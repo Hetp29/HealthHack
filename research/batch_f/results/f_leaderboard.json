@@ -1,0 +1,272 @@
+{
+  "fs13_mae": 23.075777284544344,
+  "rows": [
+    {
+      "config": "fs-1.3 blend (reference)",
+      "mae": 23.075777284544344,
+      "delta_vs_fs13": 0.0
+    },
+    {
+      "config": "CTRL static-only (no path)",
+      "mae": 24.011378004510327,
+      "delta_vs_fs13": -0.9356007199659828,
+      "bias": -4.12933508765226,
+      "params": 1444,
+      "seconds": 0.42500000000000004,
+      "folds_completed": 4,
+      "nonfinite_batches": 0
+    },
+    {
+      "config": "F1 CDE-8 linear",
+      "mae": 23.84334521659096,
+      "delta_vs_fs13": -0.7675679320466173,
+      "bias": -4.542873844785424,
+      "params": 3052,
+      "seconds": 12.85,
+      "folds_completed": 4,
+      "nonfinite_batches": 0
+    },
+    {
+      "config": "F2 CDE-8 rectilinear",
+      "mae": 23.961254795059197,
+      "delta_vs_fs13": -0.8854775105148533,
+      "bias": -5.014463283311447,
+      "params": 3052,
+      "seconds": 23.8,
+      "folds_completed": 4,
+      "nonfinite_batches": 0
+    },
+    {
+      "config": "F6 ODE-8 (control)",
+      "mae": 24.076381991766763,
+      "delta_vs_fs13": -1.0006047072224185,
+      "bias": -4.607901028390181,
+      "params": 2292,
+      "seconds": 1.175,
+      "folds_completed": 4,
+      "nonfinite_batches": 0
+    },
+    {
+      "config": "F5 CDE-8 keep 25%",
+      "mae": 24.082726113548198,
+      "delta_vs_fs13": -1.0069488290038535,
+      "bias": -4.874775430802647,
+      "params": 3052,
+      "seconds": 12.325,
+      "folds_completed": 4,
+      "nonfinite_batches": 0
+    }
+  ],
+  "per_fold": {
+    "CTRL static-only (no path)": [
+      {
+        "fold": 0,
+        "status": "ok",
+        "epochs": 40,
+        "params": 1444,
+        "seconds": 0.9,
+        "nonfinite_batches": 0,
+        "bias": -0.8866729596937383,
+        "max_abs_pred": 110.20072174072266
+      },
+      {
+        "fold": 1,
+        "status": "ok",
+        "epochs": 40,
+        "params": 1444,
+        "seconds": 0.2,
+        "nonfinite_batches": 0,
+        "bias": 0.6440183675214858,
+        "max_abs_pred": 130.08322143554688
+      },
+      {
+        "fold": 2,
+        "status": "ok",
+        "epochs": 31,
+        "params": 1444,
+        "seconds": 0.2,
+        "nonfinite_batches": 0,
+        "bias": -3.4785896177209326,
+        "max_abs_pred": 144.65428161621094
+      },
+      {
+        "fold": 3,
+        "status": "ok",
+        "epochs": 40,
+        "params": 1444,
+        "seconds": 0.4,
+        "nonfinite_batches": 0,
+        "bias": -12.796096140715855,
+        "max_abs_pred": 149.56546020507812
+      }
+    ],
+    "F1 CDE-8 linear": [
+      {
+        "fold": 0,
+        "status": "ok",
+        "epochs": 40,
+        "params": 3052,
+        "seconds": 11.8,
+        "nonfinite_batches": 0,
+        "bias": -0.9559943463692481,
+        "max_abs_pred": 118.85293579101562
+      },
+      {
+        "fold": 1,
+        "status": "ok",
+        "epochs": 39,
+        "params": 3052,
+        "seconds": 13.8,
+        "nonfinite_batches": 0,
+        "bias": -0.3186655236331376,
+        "max_abs_pred": 119.28316497802734
+      },
+      {
+        "fold": 2,
+        "status": "ok",
+        "epochs": 29,
+        "params": 3052,
+        "seconds": 11.9,
+        "nonfinite_batches": 0,
+        "bias": -4.104098334472975,
+        "max_abs_pred": 106.46981811523438
+      },
+      {
+        "fold": 3,
+        "status": "ok",
+        "epochs": 38,
+        "params": 3052,
+        "seconds": 13.9,
+        "nonfinite_batches": 0,
+        "bias": -12.792737174666337,
+        "max_abs_pred": 151.31219482421875
+      }
+    ],
+    "F2 CDE-8 rectilinear": [
+      {
+        "fold": 0,
+        "status": "ok",
+        "epochs": 40,
+        "params": 3052,
+        "seconds": 23.4,
+        "nonfinite_batches": 0,
+        "bias": -1.4458970917590164,
+        "max_abs_pred": 117.41848754882812
+      },
+      {
+        "fold": 1,
+        "status": "ok",
+        "epochs": 39,
+        "params": 3052,
+        "seconds": 27.1,
+        "nonfinite_batches": 0,
+        "bias": -0.37045952874106747,
+        "max_abs_pred": 120.0540542602539
+      },
+      {
+        "fold": 2,
+        "status": "ok",
+        "epochs": 20,
+        "params": 3052,
+        "seconds": 18.0,
+        "nonfinite_batches": 0,
+        "bias": -5.518325013292806,
+        "max_abs_pred": 124.16673278808594
+      },
+      {
+        "fold": 3,
+        "status": "ok",
+        "epochs": 37,
+        "params": 3052,
+        "seconds": 26.7,
+        "nonfinite_batches": 0,
+        "bias": -12.7231714994529,
+        "max_abs_pred": 155.53172302246094
+      }
+    ],
+    "F6 ODE-8 (control)": [
+      {
+        "fold": 0,
+        "status": "ok",
+        "epochs": 39,
+        "params": 2292,
+        "seconds": 1.1,
+        "nonfinite_batches": 0,
+        "bias": -0.2746840645125634,
+        "max_abs_pred": 121.49913787841797
+      },
+      {
+        "fold": 1,
+        "status": "ok",
+        "epochs": 34,
+        "params": 2292,
+        "seconds": 1.2,
+        "nonfinite_batches": 0,
+        "bias": 0.11189396070379219,
+        "max_abs_pred": 122.5738296508789
+      },
+      {
+        "fold": 2,
+        "status": "ok",
+        "epochs": 32,
+        "params": 2292,
+        "seconds": 1.2,
+        "nonfinite_batches": 0,
+        "bias": -4.284922207290267,
+        "max_abs_pred": 168.0831298828125
+      },
+      {
+        "fold": 3,
+        "status": "ok",
+        "epochs": 40,
+        "params": 2292,
+        "seconds": 1.2,
+        "nonfinite_batches": 0,
+        "bias": -13.983891802461685,
+        "max_abs_pred": 142.9818115234375
+      }
+    ],
+    "F5 CDE-8 keep 25%": [
+      {
+        "fold": 0,
+        "status": "ok",
+        "epochs": 38,
+        "params": 3052,
+        "seconds": 11.7,
+        "nonfinite_batches": 0,
+        "bias": -1.7563659951549482,
+        "max_abs_pred": 116.65593719482422
+      },
+      {
+        "fold": 1,
+        "status": "ok",
+        "epochs": 40,
+        "params": 3052,
+        "seconds": 13.5,
+        "nonfinite_batches": 0,
+        "bias": 0.7697532109651115,
+        "max_abs_pred": 133.39736938476562
+      },
+      {
+        "fold": 2,
+        "status": "ok",
+        "epochs": 25,
+        "params": 3052,
+        "seconds": 10.9,
+        "nonfinite_batches": 0,
+        "bias": -4.2898990916115025,
+        "max_abs_pred": 155.37562561035156
+      },
+      {
+        "fold": 3,
+        "status": "ok",
+        "epochs": 40,
+        "params": 3052,
+        "seconds": 13.2,
+        "nonfinite_batches": 0,
+        "bias": -14.222589847409251,
+        "max_abs_pred": 153.1175994873047
+      }
+    ]
+  }
+}
