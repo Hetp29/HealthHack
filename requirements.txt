@@ -8,3 +8,6 @@ pandas==2.2.2
 scikit-learn==1.4.2
 joblib==1.4.2
 python-dateutil==2.9.0.post0
+# Canonical data layer (data/**): SQLite access + MetaboNet Parquet streaming.
+SQLAlchemy==2.0.43
+pyarrow==17.0.0

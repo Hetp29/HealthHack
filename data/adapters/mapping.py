@@ -17,11 +17,11 @@ from data.schema import DATA_SOURCES
 from data.timeutil import is_valid_timezone
 
 MODALITIES: tuple[str, ...] = (
-    "participants", "cgm", "cgm_secondary", "heart_rate", "meals", "medications", "activity",
+    "participants", "cgm", "cgm_secondary", "heart_rate", "meals", "medications", "activity", "source_attributes",
 )
 
 CANONICAL_FIELDS: dict[str, tuple[str, ...]] = {
-    "participants": ("participant_id", "display_name", "timezone", "source_dataset"),
+    "participants": ("participant_id", "display_name", "timezone", "source_dataset", "time_basis"),
     "cgm": ("participant_id", "timestamp", "glucose_mg_dl", "sensor"),
     "cgm_secondary": ("participant_id", "timestamp", "glucose_mg_dl", "sensor"),
     "heart_rate": ("participant_id", "timestamp", "heart_rate_bpm", "resting_heart_rate_bpm"),
@@ -38,6 +38,7 @@ CANONICAL_FIELDS: dict[str, tuple[str, ...]] = {
     ),
     "medications": ("id", "participant_id", "timestamp", "medication_class", "dose", "dose_unit"),
     "activity": ("participant_id", "timestamp", "activity_value", "activity_unit"),
+    "source_attributes": ("participant_id", "entity_type", "entity_id", "attribute", "value_num", "value_text", "unit"),
 }
 
 # Explicit, declared conversions into canonical units. Doses are deliberately absent:
@@ -104,8 +105,8 @@ def parse_mapping(raw: dict, *, sha256: str = "", path: str | None = None) -> Ma
     if data_source not in DATA_SOURCES:
         raise MappingError(f"data_source must be one of {DATA_SOURCES}, got {data_source!r}")
     assume_tz = raw.get("assume_timezone") or None
-    if assume_tz not in (None, "participant") and not is_valid_timezone(assume_tz):
-        raise MappingError(f"assume_timezone {assume_tz!r} is not an IANA timezone or 'participant'")
+    if assume_tz not in (None, "participant", "floating") and not is_valid_timezone(assume_tz):
+        raise MappingError(f"assume_timezone {assume_tz!r} is not an IANA timezone, 'participant' or 'floating'")
     derived_tz = raw.get("derived_participant_timezone") or None
     if derived_tz is not None and not is_valid_timezone(derived_tz):
         raise MappingError(f"derived_participant_timezone {derived_tz!r} is not an IANA timezone")
@@ -135,7 +136,7 @@ def parse_mapping(raw: dict, *, sha256: str = "", path: str | None = None) -> Ma
                 raise MappingError(f"modalities.{modality}.units.{fname}: unsupported unit {unit!r} ({list(options)})")
         generate_meal_id = bool(spec.get("generate_meal_id", False))
         required = [f for f in ("participant_id", "timestamp") if f in allowed]
-        if modality == "participants":
+        if modality in ("participants", "source_attributes"):
             required = ["participant_id"]
         missing = [f for f in required if f not in columns and f not in constants]
         if modality == "meals" and "meal_id" not in columns and not generate_meal_id:

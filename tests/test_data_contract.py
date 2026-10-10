@@ -177,9 +177,23 @@ class TestBackendResolution:
         with pytest.raises(DataLayerError, match="unknown GLUCOTWIN_DATA_BACKEND"):
             build_repository(settings)
 
-    def test_sqlite_backend_fails_informatively_until_the_data_layer_lands(self):
-        """Must name what is missing, not raise an opaque ImportError."""
-        settings = Settings(data_backend="sqlite")
-        with pytest.raises(DataLayerError) as excinfo:
+    # Replaces `test_sqlite_backend_fails_informatively_until_the_data_layer_lands`, which
+    # asserted the data layer was absent; it has landed (approved replacement).
+    def test_sqlite_backend_binds_the_canonical_repository(self, tmp_path):
+        from data.adapters import import_fixture
+        from data.storage.db import init_db, make_engine
+
+        url = f"sqlite:///{tmp_path / 'canonical.db'}"
+        engine = make_engine(url)
+        init_db(engine)
+        import_fixture(engine=engine, report_dir=tmp_path / "reports")
+        repository = build_repository(Settings(data_backend="sqlite", db_url=url))
+        assert isinstance(repository, DataRepository)
+        assert type(repository).__name__ == "SqliteDataRepository"
+        assert [s.participant_id for s in repository.list_participants()][:1] == ["synthetic_p001"]
+
+    def test_sqlite_backend_fails_informatively_without_a_database(self, tmp_path):
+        """An uninitialized database must say what to run, not fail opaquely."""
+        settings = Settings(data_backend="sqlite", db_url=f"sqlite:///{tmp_path / 'missing.db'}")
+        with pytest.raises(RuntimeError, match="not initialized"):
             build_repository(settings)
-        assert "data/storage/repository.py" in str(excinfo.value)

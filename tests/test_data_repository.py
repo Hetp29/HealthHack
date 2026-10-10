@@ -135,5 +135,5 @@ def test_export_tables_writes_canonical_csvs(fixture_repo, tmp_path):
     manifest = fixture_repo.export_tables(tmp_path / "export", cutoff=datetime(2026, 10, 3, tzinfo=UTC))
     assert manifest["files"]["cgm.csv"]["rows"] > 0
     header = (tmp_path / "export" / "cgm.csv").read_text().splitlines()[0]
-    assert header == "participant_id,timestamp,glucose_mg_dl,sensor,data_source"
+    assert header == "participant_id,timestamp,source_timestamp,glucose_mg_dl,sensor,data_source"
     assert manifest["runs"] and manifest["runs"][0]["sha256"]

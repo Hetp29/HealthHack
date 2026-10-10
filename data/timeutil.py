@@ -116,3 +116,27 @@ def require_aware(dt: datetime | None, name: str) -> datetime | None:
     if dt.tzinfo is None or dt.utcoffset() is None:
         raise ValueError(f"{name} must be offset-aware (got naive {dt.isoformat()})")
     return dt.astimezone(UTC)
+
+
+SOURCE_LOCAL_UNKNOWN_TZ = "source_local_unknown_tz"
+
+
+def local_minutes_of_day(timestamp: datetime, time_basis: str, timezone_name: str | None) -> float | None:
+    """Minutes since local midnight for a canonical timestamp, or None when unknowable.
+
+    * ``source_local_unknown_tz``: the canonical value encodes the source's local wall
+      clock under a +00:00 label, so its clock reading IS the local time of day.
+    * ``utc`` with a known IANA timezone: convert, then read the clock.
+    * ``utc`` with no timezone: the local time of day is unknown -> None (do not guess).
+    """
+    if timestamp.tzinfo is None:
+        raise ValueError("timestamp must be offset-aware")
+    if time_basis == SOURCE_LOCAL_UNKNOWN_TZ:
+        local = timestamp.astimezone(UTC)
+    elif time_basis == "utc" and timezone_name:
+        local = timestamp.astimezone(ZoneInfo(timezone_name))
+    elif time_basis == "utc":
+        return None
+    else:
+        raise ValueError(f"unknown time_basis {time_basis!r}")
+    return local.hour * 60 + local.minute + local.second / 60

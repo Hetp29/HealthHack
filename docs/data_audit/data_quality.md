@@ -19,9 +19,12 @@
 5. **Implausible fiber.** 8 meals (participants 016 and 019) report 1,020–2,830 g of fiber,
    probably milligrams. They are **quarantined** (`implausible_fiber_g`), not unit-guessed.
    Many meals report fiber = 0 (stored as 0; it may mean "not estimated").
-6. **Fields without a canonical home (not stored):** `Meal Type`, `Amount Consumed` (% of
-   the meal eaten; 391 meals < 100%, 131 > 100%; macros are NOT scaled by it),
-   `Sugar`, `RecordIndex`, and participant-level `bio.csv` / gut-health / microbiome tables.
+6. **Preserved but not in the API.** `Amount Consumed` (% of the meal eaten;
+   391 meals < 100%, 131 > 100%; macros are NOT scaled by it) and `bio.csv` A1c are stored in the
+   data-layer-only `source_attributes` table for later evaluation. The A1c data dictionary
+   says mmol/mol, but values 4.6–8.5 are consistent with %; the unit is left unset.
+   Not stored: `Meal Type`, `Sugar`, `RecordIndex`, other `bio.csv` columns, gut-health and
+   microbiome tables (they remain in the source files).
 7. **Coverage.** Participant 007 has a fragmented Dexcom signal (~66% coverage); 018 has two
    recording periods ~9 days apart. Both are kept and reported.
 8. **Medications.** None recorded. Absent ≠ "not taking any" (T2D participants may be medicated).
@@ -52,11 +55,17 @@
 
 ## Both datasets
 
-- **Time.** Offset-naive, date-shifted local wall clock, no timezone given. Stored as
-  UTC-labelled wall clock through an explicit `assume_timezone="UTC"` policy;
-  `participant.timezone` is null (unknown). Within-participant ordering, durations and
-  time-of-day are exact; cross-participant absolute instants are meaningless. With a null
-  timezone, `ml/features.py` falls back to UTC = the source wall clock.
+- **Time — unknown timezone, NOT UTC.** Both sources give offset-naive, date-shifted local
+  wall-clock times with no timezone. The data layer does not claim they are UTC:
+  - every row keeps the original text in `source_timestamp`;
+  - the participant is marked `time_basis = "source_local_unknown_tz"`, `timezone = null`;
+  - the contract still requires an offset on `timestamp`, so it carries the source wall
+    clock with a `+00:00` label as an **ordering key**, not a real UTC instant. Within a
+    participant, ordering and durations are exact; across participants, or against real
+    clocks, the instants are meaningless;
+  - local time of day comes from `SqliteDataRepository.local_minutes_of_day()` /
+    `data.timeutil.local_minutes_of_day()`, which reads the source clock for this basis
+    (and returns None for real-UTC data without a timezone instead of guessing).
 - **Provenance.** Every row carries `data_source="official"`, `ingestion_run_id`, and its
   participant's `source_dataset`; every run records the input SHA-256.
 - **Nothing invented.** No macro, activity, medication or image value is imputed.

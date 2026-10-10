@@ -2,7 +2,7 @@
 
 **Owner:** Het Patel · **Contract:** canonical schema v1.0 (`contracts/canonical_schema_v1.md`) ·
 **Storage:** SQLite via SQLAlchemy · **Sources:** `synthetic_dev` fixtures, **CGMacros** and **MetaboNet** (organizer datasets).
-Dataset audit: [`docs/data_audit/summary.md`](../docs/data_audit/summary.md).
+Dataset audit: [`docs/data_audit/summary.md`](../docs/data_audit/summary.md). Setup, resources and time semantics: [`docs/data_setup.md`](../docs/data_setup.md).
 
 This package loads, validates and stores the data, records where it came from, and provides one read
 interface (`DataRepository`). It does **not** construct targets, engineer features, train models or serve HTTP.

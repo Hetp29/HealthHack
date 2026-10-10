@@ -112,8 +112,12 @@ def test_equivalent_timestamps_in_other_offsets_do_not_duplicate(tmp_path):
     ingest(src, engine)
     write_csv(src / "cgm.csv", CANONICAL_HEADERS["cgm"], [["p1", "2026-09-30T20:00:00-04:00", 100]])
     result = ingest(src, engine)
-    assert result.report["totals"]["unchanged"] == 2
+    # Same instant -> same row (no duplicate); the preserved source text changed -> update.
+    assert result.report["modalities"]["cgm"]["inserted"] == 0
+    assert result.report["modalities"]["cgm"]["updated"] == 1
     assert count(engine, tables.cgm) == 1
+    with engine.connect() as conn:
+        assert conn.execute(select(tables.cgm.c.source_timestamp)).scalar_one() == "2026-09-30T20:00:00-04:00"
 
 
 def test_in_source_duplicates_collapse_and_conflicts_are_quarantined(tmp_path):

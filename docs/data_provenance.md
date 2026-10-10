@@ -1,6 +1,6 @@
 # Data provenance, validation and quality
 
-**Owner:** Het Patel · **Schema version:** 1.0 (storage layout v2) · **Status:** synthetic fixtures plus both
+**Owner:** Het Patel · **Schema version:** 1.0 (storage layout v3) · **Status:** synthetic fixtures plus both
 organizer datasets (CGMacros, MetaboNet) ingested. Full audit: `docs/data_audit/`.
 
 ## 1. Data sources
@@ -148,6 +148,11 @@ glucose per participant ranges from 98 to 152 mg/dL.
 8. **Storage layout v2 (internal).** Added `cgm.sensor`, `participants.source_dataset` and a `cgm_secondary` table
    (second simultaneously worn sensor). No API-facing field changed. A local DB from layout v1 must be rebuilt;
    `init_db` refuses to open it and says how.
-9. **Floating local time for official data.** Both datasets give offset-naive, date-shifted wall-clock times with no
-   timezone. They are stored as UTC-labelled wall clock under an explicit `assume_timezone="UTC"` policy, and
-   `participant.timezone` is null. This needs Ruhaan's acknowledgement; see `docs/data_audit/data_quality.md`.
+9. **Unknown-timezone source time (storage layout v3).** Both organizer datasets give offset-naive, date-shifted
+   local wall-clock times with no timezone. These are **not** treated as UTC: the original text is kept in
+   `source_timestamp` on every row, the participant carries `time_basis = "source_local_unknown_tz"` with a null
+   `timezone`, and the contract-required offset-aware `timestamp` is documented as an ordering key (source wall clock
+   with a `+00:00` label). Local time of day: `local_minutes_of_day()`. No API field changed. Feature-side use is
+   Ruhaan's call (see `docs/data_setup.md`).
+10. **Preserved source fields.** CGMacros `Amount Consumed` and `bio.csv` A1c live in `source_attributes` (data
+   layer only), pending evaluation of the first real-data models.

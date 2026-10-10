@@ -59,6 +59,11 @@ def _participant_fk(primary_key: bool = False) -> Column:
     )
 
 
+def _source_time() -> Column:
+    # The timestamp exactly as written in the source (e.g. "2020-05-01 10:30:00").
+    return Column("source_timestamp", String, nullable=True)
+
+
 def _provenance() -> list[Column]:
     return [
         Column("data_source", String, nullable=False),
@@ -100,8 +105,13 @@ participants = Table(
     Column("timezone", String, nullable=True),
     # Which source dataset the participant came from (e.g. "cgmacros", "metabonet").
     Column("source_dataset", String, nullable=True),
+    # "utc": timestamps are real UTC instants. "source_local_unknown_tz": the source gave
+    # offset-naive local wall-clock times with no timezone; `timestamp` then encodes that
+    # wall clock with a +00:00 label as an ORDERING KEY and is NOT a real UTC instant.
+    Column("time_basis", String, nullable=False, server_default="utc"),
     *_provenance(),
     CheckConstraint(_DATA_SOURCE_CHECK, name="ck_participants_data_source"),
+    CheckConstraint("time_basis IN ('utc','source_local_unknown_tz')", name="ck_participants_time_basis"),
 )
 
 cgm = Table(
@@ -110,6 +120,7 @@ cgm = Table(
     # Composite primary key (participant_id, timestamp): one reading per instant.
     _participant_fk(primary_key=True),
     Column("timestamp", UTCDateTime, primary_key=True),
+    _source_time(),
     Column("glucose_mg_dl", Float, nullable=False),
     # Original sensor identity (e.g. "dexcom_g6_pro"); null when the source does not say.
     Column("sensor", String, nullable=True),
@@ -126,6 +137,7 @@ cgm_secondary = Table(
     metadata,
     _participant_fk(primary_key=True),
     Column("timestamp", UTCDateTime, primary_key=True),
+    _source_time(),
     Column("sensor", String, primary_key=True),
     Column("glucose_mg_dl", Float, nullable=False),
     *_provenance(),
@@ -139,6 +151,7 @@ heart_rate = Table(
     # Composite primary key (participant_id, timestamp): one reading per instant.
     _participant_fk(primary_key=True),
     Column("timestamp", UTCDateTime, primary_key=True),
+    _source_time(),
     Column("heart_rate_bpm", Float, nullable=False),
     Column("resting_heart_rate_bpm", Float, nullable=True),
     *_provenance(),
@@ -152,6 +165,7 @@ meals = Table(
     Column("meal_id", String, primary_key=True),
     _participant_fk(),
     Column("timestamp", UTCDateTime, nullable=False),
+    _source_time(),
     Column("carbs_g", Float, nullable=True),
     Column("protein_g", Float, nullable=True),
     Column("fat_g", Float, nullable=True),
@@ -173,6 +187,7 @@ medications = Table(
     Column("id", String, primary_key=True),
     _participant_fk(),
     Column("timestamp", UTCDateTime, nullable=False),
+    _source_time(),
     Column("medication_class", String, nullable=False),
     Column("dose", Float, nullable=True),
     Column("dose_unit", String, nullable=True),
@@ -188,11 +203,30 @@ activity = Table(
     Column("id", String, primary_key=True),
     _participant_fk(),
     Column("timestamp", UTCDateTime, nullable=False),
+    _source_time(),
     Column("activity_value", Float, nullable=True),
     Column("activity_unit", String, nullable=True),
     *_provenance(),
     UniqueConstraint("participant_id", "timestamp", "activity_unit", name="uq_activity_event"),
     CheckConstraint(_DATA_SOURCE_CHECK, name="ck_activity_data_source"),
+)
+
+# Source fields that have no canonical home yet but must not be lost (e.g. CGMacros
+# "Amount Consumed" per meal, bio.csv A1c per participant). Data layer only: not exposed
+# through the backend Protocol or the API.
+source_attributes = Table(
+    "source_attributes",
+    metadata,
+    Column("entity_type", String, primary_key=True),  # "participant" | "meal"
+    Column("entity_id", String, primary_key=True),
+    Column("attribute", String, primary_key=True),
+    _participant_fk(),
+    Column("value_num", Float, nullable=True),
+    Column("value_text", String, nullable=True),
+    Column("unit", String, nullable=True),
+    *_provenance(),
+    CheckConstraint("entity_type IN ('participant','meal')", name="ck_attr_entity_type"),
+    CheckConstraint(_DATA_SOURCE_CHECK, name="ck_attr_data_source"),
 )
 
 quarantine = Table(
@@ -215,6 +249,7 @@ Index("ix_meals_participant_time", meals.c.participant_id, meals.c.timestamp)
 Index("ix_meds_participant_time", medications.c.participant_id, medications.c.timestamp)
 Index("ix_activity_participant_time", activity.c.participant_id, activity.c.timestamp)
 Index("ix_quarantine_run", quarantine.c.run_id)
+Index("ix_attr_participant", source_attributes.c.participant_id)
 
 EVENT_TABLES = {
     "cgm": cgm,
@@ -223,4 +258,5 @@ EVENT_TABLES = {
     "meals": meals,
     "medications": medications,
     "activity": activity,
+    "source_attributes": source_attributes,
 }

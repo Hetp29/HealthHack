@@ -21,7 +21,9 @@ Mapping decisions
   reported. Units are inferred from the data (dictionary not machine-readable).
 * **Heart rate / activity** -> ``heart_rate``; ``steps`` and ``calories_burned`` as activity.
 * **Time.** Parquet stores ``isAdjustedToUTC=false`` (offset-naive local wall clock, dates
-  shifted). Stored as UTC-labelled wall clock under an explicit policy; timezone null.
+  shifted, no timezone). Participants get ``time_basis="source_local_unknown_tz"`` and a
+  null timezone; the original text is kept in ``source_timestamp``; the canonical
+  ``timestamp`` is an ordering key with a +00:00 label, NOT a real UTC instant.
 * **Scope.** The full dataset (111M CGM rows) is audited in streaming. Ingestion loads a
   bounded, deterministic window per eligible subject: the 7 calendar days before the
   subject's FIRST eligible Day-8 meal plus that day (8 days). See ``docs/data_audit``.
@@ -169,7 +171,8 @@ def _rows_for_subject(src: str, sid: str, g: pd.DataFrame) -> dict[str, list[Raw
 
     rows: dict[str, list[RawRow]] = {
         "participants": [raw(0, {"participant_id": pid, "display_name": f"MetaboNet {src} {sid}",
-                                 "timezone": None, "source_dataset": DATASET})],
+                                 "timezone": None, "source_dataset": DATASET,
+                                 "time_basis": "source_local_unknown_tz"})],
     }
     c = g["CGM"].notna()
     rows["cgm"] = [raw(i, {"participant_id": pid, "timestamp": _ts(t), "glucose_mg_dl": float(v),
@@ -227,11 +230,11 @@ def import_metabonet(
             sha256=file_sha,
             data_source="official",
             rows=batch,
-            assume_timezone="UTC",
+            assume_timezone="floating",
             notes=[
                 {"code": "metabonet_window", "detail": "7 days before first eligible meal day + that day",
                  "subjects": len(batch_subjects)},
-                {"code": "timestamps_floating_local_wall_clock", "detail": "parquet isAdjustedToUTC=false"},
+                {"code": "time_basis_source_local_unknown_tz", "detail": "parquet isAdjustedToUTC=false"},
                 {"code": "basal_insulin_not_ingested_as_events"},
                 {"code": "macros_other_than_carbs_absent_in_source"},
             ],

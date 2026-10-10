@@ -16,7 +16,7 @@ DEFAULT_DB_URL = "sqlite:///data/glucotwin.db"
 DB_URL_ENV = "GLUCOTWIN_DB_URL"
 # Internal storage layout version (independent of the API contract version). Bump when
 # tables/columns change; an older local DB must then be rebuilt (`python -m data.seed --reset --yes`).
-STORAGE_VERSION = "2"
+STORAGE_VERSION = "3"
 
 
 class SchemaVersionMismatch(RuntimeError):
