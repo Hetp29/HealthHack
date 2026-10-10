@@ -88,6 +88,13 @@ Interactive docs: <http://localhost:8000/docs>
 python -m pytest -q          # 385 passed
 ```
 
+The suite is self-sufficient on a clean clone: `tests/conftest.py` trains the model
+once if `ml/artifacts/` is empty, so `pytest` is a reliable signal even before you have
+run `ml.train` yourself. An existing artifact is left alone.
+
+**Verified from a clean clone** at commit `b949fb8`: 385 passed, then
+`ml.train` + `ml.evaluate` + `uvicorn` reproduced every number in this README exactly.
+
 ---
 
 ## Repository layout
