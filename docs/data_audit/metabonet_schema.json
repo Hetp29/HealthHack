@@ -1,0 +1,374 @@
+{
+  "file": "Type1Diabetes.parquet",
+  "bytes": 1278078013,
+  "sha256": "2a6a3478d0f3f17b660ec88171af1113ff68d422d8ac1e5de325b12e6886dc3a",
+  "rows": 132811004,
+  "row_groups": 129,
+  "columns": [
+    {
+      "name": "CGM",
+      "type": "double"
+    },
+    {
+      "name": "age",
+      "type": "double"
+    },
+    {
+      "name": "air_temp",
+      "type": "double"
+    },
+    {
+      "name": "basal",
+      "type": "double"
+    },
+    {
+      "name": "bolus",
+      "type": "double"
+    },
+    {
+      "name": "calories_burned",
+      "type": "double"
+    },
+    {
+      "name": "carbs",
+      "type": "double"
+    },
+    {
+      "name": "cgm_device",
+      "type": "string"
+    },
+    {
+      "name": "misc_notes",
+      "type": "string"
+    },
+    {
+      "name": "date",
+      "type": "timestamp[ns]"
+    },
+    {
+      "name": "galvanic_skin_response",
+      "type": "double"
+    },
+    {
+      "name": "heartrate",
+      "type": "double"
+    },
+    {
+      "name": "height",
+      "type": "double"
+    },
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "insulin",
+      "type": "double"
+    },
+    {
+      "name": "insulin_delivery_algorithm",
+      "type": "string"
+    },
+    {
+      "name": "insulin_delivery_device",
+      "type": "string"
+    },
+    {
+      "name": "insulin_delivery_modality",
+      "type": "string"
+    },
+    {
+      "name": "insulin_type_basal",
+      "type": "string"
+    },
+    {
+      "name": "insulin_type_bolus",
+      "type": "string"
+    },
+    {
+      "name": "is_pregnant",
+      "type": "bool"
+    },
+    {
+      "name": "is_test",
+      "type": "bool"
+    },
+    {
+      "name": "meal_label",
+      "type": "string"
+    },
+    {
+      "name": "skin_temp",
+      "type": "double"
+    },
+    {
+      "name": "source_file",
+      "type": "string"
+    },
+    {
+      "name": "steps",
+      "type": "double"
+    },
+    {
+      "name": "weight",
+      "type": "double"
+    },
+    {
+      "name": "workout_duration",
+      "type": "double"
+    },
+    {
+      "name": "workout_intensity",
+      "type": "double"
+    },
+    {
+      "name": "workout_label",
+      "type": "string"
+    },
+    {
+      "name": "treatment_group",
+      "type": "string"
+    },
+    {
+      "name": "randomization_date",
+      "type": "timestamp[ns]"
+    },
+    {
+      "name": "extension_date",
+      "type": "timestamp[ns]"
+    },
+    {
+      "name": "gender",
+      "type": "string"
+    },
+    {
+      "name": "age_of_diagnosis",
+      "type": "double"
+    },
+    {
+      "name": "ethnicity",
+      "type": "string"
+    },
+    {
+      "name": "subject_split_across_traintest",
+      "type": "bool"
+    }
+  ],
+  "date_logical_type": "Timestamp(isAdjustedToUTC=false, timeUnit=nanoseconds, is_from_converted_type=false, force_set_converted_type=false)",
+  "created_by": "parquet-cpp-arrow version 22.0.0",
+  "subjects": 1730,
+  "subject_ids_shared_across_sources": 222,
+  "is_test_rows": 0,
+  "by_source": [
+    {
+      "source": "AZT1D",
+      "subjects": 21,
+      "rows": 241871,
+      "cgm_readings": 237290,
+      "meal_events": 3742,
+      "bolus_events": 8622,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 21,
+      "eligible_episodes": 3003,
+      "split_across_traintest": 2
+    },
+    {
+      "source": "BrisT1D",
+      "subjects": 18,
+      "rows": 973326,
+      "cgm_readings": 726724,
+      "meal_events": 15042,
+      "bolus_events": 0,
+      "heart_rate_rows": 575798,
+      "steps_rows": 403087,
+      "negative_bolus": 0,
+      "eligible_subjects": 14,
+      "eligible_episodes": 10294,
+      "split_across_traintest": 1
+    },
+    {
+      "source": "CTR3",
+      "subjects": 30,
+      "rows": 1962436,
+      "cgm_readings": 1115606,
+      "meal_events": 11635,
+      "bolus_events": 0,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 26,
+      "eligible_episodes": 8351,
+      "split_across_traintest": 2
+    },
+    {
+      "source": "DCLP3",
+      "subjects": 101,
+      "rows": 5175028,
+      "cgm_readings": 4835303,
+      "meal_events": 0,
+      "bolus_events": 207445,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 0,
+      "eligible_episodes": 0,
+      "split_across_traintest": 10
+    },
+    {
+      "source": "DCLP5",
+      "subjects": 90,
+      "rows": 5243288,
+      "cgm_readings": 4697169,
+      "meal_events": 0,
+      "bolus_events": 215436,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 0,
+      "eligible_episodes": 0,
+      "split_across_traintest": 9
+    },
+    {
+      "source": "Flair",
+      "subjects": 102,
+      "rows": 5977590,
+      "cgm_readings": 4708837,
+      "meal_events": 0,
+      "bolus_events": 2842507,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 0,
+      "eligible_episodes": 0,
+      "split_across_traintest": 10
+    },
+    {
+      "source": "HUPA-UCM",
+      "subjects": 20,
+      "rows": 207022,
+      "cgm_readings": 207022,
+      "meal_events": 1863,
+      "bolus_events": 2734,
+      "heart_rate_rows": 207022,
+      "steps_rows": 207022,
+      "negative_bolus": 4,
+      "eligible_subjects": 17,
+      "eligible_episodes": 1455,
+      "split_across_traintest": 2
+    },
+    {
+      "source": "IOBP2",
+      "subjects": 299,
+      "rows": 8278133,
+      "cgm_readings": 6651541,
+      "meal_events": 0,
+      "bolus_events": 1460315,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 0,
+      "eligible_episodes": 0,
+      "split_across_traintest": 29
+    },
+    {
+      "source": "Loop",
+      "subjects": 761,
+      "rows": 80989684,
+      "cgm_readings": 71876664,
+      "meal_events": 1128317,
+      "bolus_events": 2107749,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 750,
+      "eligible_episodes": 987088,
+      "split_across_traintest": 76
+    },
+    {
+      "source": "OhioT1DM",
+      "subjects": 12,
+      "rows": 190966,
+      "cgm_readings": 166532,
+      "meal_events": 2160,
+      "bolus_events": 3670,
+      "heart_rate_rows": 86811,
+      "steps_rows": 91387,
+      "negative_bolus": 0,
+      "eligible_subjects": 12,
+      "eligible_episodes": 1482,
+      "split_across_traintest": 0
+    },
+    {
+      "source": "PEDAP",
+      "subjects": 59,
+      "rows": 4699920,
+      "cgm_readings": 4289834,
+      "meal_events": 90376,
+      "bolus_events": 344194,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 58,
+      "eligible_episodes": 82461,
+      "split_across_traintest": 5
+    },
+    {
+      "source": "ReplaceBG",
+      "subjects": 188,
+      "rows": 18139804,
+      "cgm_readings": 11549365,
+      "meal_events": 182681,
+      "bolus_events": 555785,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 183,
+      "eligible_episodes": 117496,
+      "split_across_traintest": 18
+    },
+    {
+      "source": "SIESTA",
+      "subjects": 5,
+      "rows": 38475,
+      "cgm_readings": 37277,
+      "meal_events": 0,
+      "bolus_events": 776,
+      "heart_rate_rows": 32201,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 0,
+      "eligible_episodes": 0,
+      "split_across_traintest": 0
+    },
+    {
+      "source": "ShanghaiT1DM",
+      "subjects": 11,
+      "rows": 41666,
+      "cgm_readings": 13897,
+      "meal_events": 0,
+      "bolus_events": 438,
+      "heart_rate_rows": 0,
+      "steps_rows": 0,
+      "negative_bolus": 0,
+      "eligible_subjects": 0,
+      "eligible_episodes": 0,
+      "split_across_traintest": 1
+    },
+    {
+      "source": "T1D-UOM",
+      "subjects": 13,
+      "rows": 651795,
+      "cgm_readings": 236862,
+      "meal_events": 3197,
+      "bolus_events": 4286,
+      "heart_rate_rows": 0,
+      "steps_rows": 103703,
+      "negative_bolus": 0,
+      "eligible_subjects": 6,
+      "eligible_episodes": 928,
+      "split_across_traintest": 1
+    }
+  ]
+}

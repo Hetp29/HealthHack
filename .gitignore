@@ -35,3 +35,27 @@ data/cgmacros-a-scientific-dataset-for-personalized-nutrition-and-diet-monitorin
 # Frontend
 node_modules/
 frontend/dist/
+
+# Data layer (Het): local databases, generated run/profile reports, and official
+# source files (kept outside git unless the license allows committing them).
+data/local/
+data/reports/runs/
+data/reports/profiles/
+data/official_raw/
+*.db-wal
+*.db-shm
+
+# Defense in depth on raw source data. The two dataset drops above are ignored by
+# path, but a future drop under a different folder name must not become committable
+# by accident. These file types are never legitimate tracked content in this repo.
+# NOTE: deliberately no `data/**/*.csv` rule -- data/fixtures/synthetic_dev/*.csv are
+# small committed synthetic fixtures and must stay tracked.
+*.parquet
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+data/**/*.jpg
+data/**/*.jpeg
+data/**/*.png
+data/**/photos/
