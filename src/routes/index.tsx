@@ -67,11 +67,11 @@ function Index() {
         <Card>
           <CardTitle>Glucose and heart rate history</CardTitle>
           {status.state === "error" && <ErrorState error={status.error} onRetry={retry} />}
-          {status.state === "success" && !history.glucose.length && (
+          {status.state === "success" && history && !history.glucose.length && (
             <EmptyState title="No glucose observations" body="There is no historical glucose data for this participant." />
           )}
-          {status.state === "success" && history.glucose.length > 0 && (
-            mounted ? <HistoryChart history={history} /> : <Skeleton className="h-[340px] w-full" />
+          {status.state === "success" && history && history.glucose.length > 0 && (
+            mounted && history ? <HistoryChart history={history} /> : <Skeleton className="h-[340px] w-full" />
           )}
           {status.state === "loading" && <Skeleton className="h-[340px] w-full" />}
           {status.state === "idle" && <EmptyState title="Select a participant" body="Choose a participant to load their history." />}
@@ -79,7 +79,7 @@ function Index() {
         <Card>
           <CardTitle>Historical meals</CardTitle>
           {status.state === "error" && <ErrorState error={status.error} onRetry={retry} />}
-          {status.state === "success" && <HistoricalMeals meals={history.meals} />}
+          {status.state === "success" && history && <HistoricalMeals meals={history.meals ?? []} />}
           {status.state === "loading" && <Skeleton className="h-48 w-full" />}
           {status.state === "idle" && <EmptyState title="No participant selected" />}
         </Card>
