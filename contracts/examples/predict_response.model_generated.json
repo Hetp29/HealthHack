@@ -1,0 +1,226 @@
+{
+  "participant_id": "synthetic_p001",
+  "meal_timestamp": "2026-10-07T20:29:09.859027Z",
+  "model_version": "v0.1.0",
+  "data_source": "synthetic_dev",
+  "prediction_status": "personalized",
+  "points": [
+    {
+      "minute": 0,
+      "glucose_mg_dl": 103.8,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 5,
+      "glucose_mg_dl": 106.4,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 10,
+      "glucose_mg_dl": 109.1,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 15,
+      "glucose_mg_dl": 111.7,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 20,
+      "glucose_mg_dl": 114.3,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 25,
+      "glucose_mg_dl": 117.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 30,
+      "glucose_mg_dl": 119.6,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 35,
+      "glucose_mg_dl": 120.9,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 40,
+      "glucose_mg_dl": 122.2,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 45,
+      "glucose_mg_dl": 123.5,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 50,
+      "glucose_mg_dl": 124.8,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 55,
+      "glucose_mg_dl": 126.1,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 60,
+      "glucose_mg_dl": 127.4,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 65,
+      "glucose_mg_dl": 126.2,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 70,
+      "glucose_mg_dl": 125.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 75,
+      "glucose_mg_dl": 123.8,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 80,
+      "glucose_mg_dl": 122.5,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 85,
+      "glucose_mg_dl": 121.3,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 90,
+      "glucose_mg_dl": 120.1,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 95,
+      "glucose_mg_dl": 119.4,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 100,
+      "glucose_mg_dl": 118.7,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 105,
+      "glucose_mg_dl": 118.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 110,
+      "glucose_mg_dl": 117.3,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 115,
+      "glucose_mg_dl": 116.6,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 120,
+      "glucose_mg_dl": 115.9,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    }
+  ],
+  "glucose_at_minutes": {
+    "30": 119.6,
+    "60": 127.4,
+    "90": 120.1,
+    "120": 115.9
+  },
+  "metrics": {
+    "peak_mg_dl": 127.4,
+    "peak_delta_mg_dl": 23.6,
+    "time_to_peak_minutes": 60,
+    "incremental_auc_mg_dl_min": 1853.7
+  },
+  "drivers": [
+    {
+      "feature": "minutes_since_prior_meal",
+      "contribution_mg_dl": -11.15,
+      "explanation": "Model-based contribution of time since previous meal at the 60-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "hr_mean_30min_bpm",
+      "contribution_mg_dl": 9.62,
+      "explanation": "Model-based contribution of mean heart rate (prior 30 min) at the 60-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "calories_kcal",
+      "contribution_mg_dl": -8.63,
+      "explanation": "Model-based contribution of calories at the 60-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "participant_calibration",
+      "contribution_mg_dl": -5.71,
+      "explanation": "Participant-specific correction at the 60-minute horizon: the shrunk mean residual of the cohort model on this participant's earlier training meals only."
+    },
+    {
+      "feature": "medication_exposure_recent",
+      "contribution_mg_dl": 5.02,
+      "explanation": "Model-based contribution of recent medication exposure at the 60-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "fiber_g",
+      "contribution_mg_dl": 4.5,
+      "explanation": "Model-based contribution of fiber at the 60-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "fat_g",
+      "contribution_mg_dl": 4.13,
+      "explanation": "Model-based contribution of fat at the 60-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "carbs_g",
+      "contribution_mg_dl": -3.24,
+      "explanation": "Model-based contribution of carbohydrate at the 60-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "tod_cos",
+      "contribution_mg_dl": -2.63,
+      "explanation": "Model-based contribution of time of day (cyclic) at the 60-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    }
+  ],
+  "uncertainty_status": "not_calibrated",
+  "limitations": [
+    "Research prototype; not medical advice and not for clinical decision-making.",
+    "The model learns glucose change at 30/60/90/120 minutes and the curve between those knots is linearly interpolated, so the reported peak time is resolved only to those knots and true peak timing may fall between them.",
+    "Prediction intervals are not calibrated, so no interval bounds are reported.",
+    "Drivers are reported at the 60-minute horizon, where this forecast peaks, and describe that horizon only.",
+    "Produced by a model trained on synthetic development fixtures, not on organizer data. No external validity is claimed."
+  ]
+}
