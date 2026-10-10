@@ -21,7 +21,7 @@ interface AppState {
 
 const Ctx = createContext<AppState | null>(null);
 
-const envMode = (import.meta.env.VITE_DATA_MODE as string | undefined)?.toLowerCase();
+const envMode = (import.meta.env["VITE_DATA_MODE"] as string | undefined)?.toLowerCase();
 export const INITIAL_MODE: DataMode = envMode === "live" ? "live" : "fixture";
 
 export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { children: ReactNode; initialMode?: DataMode }) {

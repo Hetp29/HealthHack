@@ -59,10 +59,11 @@ export function HistoryChart({ history }: { history: HistoryResponse }) {
   }, [history]);
   const ticks = useMemo(() => {
     if (!rows.length) return [];
-    const start = new Date(rows[0].t);
+    const first = rows[0]!, last = rows[rows.length - 1]!;
+    const start = new Date(first.t);
     start.setUTCHours(0, 0, 0, 0);
     const out = [];
-    for (let t = start.getTime(); t <= rows[rows.length - 1].t; t += 864e5) out.push(t);
+    for (let t = start.getTime(); t <= last.t; t += 864e5) out.push(t);
     return out;
   }, [rows]);
   const meals = useMemo(() => history.meals.map((m) => Date.parse(m.timestamp)), [history]);

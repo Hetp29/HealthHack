@@ -20,7 +20,7 @@ export function summarizeHistory(h: HistoryResponse): HistorySummary {
   return {
     readingCount: g.length,
     meanGlucose: g.length ? g.reduce((a, b) => a + b, 0) / g.length : null,
-    restingHeartRate: hr.length ? hr[Math.floor((hr.length - 1) * 0.1)] : null,
+    restingHeartRate: hr.length ? (hr[Math.floor((hr.length - 1) * 0.1)] ?? null) : null,
     mealCount: h.meals.length,
   };
 }

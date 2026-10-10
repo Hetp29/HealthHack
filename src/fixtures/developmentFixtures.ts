@@ -43,7 +43,7 @@ export function buildFixtureHistory(participantId: string): HistoryResponse {
   const meals = Array.from({ length: 7 }).flatMap((_, d) =>
     mealHours.map((h, mi) => ({
       timestamp: new Date(START + d * 864e5 + (h + (r() - 0.5)) * 36e5).toISOString(),
-      carbs_g: Math.round([45, 60, 70][mi] + (r() - 0.5) * 30),
+      carbs_g: Math.round(([45, 60, 70][mi] ?? 50) + (r() - 0.5) * 30),
       protein_g: Math.round(18 + r() * 15),
       fat_g: Math.round(10 + r() * 15),
       fiber_g: mi === 0 && r() > 0.6 ? null : Math.round(3 + r() * 6),
