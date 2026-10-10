@@ -1,0 +1,17 @@
+{
+  "folds": "coldstart",
+  "n_folds": 4,
+  "retrieval_k": 5,
+  "dev_pool": 1171,
+  "reserved_test_not_loaded": 394,
+  "candidates": [
+    "BASELINE blend (fs-1.2)",
+    "trajectory fpca-4 (ridge)",
+    "trajectory fpca-4 (gbm)",
+    "trajectory spline-4 (ridge)",
+    "hybrid: blend horizons + FPCA shape",
+    "+ retrieval",
+    "+ retrieval + FPCA shape"
+  ],
+  "failures": []
+}

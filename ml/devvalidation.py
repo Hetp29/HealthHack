@@ -42,8 +42,8 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-from ml.config import HORIZONS, Config
-from ml.metrics import CurveErrors, build_curve, mae, rmse, summarize_curve, summarize_observed
+from ml.config import FORECAST_MINUTES, HORIZONS, Config
+from ml.metrics import _round, CurveErrors, build_curve, mae, rmse, summarize_curve, summarize_observed
 from ml.targets import Episode
 from ml.train import EpisodeMatrices, episodes_to_matrices
 
@@ -192,11 +192,20 @@ def _assert_fold_is_purged(fold: Fold, config: Config) -> None:
 FitPredict = Callable[[EpisodeMatrices, EpisodeMatrices, Config], dict[int, np.ndarray]]
 
 
+#: Optional richer interface: a candidate that predicts a FULL trajectory returns an
+#: (n_episodes, 25) array of deltas on the five-minute grid. Scoring then derives
+#: peak / time-to-peak / iAUC from the model's OWN curve instead of re-interpolating
+#: four horizons, which is the whole point of a functional trajectory head.
+FitPredictCurves = Callable[[EpisodeMatrices, EpisodeMatrices, Config], np.ndarray]
+
+
 @dataclass
 class Candidate:
     name: str
     fit_predict: FitPredict
     notes: str = ""
+    #: When set, curve metrics come from this instead of from interpolated horizons.
+    fit_predict_curves: FitPredictCurves | None = None
 
 
 # --------------------------------------------------------------------------- #
@@ -216,6 +225,12 @@ class OofResult:
     curve: CurveErrors = field(default_factory=CurveErrors.empty)
     #: fold index -> overall MAE, for fold-to-fold variability
     fold_mae: dict[int, float] = field(default_factory=dict)
+    #: "how many of the participant's own past meals had been observed" -> errors.
+    #: Drives the few-shot curve (1 / 3 / 5 / 10+ prior meals).
+    fewshot_errors: dict[str, list[float]] = field(default_factory=dict)
+    #: Full-trajectory absolute errors against NATIVE observed CGM, when the candidate
+    #: predicts a curve and the episode has enough real readings.
+    trajectory_errors: list[float] = field(default_factory=list)
     #: participant -> overall MAE
     participant_mae: dict[str, float] = field(default_factory=dict)
     n_validation_episodes: int = 0
@@ -255,6 +270,11 @@ class OofResult:
                 else None
             ),
             "fit_seconds": round(self.fit_seconds, 1),
+            "trajectory_mae": _round(mae(self.trajectory_errors)),
+            **{
+                f"fewshot_{bucket}": _round(mae(errors))
+                for bucket, errors in sorted(self.fewshot_errors.items())
+            },
         }
 
 
@@ -278,6 +298,11 @@ def score_candidate(
 
         start = time.perf_counter()
         predicted = candidate.fit_predict(train_matrices, val_matrices, config)
+        curves = (
+            candidate.fit_predict_curves(train_matrices, val_matrices, config)
+            if candidate.fit_predict_curves is not None
+            else None
+        )
         elapsed += time.perf_counter() - start
 
         fold_errors: list[float] = []
@@ -292,23 +317,54 @@ def score_candidate(
             for pid, err in zip(ids, errs):
                 per_participant.setdefault(str(pid), []).append(abs(float(err)))
 
-        # Curve-derived errors on observed native CGM.
+        # Few-shot bucketing: how much of the participant's OWN history existed.
+        prior_counts = _prior_meal_counts(fold.validate)
+        for horizon in HORIZONS:
+            observed = val_matrices.deltas[horizon].to_numpy(dtype="float64")
+            mask = val_matrices.valid_mask(horizon)
+            for index in np.flatnonzero(mask):
+                bucket = _fewshot_bucket(prior_counts[index])
+                result.fewshot_errors.setdefault(bucket, []).append(
+                    float(predicted[horizon][index] - observed[index])
+                )
+
+        # Curve-derived errors against native observed CGM.
         for index, episode in enumerate(fold.validate):
+            baseline = episode.target.baseline_glucose_mg_dl
             observed_summary = summarize_observed(
-                episode.target.observed_curve, episode.target.baseline_glucose_mg_dl
+                episode.target.observed_curve, baseline
             )
+            if curves is not None:
+                minutes = list(FORECAST_MINUTES)
+                values = [
+                    float(np.clip(
+                        baseline + curves[index, j],
+                        config.model.clip_glucose_min_mg_dl,
+                        config.model.clip_glucose_max_mg_dl,
+                    ))
+                    for j in range(len(minutes))
+                ]
+                values[0] = baseline
+            else:
+                deltas = {h: float(predicted[h][index]) for h in HORIZONS}
+                minutes, values, _ = build_curve(
+                    baseline,
+                    deltas,
+                    clip_min=config.model.clip_glucose_min_mg_dl,
+                    clip_max=config.model.clip_glucose_max_mg_dl,
+                )
+
+            # Full-trajectory error against every NATIVE reading we have.
+            by_minute = dict(zip(minutes, values))
+            for minute, actual in episode.target.observed_curve.items():
+                if minute == 0 or minute not in by_minute:
+                    continue
+                result.trajectory_errors.append(float(by_minute[minute] - actual))
+
             if observed_summary is None:
                 continue
-            deltas = {h: float(predicted[h][index]) for h in HORIZONS}
-            minutes, values, _ = build_curve(
-                episode.target.baseline_glucose_mg_dl,
-                deltas,
-                clip_min=config.model.clip_glucose_min_mg_dl,
-                clip_max=config.model.clip_glucose_max_mg_dl,
-            )
             result.curve.add(
-                summarize_curve(minutes, values, episode.target.baseline_glucose_mg_dl),
-                observed_summary,
+                summarize_curve(minutes, values, baseline), observed_summary
             )
 
         fold_value = mae(fold_errors)
@@ -321,6 +377,34 @@ def score_candidate(
     }
     result.fit_seconds = elapsed
     return result
+
+
+def _prior_meal_counts(episodes: list[Episode]) -> list[float]:
+    """Observed-history depth per episode, read from the `r_hist_n` feature."""
+    return [
+        float(episode.features.values.get("r_hist_n", float("nan")))
+        for episode in episodes
+    ]
+
+
+def _fewshot_bucket(count: float) -> str:
+    """Bucket an episode by how many of the participant's own past meals were observed.
+
+    Answers "how good is this model for a NEW user after k meals?" -- the question the
+    fitted per-participant calibration cannot address, because a brand-new participant
+    has no calibration at all.
+    """
+    if not np.isfinite(count):
+        return "unknown"
+    if count <= 0:
+        return "00_none"
+    if count <= 2:
+        return "01_1-2"
+    if count <= 4:
+        return "02_3-4"
+    if count <= 9:
+        return "03_5-9"
+    return "04_10plus"
 
 
 def paired_participant_bootstrap(
