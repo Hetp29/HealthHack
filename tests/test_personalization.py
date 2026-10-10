@@ -24,12 +24,26 @@ def _fit(ids: list[str], values: list[float], config=None) -> PersonalizationMod
 
 class TestShrinkage:
     def test_offset_is_the_shrunk_mean_residual(self):
-        """n=10, k=6 gives factor 10/16 = 0.625; mean residual 8 -> offset 5.0."""
-        model = _fit(["p"] * 10, [8.0] * 10)
+        """offset = mean residual * n/(n+k), with k read from config, not hardcoded.
+
+        Derived from `DEFAULT_CONFIG` so that re-tuning `shrinkage_k` (it moved from
+        6.0 to 3.0 after rolling development validation) cannot silently invalidate
+        the arithmetic this test is actually checking.
+        """
+        n, residual = 10, 8.0
+        k = DEFAULT_CONFIG.personalization.shrinkage_k
+        model = _fit(["p"] * n, [residual] * n)
         calibration = model.calibration_for("p")
-        assert calibration.raw_offsets[60] == pytest.approx(8.0)
-        assert calibration.shrinkage_factors[60] == pytest.approx(10 / 16)
-        assert calibration.offsets[60] == pytest.approx(5.0)
+        assert calibration.raw_offsets[60] == pytest.approx(residual)
+        assert calibration.shrinkage_factors[60] == pytest.approx(n / (n + k))
+        assert calibration.offsets[60] == pytest.approx(residual * n / (n + k))
+
+    def test_shrinkage_factor_formula_across_sample_sizes(self):
+        """The n/(n+k) curve itself, independent of the configured k."""
+        k = DEFAULT_CONFIG.personalization.shrinkage_k
+        for n in (4, 10, 25, 100):
+            calibration = _fit(["p"] * n, [10.0] * n).calibration_for("p")
+            assert calibration.shrinkage_factors[60] == pytest.approx(n / (n + k))
 
     def test_more_evidence_means_less_shrinkage(self):
         few = _fit(["p"] * 5, [10.0] * 5).calibration_for("p")

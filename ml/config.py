@@ -145,7 +145,16 @@ class PersonalizationConfig:
 
     #: Shrinkage constant k in the factor n / (n + k). Larger k means stronger pull
     #: toward the cohort model when personal history is sparse.
-    shrinkage_k: float = 6.0
+    #:
+    #: Selected as 3.0 on rolling purged DEVELOPMENT validation (docs/experiments/
+    #: personalization.json), never on the held-out test set. The sweep was monotone
+    #: -- k=3: 24.96, k=6: 25.12, k=12: 25.44, k=20: 25.81 mg/dL MAE -- which is what
+    #: you expect when participants already have ~20 training episodes, so the raw
+    #: mean residual is reasonably well estimated and heavy shrinkage only discards
+    #: real signal. The k=3 gain over k=6 is small (+0.16 mg/dL, participant-clustered
+    #: 95% CI [+0.06, +0.26]) but it harmed no participant by more than 0.37 mg/dL
+    #: while helping 6 by more than 0.5.
+    shrinkage_k: float = 3.0
 
     #: Hard cap on the magnitude of a per-participant offset, in mg/dL, so a single
     #: outlying training meal cannot produce an implausible personal correction.

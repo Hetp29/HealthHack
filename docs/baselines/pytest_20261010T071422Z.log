@@ -1,0 +1,22 @@
+........................................................................ [ 12%]
+........................................................................ [ 25%]
+........................................................................ [ 37%]
+........................................................................ [ 50%]
+........................................................................ [ 62%]
+........................................................................ [ 75%]
+........................................................................ [ 87%]
+.......................................................................  [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/starlette/testclient.py:31
+  /Users/ruhaanshah/Desktop/HealthHack/HealthHack/.venv/lib/python3.12/site-packages/starlette/testclient.py:31: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    [], typing.ContextManager[anyio.abc.BlockingPortal]
+
+tests/test_api.py::TestHealth::test_health_is_ok
+tests/test_api.py::TestHealth::test_health_does_not_depend_on_model_readiness
+tests/test_api.py::TestModelNotTrained::test_predict_is_503_model_not_trained
+tests/test_data_contract.py::TestBackendResolution::test_service_survives_an_uninitialized_database
+  /Users/ruhaanshah/Desktop/HealthHack/HealthHack/.venv/lib/python3.12/site-packages/httpx/_client.py:690: DeprecationWarning: The 'app' shortcut is now deprecated. Use the explicit style 'transport=WSGITransport(app=...)' instead.
+    warnings.warn(message, DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+575 passed, 5 warnings in 297.36s (0:04:57)

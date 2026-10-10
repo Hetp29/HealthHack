@@ -4,6 +4,17 @@
 
 ---
 
+> **SUPERSEDED HEADLINE.** The model was improved after this was written. The
+> selected production family is now `blend_personalized` (Ridge averaged 50/50 with a
+> regularized gradient booster, then participant-calibrated), which scores **23.22
+> mg/dL MAE** on the same 394 reference episodes versus 23.97 for the model documented
+> below. Selection was made on rolling development validation, never on these
+> episodes. Full experiments, confidence intervals and the time-to-peak tradeoff:
+> **[`experiments/README.md`](experiments/README.md)**.
+>
+> Part 1 below remains accurate as the description of the *protocol*, the dataset and
+> the per-participant personalization finding.
+
 # PART 1 — PRIMARY RESULT: real organizer data (CGMacros)
 
 **Dataset:** CGMacros v1.0.0 (Das et al., *Sci Data* 12, 1557 (2025)) · provenance label

@@ -278,6 +278,94 @@ class GeneralizedModel:
 
 
 # --------------------------------------------------------------------------- #
+# Model 3: gradient-boosted residual-free regressor, blended with Ridge
+# --------------------------------------------------------------------------- #
+
+#: Conservative tree settings. The binding constraint is ~900 independent meal
+#: episodes, not model capacity, so: shallow, slow, large leaves, strong L2.
+#: `HistGradientBoostingRegressor` ships with scikit-learn (already pinned), handles
+#: NaN natively -- so no imputer is needed and missingness stays informative -- and is
+#: the boosting option the master specification names.
+BOOSTER_PARAMS: dict = {
+    "max_depth": 3,
+    "learning_rate": 0.05,
+    "max_iter": 300,
+    "min_samples_leaf": 25,
+    "l2_regularization": 1.0,
+    "max_leaf_nodes": 8,
+    "early_stopping": False,
+    "random_state": 20261011,
+}
+
+#: Equal weighting of the two families. Deliberately FIXED, not tuned: with this few
+#: episodes a learned blend weight would itself need another validation level to
+#: choose it, and the 0.5/0.5 average already captured the gain on rolling validation.
+BLEND_WEIGHT_RIDGE = 0.5
+
+
+@dataclass
+class BoosterModel:
+    """One HistGradientBoostingRegressor per horizon, predicting the delta."""
+
+    name: str = "booster"
+    params: dict = field(default_factory=lambda: dict(BOOSTER_PARAMS))
+    models: dict = field(default_factory=dict)
+    fit_episode_counts: dict[int, int] = field(default_factory=dict)
+
+    def fit(self, features: pd.DataFrame, deltas: pd.DataFrame) -> BoosterModel:
+        from sklearn.ensemble import HistGradientBoostingRegressor
+
+        self.models = {}
+        for horizon in HORIZONS:
+            mask = deltas[horizon].notna().to_numpy()
+            estimator = HistGradientBoostingRegressor(**self.params)
+            estimator.fit(
+                features.loc[mask].reset_index(drop=True),
+                deltas.loc[mask, horizon].to_numpy(dtype="float64"),
+            )
+            self.models[horizon] = estimator
+            self.fit_episode_counts[horizon] = int(mask.sum())
+        return self
+
+    def predict_deltas(self, features: pd.DataFrame) -> dict[int, np.ndarray]:
+        if not self.models:
+            raise RuntimeError("BoosterModel is not fitted")
+        return {
+            horizon: np.asarray(self.models[horizon].predict(features), dtype="float64")
+            for horizon in HORIZONS
+        }
+
+
+@dataclass
+class BlendedModel:
+    """Fixed-weight average of the Ridge and booster families.
+
+    Kept as a thin wrapper rather than a new estimator so that the Ridge half stays
+    directly available for attribution: `ml/explain.py` decomposes the linear
+    component exactly and reports the booster's share as explicitly unexplained,
+    rather than pretending the whole blend is additively decomposable.
+    """
+
+    ridge: GeneralizedModel
+    booster: BoosterModel
+    ridge_weight: float = BLEND_WEIGHT_RIDGE
+    name: str = "blend"
+
+    @property
+    def booster_weight(self) -> float:
+        return 1.0 - self.ridge_weight
+
+    def predict_deltas(self, features: pd.DataFrame) -> dict[int, np.ndarray]:
+        ridge = self.ridge.predict_deltas(features)
+        booster = self.booster.predict_deltas(features)
+        return {
+            horizon: self.ridge_weight * ridge[horizon]
+            + self.booster_weight * booster[horizon]
+            for horizon in HORIZONS
+        }
+
+
+# --------------------------------------------------------------------------- #
 # Artifact
 # --------------------------------------------------------------------------- #
 
@@ -298,6 +386,19 @@ class TrainedArtifact:
     cohort_mean: CohortMeanDeltaBaseline
     training_summary: dict
     feature_names: tuple[str, ...] = FEATURE_NAMES
+    #: Fitted booster, present only for family="blend". `None` keeps older artifacts
+    #: and the pure-Ridge family loadable unchanged.
+    booster: BoosterModel | None = None
+    #: "ridge" or "blend". Recorded so inference cannot guess wrong.
+    family: str = "ridge"
+    ridge_weight: float = BLEND_WEIGHT_RIDGE
+
+    @property
+    def response_model(self):
+        """The object whose `predict_deltas` the cohort-level forecast should use."""
+        if self.family == "blend" and self.booster is not None:
+            return BlendedModel(self.generalized, self.booster, self.ridge_weight)
+        return self.generalized
 
     def manifest(self) -> dict:
         return {
@@ -308,6 +409,9 @@ class TrainedArtifact:
             "data_source": self.data_source,
             "feature_names": list(self.feature_names),
             "horizons": list(HORIZONS),
+            "family": self.family,
+            "ridge_weight": self.ridge_weight if self.family == "blend" else None,
+            "booster_params": dict(self.booster.params) if self.booster else None,
             "chosen_alpha": {str(h): a for h, a in sorted(self.generalized.chosen_alpha.items())},
             "fit_episode_counts": {
                 str(h): n for h, n in sorted(self.generalized.fit_episode_counts.items())
@@ -345,6 +449,7 @@ def train(
     data_source: str | None = None,
     exclude_overlapping: bool = False,
     holdout: str = "none",
+    family: str = "ridge",
 ) -> TrainedArtifact:
     """Fit all three models on every usable episode and return the artifact.
 
@@ -407,8 +512,20 @@ def train(
         matrices.features, matrices.deltas, config, validation=validation
     )
 
+    booster: BoosterModel | None = None
+    if family == "blend":
+        booster = BoosterModel().fit(matrices.features, matrices.deltas)
+    elif family != "ridge":
+        raise ValueError(f"unknown family {family!r}; expected 'ridge' or 'blend'")
+
+    response_model = (
+        BlendedModel(generalized, booster) if booster is not None else generalized
+    )
+
     # Residuals of the cohort model on the fitting episodes -> personal offsets.
-    cohort_predictions = generalized.predict_deltas(matrices.features)
+    # Taken from the BLEND when blending, so the calibration corrects what is actually
+    # served rather than the Ridge half alone.
+    cohort_predictions = response_model.predict_deltas(matrices.features)
     residuals = {
         horizon: matrices.deltas[horizon].to_numpy(dtype="float64")
         - cohort_predictions[horizon]
@@ -449,6 +566,8 @@ def train(
         data_source=data_source,
         config=config,
         generalized=generalized,
+        booster=booster,
+        family=family,
         personalization=personalization,
         persistence=persistence,
         cohort_mean=cohort_mean,
@@ -574,6 +693,15 @@ def main(argv: list[str] | None = None) -> int:
         help="drop episodes with another meal inside the 120-minute window",
     )
     parser.add_argument(
+        "--family",
+        default="ridge",
+        choices=["ridge", "blend"],
+        help=(
+            "'ridge' is the interpretable linear family; 'blend' averages it with a "
+            "regularized gradient booster (lower validated error, partial attribution)"
+        ),
+    )
+    parser.add_argument(
         "--holdout",
         default="none",
         choices=["none", "day8"],
@@ -597,6 +725,7 @@ def main(argv: list[str] | None = None) -> int:
         # data_source=None -> resolved from the participant records (ruling D2).
         exclude_overlapping=args.exclude_overlapping,
         holdout=args.holdout,
+        family=args.family,
     )
     artifact_path, manifest_path = save_artifact(artifact, pathlib.Path(args.out))
 
@@ -609,6 +738,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"holdout              {summary['holdout']} (fitted {summary['fitted_episodes']}, validation {summary['validation_episodes']})")
     print(f"exclusions           {summary['exclusions']['excluded']} {summary['exclusions']['reasons']}")
     print(f"overlapping tagged   {summary['exclusions']['overlapping_tagged']}")
+    print(f"family               {artifact.family}" + (f" (ridge weight {artifact.ridge_weight})" if artifact.family == "blend" else ""))
     print(f"chosen alpha         {artifact.generalized.chosen_alpha}")
     personalized = [
         c.participant_id

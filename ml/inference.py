@@ -165,9 +165,11 @@ def forecast(
             for horizon, values in artifact.cohort_mean.predict_deltas(design).items()
         }
     else:
+        # `response_model` is the Ridge for family="ridge" and the fixed-weight
+        # Ridge+booster blend for family="blend".
         cohort_deltas = {
             horizon: float(values[0])
-            for horizon, values in artifact.generalized.predict_deltas(design).items()
+            for horizon, values in artifact.response_model.predict_deltas(design).items()
         }
 
     calibration = artifact.personalization.calibration_for(history.participant_id)
@@ -202,9 +204,16 @@ def forecast(
     drivers: list[DriverContribution] = []
     driver_horizon: int | None = None
     attribution_note: str | None = None
+    attribution_weight = 1.0
 
     if model in {"personalized", "generalized"}:
         driver_horizon = peak_horizon(horizon_deltas)
+        # For the blend, the Ridge half is decomposed exactly and its contributions are
+        # scaled by the blend weight. The booster half has no additive decomposition,
+        # so its share is reported as explicitly unexplained rather than attributed.
+        attribution_weight = (
+            artifact.ridge_weight if getattr(artifact, "family", "ridge") == "blend" else 1.0
+        )
         drivers, _, _ = explain_horizon(
             artifact.generalized,
             design,
@@ -212,7 +221,17 @@ def forecast(
             calibration_offset_mg_dl=(
                 calibration.offset_for(driver_horizon) if apply_personalization else 0.0
             ),
+            weight=attribution_weight,
         )
+        if attribution_weight < 1.0:
+            attribution_note = (
+                f"This forecast averages an interpretable linear model "
+                f"({attribution_weight:.0%}) with a gradient-boosted model "
+                f"({1 - attribution_weight:.0%}). The drivers below decompose the "
+                "linear half exactly and are scaled by its weight; the boosted half "
+                "has no exact additive decomposition and its contribution is NOT "
+                "attributed here. Treat the listed drivers as a partial explanation."
+            )
     else:
         attribution_note = (
             f"The {model} benchmark has no feature attribution, so no drivers are "

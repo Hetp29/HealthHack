@@ -59,7 +59,12 @@ from ml.metrics import (
 from ml.personalization import PersonalizationModel
 from ml.provenance import resolve_data_source
 from ml.targets import Episode, build_episodes
-from ml.train import GeneralizedModel, episodes_to_matrices
+from ml.train import (
+    BlendedModel,
+    BoosterModel,
+    GeneralizedModel,
+    episodes_to_matrices,
+)
 
 PROTOCOLS = ("day8_holdout", "within_person_chronological", "cohort_holdout")
 
@@ -73,7 +78,13 @@ CONTRACT_PROTOCOL_NAME = {
     "within_person_chronological": "within_person_chronological",
     "cohort_holdout": "cohort_holdout",
 }
-MODEL_NAMES = ("persistence", "cohort_mean_delta", "generalized", "personalized")
+MODEL_NAMES = (
+    "persistence",
+    "cohort_mean_delta",
+    "generalized",
+    "personalized",
+    "blend_personalized",
+)
 
 PROTOCOL_DESCRIPTIONS = {
     "day8_holdout": (
@@ -337,33 +348,59 @@ def _fit_models(train_matrices, config: Config, validation_matrices=None):
         train_matrices.features, train_matrices.deltas, config, validation=validation
     )
 
-    # Personal offsets from the cohort model's residuals on TRAINING episodes only.
-    train_predictions = generalized.predict_deltas(train_matrices.features)
-    residuals = {
-        horizon: train_matrices.deltas[horizon].to_numpy(dtype="float64")
-        - train_predictions[horizon]
-        for horizon in HORIZONS
-    }
+    # The selected production family: Ridge averaged with a regularized booster.
+    booster = BoosterModel().fit(train_matrices.features, train_matrices.deltas)
+    blend = BlendedModel(generalized, booster)
+
     valid_masks = {
         horizon: train_matrices.valid_mask(horizon) for horizon in HORIZONS
     }
-    personalization = PersonalizationModel(config.personalization).fit(
-        train_matrices.participant_ids, residuals, valid_masks=valid_masks
+
+    def _calibrate(model) -> PersonalizationModel:
+        """Shrunk offsets from TRAINING-fold residuals of that same model."""
+        in_sample = model.predict_deltas(train_matrices.features)
+        residuals = {
+            horizon: train_matrices.deltas[horizon].to_numpy(dtype="float64")
+            - in_sample[horizon]
+            for horizon in HORIZONS
+        }
+        return PersonalizationModel(config.personalization).fit(
+            train_matrices.participant_ids, residuals, valid_masks=valid_masks
+        )
+
+    personalization = _calibrate(generalized)
+    blend_personalization = _calibrate(blend)
+    return (
+        persistence,
+        cohort_mean,
+        generalized,
+        personalization,
+        blend,
+        blend_personalization,
     )
-    return persistence, cohort_mean, generalized, personalization
 
 
 def _predict_all(
-    test_matrices, persistence, cohort_mean, generalized, personalization
+    test_matrices,
+    persistence,
+    cohort_mean,
+    generalized,
+    personalization,
+    blend,
+    blend_personalization,
 ) -> dict[str, dict[int, np.ndarray]]:
     """Predicted deltas per model on the held-out fold."""
     features = test_matrices.features
     cohort = generalized.predict_deltas(features)
+    blended = blend.predict_deltas(features)
     return {
         "persistence": persistence.predict_deltas(features),
         "cohort_mean_delta": cohort_mean.predict_deltas(features),
         "generalized": cohort,
         "personalized": personalization.apply(test_matrices.participant_ids, cohort),
+        "blend_personalized": blend_personalization.apply(
+            test_matrices.participant_ids, blended
+        ),
     }
 
 
@@ -592,11 +629,22 @@ def evaluate(
     test_matrices = episodes_to_matrices(test)
     validation_matrices = episodes_to_matrices(validation) if validation else None
 
-    persistence, cohort_mean, generalized, personalization = _fit_models(
-        train_matrices, config, validation_matrices
-    )
+    (
+        persistence,
+        cohort_mean,
+        generalized,
+        personalization,
+        blend,
+        blend_personalization,
+    ) = _fit_models(train_matrices, config, validation_matrices)
     predictions = _predict_all(
-        test_matrices, persistence, cohort_mean, generalized, personalization
+        test_matrices,
+        persistence,
+        cohort_mean,
+        generalized,
+        personalization,
+        blend,
+        blend_personalization,
     )
 
     by_model = []
@@ -613,7 +661,7 @@ def evaluate(
             "curve": curve_errors.as_dict(),
         }
         by_model.append(block)
-        if model_name == "personalized":
+        if model_name == "blend_personalized":
             primary_by_horizon = block["by_horizon"]
 
     comparison = _personalization_comparison(test_matrices, predictions, personalization)
