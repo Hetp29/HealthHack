@@ -1,0 +1,15 @@
+{
+  "participant_ids": [
+    "synthetic_p001",
+    "synthetic_p002"
+  ],
+  "meal_timestamp": "2026-10-08T12:30:00Z",
+  "meal": {
+    "carbs_g": 55,
+    "protein_g": 22,
+    "fat_g": 16,
+    "fiber_g": 7,
+    "calories_kcal": 460
+  },
+  "context_override": null
+}

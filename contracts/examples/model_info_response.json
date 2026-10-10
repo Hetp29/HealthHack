@@ -1,0 +1,12 @@
+{
+  "model_version": "v0.1.0",
+  "trained_at": "2026-10-10T00:00:00Z",
+  "data_source": "synthetic_dev",
+  "feature_set_version": "fs-1.0",
+  "metrics_available": false,
+  "limitations": [
+    "Synthetic research demonstration; not medical advice and not for clinical decision-making.",
+    "Trained on synthetic development fixtures, not organizer data.",
+    "Uncertainty intervals are not calibrated; no interval bounds are emitted."
+  ]
+}

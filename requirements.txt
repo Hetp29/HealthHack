@@ -1,0 +1,10 @@
+# GlucoTwin backend + ML runtime (contract v1.0)
+# Pinned for reproducible clean-clone installs. Python 3.12.
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.4.2
+joblib==1.4.2
+python-dateutil==2.9.0.post0

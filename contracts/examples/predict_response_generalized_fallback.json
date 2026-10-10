@@ -1,0 +1,184 @@
+{
+  "participant_id": "synthetic_p006",
+  "meal_timestamp": "2026-10-08T12:30:00Z",
+  "model_version": "v0.1.0",
+  "data_source": "synthetic_dev",
+  "prediction_status": "generalized_fallback",
+  "points": [
+    {
+      "minute": 0,
+      "glucose_mg_dl": 98.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 5,
+      "glucose_mg_dl": 101.3,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 10,
+      "glucose_mg_dl": 104.7,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 15,
+      "glucose_mg_dl": 108.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 20,
+      "glucose_mg_dl": 111.3,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 25,
+      "glucose_mg_dl": 114.7,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 30,
+      "glucose_mg_dl": 118.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 35,
+      "glucose_mg_dl": 120.2,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 40,
+      "glucose_mg_dl": 122.3,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 45,
+      "glucose_mg_dl": 124.5,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 50,
+      "glucose_mg_dl": 126.7,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 55,
+      "glucose_mg_dl": 128.8,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 60,
+      "glucose_mg_dl": 131.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 65,
+      "glucose_mg_dl": 129.5,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 70,
+      "glucose_mg_dl": 128.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 75,
+      "glucose_mg_dl": 126.5,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 80,
+      "glucose_mg_dl": 125.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 85,
+      "glucose_mg_dl": 123.5,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 90,
+      "glucose_mg_dl": 122.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 95,
+      "glucose_mg_dl": 119.3,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 100,
+      "glucose_mg_dl": 116.7,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 105,
+      "glucose_mg_dl": 114.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 110,
+      "glucose_mg_dl": 111.3,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 115,
+      "glucose_mg_dl": 108.7,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    },
+    {
+      "minute": 120,
+      "glucose_mg_dl": 106.0,
+      "lower_mg_dl": null,
+      "upper_mg_dl": null
+    }
+  ],
+  "glucose_at_minutes": {
+    "30": 118.0,
+    "60": 131.0,
+    "90": 122.0,
+    "120": 106.0
+  },
+  "metrics": {
+    "peak_mg_dl": 131.0,
+    "peak_delta_mg_dl": 33.0,
+    "time_to_peak_minutes": 60,
+    "incremental_auc_mg_dl_min": 2430.0
+  },
+  "drivers": [
+    {
+      "feature": "carbs_g",
+      "contribution_mg_dl": 11.8,
+      "explanation": "Model-based contribution at the peak horizon; association within the model, not a causal physiological effect."
+    }
+  ],
+  "uncertainty_status": "not_calibrated",
+  "limitations": [
+    "Generalized cohort model used: this participant has 1 usable training meal episode, below the configured minimum of 4, so no participant-specific calibration was applied.",
+    "Synthetic research demonstration; not medical advice and not for clinical decision-making.",
+    "Curve shape between the 30/60/90/120-minute learned horizons is linearly interpolated, so the reported peak time is resolved only to those knots."
+  ]
+}

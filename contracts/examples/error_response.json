@@ -1,0 +1,7 @@
+{
+  "code": "participant_not_found",
+  "message": "Unknown participant identifier.",
+  "detail": {
+    "participant_id": "nope_p999"
+  }
+}
