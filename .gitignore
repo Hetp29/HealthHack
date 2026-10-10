@@ -26,6 +26,12 @@ ml/_devdata/
 *.db
 *.sqlite3
 
+# Source datasets -- NEVER committed. 3.7 GB combined, and licensing/redistribution
+# terms are the data owner's to honour, not ours to assume. Het's adapter reads these
+# from local disk and commits only canonical records, provenance and checksums.
+data/Type1Diabetes.parquet
+data/cgmacros-a-scientific-dataset-for-personalized-nutrition-and-diet-monitoring-1.0.0/
+
 # Frontend
 node_modules/
 frontend/dist/
