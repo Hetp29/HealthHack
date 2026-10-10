@@ -94,17 +94,28 @@ def build_repository(settings) -> DataRepository:
         )
 
     if backend == "sqlite":
-        # Reserved for Het's canonical repository. Importing a module that does not
-        # exist yet would crash the process at startup, so fail with a clear message
-        # instead -- the service still serves /health and /api/model/info.
+        # The canonical data layer (owner: Het). Two distinct failures are possible and
+        # BOTH must degrade rather than kill the process: the module may be missing, or
+        # it may import fine but the database may not be initialized. Either way the
+        # service keeps serving /health and /api/model/info so an operator can see why
+        # the data layer is down, and /api/* returns 503 data_layer_unavailable.
         try:
-            from data.storage.repository import SqliteDataRepository  # type: ignore
-        except Exception as error:  # pragma: no cover - until data/ lands
+            from data.storage.repository import SqliteDataRepository
+        except Exception as error:
             raise DataLayerError(
                 "GLUCOTWIN_DATA_BACKEND=sqlite requires the canonical data layer at "
-                f"data/storage/repository.py, which is not importable yet: {error}"
+                f"data/storage/repository.py, which is not importable: {error}"
             ) from error
-        return SqliteDataRepository(settings.db_url)
+
+        try:
+            return SqliteDataRepository(settings.db_url)
+        except Exception as error:
+            # Typically DataLayerUnavailableError (schema absent). Deliberately broad:
+            # a locked file, a bad URL or a permissions error must not crash startup
+            # either.
+            raise DataLayerError(
+                f"could not open the canonical database at {settings.db_url}: {error}"
+            ) from error
 
     raise DataLayerError(
         f"unknown GLUCOTWIN_DATA_BACKEND={backend!r}; expected 'synthetic_dev' or 'sqlite'"

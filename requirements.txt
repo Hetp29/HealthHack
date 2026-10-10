@@ -8,3 +8,10 @@ pandas==2.2.2
 scikit-learn==1.4.2
 joblib==1.4.2
 python-dateutil==2.9.0.post0
+
+# Data layer (owner: Het, requested via data/requirements.txt).
+# SQLAlchemy 2.0 Core only -- no ORM session machinery.
+# pyarrow is needed to stream the MetaboNet Parquet file by row group rather than
+# loading 132M rows into memory.
+SQLAlchemy==2.0.43
+pyarrow==17.0.0
