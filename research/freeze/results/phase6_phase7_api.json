@@ -1,0 +1,225 @@
+{
+  "artifact_sha256_before": {
+    "evaluation_detail_day8_holdout.json": "ec8829178554a12058b568e9ec9cd286b3241b8612b20ec1077e8a87f34e47fe",
+    "metrics.json": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+    "metrics_day8_holdout.json": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+    "model.joblib": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
+    "model_manifest.json": "e1b4d4c1c3a8ad5f5c9b6979dca5cc953eca5192c67f97c03ca8b546686599d9"
+  },
+  "model_init_ms": 258.9,
+  "peak_traced_mem_mb": 6.2,
+  "model_info": {
+    "model_version": "v0.1.0",
+    "trained_at": "2026-10-10T09:32:09.702154Z",
+    "data_source": "official",
+    "feature_set_version": "fs-1.3",
+    "metrics_available": true,
+    "limitations": [
+      "Research prototype; not medical advice and not for clinical decision-making.",
+      "Prediction intervals are not calibrated, so no interval bounds are reported.",
+      "45 of 45 training participants met the minimum 4-episode threshold for personal calibration; the rest receive the generalized cohort model."
+    ]
+  },
+  "health": {
+    "status": "ok",
+    "version": "1.0.0"
+  },
+  "n_participants": 45,
+  "prediction_keys": [
+    "data_source",
+    "drivers",
+    "glucose_at_minutes",
+    "limitations",
+    "meal_timestamp",
+    "metrics",
+    "model_version",
+    "participant_id",
+    "points",
+    "prediction_status",
+    "uncertainty_status"
+  ],
+  "trajectory": {
+    "n": 25,
+    "minutes": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      35,
+      40,
+      45,
+      50,
+      55,
+      60,
+      65,
+      70,
+      75,
+      80,
+      85,
+      90,
+      95,
+      100,
+      105,
+      110,
+      115,
+      120
+    ],
+    "values": [
+      106.0,
+      107.7,
+      109.3,
+      111.0,
+      112.6,
+      114.3,
+      115.9,
+      114.5,
+      113.1,
+      111.6,
+      110.2,
+      108.8,
+      107.3,
+      107.3,
+      107.4,
+      107.4,
+      107.4,
+      107.4,
+      107.5,
+      107.9,
+      108.4,
+      108.8,
+      109.3,
+      109.7,
+      110.2
+    ]
+  },
+  "consistency_checks": [
+    {
+      "check": "peak magnitude",
+      "reported": 115.9,
+      "derived": 115.9,
+      "diff": 0.0,
+      "tol": 0.05
+    },
+    {
+      "check": "time-to-peak",
+      "reported": 30.0,
+      "derived": 30.0,
+      "diff": 0.0,
+      "tol": 0.0
+    },
+    {
+      "check": "incremental AUC",
+      "reported": 444.2,
+      "derived": 444.50000000000006,
+      "diff": 0.3000000000000682,
+      "tol": 6.25
+    },
+    {
+      "check": "30-min horizon",
+      "reported": 115.9,
+      "derived": 115.9,
+      "diff": 0.0,
+      "tol": 0.05
+    },
+    {
+      "check": "60-min horizon",
+      "reported": 107.3,
+      "derived": 107.3,
+      "diff": 0.0,
+      "tol": 0.05
+    },
+    {
+      "check": "90-min horizon",
+      "reported": 107.5,
+      "derived": 107.5,
+      "diff": 0.0,
+      "tol": 0.05
+    },
+    {
+      "check": "120-min horizon",
+      "reported": 110.2,
+      "derived": 110.2,
+      "diff": 0.0,
+      "tol": 0.05
+    }
+  ],
+  "drivers": [
+    {
+      "feature": "q_retr_delta_60",
+      "contribution_mg_dl": -3.11,
+      "explanation": "Model-based contribution of similar past meals' response at 60 min at the 30-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "calories_kcal",
+      "contribution_mg_dl": -2.93,
+      "explanation": "Model-based contribution of calories at the 30-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "protein_g",
+      "contribution_mg_dl": 2.81,
+      "explanation": "Model-based contribution of protein at the 30-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "q_retr_delta_30",
+      "contribution_mg_dl": -2.59,
+      "explanation": "Model-based contribution of similar past meals' response at 30 min at the 30-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "cgm_std_60min_mg_dl",
+      "contribution_mg_dl": 2.48,
+      "explanation": "Model-based contribution of glucose variability (prior 60 min) at the 30-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "premeal_glucose_mg_dl",
+      "contribution_mg_dl": -1.9,
+      "explanation": "Model-based contribution of pre-meal glucose at the 30-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "q_retr_peak_delta",
+      "contribution_mg_dl": 1.88,
+      "explanation": "Model-based contribution of similar past meals' peak response at the 30-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "r_hist_peak_delta",
+      "contribution_mg_dl": 1.55,
+      "explanation": "Model-based contribution of own typical past excursion at the 30-minute horizon, relative to the average training meal. Drivers are model attributions -- how this model's fitted coefficients combine this meal's features -- not measured causal physiological effects."
+    },
+    {
+      "feature": "participant_calibration",
+      "contribution_mg_dl": -0.97,
+      "explanation": "Participant-specific correction at the 30-minute horizon: the shrunk mean residual of the cohort model on this participant's earlier training meals only."
+    }
+  ],
+  "uncertainty": "not_calibrated",
+  "error_handling": {
+    "invalid participant": 404,
+    "malformed meal": 422,
+    "impossible numeric": 422,
+    "missing required field": 422,
+    "extra unknown field": 422,
+    "naive timestamp": 422
+  },
+  "prediction_statuses": [
+    "personalized"
+  ],
+  "latency_ms": {
+    "n": 60,
+    "median": 286.6,
+    "p95": 404.8,
+    "min": 67.9,
+    "max": 438.8,
+    "recorded_baseline_median": 359.0
+  },
+  "artifact_sha256_after": {
+    "evaluation_detail_day8_holdout.json": "ec8829178554a12058b568e9ec9cd286b3241b8612b20ec1077e8a87f34e47fe",
+    "metrics.json": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+    "metrics_day8_holdout.json": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+    "model.joblib": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
+    "model_manifest.json": "e1b4d4c1c3a8ad5f5c9b6979dca5cc953eca5192c67f97c03ca8b546686599d9"
+  },
+  "artifact_unchanged": true,
+  "blockers": []
+}
