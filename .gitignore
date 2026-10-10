@@ -36,3 +36,5 @@ data/local/
 data/reports/runs/
 data/reports/profiles/
 data/official_raw/
+*.db-wal
+*.db-shm

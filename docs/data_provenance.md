@@ -1,14 +1,18 @@
 # Data provenance, validation and quality
 
-**Owner:** Het Patel · **Schema version:** 1.0 · **Status:** only synthetic development data so far. The organizer
-dataset has not arrived.
+**Owner:** Het Patel · **Schema version:** 1.0 (storage layout v2) · **Status:** synthetic fixtures plus both
+organizer datasets (CGMacros, MetaboNet) ingested. Full audit: `docs/data_audit/`.
 
 ## 1. Data sources
 
 | `data_source` | What it is | Where | Status |
 |---|---|---|---|
 | `synthetic_dev` | Fictional participants from our own hand-written simulator | `data/fixtures/synthetic_dev/` | In use |
-| `official` | Organizer-supplied Challenge 3 dataset | kept outside git (`data/official_raw/` is gitignored) | **Not yet received** |
+| `official` — CGMacros | Organizer-supplied (Das et al., Sci Data 2025); 45 participants, non-T1D | `data/official_raw/` (gitignored) → `data/glucotwin.db` | In use (primary) |
+| `official` — MetaboNet | Organizer-supplied (Wolff et al., JDST 2026); 1,188 T1D subjects from 15 studies | `data/official_raw/` (gitignored) → `data/metabonet.db` | Audited in full; 8-day windows ingested |
+
+Participants are namespaced by dataset (`cgmacros_NNN`, `metabonet_<source>_<id>`) and carry `source_dataset`.
+Dataset-specific transformations and exclusions: `docs/data_audit/data_quality.md`.
 
 **`synthetic_dev` is not real data.** The people are invented. Simulator parameters were chosen by hand and not fitted
 to any human data. Any metric computed on this data shows that the software works. It is **not** clinical evidence and
@@ -87,7 +91,8 @@ but possible values rather than deleting them.
   block per participant (up to 5 h, a simulated sensor change), and meal logging times that differ from true times by
   0–8 min. Logged macros carry ~8% self-report noise. 12% of meals are missing fiber and 8% are missing calories.
   p005 logs snacks as carbs only, and one p003 meal has no nutrition logged at all. Snacks 45–90 min after lunch create
-  overlapping meal responses. p006 has no heart-rate or activity data. Medications exist only for p002 (biguanide
+  overlapping meal responses. p005 has no heart-rate or activity data; p006 is a sparse logger (eats normally, logs
+  3 meals in the week). Medications exist only for p002 (biguanide
   500 mg twice daily, with occasional skipped doses) and p004 (basal insulin 14 units nightly).
 - **Medications have no simulated effect on glucose.** The contract forbids linking a medication name to a clinical
   effect, so a model trained on this data cannot learn one.
@@ -132,10 +137,17 @@ glucose per participant ranges from 98 to 152 mg/dL.
    (participant, UTC timestamp, class), truncated, so re-imports stay idempotent.
 4. **Activity key.** Activity uses `(participant_id, timestamp, activity_unit)`, with a deterministic `id`. A value
    with no unit is rejected, because it can't be interpreted.
-5. **Unknown participant.** `get_participant` returns `None`, as the contract says. The other per-participant readers
-   raise `ParticipantNotFoundError`. This needs confirming against `backend/app/services/data_access.py` (the Protocol
-   file is not committed yet).
+5. **Unknown participant.** Resolved against `backend/app/services/data_access.py`: the backend-facing
+   `SqliteDataRepository` returns `None` from `get_participant` and an **empty** history / meal list for an unknown
+   id, as the Protocol requires. (The older pydantic `data.repository.DataRepository`, kept for data-layer tooling,
+   still raises `ParticipantNotFoundError`.)
 6. **Meal IDs from official data.** If the official data has no meal ID, `generate_meal_id = true` builds
    `<participant_id>_meal_<UTC YYYYMMDDTHHMMSS>`.
-7. **SQLAlchemy dependency.** SQLAlchemy is not in the root `requirements.txt` (owned by Ruhaan). It is listed in
-   `data/requirements.txt`, and we've asked for it to be added to the root file.
+7. **Dependencies.** SQLAlchemy and pyarrow are not in the root `requirements.txt` (owned by Ruhaan). They are
+   listed in `data/requirements.txt`, and we've asked for them to be added to the root file.
+8. **Storage layout v2 (internal).** Added `cgm.sensor`, `participants.source_dataset` and a `cgm_secondary` table
+   (second simultaneously worn sensor). No API-facing field changed. A local DB from layout v1 must be rebuilt;
+   `init_db` refuses to open it and says how.
+9. **Floating local time for official data.** Both datasets give offset-naive, date-shifted wall-clock times with no
+   timezone. They are stored as UTC-labelled wall clock under an explicit `assume_timezone="UTC"` policy, and
+   `participant.timezone` is null. This needs Ruhaan's acknowledgement; see `docs/data_audit/data_quality.md`.

@@ -16,11 +16,14 @@ from typing import Any
 from data.schema import DATA_SOURCES
 from data.timeutil import is_valid_timezone
 
-MODALITIES: tuple[str, ...] = ("participants", "cgm", "heart_rate", "meals", "medications", "activity")
+MODALITIES: tuple[str, ...] = (
+    "participants", "cgm", "cgm_secondary", "heart_rate", "meals", "medications", "activity",
+)
 
 CANONICAL_FIELDS: dict[str, tuple[str, ...]] = {
-    "participants": ("participant_id", "display_name", "timezone"),
-    "cgm": ("participant_id", "timestamp", "glucose_mg_dl"),
+    "participants": ("participant_id", "display_name", "timezone", "source_dataset"),
+    "cgm": ("participant_id", "timestamp", "glucose_mg_dl", "sensor"),
+    "cgm_secondary": ("participant_id", "timestamp", "glucose_mg_dl", "sensor"),
     "heart_rate": ("participant_id", "timestamp", "heart_rate_bpm", "resting_heart_rate_bpm"),
     "meals": (
         "meal_id",

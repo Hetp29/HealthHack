@@ -88,6 +88,7 @@ class SimParams:
     medications: tuple = ()  # (class, dose, unit, "HH:MM", skip_prob)
     carbs_only_snack_logging: bool = False
     gap_blocks: tuple = ()  # (day_index, "HH:MM", minutes) deterministic signal-loss gaps
+    logged_meal_limit: int | None = None  # sparse logger: eats normally, logs only N meals
 
 
 # Six phenotypes chosen to be clearly distinct so personalization has something to find.
@@ -103,11 +104,14 @@ PARTICIPANTS: tuple[SimParams, ...] = (
               walks_per_day=(0, 1), post_meal_walk_rate=0.1,
               medications=(("basal_insulin", 14.0, "units", "22:00", 0.0),),
               gap_blocks=((1, "11:00", 300),)),  # simulated sensor change
-    SimParams("synthetic_p005", "Participant 005", "America/Denver", 88, 1.00, 50, 0.35, 5, 2.0, 66, 6.0, 1.0, 2.5, 3,
+    # No heart-rate (or activity) data at all -- the missing-modality case.
+    SimParams("synthetic_p005", "Participant 005", "America/Denver", 88, 1.00, 50, 0.35, 5, 0.0, 66, 0.0, 1.0, 2.5, 3,
               snack_rate=0.8, overlap_rate=0.35, carbs_only_snack_logging=True,
-              gap_blocks=((3, "20:15", 40),)),
-    SimParams("synthetic_p006", "Participant 006", "America/Phoenix", 110, 1.10, 55, 0.15, 8, 0.0, 72, 0.0, 1.3, 3.0, 0,
               has_heart_rate=False, has_activity=False, walks_per_day=(0, 0), post_meal_walk_rate=0.0,
+              gap_blocks=((3, "20:15", 40),)),
+    # Sparse logger: eats ~3-4 meals a day (all affect glucose) but logs only 3 in a week.
+    SimParams("synthetic_p006", "Participant 006", "America/Phoenix", 110, 1.10, 55, 0.15, 8, 1.5, 72, 5.0, 1.3, 3.0, 0,
+              logged_meal_limit=3,
               gap_blocks=((6, "01:00", 70),)),
 )
 
@@ -184,8 +188,14 @@ def _simulate(p: SimParams, seed: int, start: date, days: int):
                                {"carbs_g": c, "protein_g": pr, "fat_g": f, "fiber_g": fi}))
     meals.sort(key=lambda m: m.true_time)
     no_nutrition_index = rng.randrange(len(meals)) if p.participant_id == "synthetic_p003" else -1
+    logged_idx = set(range(len(meals)))
+    if p.logged_meal_limit is not None:
+        logged_idx = set(rng.sample(range(len(meals)), p.logged_meal_limit))
+    n_logged = 0
     for n, meal in enumerate(meals, start=1):
-        meal.meal_id = f"{p.participant_id}_m{n:03d}"
+        if n - 1 in logged_idx:
+            n_logged += 1
+            meal.meal_id = f"{p.participant_id}_m{n_logged:03d}"
         # Logged time: people log a few minutes off; rounded to the minute.
         jitter = rng.choice([0, 0, 0, 1, 2, 3, 5, -2, 8])
         meal.logged_time = (meal.true_time + timedelta(minutes=jitter)).replace(second=0, microsecond=0)
@@ -349,6 +359,7 @@ def generate(
             [m.meal_id, pid, m.logged_time, m.logged["carbs_g"], m.logged["protein_g"], m.logged["fat_g"],
              m.logged["fiber_g"], m.logged["calories_kcal"], None]
             for m in meals
+            if m.meal_id
         ]
         rows["medications"] += [
             [f"{pid}_med{n:03d}", pid, ts, cls, dose, unit] for n, (ts, cls, dose, unit) in enumerate(med_rows, start=1)
@@ -357,7 +368,7 @@ def generate(
         truth["participants"][pid] = {
             "params": asdict(p),
             "meals": [
-                {"meal_id": m.meal_id, "kind": m.kind, "template": m.name, "true_time": to_rfc3339(m.true_time),
+                {"meal_id": m.meal_id or None, "logged": bool(m.meal_id), "kind": m.kind, "template": m.name, "true_time": to_rfc3339(m.true_time),
                  "true_macros": {k: round(v, 2) for k, v in m.true_macros.items()}}
                 for m in meals
             ],
@@ -395,10 +406,11 @@ def generate(
             "like a consumer CGM display.",
             "~1.5% random CGM dropouts plus one deterministic signal-loss block per participant.",
             "Logged meal times differ from true times by 0-8 min; logged macros carry ~8% self-report noise; some "
-            "fiber/calorie labels are missing; synthetic_p005 logs snacks as carbs only; one synthetic_p003 meal has "
+            "fiber/calorie labels are missing; synthetic_p005 logs snacks as carbs only; synthetic_p006 logs only 3 "
+            "of its meals (unlogged meals still move glucose); one synthetic_p003 meal has "
             "no nutrition logged.",
             "Some days include a snack 45-90 min after lunch, producing overlapping meal responses.",
-            "Heart rate: 5-min samples, ~4% missing; synthetic_p006 has no heart-rate or activity data at all.",
+            "Heart rate: 5-min samples, ~4% missing; synthetic_p005 has no heart-rate or activity data at all.",
             "Activity: steps summed per 15-min window.",
             "Medications are recorded events with NO simulated physiological effect.",
             "No meal images exist; image_ref is null everywhere.",

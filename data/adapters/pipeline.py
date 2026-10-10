@@ -40,7 +40,7 @@ from data.validation import (
 )
 
 DEFAULT_REPORT_DIR = REPO_ROOT / "data" / "reports" / "runs"
-EVENT_MODALITIES = ("cgm", "heart_rate", "meals", "medications", "activity")
+EVENT_MODALITIES = ("cgm", "cgm_secondary", "heart_rate", "meals", "medications", "activity")
 REQUIRED_MODALITIES = ("cgm",)
 # A participant-level median below this is far below any physiologic mg/dL level and
 # typical of mmol/L values mislabeled as mg/dL.
@@ -59,6 +59,24 @@ class _Quarantined:
     participant_id: str | None
     reasons: list[str]
     raw: dict
+
+
+@dataclass
+class PreparedSource:
+    """Canonical-keyed rows produced by a source-specific adapter (CGMacros, MetaboNet).
+
+    The adapter does the format-specific work (file layout, header variants, sensor
+    de-interpolation); validation, dedupe, FK checks, upsert, quarantine and reporting
+    still happen here, exactly as for mapped files.
+    """
+
+    name: str  # adapter name, recorded as the run's mapping_name
+    label: str  # source label for provenance (relative path or dataset/subject)
+    sha256: str  # checksum of the inputs this batch was built from
+    data_source: str
+    rows: dict  # modality -> list[RawRow] whose .values use canonical field names
+    assume_timezone: str | None = None  # declared policy for offset-naive timestamps
+    notes: list = field(default_factory=list)  # adapter findings, copied to batch_warnings
 
 
 @dataclass
@@ -140,7 +158,15 @@ def _comparable(record: dict) -> tuple:
 
 
 class _Run:
-    def __init__(self, source_root: Path, mapping: MappingConfig, engine: Engine | None, thresholds: Thresholds):
+    def __init__(
+        self,
+        source_root: Path,
+        mapping: MappingConfig,
+        engine: Engine | None,
+        thresholds: Thresholds,
+        prepared: "PreparedSource | None" = None,
+    ):
+        self.prepared = prepared
         self.root = source_root
         self.mapping = mapping
         self.engine = engine
@@ -170,10 +196,13 @@ class _Run:
             self.files[modality] = files
             self.stats[modality].files = [p.relative_to(self.root.resolve()).as_posix() for p in files]
             all_files.extend(files)
-        for modality in MODALITIES:
-            if modality not in self.mapping.modalities and modality != "participants":
-                self.batch_warnings.append({"code": "modality_not_mapped", "modality": modality})
+        self._warn_unmapped()
         return all_files
+
+    def _warn_unmapped(self) -> None:
+        for modality in MODALITIES:
+            if modality not in self.mapping.modalities and modality not in ("participants", "cgm_secondary"):
+                self.batch_warnings.append({"code": "modality_not_mapped", "modality": modality})
 
     # ------------------------------------------------------------ validation
 
@@ -197,25 +226,33 @@ class _Run:
         stats.unit_conversions = {k: f"{v} -> canonical" for k, v in mmap.units.items() if mmap.unit_factors()[k] != 1.0}
         validator = VALIDATORS[modality]
         accepted: list[_Candidate] = []
+        for raw, mapped in self._source_rows(modality, mmap):
+            stats.rows_read += 1
+            if mmap.skip_if_all_null and _all_null(mapped, mmap.skip_if_all_null, ctx):
+                stats.skipped_empty += 1
+                continue
+            if modality == "meals" and mmap.generate_meal_id:
+                mapped["meal_id"] = "__generated__"
+            result = validator(mapped, ctx)
+            stats.warnings.update(result.warnings)
+            if result.rejected:
+                self._reject(modality, raw, mapped, result.reasons, ctx.participant_id_prefix)
+                continue
+            record = result.record
+            if modality == "meals" and mmap.generate_meal_id:
+                record["meal_id"] = f"{record['participant_id']}_meal_{to_storage(record['timestamp'])[:19].replace('-', '').replace(':', '')}"
+            accepted.append(_Candidate(record, raw, bool(result.warnings)))
+        return accepted
+
+    def _source_rows(self, modality: str, mmap: ModalityMap):
+        """(provenance row, canonical-keyed dict) pairs from files or from an adapter."""
+        if self.prepared is not None:
+            for raw in self.prepared.rows.get(modality, []):
+                yield raw, dict(raw.values)
+            return
         for path in self.files.get(modality, []):
             for raw in iter_rows(path, self.root):
-                stats.rows_read += 1
-                mapped = _map_row(raw, mmap)
-                if mmap.skip_if_all_null and _all_null(mapped, mmap.skip_if_all_null, ctx):
-                    stats.skipped_empty += 1
-                    continue
-                if modality == "meals" and mmap.generate_meal_id:
-                    mapped["meal_id"] = "__generated__"
-                result = validator(mapped, ctx)
-                stats.warnings.update(result.warnings)
-                if result.rejected:
-                    self._reject(modality, raw, mapped, result.reasons, ctx.participant_id_prefix)
-                    continue
-                record = result.record
-                if modality == "meals" and mmap.generate_meal_id:
-                    record["meal_id"] = f"{record['participant_id']}_meal_{to_storage(record['timestamp'])[:19].replace('-', '').replace(':', '')}"
-                accepted.append(_Candidate(record, raw, bool(result.warnings)))
-        return accepted
+                yield raw, _map_row(raw, mmap)
 
     def _reject(self, modality: str, raw: RawRow | None, mapped: dict, reasons: list[str], prefix: str = "") -> None:
         stats = self.stats[modality]
@@ -254,8 +291,15 @@ class _Run:
     # ------------------------------------------------------------ main flow
 
     def execute(self, *, dry_run: bool) -> dict:
-        input_files = self.discover()
-        sha = sha256_inputs(self.root, input_files)
+        if self.prepared is not None:
+            sha = self.prepared.sha256
+            for modality, rows in self.prepared.rows.items():
+                self.stats[modality].files = sorted({r.source_file for r in rows})
+            self.batch_warnings.extend(self.prepared.notes)
+            self._warn_unmapped()
+        else:
+            input_files = self.discover()
+            sha = sha256_inputs(self.root, input_files)
 
         existing_tz: dict[str, str | None] = {}
         if self.engine is not None and _has_tables(self.engine):
@@ -469,26 +513,40 @@ def _display_source(root: Path) -> str:
         return root.resolve().name  # do not record absolute local paths
 
 
-def run_ingestion(
-    source_root: str | Path,
-    mapping: MappingConfig,
+def run_prepared_ingestion(
+    prepared: PreparedSource,
     engine: Engine | None,
     *,
     dry_run: bool = False,
     report_dir: str | Path | None = DEFAULT_REPORT_DIR,
     thresholds: Thresholds = DEFAULT_THRESHOLDS,
 ) -> IngestionResult:
-    """Ingest every file the mapping names under ``source_root``.
+    """Ingest rows from a source-specific adapter through the common pipeline."""
+    from data.adapters.mapping import CANONICAL_FIELDS, parse_mapping
 
-    ``dry_run=True`` validates and reports without writing to the database (``engine``
-    may then be ``None``). The JSON report is written to ``report_dir`` unless it is
-    ``None``.
-    """
+    mapping = parse_mapping(
+        {
+            "name": prepared.name,
+            "data_source": prepared.data_source,
+            "assume_timezone": prepared.assume_timezone or "",
+            "derive_participants": "participants" not in prepared.rows,
+            "modalities": {
+                m: {"files": ["<adapter>"], "columns": {f: f for f in CANONICAL_FIELDS[m]}}
+                for m in prepared.rows
+            },
+        }
+    )
+    return _execute(Path("."), mapping, engine, dry_run, report_dir, thresholds, prepared)
+
+
+def _execute(source_root, mapping, engine, dry_run, report_dir, thresholds, prepared=None) -> IngestionResult:
     if engine is None and not dry_run:
         raise IngestionError("an engine is required unless dry_run=True")
     if engine is not None and not dry_run:
         init_db(engine)
-    run = _Run(Path(source_root), mapping, engine, thresholds)
+    run = _Run(Path(source_root), mapping, engine, thresholds, prepared)
+    if prepared is not None:
+        run.source_label = prepared.label
     report_path = None
     if report_dir is not None:
         report_path = Path(report_dir) / f"{run.run_id}.json"
@@ -504,3 +562,21 @@ def run_ingestion(
         report_path.parent.mkdir(parents=True, exist_ok=True)
         report_path.write_text(json.dumps(report, indent=2, sort_keys=True, default=str) + "\n")
     return IngestionResult(run.run_id, report["status"], report, report_path)
+
+
+def run_ingestion(
+    source_root: str | Path,
+    mapping: MappingConfig,
+    engine: Engine | None,
+    *,
+    dry_run: bool = False,
+    report_dir: str | Path | None = DEFAULT_REPORT_DIR,
+    thresholds: Thresholds = DEFAULT_THRESHOLDS,
+) -> IngestionResult:
+    """Ingest every file the mapping names under ``source_root``.
+
+    ``dry_run=True`` validates and reports without writing to the database (``engine``
+    may then be ``None``). The JSON report is written to ``report_dir`` unless it is
+    ``None``.
+    """
+    return _execute(source_root, mapping, engine, dry_run, report_dir, thresholds)

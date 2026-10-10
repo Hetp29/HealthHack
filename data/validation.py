@@ -28,6 +28,7 @@ class Thresholds:
     # Glucose (mg/dL). Reject <= 0 (impossible) and > hard max (sensor/sentinel/unit
     # error). Commercial CGMs report roughly 40-400 (some 500); values outside that are
     # kept but flagged, because lab-measured extremes beyond it do occur.
+    glucose_hard_min: float = 10.0
     glucose_hard_max: float = 1500.0
     glucose_typical_min: float = 40.0
     glucose_typical_max: float = 400.0
@@ -163,7 +164,13 @@ def validate_participant(row: dict, ctx: ValidationContext) -> RowResult:
     if reasons:
         return RowResult(None, reasons, warnings)
     return RowResult(
-        {"participant_id": pid, "display_name": display_name, "timezone": tz, "data_source": ctx.data_source},
+        {
+            "participant_id": pid,
+            "display_name": display_name,
+            "timezone": tz,
+            "source_dataset": _text(row.get("source_dataset"), ctx),
+            "data_source": ctx.data_source,
+        },
         reasons,
         warnings,
     )
@@ -183,6 +190,8 @@ def validate_cgm(row: dict, ctx: ValidationContext) -> RowResult:
             reasons.append("negative_glucose")
         elif glucose == 0:
             reasons.append("zero_glucose")
+        elif glucose < t.glucose_hard_min:
+            reasons.append("implausible_glucose_low")
         elif glucose > t.glucose_hard_max:
             reasons.append("implausible_glucose_high")
         elif glucose < t.glucose_typical_min:
@@ -192,10 +201,23 @@ def validate_cgm(row: dict, ctx: ValidationContext) -> RowResult:
     if reasons:
         return RowResult(None, reasons, warnings)
     return RowResult(
-        {"participant_id": pid, "timestamp": ts, "glucose_mg_dl": glucose, "data_source": ctx.data_source},
+        {
+            "participant_id": pid,
+            "timestamp": ts,
+            "glucose_mg_dl": glucose,
+            "sensor": _text(row.get("sensor"), ctx),
+            "data_source": ctx.data_source,
+        },
         reasons,
         warnings,
     )
+
+
+def validate_cgm_secondary(row: dict, ctx: ValidationContext) -> RowResult:
+    result = validate_cgm(row, ctx)
+    if not result.rejected and result.record["sensor"] is None:
+        return RowResult(None, ["missing_sensor"], result.warnings)
+    return result
 
 
 def validate_heart_rate(row: dict, ctx: ValidationContext) -> RowResult:
@@ -380,6 +402,7 @@ def validate_activity(row: dict, ctx: ValidationContext) -> RowResult:
 VALIDATORS: dict[str, Callable[[dict, ValidationContext], RowResult]] = {
     "participants": validate_participant,
     "cgm": validate_cgm,
+    "cgm_secondary": validate_cgm_secondary,
     "heart_rate": validate_heart_rate,
     "meals": validate_meal,
     "medications": validate_medication,
@@ -390,6 +413,7 @@ VALIDATORS: dict[str, Callable[[dict, ValidationContext], RowResult]] = {
 NATURAL_KEYS: dict[str, tuple[str, ...]] = {
     "participants": ("participant_id",),
     "cgm": ("participant_id", "timestamp"),
+    "cgm_secondary": ("participant_id", "timestamp", "sensor"),
     "heart_rate": ("participant_id", "timestamp"),
     "meals": ("meal_id",),
     "medications": ("participant_id", "timestamp", "medication_class"),
@@ -400,6 +424,7 @@ NATURAL_KEYS: dict[str, tuple[str, ...]] = {
 PRIMARY_KEYS: dict[str, tuple[str, ...]] = {
     "participants": ("participant_id",),
     "cgm": ("participant_id", "timestamp"),
+    "cgm_secondary": ("participant_id", "timestamp", "sensor"),
     "heart_rate": ("participant_id", "timestamp"),
     "meals": ("meal_id",),
     "medications": ("id",),

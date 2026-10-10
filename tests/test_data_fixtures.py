@@ -48,7 +48,7 @@ def test_fixture_shape_and_labels():
 
 def test_modality_coverage_edge_cases():
     hr_ids = {r["participant_id"] for r in read(DEFAULT_OUT / "heart_rate.csv")}
-    assert "synthetic_p006" not in hr_ids and len(hr_ids) == 5
+    assert "synthetic_p005" not in hr_ids and len(hr_ids) == 5
     med_ids = {r["participant_id"] for r in read(DEFAULT_OUT / "medications.csv")}
     assert med_ids == {"synthetic_p002", "synthetic_p004"}
 

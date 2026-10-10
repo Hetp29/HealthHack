@@ -37,11 +37,13 @@
             "03:10",
             95
           ]
-        ]
+        ],
+        "logged_meal_limit": null
       },
       "meals": [
         {
           "meal_id": "synthetic_p001_m001",
+          "logged": true,
           "kind": "breakfast",
           "template": "bagel_cream_cheese",
           "true_time": "2026-10-01T11:04:52.388550Z",
@@ -54,6 +56,7 @@
         },
         {
           "meal_id": "synthetic_p001_m002",
+          "logged": true,
           "kind": "lunch",
           "template": "rice_bowl",
           "true_time": "2026-10-01T17:17:48.824326Z",
@@ -66,6 +69,7 @@
         },
         {
           "meal_id": "synthetic_p001_m003",
+          "logged": true,
           "kind": "snack",
           "template": "cookie",
           "true_time": "2026-10-01T19:45:16.103615Z",
@@ -78,6 +82,7 @@
         },
         {
           "meal_id": "synthetic_p001_m004",
+          "logged": true,
           "kind": "dinner",
           "template": "pizza_slices",
           "true_time": "2026-10-01T22:12:21.658291Z",
@@ -90,6 +95,7 @@
         },
         {
           "meal_id": "synthetic_p001_m005",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-02T11:51:26.273518Z",
@@ -102,6 +108,7 @@
         },
         {
           "meal_id": "synthetic_p001_m006",
+          "logged": true,
           "kind": "lunch",
           "template": "burrito",
           "true_time": "2026-10-02T16:53:44.605251Z",
@@ -114,6 +121,7 @@
         },
         {
           "meal_id": "synthetic_p001_m007",
+          "logged": true,
           "kind": "snack",
           "template": "banana",
           "true_time": "2026-10-02T19:03:43.622619Z",
@@ -126,6 +134,7 @@
         },
         {
           "meal_id": "synthetic_p001_m008",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-02T22:38:19.858072Z",
@@ -138,6 +147,7 @@
         },
         {
           "meal_id": "synthetic_p001_m009",
+          "logged": true,
           "kind": "breakfast",
           "template": "yogurt_granola",
           "true_time": "2026-10-03T12:11:20.379446Z",
@@ -150,6 +160,7 @@
         },
         {
           "meal_id": "synthetic_p001_m010",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-03T17:29:33.263918Z",
@@ -162,6 +173,7 @@
         },
         {
           "meal_id": "synthetic_p001_m011",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-03T22:05:19.177424Z",
@@ -174,6 +186,7 @@
         },
         {
           "meal_id": "synthetic_p001_m012",
+          "logged": true,
           "kind": "breakfast",
           "template": "oatmeal_berries",
           "true_time": "2026-10-04T11:58:51.704734Z",
@@ -186,6 +199,7 @@
         },
         {
           "meal_id": "synthetic_p001_m013",
+          "logged": true,
           "kind": "lunch",
           "template": "chicken_salad",
           "true_time": "2026-10-04T17:24:49.381754Z",
@@ -198,6 +212,7 @@
         },
         {
           "meal_id": "synthetic_p001_m014",
+          "logged": true,
           "kind": "snack",
           "template": "granola_bar",
           "true_time": "2026-10-04T18:53:11.686526Z",
@@ -210,6 +225,7 @@
         },
         {
           "meal_id": "synthetic_p001_m015",
+          "logged": true,
           "kind": "snack",
           "template": "granola_bar",
           "true_time": "2026-10-04T19:16:52.235143Z",
@@ -222,6 +238,7 @@
         },
         {
           "meal_id": "synthetic_p001_m016",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-04T23:16:10.216614Z",
@@ -234,6 +251,7 @@
         },
         {
           "meal_id": "synthetic_p001_m017",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-05T11:05:32.367291Z",
@@ -246,6 +264,7 @@
         },
         {
           "meal_id": "synthetic_p001_m018",
+          "logged": true,
           "kind": "lunch",
           "template": "rice_bowl",
           "true_time": "2026-10-05T17:07:02.607578Z",
@@ -258,6 +277,7 @@
         },
         {
           "meal_id": "synthetic_p001_m019",
+          "logged": true,
           "kind": "dinner",
           "template": "lentil_curry_rice",
           "true_time": "2026-10-05T22:22:48.137948Z",
@@ -270,6 +290,7 @@
         },
         {
           "meal_id": "synthetic_p001_m020",
+          "logged": true,
           "kind": "breakfast",
           "template": "smoothie",
           "true_time": "2026-10-06T11:53:43.341512Z",
@@ -282,6 +303,7 @@
         },
         {
           "meal_id": "synthetic_p001_m021",
+          "logged": true,
           "kind": "lunch",
           "template": "rice_bowl",
           "true_time": "2026-10-06T16:47:38.701790Z",
@@ -294,6 +316,7 @@
         },
         {
           "meal_id": "synthetic_p001_m022",
+          "logged": true,
           "kind": "snack",
           "template": "granola_bar",
           "true_time": "2026-10-06T19:51:09.924629Z",
@@ -306,6 +329,7 @@
         },
         {
           "meal_id": "synthetic_p001_m023",
+          "logged": true,
           "kind": "dinner",
           "template": "pizza_slices",
           "true_time": "2026-10-06T22:45:24.133898Z",
@@ -318,6 +342,7 @@
         },
         {
           "meal_id": "synthetic_p001_m024",
+          "logged": true,
           "kind": "breakfast",
           "template": "yogurt_granola",
           "true_time": "2026-10-07T11:36:50.270042Z",
@@ -330,6 +355,7 @@
         },
         {
           "meal_id": "synthetic_p001_m025",
+          "logged": true,
           "kind": "lunch",
           "template": "rice_bowl",
           "true_time": "2026-10-07T17:17:41.293435Z",
@@ -342,6 +368,7 @@
         },
         {
           "meal_id": "synthetic_p001_m026",
+          "logged": true,
           "kind": "snack",
           "template": "apple",
           "true_time": "2026-10-07T19:55:13.678419Z",
@@ -354,6 +381,7 @@
         },
         {
           "meal_id": "synthetic_p001_m027",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-07T22:41:26.155405Z",
@@ -414,11 +442,13 @@
             "14:20",
             50
           ]
-        ]
+        ],
+        "logged_meal_limit": null
       },
       "meals": [
         {
           "meal_id": "synthetic_p002_m001",
+          "logged": true,
           "kind": "breakfast",
           "template": "smoothie",
           "true_time": "2026-10-01T12:59:41.598620Z",
@@ -431,6 +461,7 @@
         },
         {
           "meal_id": "synthetic_p002_m002",
+          "logged": true,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-01T17:12:05.685189Z",
@@ -443,6 +474,7 @@
         },
         {
           "meal_id": "synthetic_p002_m003",
+          "logged": true,
           "kind": "snack",
           "template": "banana",
           "true_time": "2026-10-01T18:00:09.253629Z",
@@ -455,6 +487,7 @@
         },
         {
           "meal_id": "synthetic_p002_m004",
+          "logged": true,
           "kind": "snack",
           "template": "chips",
           "true_time": "2026-10-01T21:17:05.414173Z",
@@ -467,6 +500,7 @@
         },
         {
           "meal_id": "synthetic_p002_m005",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-02T00:22:19.137681Z",
@@ -479,6 +513,7 @@
         },
         {
           "meal_id": "synthetic_p002_m006",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-02T12:29:15.595293Z",
@@ -491,6 +526,7 @@
         },
         {
           "meal_id": "synthetic_p002_m007",
+          "logged": true,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-02T17:48:07.035984Z",
@@ -503,6 +539,7 @@
         },
         {
           "meal_id": "synthetic_p002_m008",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-02T23:28:13.007364Z",
@@ -515,6 +552,7 @@
         },
         {
           "meal_id": "synthetic_p002_m009",
+          "logged": true,
           "kind": "breakfast",
           "template": "oatmeal_berries",
           "true_time": "2026-10-03T12:51:17.967395Z",
@@ -527,6 +565,7 @@
         },
         {
           "meal_id": "synthetic_p002_m010",
+          "logged": true,
           "kind": "lunch",
           "template": "chicken_salad",
           "true_time": "2026-10-03T17:53:28.394051Z",
@@ -539,6 +578,7 @@
         },
         {
           "meal_id": "synthetic_p002_m011",
+          "logged": true,
           "kind": "snack",
           "template": "apple",
           "true_time": "2026-10-03T21:20:36.954055Z",
@@ -551,6 +591,7 @@
         },
         {
           "meal_id": "synthetic_p002_m012",
+          "logged": true,
           "kind": "dinner",
           "template": "stir_fry_noodles",
           "true_time": "2026-10-03T23:59:51.899741Z",
@@ -563,6 +604,7 @@
         },
         {
           "meal_id": "synthetic_p002_m013",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-04T13:17:31.720346Z",
@@ -575,6 +617,7 @@
         },
         {
           "meal_id": "synthetic_p002_m014",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-04T17:53:11.778151Z",
@@ -587,6 +630,7 @@
         },
         {
           "meal_id": "synthetic_p002_m015",
+          "logged": true,
           "kind": "snack",
           "template": "cookie",
           "true_time": "2026-10-04T21:07:12.209980Z",
@@ -599,6 +643,7 @@
         },
         {
           "meal_id": "synthetic_p002_m016",
+          "logged": true,
           "kind": "dinner",
           "template": "lentil_curry_rice",
           "true_time": "2026-10-04T23:11:04.354694Z",
@@ -611,6 +656,7 @@
         },
         {
           "meal_id": "synthetic_p002_m017",
+          "logged": true,
           "kind": "breakfast",
           "template": "oatmeal_berries",
           "true_time": "2026-10-05T12:22:21.589148Z",
@@ -623,6 +669,7 @@
         },
         {
           "meal_id": "synthetic_p002_m018",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-05T17:22:00.242570Z",
@@ -635,6 +682,7 @@
         },
         {
           "meal_id": "synthetic_p002_m019",
+          "logged": true,
           "kind": "dinner",
           "template": "pizza_slices",
           "true_time": "2026-10-05T23:25:49.171322Z",
@@ -647,6 +695,7 @@
         },
         {
           "meal_id": "synthetic_p002_m020",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-06T13:01:25.397350Z",
@@ -659,6 +708,7 @@
         },
         {
           "meal_id": "synthetic_p002_m021",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-06T17:07:53.142072Z",
@@ -671,6 +721,7 @@
         },
         {
           "meal_id": "synthetic_p002_m022",
+          "logged": true,
           "kind": "snack",
           "template": "crackers_cheese",
           "true_time": "2026-10-06T20:08:32.601472Z",
@@ -683,6 +734,7 @@
         },
         {
           "meal_id": "synthetic_p002_m023",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-07T00:05:19.813830Z",
@@ -695,6 +747,7 @@
         },
         {
           "meal_id": "synthetic_p002_m024",
+          "logged": true,
           "kind": "breakfast",
           "template": "bagel_cream_cheese",
           "true_time": "2026-10-07T12:35:47.830300Z",
@@ -707,6 +760,7 @@
         },
         {
           "meal_id": "synthetic_p002_m025",
+          "logged": true,
           "kind": "lunch",
           "template": "chicken_salad",
           "true_time": "2026-10-07T17:20:08.750671Z",
@@ -719,6 +773,7 @@
         },
         {
           "meal_id": "synthetic_p002_m026",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-07T23:06:26.272454Z",
@@ -764,11 +819,13 @@
             "09:40",
             180
           ]
-        ]
+        ],
+        "logged_meal_limit": null
       },
       "meals": [
         {
           "meal_id": "synthetic_p003_m001",
+          "logged": true,
           "kind": "breakfast",
           "template": "oatmeal_berries",
           "true_time": "2026-10-01T14:02:57.352960Z",
@@ -781,6 +838,7 @@
         },
         {
           "meal_id": "synthetic_p003_m002",
+          "logged": true,
           "kind": "lunch",
           "template": "chicken_salad",
           "true_time": "2026-10-01T19:44:28.491056Z",
@@ -793,6 +851,7 @@
         },
         {
           "meal_id": "synthetic_p003_m003",
+          "logged": true,
           "kind": "snack",
           "template": "apple",
           "true_time": "2026-10-01T22:41:38.493213Z",
@@ -805,6 +864,7 @@
         },
         {
           "meal_id": "synthetic_p003_m004",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-02T01:17:02.108491Z",
@@ -817,6 +877,7 @@
         },
         {
           "meal_id": "synthetic_p003_m005",
+          "logged": true,
           "kind": "breakfast",
           "template": "bagel_cream_cheese",
           "true_time": "2026-10-02T14:53:33.111560Z",
@@ -829,6 +890,7 @@
         },
         {
           "meal_id": "synthetic_p003_m006",
+          "logged": true,
           "kind": "lunch",
           "template": "burrito",
           "true_time": "2026-10-02T20:10:59.340927Z",
@@ -841,6 +903,7 @@
         },
         {
           "meal_id": "synthetic_p003_m007",
+          "logged": true,
           "kind": "snack",
           "template": "cookie",
           "true_time": "2026-10-02T23:19:09.816061Z",
@@ -853,6 +916,7 @@
         },
         {
           "meal_id": "synthetic_p003_m008",
+          "logged": true,
           "kind": "dinner",
           "template": "stir_fry_noodles",
           "true_time": "2026-10-03T01:36:12.166615Z",
@@ -865,6 +929,7 @@
         },
         {
           "meal_id": "synthetic_p003_m009",
+          "logged": true,
           "kind": "breakfast",
           "template": "smoothie",
           "true_time": "2026-10-03T14:15:11.533168Z",
@@ -877,6 +942,7 @@
         },
         {
           "meal_id": "synthetic_p003_m010",
+          "logged": true,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-03T19:24:35.999107Z",
@@ -889,6 +955,7 @@
         },
         {
           "meal_id": "synthetic_p003_m011",
+          "logged": true,
           "kind": "snack",
           "template": "apple",
           "true_time": "2026-10-03T23:30:03.152347Z",
@@ -901,6 +968,7 @@
         },
         {
           "meal_id": "synthetic_p003_m012",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-04T01:18:33.296421Z",
@@ -913,6 +981,7 @@
         },
         {
           "meal_id": "synthetic_p003_m013",
+          "logged": true,
           "kind": "breakfast",
           "template": "bagel_cream_cheese",
           "true_time": "2026-10-04T14:40:45.521940Z",
@@ -925,6 +994,7 @@
         },
         {
           "meal_id": "synthetic_p003_m014",
+          "logged": true,
           "kind": "lunch",
           "template": "chicken_salad",
           "true_time": "2026-10-04T20:25:20.130248Z",
@@ -937,6 +1007,7 @@
         },
         {
           "meal_id": "synthetic_p003_m015",
+          "logged": true,
           "kind": "snack",
           "template": "apple",
           "true_time": "2026-10-04T21:37:23.336213Z",
@@ -949,6 +1020,7 @@
         },
         {
           "meal_id": "synthetic_p003_m016",
+          "logged": true,
           "kind": "snack",
           "template": "cookie",
           "true_time": "2026-10-04T22:41:06.705088Z",
@@ -961,6 +1033,7 @@
         },
         {
           "meal_id": "synthetic_p003_m017",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-05T01:14:04.839370Z",
@@ -973,6 +1046,7 @@
         },
         {
           "meal_id": "synthetic_p003_m018",
+          "logged": true,
           "kind": "breakfast",
           "template": "yogurt_granola",
           "true_time": "2026-10-05T14:19:17.418555Z",
@@ -985,6 +1059,7 @@
         },
         {
           "meal_id": "synthetic_p003_m019",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-05T19:58:47.794654Z",
@@ -997,6 +1072,7 @@
         },
         {
           "meal_id": "synthetic_p003_m020",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-06T01:00:38.512875Z",
@@ -1009,6 +1085,7 @@
         },
         {
           "meal_id": "synthetic_p003_m021",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-06T14:41:15.266993Z",
@@ -1021,6 +1098,7 @@
         },
         {
           "meal_id": "synthetic_p003_m022",
+          "logged": true,
           "kind": "lunch",
           "template": "chicken_salad",
           "true_time": "2026-10-06T19:02:00.938590Z",
@@ -1033,6 +1111,7 @@
         },
         {
           "meal_id": "synthetic_p003_m023",
+          "logged": true,
           "kind": "snack",
           "template": "crackers_cheese",
           "true_time": "2026-10-06T23:06:02.145781Z",
@@ -1045,6 +1124,7 @@
         },
         {
           "meal_id": "synthetic_p003_m024",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-07T02:12:42.887149Z",
@@ -1057,6 +1137,7 @@
         },
         {
           "meal_id": "synthetic_p003_m025",
+          "logged": true,
           "kind": "breakfast",
           "template": "yogurt_granola",
           "true_time": "2026-10-07T14:39:22.149706Z",
@@ -1069,6 +1150,7 @@
         },
         {
           "meal_id": "synthetic_p003_m026",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-07T19:09:00.018177Z",
@@ -1081,6 +1163,7 @@
         },
         {
           "meal_id": "synthetic_p003_m027",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-08T01:52:39.959389Z",
@@ -1134,11 +1217,13 @@
             "11:00",
             300
           ]
-        ]
+        ],
+        "logged_meal_limit": null
       },
       "meals": [
         {
           "meal_id": "synthetic_p004_m001",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-01T11:40:11.752056Z",
@@ -1151,6 +1236,7 @@
         },
         {
           "meal_id": "synthetic_p004_m002",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-01T17:09:32.818916Z",
@@ -1163,6 +1249,7 @@
         },
         {
           "meal_id": "synthetic_p004_m003",
+          "logged": true,
           "kind": "snack",
           "template": "banana",
           "true_time": "2026-10-01T18:27:45.572647Z",
@@ -1175,6 +1262,7 @@
         },
         {
           "meal_id": "synthetic_p004_m004",
+          "logged": true,
           "kind": "dinner",
           "template": "pizza_slices",
           "true_time": "2026-10-01T22:04:32.586296Z",
@@ -1187,6 +1275,7 @@
         },
         {
           "meal_id": "synthetic_p004_m005",
+          "logged": true,
           "kind": "breakfast",
           "template": "yogurt_granola",
           "true_time": "2026-10-02T11:55:12.552339Z",
@@ -1199,6 +1288,7 @@
         },
         {
           "meal_id": "synthetic_p004_m006",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-02T16:06:59.663925Z",
@@ -1211,6 +1301,7 @@
         },
         {
           "meal_id": "synthetic_p004_m007",
+          "logged": true,
           "kind": "snack",
           "template": "banana",
           "true_time": "2026-10-02T19:12:38.759089Z",
@@ -1223,6 +1314,7 @@
         },
         {
           "meal_id": "synthetic_p004_m008",
+          "logged": true,
           "kind": "dinner",
           "template": "stir_fry_noodles",
           "true_time": "2026-10-02T23:48:10.752768Z",
@@ -1235,6 +1327,7 @@
         },
         {
           "meal_id": "synthetic_p004_m009",
+          "logged": true,
           "kind": "breakfast",
           "template": "bagel_cream_cheese",
           "true_time": "2026-10-03T12:15:56.812726Z",
@@ -1247,6 +1340,7 @@
         },
         {
           "meal_id": "synthetic_p004_m010",
+          "logged": true,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-03T16:01:08.334255Z",
@@ -1259,6 +1353,7 @@
         },
         {
           "meal_id": "synthetic_p004_m011",
+          "logged": true,
           "kind": "snack",
           "template": "apple",
           "true_time": "2026-10-03T19:43:29.010387Z",
@@ -1271,6 +1366,7 @@
         },
         {
           "meal_id": "synthetic_p004_m012",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-03T23:21:30.499042Z",
@@ -1283,6 +1379,7 @@
         },
         {
           "meal_id": "synthetic_p004_m013",
+          "logged": true,
           "kind": "breakfast",
           "template": "yogurt_granola",
           "true_time": "2026-10-04T12:13:03.853834Z",
@@ -1295,6 +1392,7 @@
         },
         {
           "meal_id": "synthetic_p004_m014",
+          "logged": true,
           "kind": "lunch",
           "template": "burrito",
           "true_time": "2026-10-04T16:34:10.803853Z",
@@ -1307,6 +1405,7 @@
         },
         {
           "meal_id": "synthetic_p004_m015",
+          "logged": true,
           "kind": "snack",
           "template": "crackers_cheese",
           "true_time": "2026-10-04T19:31:49.371223Z",
@@ -1319,6 +1418,7 @@
         },
         {
           "meal_id": "synthetic_p004_m016",
+          "logged": true,
           "kind": "dinner",
           "template": "lentil_curry_rice",
           "true_time": "2026-10-04T22:27:09.430659Z",
@@ -1331,6 +1431,7 @@
         },
         {
           "meal_id": "synthetic_p004_m017",
+          "logged": true,
           "kind": "breakfast",
           "template": "bagel_cream_cheese",
           "true_time": "2026-10-05T12:03:54.756181Z",
@@ -1343,6 +1444,7 @@
         },
         {
           "meal_id": "synthetic_p004_m018",
+          "logged": true,
           "kind": "lunch",
           "template": "burrito",
           "true_time": "2026-10-05T17:04:29.314759Z",
@@ -1355,6 +1457,7 @@
         },
         {
           "meal_id": "synthetic_p004_m019",
+          "logged": true,
           "kind": "snack",
           "template": "chips",
           "true_time": "2026-10-05T19:20:42.795511Z",
@@ -1367,6 +1470,7 @@
         },
         {
           "meal_id": "synthetic_p004_m020",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-05T23:28:59.018154Z",
@@ -1379,6 +1483,7 @@
         },
         {
           "meal_id": "synthetic_p004_m021",
+          "logged": true,
           "kind": "breakfast",
           "template": "bagel_cream_cheese",
           "true_time": "2026-10-06T12:16:02.947919Z",
@@ -1391,6 +1496,7 @@
         },
         {
           "meal_id": "synthetic_p004_m022",
+          "logged": true,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-06T16:45:49.295314Z",
@@ -1403,6 +1509,7 @@
         },
         {
           "meal_id": "synthetic_p004_m023",
+          "logged": true,
           "kind": "snack",
           "template": "crackers_cheese",
           "true_time": "2026-10-06T20:07:58.195250Z",
@@ -1415,6 +1522,7 @@
         },
         {
           "meal_id": "synthetic_p004_m024",
+          "logged": true,
           "kind": "dinner",
           "template": "pizza_slices",
           "true_time": "2026-10-06T22:27:18.033985Z",
@@ -1427,6 +1535,7 @@
         },
         {
           "meal_id": "synthetic_p004_m025",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-07T11:58:13.960284Z",
@@ -1439,6 +1548,7 @@
         },
         {
           "meal_id": "synthetic_p004_m026",
+          "logged": true,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-07T17:21:34.253175Z",
@@ -1451,6 +1561,7 @@
         },
         {
           "meal_id": "synthetic_p004_m027",
+          "logged": true,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-07T23:11:34.374791Z",
@@ -1473,21 +1584,21 @@
         "time_to_peak_min": 50,
         "circadian_amp": 0.35,
         "dawn_rise_mg_dl": 5,
-        "activity_sensitivity": 2.0,
+        "activity_sensitivity": 0.0,
         "resting_hr": 66,
-        "hr_activity_gain": 6.0,
+        "hr_activity_gain": 0.0,
         "drift_sd": 1.0,
         "sensor_noise_sd": 2.5,
         "cgm_offset_min": 3,
-        "has_heart_rate": true,
-        "has_activity": true,
+        "has_heart_rate": false,
+        "has_activity": false,
         "snack_rate": 0.8,
         "overlap_rate": 0.35,
         "walks_per_day": [
-          1,
-          2
+          0,
+          0
         ],
-        "post_meal_walk_rate": 0.25,
+        "post_meal_walk_rate": 0.0,
         "medications": [],
         "carbs_only_snack_logging": true,
         "gap_blocks": [
@@ -1496,11 +1607,13 @@
             "20:15",
             40
           ]
-        ]
+        ],
+        "logged_meal_limit": null
       },
       "meals": [
         {
           "meal_id": "synthetic_p005_m001",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-01T14:00:57.502959Z",
@@ -1513,6 +1626,7 @@
         },
         {
           "meal_id": "synthetic_p005_m002",
+          "logged": true,
           "kind": "lunch",
           "template": "rice_bowl",
           "true_time": "2026-10-01T18:58:36.724531Z",
@@ -1525,6 +1639,7 @@
         },
         {
           "meal_id": "synthetic_p005_m003",
+          "logged": true,
           "kind": "dinner",
           "template": "pizza_slices",
           "true_time": "2026-10-02T01:17:04.402763Z",
@@ -1537,6 +1652,7 @@
         },
         {
           "meal_id": "synthetic_p005_m004",
+          "logged": true,
           "kind": "breakfast",
           "template": "oatmeal_berries",
           "true_time": "2026-10-02T13:34:20.325841Z",
@@ -1549,6 +1665,7 @@
         },
         {
           "meal_id": "synthetic_p005_m005",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-02T18:30:59.794121Z",
@@ -1561,6 +1678,7 @@
         },
         {
           "meal_id": "synthetic_p005_m006",
+          "logged": true,
           "kind": "snack",
           "template": "apple",
           "true_time": "2026-10-02T22:20:50.575800Z",
@@ -1573,6 +1691,7 @@
         },
         {
           "meal_id": "synthetic_p005_m007",
+          "logged": true,
           "kind": "dinner",
           "template": "lentil_curry_rice",
           "true_time": "2026-10-03T00:02:11.165334Z",
@@ -1585,6 +1704,7 @@
         },
         {
           "meal_id": "synthetic_p005_m008",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-03T13:51:13.969570Z",
@@ -1597,6 +1717,7 @@
         },
         {
           "meal_id": "synthetic_p005_m009",
+          "logged": true,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-03T18:55:18.641508Z",
@@ -1609,6 +1730,7 @@
         },
         {
           "meal_id": "synthetic_p005_m010",
+          "logged": true,
           "kind": "snack",
           "template": "granola_bar",
           "true_time": "2026-10-03T19:58:32.507559Z",
@@ -1621,6 +1743,7 @@
         },
         {
           "meal_id": "synthetic_p005_m011",
+          "logged": true,
           "kind": "snack",
           "template": "granola_bar",
           "true_time": "2026-10-03T22:28:46.663976Z",
@@ -1633,6 +1756,7 @@
         },
         {
           "meal_id": "synthetic_p005_m012",
+          "logged": true,
           "kind": "dinner",
           "template": "stir_fry_noodles",
           "true_time": "2026-10-04T01:09:15.518588Z",
@@ -1645,6 +1769,7 @@
         },
         {
           "meal_id": "synthetic_p005_m013",
+          "logged": true,
           "kind": "breakfast",
           "template": "oatmeal_berries",
           "true_time": "2026-10-04T13:55:16.195091Z",
@@ -1657,6 +1782,7 @@
         },
         {
           "meal_id": "synthetic_p005_m014",
+          "logged": true,
           "kind": "lunch",
           "template": "burrito",
           "true_time": "2026-10-04T18:12:31.890401Z",
@@ -1669,6 +1795,7 @@
         },
         {
           "meal_id": "synthetic_p005_m015",
+          "logged": true,
           "kind": "snack",
           "template": "banana",
           "true_time": "2026-10-04T19:10:14.175446Z",
@@ -1681,6 +1808,7 @@
         },
         {
           "meal_id": "synthetic_p005_m016",
+          "logged": true,
           "kind": "snack",
           "template": "banana",
           "true_time": "2026-10-04T21:22:46.026236Z",
@@ -1693,6 +1821,7 @@
         },
         {
           "meal_id": "synthetic_p005_m017",
+          "logged": true,
           "kind": "dinner",
           "template": "lentil_curry_rice",
           "true_time": "2026-10-05T00:48:42.026479Z",
@@ -1705,6 +1834,7 @@
         },
         {
           "meal_id": "synthetic_p005_m018",
+          "logged": true,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-05T13:34:35.022326Z",
@@ -1717,6 +1847,7 @@
         },
         {
           "meal_id": "synthetic_p005_m019",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-05T19:14:40.876698Z",
@@ -1729,6 +1860,7 @@
         },
         {
           "meal_id": "synthetic_p005_m020",
+          "logged": true,
           "kind": "snack",
           "template": "crackers_cheese",
           "true_time": "2026-10-05T21:26:11.751431Z",
@@ -1741,6 +1873,7 @@
         },
         {
           "meal_id": "synthetic_p005_m021",
+          "logged": true,
           "kind": "dinner",
           "template": "pizza_slices",
           "true_time": "2026-10-06T00:42:36.947514Z",
@@ -1753,6 +1886,7 @@
         },
         {
           "meal_id": "synthetic_p005_m022",
+          "logged": true,
           "kind": "breakfast",
           "template": "bagel_cream_cheese",
           "true_time": "2026-10-06T14:12:00.767622Z",
@@ -1765,6 +1899,7 @@
         },
         {
           "meal_id": "synthetic_p005_m023",
+          "logged": true,
           "kind": "lunch",
           "template": "chicken_salad",
           "true_time": "2026-10-06T19:13:09.570148Z",
@@ -1777,6 +1912,7 @@
         },
         {
           "meal_id": "synthetic_p005_m024",
+          "logged": true,
           "kind": "snack",
           "template": "banana",
           "true_time": "2026-10-06T22:16:00.575625Z",
@@ -1789,6 +1925,7 @@
         },
         {
           "meal_id": "synthetic_p005_m025",
+          "logged": true,
           "kind": "dinner",
           "template": "stir_fry_noodles",
           "true_time": "2026-10-07T01:23:32.597407Z",
@@ -1801,6 +1938,7 @@
         },
         {
           "meal_id": "synthetic_p005_m026",
+          "logged": true,
           "kind": "breakfast",
           "template": "yogurt_granola",
           "true_time": "2026-10-07T13:17:24.440925Z",
@@ -1813,6 +1951,7 @@
         },
         {
           "meal_id": "synthetic_p005_m027",
+          "logged": true,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-07T19:01:47.548628Z",
@@ -1825,6 +1964,7 @@
         },
         {
           "meal_id": "synthetic_p005_m028",
+          "logged": true,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-08T00:41:15.301700Z",
@@ -1847,21 +1987,21 @@
         "time_to_peak_min": 55,
         "circadian_amp": 0.15,
         "dawn_rise_mg_dl": 8,
-        "activity_sensitivity": 0.0,
+        "activity_sensitivity": 1.5,
         "resting_hr": 72,
-        "hr_activity_gain": 0.0,
+        "hr_activity_gain": 5.0,
         "drift_sd": 1.3,
         "sensor_noise_sd": 3.0,
         "cgm_offset_min": 0,
-        "has_heart_rate": false,
-        "has_activity": false,
+        "has_heart_rate": true,
+        "has_activity": true,
         "snack_rate": 0.5,
         "overlap_rate": 0.2,
         "walks_per_day": [
-          0,
-          0
+          1,
+          2
         ],
-        "post_meal_walk_rate": 0.0,
+        "post_meal_walk_rate": 0.25,
         "medications": [],
         "carbs_only_snack_logging": false,
         "gap_blocks": [
@@ -1870,11 +2010,13 @@
             "01:00",
             70
           ]
-        ]
+        ],
+        "logged_meal_limit": 3
       },
       "meals": [
         {
-          "meal_id": "synthetic_p006_m001",
+          "meal_id": null,
+          "logged": false,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-01T15:07:59.636926Z",
@@ -1886,7 +2028,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m002",
+          "meal_id": "synthetic_p006_m001",
+          "logged": true,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-01T19:46:57.435345Z",
@@ -1898,7 +2041,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m003",
+          "meal_id": null,
+          "logged": false,
           "kind": "dinner",
           "template": "lentil_curry_rice",
           "true_time": "2026-10-02T02:27:38.438468Z",
@@ -1910,7 +2054,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m004",
+          "meal_id": null,
+          "logged": false,
           "kind": "breakfast",
           "template": "smoothie",
           "true_time": "2026-10-02T15:00:13.072625Z",
@@ -1922,7 +2067,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m005",
+          "meal_id": null,
+          "logged": false,
           "kind": "lunch",
           "template": "turkey_sandwich",
           "true_time": "2026-10-02T19:11:43.101277Z",
@@ -1934,7 +2080,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m006",
+          "meal_id": null,
+          "logged": false,
           "kind": "snack",
           "template": "cookie",
           "true_time": "2026-10-02T20:18:22.222484Z",
@@ -1946,7 +2093,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m007",
+          "meal_id": null,
+          "logged": false,
           "kind": "dinner",
           "template": "lentil_curry_rice",
           "true_time": "2026-10-03T01:45:55.200662Z",
@@ -1958,7 +2106,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m008",
+          "meal_id": null,
+          "logged": false,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-03T14:42:41.735793Z",
@@ -1970,7 +2119,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m009",
+          "meal_id": "synthetic_p006_m002",
+          "logged": true,
           "kind": "lunch",
           "template": "rice_bowl",
           "true_time": "2026-10-03T19:12:48.988857Z",
@@ -1982,7 +2132,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m010",
+          "meal_id": "synthetic_p006_m003",
+          "logged": true,
           "kind": "snack",
           "template": "chips",
           "true_time": "2026-10-03T23:21:36.058402Z",
@@ -1994,7 +2145,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m011",
+          "meal_id": null,
+          "logged": false,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-04T01:52:09.700918Z",
@@ -2006,7 +2158,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m012",
+          "meal_id": null,
+          "logged": false,
           "kind": "breakfast",
           "template": "eggs_toast",
           "true_time": "2026-10-04T14:17:30.778711Z",
@@ -2018,7 +2171,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m013",
+          "meal_id": null,
+          "logged": false,
           "kind": "lunch",
           "template": "burrito",
           "true_time": "2026-10-04T19:55:18.101243Z",
@@ -2030,7 +2184,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m014",
+          "meal_id": null,
+          "logged": false,
           "kind": "snack",
           "template": "granola_bar",
           "true_time": "2026-10-04T23:31:51.543279Z",
@@ -2042,7 +2197,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m015",
+          "meal_id": null,
+          "logged": false,
           "kind": "dinner",
           "template": "steak_potato",
           "true_time": "2026-10-05T01:34:25.474867Z",
@@ -2054,7 +2210,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m016",
+          "meal_id": null,
+          "logged": false,
           "kind": "breakfast",
           "template": "oatmeal_berries",
           "true_time": "2026-10-05T14:16:16.353052Z",
@@ -2066,7 +2223,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m017",
+          "meal_id": null,
+          "logged": false,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-05T20:04:01.833336Z",
@@ -2078,7 +2236,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m018",
+          "meal_id": null,
+          "logged": false,
           "kind": "snack",
           "template": "crackers_cheese",
           "true_time": "2026-10-05T21:22:33.570167Z",
@@ -2090,7 +2249,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m019",
+          "meal_id": null,
+          "logged": false,
           "kind": "dinner",
           "template": "stir_fry_noodles",
           "true_time": "2026-10-06T01:26:26.646583Z",
@@ -2102,7 +2262,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m020",
+          "meal_id": null,
+          "logged": false,
           "kind": "breakfast",
           "template": "oatmeal_berries",
           "true_time": "2026-10-06T15:05:38.097093Z",
@@ -2114,7 +2275,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m021",
+          "meal_id": null,
+          "logged": false,
           "kind": "lunch",
           "template": "chicken_salad",
           "true_time": "2026-10-06T20:07:12.306436Z",
@@ -2126,7 +2288,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m022",
+          "meal_id": null,
+          "logged": false,
           "kind": "snack",
           "template": "granola_bar",
           "true_time": "2026-10-06T22:25:07.471468Z",
@@ -2138,7 +2301,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m023",
+          "meal_id": null,
+          "logged": false,
           "kind": "dinner",
           "template": "pizza_slices",
           "true_time": "2026-10-07T02:38:19.153261Z",
@@ -2150,7 +2314,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m024",
+          "meal_id": null,
+          "logged": false,
           "kind": "breakfast",
           "template": "yogurt_granola",
           "true_time": "2026-10-07T14:44:39.949675Z",
@@ -2162,7 +2327,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m025",
+          "meal_id": null,
+          "logged": false,
           "kind": "lunch",
           "template": "pasta_tomato",
           "true_time": "2026-10-07T19:15:01.803995Z",
@@ -2174,7 +2340,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m026",
+          "meal_id": null,
+          "logged": false,
           "kind": "snack",
           "template": "crackers_cheese",
           "true_time": "2026-10-07T22:02:28.588696Z",
@@ -2186,7 +2353,8 @@
           }
         },
         {
-          "meal_id": "synthetic_p006_m027",
+          "meal_id": null,
+          "logged": false,
           "kind": "dinner",
           "template": "salmon_rice_veg",
           "true_time": "2026-10-08T02:58:08.678148Z",

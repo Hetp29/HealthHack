@@ -98,6 +98,8 @@ participants = Table(
     Column("participant_id", String, primary_key=True),
     Column("display_name", String, nullable=False),
     Column("timezone", String, nullable=True),
+    # Which source dataset the participant came from (e.g. "cgmacros", "metabonet").
+    Column("source_dataset", String, nullable=True),
     *_provenance(),
     CheckConstraint(_DATA_SOURCE_CHECK, name="ck_participants_data_source"),
 )
@@ -109,9 +111,26 @@ cgm = Table(
     _participant_fk(primary_key=True),
     Column("timestamp", UTCDateTime, primary_key=True),
     Column("glucose_mg_dl", Float, nullable=False),
+    # Original sensor identity (e.g. "dexcom_g6_pro"); null when the source does not say.
+    Column("sensor", String, nullable=True),
     *_provenance(),
     CheckConstraint("glucose_mg_dl > 0", name="ck_cgm_positive"),
     CheckConstraint(_DATA_SOURCE_CHECK, name="ck_cgm_data_source"),
+)
+
+# Readings from an additional, simultaneously worn sensor (e.g. CGMacros Libre Pro next
+# to the primary Dexcom). Kept apart so `cgm` stays one reading per participant per
+# instant, as the contract requires. Not exposed through the backend Protocol.
+cgm_secondary = Table(
+    "cgm_secondary",
+    metadata,
+    _participant_fk(primary_key=True),
+    Column("timestamp", UTCDateTime, primary_key=True),
+    Column("sensor", String, primary_key=True),
+    Column("glucose_mg_dl", Float, nullable=False),
+    *_provenance(),
+    CheckConstraint("glucose_mg_dl > 0", name="ck_cgm2_positive"),
+    CheckConstraint(_DATA_SOURCE_CHECK, name="ck_cgm2_data_source"),
 )
 
 heart_rate = Table(
@@ -190,6 +209,7 @@ quarantine = Table(
 )
 
 Index("ix_cgm_participant_time", cgm.c.participant_id, cgm.c.timestamp)
+Index("ix_cgm2_participant_time", cgm_secondary.c.participant_id, cgm_secondary.c.timestamp)
 Index("ix_hr_participant_time", heart_rate.c.participant_id, heart_rate.c.timestamp)
 Index("ix_meals_participant_time", meals.c.participant_id, meals.c.timestamp)
 Index("ix_meds_participant_time", medications.c.participant_id, medications.c.timestamp)
@@ -198,6 +218,7 @@ Index("ix_quarantine_run", quarantine.c.run_id)
 
 EVENT_TABLES = {
     "cgm": cgm,
+    "cgm_secondary": cgm_secondary,
     "heart_rate": heart_rate,
     "meals": meals,
     "medications": medications,

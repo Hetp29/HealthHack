@@ -101,10 +101,11 @@ def test_prediction_context_lookback_and_naive_guard(fixture_repo):
 
 
 def test_missing_modality_returns_empty_lists(fixture_repo):
-    assert fixture_repo.get_heart_rate("synthetic_p006") == []
-    assert fixture_repo.get_activity("synthetic_p006") == []
+    assert fixture_repo.get_heart_rate("synthetic_p005") == []
+    assert fixture_repo.get_activity("synthetic_p005") == []
     assert fixture_repo.get_medications("synthetic_p001") == []
-    ctx = fixture_repo.get_prediction_context("synthetic_p006", datetime(2026, 10, 7, 12, tzinfo=UTC))
+    assert len(fixture_repo.get_meals("synthetic_p006")) == 3  # sparse logger
+    ctx = fixture_repo.get_prediction_context("synthetic_p005", datetime(2026, 10, 7, 12, tzinfo=UTC))
     assert ctx.heart_rate == [] and ctx.cgm
 
 
@@ -134,5 +135,5 @@ def test_export_tables_writes_canonical_csvs(fixture_repo, tmp_path):
     manifest = fixture_repo.export_tables(tmp_path / "export", cutoff=datetime(2026, 10, 3, tzinfo=UTC))
     assert manifest["files"]["cgm.csv"]["rows"] > 0
     header = (tmp_path / "export" / "cgm.csv").read_text().splitlines()[0]
-    assert header == "participant_id,timestamp,glucose_mg_dl,data_source"
+    assert header == "participant_id,timestamp,glucose_mg_dl,sensor,data_source"
     assert manifest["runs"] and manifest["runs"][0]["sha256"]

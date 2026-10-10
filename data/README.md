@@ -1,7 +1,8 @@
 # GlucoTwin data layer (`data/`)
 
 **Owner:** Het Patel · **Contract:** canonical schema v1.0 (`contracts/canonical_schema_v1.md`) ·
-**Storage:** SQLite via SQLAlchemy · **Current data source:** `synthetic_dev` only. The organizer dataset has not arrived yet.
+**Storage:** SQLite via SQLAlchemy · **Sources:** `synthetic_dev` fixtures, **CGMacros** and **MetaboNet** (organizer datasets).
+Dataset audit: [`docs/data_audit/summary.md`](../docs/data_audit/summary.md).
 
 This package loads, validates and stores the data, records where it came from, and provides one read
 interface (`DataRepository`). It does **not** construct targets, engineer features, train models or serve HTTP.
@@ -15,6 +16,47 @@ python -m pytest tests/test_data_*.py -q              # data-layer tests (temp D
 ```
 
 `python -m data.seed` is safe to re-run: identical input writes nothing new. Use `--reset --yes` to drop and rebuild.
+
+## Organizer datasets (CGMacros, MetaboNet)
+
+Place the downloads in `data/official_raw/` (gitignored), then:
+
+```bash
+pip install -r requirements-dev.txt -r data/requirements.txt          # adds SQLAlchemy + pyarrow
+unzip -q data/official_raw/cgmacros-*/CGMacros_dateshifted365.zip -d data/official_raw/cgmacros_extracted
+
+python -m data.adapters.cgmacros --db-url sqlite:///data/glucotwin.db     # 45 participants, ~5 min
+python -m data.adapters.metabonet audit                                   # streams 132.8M rows, ~5 min
+python -m data.adapters.metabonet ingest --db-url sqlite:///data/metabonet.db [--max-subjects 100]
+python -m data.audit --metabonet-subjects data/reports/profiles/metabonet_subjects.csv   # -> docs/data_audit/
+```
+
+Each dataset goes to its own SQLite file, so populations are never mixed by accident (T1D MetaboNet
+vs the non-T1D CGMacros). Both use the same schema, pipeline and repository. Source-specific behaviour
+is in the adapter docstrings (`data/adapters/cgmacros.py`, `data/adapters/metabonet.py`), and the
+transformations and exclusions are in `docs/data_audit/data_quality.md`.
+
+## Binding the backend (Ruhaan's Protocol)
+
+`data/storage/repository.py::SqliteDataRepository` implements the `DataRepository` Protocol in
+`backend/app/services/data_access.py` and returns `ml.schema` record types. It is checked by running
+`tests/test_data_contract.py`'s own test classes against it (`tests/test_data_sqlite_protocol.py`).
+
+```bash
+export GLUCOTWIN_DATA_BACKEND=sqlite
+export GLUCOTWIN_DB_URL=sqlite:///data/glucotwin.db      # CGMacros
+uvicorn backend.app.main:app
+```
+
+```python
+from data.storage.repository import SqliteDataRepository
+repo = SqliteDataRepository("sqlite:///data/glucotwin.db")
+repo.list_participants()                          # ml.schema.ParticipantSummary (timezone None for official data)
+repo.get_history("cgmacros_001")                  # ml.schema.ParticipantHistory, all modalities; DISPLAY
+repo.get_history_as_of("cgmacros_001", meal.timestamp, lookback=timedelta(days=7))   # nothing after as_of
+repo.get_cgm_secondary("cgmacros_001")            # Libre Pro readings (second sensor)
+repo.get_participant_metadata("cgmacros_001")     # source_dataset, run id, cgm_sensors
+```
 
 ## Commands
 
@@ -111,8 +153,9 @@ data/
 ```
 
 Fixtures (`data/fixtures/synthetic_dev/`): 6 fictional participants and 7 days (2026-10-01 to 10-07 local time). Each
-participant has nominal 5-minute CGM readings, heart rate (p006 has none), meals, medications (p002 and p004 only) and
-15-minute step counts (p006 has none). **The simulator truth folder is for tests only.** No model, feature or API code
+participant has nominal 5-minute CGM readings, heart rate (**p005 has none**), meals (**p006 is a sparse logger: 3 logged
+meals**), medications (p002 and p004 only) and 15-minute step counts (p005 has none). These edge cases match the IDs
+`tests/test_data_contract.py` relies on. **The simulator truth folder is for tests only.** No model, feature or API code
 may read it.
 
 Provenance, validation thresholds, simulator assumptions and the procedure for the official dataset are in

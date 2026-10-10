@@ -14,6 +14,9 @@ from data.storage import tables
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DB_URL = "sqlite:///data/glucotwin.db"
 DB_URL_ENV = "GLUCOTWIN_DB_URL"
+# Internal storage layout version (independent of the API contract version). Bump when
+# tables/columns change; an older local DB must then be rebuilt (`python -m data.seed --reset --yes`).
+STORAGE_VERSION = "2"
 
 
 class SchemaVersionMismatch(RuntimeError):
@@ -41,6 +44,9 @@ def _enable_sqlite_foreign_keys(engine: Engine) -> None:
     def _on_connect(dbapi_conn, _record):
         cursor = dbapi_conn.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
+        # WAL: readers (the API) never block on a bulk import; NORMAL sync is safe under WAL.
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA synchronous=NORMAL")
         cursor.close()
 
 
@@ -63,16 +69,19 @@ def init_db(engine: Engine, *, reset: bool = False) -> None:
         tables.metadata.drop_all(engine)
     tables.metadata.create_all(engine)
     with engine.begin() as conn:
-        stored = conn.execute(
-            select(tables.schema_meta.c.value).where(tables.schema_meta.c.key == "schema_version")
-        ).scalar_one_or_none()
-        if stored is None:
-            conn.execute(tables.schema_meta.insert().values(key="schema_version", value=SCHEMA_VERSION))
-        elif stored != SCHEMA_VERSION:
-            raise SchemaVersionMismatch(
-                f"database schema_version {stored!r} != code schema_version {SCHEMA_VERSION!r}; "
-                "a migration is required (see docs/data_provenance.md)"
+        meta = dict(conn.execute(select(tables.schema_meta.c.key, tables.schema_meta.c.value)).all())
+        if not meta:
+            conn.execute(
+                tables.schema_meta.insert(),
+                [{"key": "schema_version", "value": SCHEMA_VERSION}, {"key": "storage_version", "value": STORAGE_VERSION}],
             )
+            return
+        for key, expected in (("schema_version", SCHEMA_VERSION), ("storage_version", STORAGE_VERSION)):
+            if meta.get(key) != expected:
+                raise SchemaVersionMismatch(
+                    f"database {key} {meta.get(key)!r} != code {key} {expected!r}; rebuild the local "
+                    "database with `python -m data.seed --reset --yes` (see docs/data_provenance.md)"
+                )
 
 
 def is_initialized(engine: Engine) -> bool:
