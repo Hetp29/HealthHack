@@ -1,7 +1,7 @@
 import type { ZodType, ZodTypeDef } from "zod";
 
 export const API_BASE_URL: string =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
+  (import.meta.env["VITE_API_BASE_URL"] as string | undefined) ??
   (import.meta.env.DEV ? "http://localhost:8000" : "");
 
 export type ApiErrorKind =
@@ -51,7 +51,7 @@ export const describeError = (e: unknown): string => {
 interface RequestOpts {
   method?: "GET" | "POST";
   body?: unknown;
-  signal?: AbortSignal;
+  signal?: AbortSignal | undefined;
   timeoutMs?: number;
 }
 
@@ -74,8 +74,8 @@ export async function apiRequest<T>(
   try {
     res = await fetch(`${API_BASE_URL.replace(/\/$/, "")}${path}`, {
       method,
-      headers: body ? { "Content-Type": "application/json" } : undefined,
-      body: body ? JSON.stringify(body) : undefined,
+      headers: body ? { "Content-Type": "application/json" } : {},
+      body: body ? JSON.stringify(body) : null,
       signal: ctrl.signal,
     });
   } catch {

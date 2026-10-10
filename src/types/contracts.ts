@@ -63,11 +63,11 @@ export interface PredictResponse {
 
 export interface Participant {
   participant_id: string;
-  label?: string | null;
-  observation_start?: string | null;
-  observation_end?: string | null;
+  label?: string | null | undefined;
+  observation_start?: string | null | undefined;
+  observation_end?: string | null | undefined;
   /** Backend-suggested valid Day-8 prediction timestamp, if exposed. */
-  prediction_timestamp?: string | null;
+  prediction_timestamp?: string | null | undefined;
 }
 
 export interface ParticipantsResponse {
@@ -106,17 +106,17 @@ export interface HistoryResponse {
 
 export interface HealthResponse {
   status: string;
-  model_loaded?: boolean | null;
-  data_source?: string | null;
+  model_loaded?: boolean | null | undefined;
+  data_source?: string | null | undefined;
 }
 
 export interface ModelInfo {
   model_version: string;
   data_source: string;
-  feature_set_version?: string | null;
-  evaluation_protocol?: string | null;
-  evaluated_at?: string | null;
-  limitations?: string[] | null;
+  feature_set_version?: string | null | undefined;
+  evaluation_protocol?: string | null | undefined;
+  evaluated_at?: string | null | undefined;
+  limitations?: string[] | null | undefined;
 }
 
 export interface ErrorPair {
@@ -130,16 +130,16 @@ export interface HorizonError extends ErrorPair {
 
 export interface ModelMetrics {
   model_version: string;
-  train_samples?: number | null;
-  eval_samples?: number | null;
-  participant_count?: number | null;
-  overall?: ErrorPair | null;
-  by_horizon?: HorizonError[] | null;
+  train_samples?: number | null | undefined;
+  eval_samples?: number | null | undefined;
+  participant_count?: number | null | undefined;
+  overall?: ErrorPair | null | undefined;
+  by_horizon?: HorizonError[] | null | undefined;
   personalization?: {
     generalized: ErrorPair;
     personalized: ErrorPair;
-    win_rate?: number | null;
-    win_rate_definition?: string | null;
-    compared_samples?: number | null;
-  } | null;
+    win_rate?: number | null | undefined;
+    win_rate_definition?: string | null | undefined;
+    compared_samples?: number | null | undefined;
+  } | null | undefined;
 }
