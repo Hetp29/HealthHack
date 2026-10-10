@@ -1,0 +1,64 @@
+# TEMPLATE — the organizer dataset has NOT arrived; every column name below is a
+# placeholder. Copy to data/mapping/official.toml, then fill it in from the schema
+# profile:  python -m data.adapters.profile --path <official_dir>
+#
+# Only this file may know organizer column names. Nothing downstream ever sees them.
+
+name = "official_v1"
+data_source = "official"
+
+# Values that mean "missing" in the source. "nan" is deliberately NOT here by default:
+# a NaN is rejected as non-finite unless the profile shows it is the source's null marker.
+null_tokens = ["", "NA", "N/A", "n/a", "null", "NULL", "None"]
+
+# Timestamps. ""/omitted = ISO 8601 / RFC3339; "unix_s"; "unix_ms"; or a strptime
+# pattern like "%Y-%m-%d %H:%M:%S". Can be overridden per modality.
+timestamp_format = ""
+
+# How to treat timestamps WITHOUT a UTC offset:
+#   ""             -> reject them (default, safest)
+#   "participant"  -> localize with the participant's timezone (roster or derived)
+#   "America/New_York" (any IANA zone) -> localize with that zone
+# DST-ambiguous or nonexistent local times are always rejected, never guessed.
+assume_timezone = ""
+
+# Prepend to every source participant ID (keeps official IDs distinct from fixtures).
+participant_id_prefix = "official_"
+
+# If the dataset has no participant roster, build participants from the IDs seen in
+# event files ("Participant 001", ...). Their timezone is this value (may be "").
+derive_participants = false
+derived_participant_timezone = ""
+
+[modalities.participants]
+files = ["participants.csv"]
+columns = { participant_id = "SUBJECT_ID_PLACEHOLDER", display_name = "LABEL_PLACEHOLDER", timezone = "TZ_PLACEHOLDER" }
+
+[modalities.cgm]
+files = ["cgm/*.csv"]                     # globs are allowed, relative to --path
+columns = { participant_id = "SUBJECT_ID_PLACEHOLDER", timestamp = "TIME_PLACEHOLDER", glucose_mg_dl = "GLUCOSE_PLACEHOLDER" }
+units = { glucose_mg_dl = "mg/dL" }       # or "mmol/L" (x 18.0182, explicit and reported)
+# For a single wide file holding several modalities, skip rows that carry no reading:
+# skip_if_all_null = ["glucose_mg_dl"]
+
+[modalities.heart_rate]
+files = ["heart_rate.csv"]
+columns = { participant_id = "SUBJECT_ID_PLACEHOLDER", timestamp = "TIME_PLACEHOLDER", heart_rate_bpm = "HR_PLACEHOLDER" }
+
+[modalities.meals]
+files = ["meals.csv"]
+columns = { participant_id = "SUBJECT_ID_PLACEHOLDER", timestamp = "TIME_PLACEHOLDER", carbs_g = "CARBS_PLACEHOLDER", protein_g = "PROTEIN_PLACEHOLDER", fat_g = "FAT_PLACEHOLDER", fiber_g = "FIBER_PLACEHOLDER", calories_kcal = "KCAL_PLACEHOLDER", image_ref = "IMAGE_PLACEHOLDER" }
+# No meal ID column? Generate a deterministic one from participant + UTC time:
+generate_meal_id = true
+# units = { calories_kcal = "kJ" }        # declared conversions only
+
+# Optional modalities: delete a section entirely if the dataset lacks it. Missing
+# modalities are reported, never filled with invented values.
+[modalities.medications]
+files = ["medications.csv"]
+columns = { participant_id = "SUBJECT_ID_PLACEHOLDER", timestamp = "TIME_PLACEHOLDER", medication_class = "CLASS_PLACEHOLDER", dose = "DOSE_PLACEHOLDER", dose_unit = "UNIT_PLACEHOLDER" }
+
+[modalities.activity]
+files = ["activity.csv"]
+columns = { participant_id = "SUBJECT_ID_PLACEHOLDER", timestamp = "TIME_PLACEHOLDER", activity_value = "STEPS_PLACEHOLDER" }
+constants = { activity_unit = "steps" }   # fixed unit when the source has no unit column

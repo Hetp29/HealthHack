@@ -1,0 +1,2 @@
+# Data layer runtime dependency (owner: Het). Requested addition to requirements.txt.
+SQLAlchemy==2.0.43

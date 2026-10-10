@@ -29,3 +29,10 @@ ml/_devdata/
 # Frontend
 node_modules/
 frontend/dist/
+
+# Data layer (Het): local databases, generated run/profile reports, and official
+# source files (kept outside git unless the license allows committing them).
+data/local/
+data/reports/runs/
+data/reports/profiles/
+data/official_raw/

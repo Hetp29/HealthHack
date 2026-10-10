@@ -1,0 +1,2203 @@
+{
+  "label": "SYNTHETIC DEVELOPMENT DATA (synthetic_dev). Fictional participants from a hand-written simulator; not real people, not learned physiology, not clinical evidence.",
+  "warning": "NOT A MODEL INPUT. Hidden simulator variables for tests only.",
+  "generator_version": "1.0.0",
+  "seed": 20261011,
+  "participants": {
+    "synthetic_p001": {
+      "params": {
+        "participant_id": "synthetic_p001",
+        "display_name": "Participant 001",
+        "timezone": "America/New_York",
+        "baseline_mg_dl": 92,
+        "carb_sensitivity": 0.85,
+        "time_to_peak_min": 45,
+        "circadian_amp": 0.1,
+        "dawn_rise_mg_dl": 6,
+        "activity_sensitivity": 2.0,
+        "resting_hr": 62,
+        "hr_activity_gain": 6.0,
+        "drift_sd": 1.0,
+        "sensor_noise_sd": 2.5,
+        "cgm_offset_min": 0,
+        "has_heart_rate": true,
+        "has_activity": true,
+        "snack_rate": 0.5,
+        "overlap_rate": 0.2,
+        "walks_per_day": [
+          1,
+          2
+        ],
+        "post_meal_walk_rate": 0.25,
+        "medications": [],
+        "carbs_only_snack_logging": false,
+        "gap_blocks": [
+          [
+            2,
+            "03:10",
+            95
+          ]
+        ]
+      },
+      "meals": [
+        {
+          "meal_id": "synthetic_p001_m001",
+          "kind": "breakfast",
+          "template": "bagel_cream_cheese",
+          "true_time": "2026-10-01T11:04:52.388550Z",
+          "true_macros": {
+            "carbs_g": 57.73,
+            "protein_g": 11.94,
+            "fat_g": 11.94,
+            "fiber_g": 1.99
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m002",
+          "kind": "lunch",
+          "template": "rice_bowl",
+          "true_time": "2026-10-01T17:17:48.824326Z",
+          "true_macros": {
+            "carbs_g": 67.7,
+            "protein_g": 20.83,
+            "fat_g": 10.42,
+            "fiber_g": 3.47
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m003",
+          "kind": "snack",
+          "template": "cookie",
+          "true_time": "2026-10-01T19:45:16.103615Z",
+          "true_macros": {
+            "carbs_g": 16.52,
+            "protein_g": 1.5,
+            "fat_g": 6.01,
+            "fiber_g": 0.75
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m004",
+          "kind": "dinner",
+          "template": "pizza_slices",
+          "true_time": "2026-10-01T22:12:21.658291Z",
+          "true_macros": {
+            "carbs_g": 79.84,
+            "protein_g": 28.05,
+            "fat_g": 30.21,
+            "fiber_g": 4.32
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m005",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-02T11:51:26.273518Z",
+          "true_macros": {
+            "carbs_g": 33.06,
+            "protein_g": 22.04,
+            "fat_g": 17.63,
+            "fiber_g": 4.41
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m006",
+          "kind": "lunch",
+          "template": "burrito",
+          "true_time": "2026-10-02T16:53:44.605251Z",
+          "true_macros": {
+            "carbs_g": 70.42,
+            "protein_g": 26.16,
+            "fat_g": 22.13,
+            "fiber_g": 9.05
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m007",
+          "kind": "snack",
+          "template": "banana",
+          "true_time": "2026-10-02T19:03:43.622619Z",
+          "true_macros": {
+            "carbs_g": 27.67,
+            "protein_g": 1.02,
+            "fat_g": 0.0,
+            "fiber_g": 3.07
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m008",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-02T22:38:19.858072Z",
+          "true_macros": {
+            "carbs_g": 50.78,
+            "protein_g": 33.2,
+            "fat_g": 19.53,
+            "fiber_g": 5.86
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m009",
+          "kind": "breakfast",
+          "template": "yogurt_granola",
+          "true_time": "2026-10-03T12:11:20.379446Z",
+          "true_macros": {
+            "carbs_g": 41.34,
+            "protein_g": 12.92,
+            "fat_g": 7.75,
+            "fiber_g": 3.45
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m010",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-03T17:29:33.263918Z",
+          "true_macros": {
+            "carbs_g": 66.79,
+            "protein_g": 13.03,
+            "fat_g": 8.14,
+            "fiber_g": 4.89
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m011",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-03T22:05:19.177424Z",
+          "true_macros": {
+            "carbs_g": 50.88,
+            "protein_g": 33.27,
+            "fat_g": 19.57,
+            "fiber_g": 5.87
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m012",
+          "kind": "breakfast",
+          "template": "oatmeal_berries",
+          "true_time": "2026-10-04T11:58:51.704734Z",
+          "true_macros": {
+            "carbs_g": 67.78,
+            "protein_g": 11.3,
+            "fat_g": 7.53,
+            "fiber_g": 10.04
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m013",
+          "kind": "lunch",
+          "template": "chicken_salad",
+          "true_time": "2026-10-04T17:24:49.381754Z",
+          "true_macros": {
+            "carbs_g": 19.91,
+            "protein_g": 37.61,
+            "fat_g": 19.91,
+            "fiber_g": 7.74
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m014",
+          "kind": "snack",
+          "template": "granola_bar",
+          "true_time": "2026-10-04T18:53:11.686526Z",
+          "true_macros": {
+            "carbs_g": 28,
+            "protein_g": 4,
+            "fat_g": 7,
+            "fiber_g": 3
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m015",
+          "kind": "snack",
+          "template": "granola_bar",
+          "true_time": "2026-10-04T19:16:52.235143Z",
+          "true_macros": {
+            "carbs_g": 30.63,
+            "protein_g": 4.38,
+            "fat_g": 7.66,
+            "fiber_g": 3.28
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m016",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-04T23:16:10.216614Z",
+          "true_macros": {
+            "carbs_g": 42.84,
+            "protein_g": 44.98,
+            "fat_g": 27.85,
+            "fiber_g": 5.36
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m017",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-05T11:05:32.367291Z",
+          "true_macros": {
+            "carbs_g": 25.17,
+            "protein_g": 16.78,
+            "fat_g": 13.42,
+            "fiber_g": 3.36
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m018",
+          "kind": "lunch",
+          "template": "rice_bowl",
+          "true_time": "2026-10-05T17:07:02.607578Z",
+          "true_macros": {
+            "carbs_g": 61.11,
+            "protein_g": 18.8,
+            "fat_g": 9.4,
+            "fiber_g": 3.13
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m019",
+          "kind": "dinner",
+          "template": "lentil_curry_rice",
+          "true_time": "2026-10-05T22:22:48.137948Z",
+          "true_macros": {
+            "carbs_g": 75.76,
+            "protein_g": 21.93,
+            "fat_g": 11.96,
+            "fiber_g": 13.96
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m020",
+          "kind": "breakfast",
+          "template": "smoothie",
+          "true_time": "2026-10-06T11:53:43.341512Z",
+          "true_macros": {
+            "carbs_g": 58.93,
+            "protein_g": 7.6,
+            "fat_g": 3.8,
+            "fiber_g": 5.7
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m021",
+          "kind": "lunch",
+          "template": "rice_bowl",
+          "true_time": "2026-10-06T16:47:38.701790Z",
+          "true_macros": {
+            "carbs_g": 79.92,
+            "protein_g": 24.59,
+            "fat_g": 12.3,
+            "fiber_g": 4.1
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m022",
+          "kind": "snack",
+          "template": "granola_bar",
+          "true_time": "2026-10-06T19:51:09.924629Z",
+          "true_macros": {
+            "carbs_g": 22.42,
+            "protein_g": 3.2,
+            "fat_g": 5.61,
+            "fiber_g": 2.4
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m023",
+          "kind": "dinner",
+          "template": "pizza_slices",
+          "true_time": "2026-10-06T22:45:24.133898Z",
+          "true_macros": {
+            "carbs_g": 69.91,
+            "protein_g": 24.56,
+            "fat_g": 26.45,
+            "fiber_g": 3.78
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m024",
+          "kind": "breakfast",
+          "template": "yogurt_granola",
+          "true_time": "2026-10-07T11:36:50.270042Z",
+          "true_macros": {
+            "carbs_g": 40.22,
+            "protein_g": 12.57,
+            "fat_g": 7.54,
+            "fiber_g": 3.35
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m025",
+          "kind": "lunch",
+          "template": "rice_bowl",
+          "true_time": "2026-10-07T17:17:41.293435Z",
+          "true_macros": {
+            "carbs_g": 98.22,
+            "protein_g": 30.22,
+            "fat_g": 15.11,
+            "fiber_g": 5.04
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m026",
+          "kind": "snack",
+          "template": "apple",
+          "true_time": "2026-10-07T19:55:13.678419Z",
+          "true_macros": {
+            "carbs_g": 29.76,
+            "protein_g": 0.0,
+            "fat_g": 0.0,
+            "fiber_g": 4.76
+          }
+        },
+        {
+          "meal_id": "synthetic_p001_m027",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-07T22:41:26.155405Z",
+          "true_macros": {
+            "carbs_g": 30.54,
+            "protein_g": 32.07,
+            "fat_g": 19.85,
+            "fiber_g": 3.82
+          }
+        }
+      ]
+    },
+    "synthetic_p002": {
+      "params": {
+        "participant_id": "synthetic_p002",
+        "display_name": "Participant 002",
+        "timezone": "America/Chicago",
+        "baseline_mg_dl": 104,
+        "carb_sensitivity": 1.25,
+        "time_to_peak_min": 60,
+        "circadian_amp": 0.2,
+        "dawn_rise_mg_dl": 10,
+        "activity_sensitivity": 1.5,
+        "resting_hr": 70,
+        "hr_activity_gain": 5.0,
+        "drift_sd": 1.2,
+        "sensor_noise_sd": 3.0,
+        "cgm_offset_min": 2,
+        "has_heart_rate": true,
+        "has_activity": true,
+        "snack_rate": 0.5,
+        "overlap_rate": 0.2,
+        "walks_per_day": [
+          1,
+          2
+        ],
+        "post_meal_walk_rate": 0.25,
+        "medications": [
+          [
+            "biguanide",
+            500.0,
+            "mg",
+            "08:00",
+            0.05
+          ],
+          [
+            "biguanide",
+            500.0,
+            "mg",
+            "19:30",
+            0.1
+          ]
+        ],
+        "carbs_only_snack_logging": false,
+        "gap_blocks": [
+          [
+            4,
+            "14:20",
+            50
+          ]
+        ]
+      },
+      "meals": [
+        {
+          "meal_id": "synthetic_p002_m001",
+          "kind": "breakfast",
+          "template": "smoothie",
+          "true_time": "2026-10-01T12:59:41.598620Z",
+          "true_macros": {
+            "carbs_g": 65.65,
+            "protein_g": 8.47,
+            "fat_g": 4.24,
+            "fiber_g": 6.35
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m002",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-01T17:12:05.685189Z",
+          "true_macros": {
+            "carbs_g": 54.58,
+            "protein_g": 33.22,
+            "fat_g": 16.61,
+            "fiber_g": 5.93
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m003",
+          "kind": "snack",
+          "template": "banana",
+          "true_time": "2026-10-01T18:00:09.253629Z",
+          "true_macros": {
+            "carbs_g": 27,
+            "protein_g": 1,
+            "fat_g": 0,
+            "fiber_g": 3
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m004",
+          "kind": "snack",
+          "template": "chips",
+          "true_time": "2026-10-01T21:17:05.414173Z",
+          "true_macros": {
+            "carbs_g": 19.76,
+            "protein_g": 2.47,
+            "fat_g": 12.35,
+            "fiber_g": 1.24
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m005",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-02T00:22:19.137681Z",
+          "true_macros": {
+            "carbs_g": 40.99,
+            "protein_g": 43.04,
+            "fat_g": 26.65,
+            "fiber_g": 5.12
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m006",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-02T12:29:15.595293Z",
+          "true_macros": {
+            "carbs_g": 27.06,
+            "protein_g": 18.04,
+            "fat_g": 14.43,
+            "fiber_g": 3.61
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m007",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-02T17:48:07.035984Z",
+          "true_macros": {
+            "carbs_g": 46.91,
+            "protein_g": 28.56,
+            "fat_g": 14.28,
+            "fiber_g": 5.1
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m008",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-02T23:28:13.007364Z",
+          "true_macros": {
+            "carbs_g": 30.01,
+            "protein_g": 31.51,
+            "fat_g": 19.5,
+            "fiber_g": 3.75
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m009",
+          "kind": "breakfast",
+          "template": "oatmeal_berries",
+          "true_time": "2026-10-03T12:51:17.967395Z",
+          "true_macros": {
+            "carbs_g": 66.02,
+            "protein_g": 11.0,
+            "fat_g": 7.34,
+            "fiber_g": 9.78
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m010",
+          "kind": "lunch",
+          "template": "chicken_salad",
+          "true_time": "2026-10-03T17:53:28.394051Z",
+          "true_macros": {
+            "carbs_g": 17.85,
+            "protein_g": 33.72,
+            "fat_g": 17.85,
+            "fiber_g": 6.94
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m011",
+          "kind": "snack",
+          "template": "apple",
+          "true_time": "2026-10-03T21:20:36.954055Z",
+          "true_macros": {
+            "carbs_g": 30.32,
+            "protein_g": 0.0,
+            "fat_g": 0.0,
+            "fiber_g": 4.85
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m012",
+          "kind": "dinner",
+          "template": "stir_fry_noodles",
+          "true_time": "2026-10-03T23:59:51.899741Z",
+          "true_macros": {
+            "carbs_g": 63.51,
+            "protein_g": 17.46,
+            "fat_g": 12.7,
+            "fiber_g": 3.97
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m013",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-04T13:17:31.720346Z",
+          "true_macros": {
+            "carbs_g": 28.34,
+            "protein_g": 18.89,
+            "fat_g": 15.12,
+            "fiber_g": 3.78
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m014",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-04T17:53:11.778151Z",
+          "true_macros": {
+            "carbs_g": 93.22,
+            "protein_g": 18.19,
+            "fat_g": 11.37,
+            "fiber_g": 6.82
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m015",
+          "kind": "snack",
+          "template": "cookie",
+          "true_time": "2026-10-04T21:07:12.209980Z",
+          "true_macros": {
+            "carbs_g": 24.35,
+            "protein_g": 2.21,
+            "fat_g": 8.86,
+            "fiber_g": 1.11
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m016",
+          "kind": "dinner",
+          "template": "lentil_curry_rice",
+          "true_time": "2026-10-04T23:11:04.354694Z",
+          "true_macros": {
+            "carbs_g": 98.64,
+            "protein_g": 28.55,
+            "fat_g": 15.57,
+            "fiber_g": 18.17
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m017",
+          "kind": "breakfast",
+          "template": "oatmeal_berries",
+          "true_time": "2026-10-05T12:22:21.589148Z",
+          "true_macros": {
+            "carbs_g": 47.19,
+            "protein_g": 7.87,
+            "fat_g": 5.24,
+            "fiber_g": 6.99
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m018",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-05T17:22:00.242570Z",
+          "true_macros": {
+            "carbs_g": 79.12,
+            "protein_g": 15.44,
+            "fat_g": 9.65,
+            "fiber_g": 5.79
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m019",
+          "kind": "dinner",
+          "template": "pizza_slices",
+          "true_time": "2026-10-05T23:25:49.171322Z",
+          "true_macros": {
+            "carbs_g": 79.87,
+            "protein_g": 28.06,
+            "fat_g": 30.22,
+            "fiber_g": 4.32
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m020",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-06T13:01:25.397350Z",
+          "true_macros": {
+            "carbs_g": 28.75,
+            "protein_g": 19.17,
+            "fat_g": 15.33,
+            "fiber_g": 3.83
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m021",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-06T17:07:53.142072Z",
+          "true_macros": {
+            "carbs_g": 102.99,
+            "protein_g": 20.1,
+            "fat_g": 12.56,
+            "fiber_g": 7.54
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m022",
+          "kind": "snack",
+          "template": "crackers_cheese",
+          "true_time": "2026-10-06T20:08:32.601472Z",
+          "true_macros": {
+            "carbs_g": 15.56,
+            "protein_g": 6.05,
+            "fat_g": 7.78,
+            "fiber_g": 0.86
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m023",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-07T00:05:19.813830Z",
+          "true_macros": {
+            "carbs_g": 58.2,
+            "protein_g": 38.05,
+            "fat_g": 22.38,
+            "fiber_g": 6.72
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m024",
+          "kind": "breakfast",
+          "template": "bagel_cream_cheese",
+          "true_time": "2026-10-07T12:35:47.830300Z",
+          "true_macros": {
+            "carbs_g": 47.21,
+            "protein_g": 9.77,
+            "fat_g": 9.77,
+            "fiber_g": 1.63
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m025",
+          "kind": "lunch",
+          "template": "chicken_salad",
+          "true_time": "2026-10-07T17:20:08.750671Z",
+          "true_macros": {
+            "carbs_g": 17.08,
+            "protein_g": 32.27,
+            "fat_g": 17.08,
+            "fiber_g": 6.64
+          }
+        },
+        {
+          "meal_id": "synthetic_p002_m026",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-07T23:06:26.272454Z",
+          "true_macros": {
+            "carbs_g": 43.45,
+            "protein_g": 28.41,
+            "fat_g": 16.71,
+            "fiber_g": 5.01
+          }
+        }
+      ]
+    },
+    "synthetic_p003": {
+      "params": {
+        "participant_id": "synthetic_p003",
+        "display_name": "Participant 003",
+        "timezone": "America/Los_Angeles",
+        "baseline_mg_dl": 97,
+        "carb_sensitivity": 0.6,
+        "time_to_peak_min": 35,
+        "circadian_amp": 0.0,
+        "dawn_rise_mg_dl": 4,
+        "activity_sensitivity": 3.0,
+        "resting_hr": 56,
+        "hr_activity_gain": 5.5,
+        "drift_sd": 0.9,
+        "sensor_noise_sd": 2.0,
+        "cgm_offset_min": 4,
+        "has_heart_rate": true,
+        "has_activity": true,
+        "snack_rate": 0.5,
+        "overlap_rate": 0.2,
+        "walks_per_day": [
+          2,
+          3
+        ],
+        "post_meal_walk_rate": 0.5,
+        "medications": [],
+        "carbs_only_snack_logging": false,
+        "gap_blocks": [
+          [
+            5,
+            "09:40",
+            180
+          ]
+        ]
+      },
+      "meals": [
+        {
+          "meal_id": "synthetic_p003_m001",
+          "kind": "breakfast",
+          "template": "oatmeal_berries",
+          "true_time": "2026-10-01T14:02:57.352960Z",
+          "true_macros": {
+            "carbs_g": 61.79,
+            "protein_g": 10.3,
+            "fat_g": 6.87,
+            "fiber_g": 9.15
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m002",
+          "kind": "lunch",
+          "template": "chicken_salad",
+          "true_time": "2026-10-01T19:44:28.491056Z",
+          "true_macros": {
+            "carbs_g": 21.19,
+            "protein_g": 40.02,
+            "fat_g": 21.19,
+            "fiber_g": 8.24
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m003",
+          "kind": "snack",
+          "template": "apple",
+          "true_time": "2026-10-01T22:41:38.493213Z",
+          "true_macros": {
+            "carbs_g": 20.25,
+            "protein_g": 0.0,
+            "fat_g": 0.0,
+            "fiber_g": 3.24
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m004",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-02T01:17:02.108491Z",
+          "true_macros": {
+            "carbs_g": 49.27,
+            "protein_g": 51.73,
+            "fat_g": 32.02,
+            "fiber_g": 6.16
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m005",
+          "kind": "breakfast",
+          "template": "bagel_cream_cheese",
+          "true_time": "2026-10-02T14:53:33.111560Z",
+          "true_macros": {
+            "carbs_g": 71.86,
+            "protein_g": 14.87,
+            "fat_g": 14.87,
+            "fiber_g": 2.48
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m006",
+          "kind": "lunch",
+          "template": "burrito",
+          "true_time": "2026-10-02T20:10:59.340927Z",
+          "true_macros": {
+            "carbs_g": 82.65,
+            "protein_g": 30.7,
+            "fat_g": 25.97,
+            "fiber_g": 10.63
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m007",
+          "kind": "snack",
+          "template": "cookie",
+          "true_time": "2026-10-02T23:19:09.816061Z",
+          "true_macros": {
+            "carbs_g": 20.72,
+            "protein_g": 1.88,
+            "fat_g": 7.54,
+            "fiber_g": 0.94
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m008",
+          "kind": "dinner",
+          "template": "stir_fry_noodles",
+          "true_time": "2026-10-03T01:36:12.166615Z",
+          "true_macros": {
+            "carbs_g": 72.11,
+            "protein_g": 19.83,
+            "fat_g": 14.42,
+            "fiber_g": 4.51
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m009",
+          "kind": "breakfast",
+          "template": "smoothie",
+          "true_time": "2026-10-03T14:15:11.533168Z",
+          "true_macros": {
+            "carbs_g": 67.16,
+            "protein_g": 8.67,
+            "fat_g": 4.33,
+            "fiber_g": 6.5
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m010",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-03T19:24:35.999107Z",
+          "true_macros": {
+            "carbs_g": 48.76,
+            "protein_g": 29.68,
+            "fat_g": 14.84,
+            "fiber_g": 5.3
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m011",
+          "kind": "snack",
+          "template": "apple",
+          "true_time": "2026-10-03T23:30:03.152347Z",
+          "true_macros": {
+            "carbs_g": 31.73,
+            "protein_g": 0.0,
+            "fat_g": 0.0,
+            "fiber_g": 5.08
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m012",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-04T01:18:33.296421Z",
+          "true_macros": {
+            "carbs_g": 49.82,
+            "protein_g": 52.31,
+            "fat_g": 32.38,
+            "fiber_g": 6.23
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m013",
+          "kind": "breakfast",
+          "template": "bagel_cream_cheese",
+          "true_time": "2026-10-04T14:40:45.521940Z",
+          "true_macros": {
+            "carbs_g": 55.81,
+            "protein_g": 11.55,
+            "fat_g": 11.55,
+            "fiber_g": 1.92
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m014",
+          "kind": "lunch",
+          "template": "chicken_salad",
+          "true_time": "2026-10-04T20:25:20.130248Z",
+          "true_macros": {
+            "carbs_g": 20.46,
+            "protein_g": 38.65,
+            "fat_g": 20.46,
+            "fiber_g": 7.96
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m015",
+          "kind": "snack",
+          "template": "apple",
+          "true_time": "2026-10-04T21:37:23.336213Z",
+          "true_macros": {
+            "carbs_g": 25,
+            "protein_g": 0,
+            "fat_g": 0,
+            "fiber_g": 4
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m016",
+          "kind": "snack",
+          "template": "cookie",
+          "true_time": "2026-10-04T22:41:06.705088Z",
+          "true_macros": {
+            "carbs_g": 23.81,
+            "protein_g": 2.16,
+            "fat_g": 8.66,
+            "fiber_g": 1.08
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m017",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-05T01:14:04.839370Z",
+          "true_macros": {
+            "carbs_g": 50.46,
+            "protein_g": 32.99,
+            "fat_g": 19.41,
+            "fiber_g": 5.82
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m018",
+          "kind": "breakfast",
+          "template": "yogurt_granola",
+          "true_time": "2026-10-05T14:19:17.418555Z",
+          "true_macros": {
+            "carbs_g": 60.99,
+            "protein_g": 19.06,
+            "fat_g": 11.44,
+            "fiber_g": 5.08
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m019",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-05T19:58:47.794654Z",
+          "true_macros": {
+            "carbs_g": 62.27,
+            "protein_g": 12.15,
+            "fat_g": 7.59,
+            "fiber_g": 4.56
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m020",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-06T01:00:38.512875Z",
+          "true_macros": {
+            "carbs_g": 44.25,
+            "protein_g": 46.46,
+            "fat_g": 28.76,
+            "fiber_g": 5.53
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m021",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-06T14:41:15.266993Z",
+          "true_macros": {
+            "carbs_g": 28.58,
+            "protein_g": 19.05,
+            "fat_g": 15.24,
+            "fiber_g": 3.81
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m022",
+          "kind": "lunch",
+          "template": "chicken_salad",
+          "true_time": "2026-10-06T19:02:00.938590Z",
+          "true_macros": {
+            "carbs_g": 14.88,
+            "protein_g": 28.11,
+            "fat_g": 14.88,
+            "fiber_g": 5.79
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m023",
+          "kind": "snack",
+          "template": "crackers_cheese",
+          "true_time": "2026-10-06T23:06:02.145781Z",
+          "true_macros": {
+            "carbs_g": 22.72,
+            "protein_g": 8.83,
+            "fat_g": 11.36,
+            "fiber_g": 1.26
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m024",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-07T02:12:42.887149Z",
+          "true_macros": {
+            "carbs_g": 52.44,
+            "protein_g": 34.29,
+            "fat_g": 20.17,
+            "fiber_g": 6.05
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m025",
+          "kind": "breakfast",
+          "template": "yogurt_granola",
+          "true_time": "2026-10-07T14:39:22.149706Z",
+          "true_macros": {
+            "carbs_g": 56.06,
+            "protein_g": 17.52,
+            "fat_g": 10.51,
+            "fiber_g": 4.67
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m026",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-07T19:09:00.018177Z",
+          "true_macros": {
+            "carbs_g": 82.13,
+            "protein_g": 16.02,
+            "fat_g": 10.02,
+            "fiber_g": 6.01
+          }
+        },
+        {
+          "meal_id": "synthetic_p003_m027",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-08T01:52:39.959389Z",
+          "true_macros": {
+            "carbs_g": 58.12,
+            "protein_g": 38.0,
+            "fat_g": 22.36,
+            "fiber_g": 6.71
+          }
+        }
+      ]
+    },
+    "synthetic_p004": {
+      "params": {
+        "participant_id": "synthetic_p004",
+        "display_name": "Participant 004",
+        "timezone": "America/New_York",
+        "baseline_mg_dl": 121,
+        "carb_sensitivity": 1.55,
+        "time_to_peak_min": 75,
+        "circadian_amp": 0.3,
+        "dawn_rise_mg_dl": 14,
+        "activity_sensitivity": 1.0,
+        "resting_hr": 76,
+        "hr_activity_gain": 4.0,
+        "drift_sd": 1.5,
+        "sensor_noise_sd": 3.5,
+        "cgm_offset_min": 1,
+        "has_heart_rate": true,
+        "has_activity": true,
+        "snack_rate": 0.5,
+        "overlap_rate": 0.2,
+        "walks_per_day": [
+          0,
+          1
+        ],
+        "post_meal_walk_rate": 0.1,
+        "medications": [
+          [
+            "basal_insulin",
+            14.0,
+            "units",
+            "22:00",
+            0.0
+          ]
+        ],
+        "carbs_only_snack_logging": false,
+        "gap_blocks": [
+          [
+            1,
+            "11:00",
+            300
+          ]
+        ]
+      },
+      "meals": [
+        {
+          "meal_id": "synthetic_p004_m001",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-01T11:40:11.752056Z",
+          "true_macros": {
+            "carbs_g": 30.82,
+            "protein_g": 20.55,
+            "fat_g": 16.44,
+            "fiber_g": 4.11
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m002",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-01T17:09:32.818916Z",
+          "true_macros": {
+            "carbs_g": 92.04,
+            "protein_g": 17.96,
+            "fat_g": 11.22,
+            "fiber_g": 6.73
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m003",
+          "kind": "snack",
+          "template": "banana",
+          "true_time": "2026-10-01T18:27:45.572647Z",
+          "true_macros": {
+            "carbs_g": 27,
+            "protein_g": 1,
+            "fat_g": 0,
+            "fiber_g": 3
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m004",
+          "kind": "dinner",
+          "template": "pizza_slices",
+          "true_time": "2026-10-01T22:04:32.586296Z",
+          "true_macros": {
+            "carbs_g": 61.97,
+            "protein_g": 21.77,
+            "fat_g": 23.45,
+            "fiber_g": 3.35
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m005",
+          "kind": "breakfast",
+          "template": "yogurt_granola",
+          "true_time": "2026-10-02T11:55:12.552339Z",
+          "true_macros": {
+            "carbs_g": 42.77,
+            "protein_g": 13.37,
+            "fat_g": 8.02,
+            "fiber_g": 3.56
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m006",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-02T16:06:59.663925Z",
+          "true_macros": {
+            "carbs_g": 75.69,
+            "protein_g": 14.77,
+            "fat_g": 9.23,
+            "fiber_g": 5.54
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m007",
+          "kind": "snack",
+          "template": "banana",
+          "true_time": "2026-10-02T19:12:38.759089Z",
+          "true_macros": {
+            "carbs_g": 34.56,
+            "protein_g": 1.28,
+            "fat_g": 0.0,
+            "fiber_g": 3.84
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m008",
+          "kind": "dinner",
+          "template": "stir_fry_noodles",
+          "true_time": "2026-10-02T23:48:10.752768Z",
+          "true_macros": {
+            "carbs_g": 86.82,
+            "protein_g": 23.88,
+            "fat_g": 17.36,
+            "fiber_g": 5.43
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m009",
+          "kind": "breakfast",
+          "template": "bagel_cream_cheese",
+          "true_time": "2026-10-03T12:15:56.812726Z",
+          "true_macros": {
+            "carbs_g": 67.94,
+            "protein_g": 14.06,
+            "fat_g": 14.06,
+            "fiber_g": 2.34
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m010",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-03T16:01:08.334255Z",
+          "true_macros": {
+            "carbs_g": 43.75,
+            "protein_g": 26.63,
+            "fat_g": 13.31,
+            "fiber_g": 4.75
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m011",
+          "kind": "snack",
+          "template": "apple",
+          "true_time": "2026-10-03T19:43:29.010387Z",
+          "true_macros": {
+            "carbs_g": 21.5,
+            "protein_g": 0.0,
+            "fat_g": 0.0,
+            "fiber_g": 3.44
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m012",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-03T23:21:30.499042Z",
+          "true_macros": {
+            "carbs_g": 41.63,
+            "protein_g": 43.72,
+            "fat_g": 27.06,
+            "fiber_g": 5.2
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m013",
+          "kind": "breakfast",
+          "template": "yogurt_granola",
+          "true_time": "2026-10-04T12:13:03.853834Z",
+          "true_macros": {
+            "carbs_g": 53.63,
+            "protein_g": 16.76,
+            "fat_g": 10.06,
+            "fiber_g": 4.47
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m014",
+          "kind": "lunch",
+          "template": "burrito",
+          "true_time": "2026-10-04T16:34:10.803853Z",
+          "true_macros": {
+            "carbs_g": 53.69,
+            "protein_g": 19.94,
+            "fat_g": 16.87,
+            "fiber_g": 6.9
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m015",
+          "kind": "snack",
+          "template": "crackers_cheese",
+          "true_time": "2026-10-04T19:31:49.371223Z",
+          "true_macros": {
+            "carbs_g": 18.03,
+            "protein_g": 7.01,
+            "fat_g": 9.01,
+            "fiber_g": 1.0
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m016",
+          "kind": "dinner",
+          "template": "lentil_curry_rice",
+          "true_time": "2026-10-04T22:27:09.430659Z",
+          "true_macros": {
+            "carbs_g": 86.06,
+            "protein_g": 24.91,
+            "fat_g": 13.59,
+            "fiber_g": 15.85
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m017",
+          "kind": "breakfast",
+          "template": "bagel_cream_cheese",
+          "true_time": "2026-10-05T12:03:54.756181Z",
+          "true_macros": {
+            "carbs_g": 65.27,
+            "protein_g": 13.5,
+            "fat_g": 13.5,
+            "fiber_g": 2.25
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m018",
+          "kind": "lunch",
+          "template": "burrito",
+          "true_time": "2026-10-05T17:04:29.314759Z",
+          "true_macros": {
+            "carbs_g": 71.68,
+            "protein_g": 26.62,
+            "fat_g": 22.53,
+            "fiber_g": 9.22
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m019",
+          "kind": "snack",
+          "template": "chips",
+          "true_time": "2026-10-05T19:20:42.795511Z",
+          "true_macros": {
+            "carbs_g": 20.05,
+            "protein_g": 2.51,
+            "fat_g": 12.53,
+            "fiber_g": 1.25
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m020",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-05T23:28:59.018154Z",
+          "true_macros": {
+            "carbs_g": 56.15,
+            "protein_g": 36.71,
+            "fat_g": 21.6,
+            "fiber_g": 6.48
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m021",
+          "kind": "breakfast",
+          "template": "bagel_cream_cheese",
+          "true_time": "2026-10-06T12:16:02.947919Z",
+          "true_macros": {
+            "carbs_g": 50.31,
+            "protein_g": 10.41,
+            "fat_g": 10.41,
+            "fiber_g": 1.73
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m022",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-06T16:45:49.295314Z",
+          "true_macros": {
+            "carbs_g": 43.16,
+            "protein_g": 26.27,
+            "fat_g": 13.13,
+            "fiber_g": 4.69
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m023",
+          "kind": "snack",
+          "template": "crackers_cheese",
+          "true_time": "2026-10-06T20:07:58.195250Z",
+          "true_macros": {
+            "carbs_g": 21.69,
+            "protein_g": 8.43,
+            "fat_g": 10.84,
+            "fiber_g": 1.2
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m024",
+          "kind": "dinner",
+          "template": "pizza_slices",
+          "true_time": "2026-10-06T22:27:18.033985Z",
+          "true_macros": {
+            "carbs_g": 56.91,
+            "protein_g": 20.0,
+            "fat_g": 21.54,
+            "fiber_g": 3.08
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m025",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-07T11:58:13.960284Z",
+          "true_macros": {
+            "carbs_g": 24.04,
+            "protein_g": 16.03,
+            "fat_g": 12.82,
+            "fiber_g": 3.21
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m026",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-07T17:21:34.253175Z",
+          "true_macros": {
+            "carbs_g": 59.38,
+            "protein_g": 36.14,
+            "fat_g": 18.07,
+            "fiber_g": 6.45
+          }
+        },
+        {
+          "meal_id": "synthetic_p004_m027",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-07T23:11:34.374791Z",
+          "true_macros": {
+            "carbs_g": 47.96,
+            "protein_g": 31.36,
+            "fat_g": 18.45,
+            "fiber_g": 5.53
+          }
+        }
+      ]
+    },
+    "synthetic_p005": {
+      "params": {
+        "participant_id": "synthetic_p005",
+        "display_name": "Participant 005",
+        "timezone": "America/Denver",
+        "baseline_mg_dl": 88,
+        "carb_sensitivity": 1.0,
+        "time_to_peak_min": 50,
+        "circadian_amp": 0.35,
+        "dawn_rise_mg_dl": 5,
+        "activity_sensitivity": 2.0,
+        "resting_hr": 66,
+        "hr_activity_gain": 6.0,
+        "drift_sd": 1.0,
+        "sensor_noise_sd": 2.5,
+        "cgm_offset_min": 3,
+        "has_heart_rate": true,
+        "has_activity": true,
+        "snack_rate": 0.8,
+        "overlap_rate": 0.35,
+        "walks_per_day": [
+          1,
+          2
+        ],
+        "post_meal_walk_rate": 0.25,
+        "medications": [],
+        "carbs_only_snack_logging": true,
+        "gap_blocks": [
+          [
+            3,
+            "20:15",
+            40
+          ]
+        ]
+      },
+      "meals": [
+        {
+          "meal_id": "synthetic_p005_m001",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-01T14:00:57.502959Z",
+          "true_macros": {
+            "carbs_g": 22.8,
+            "protein_g": 15.2,
+            "fat_g": 12.16,
+            "fiber_g": 3.04
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m002",
+          "kind": "lunch",
+          "template": "rice_bowl",
+          "true_time": "2026-10-01T18:58:36.724531Z",
+          "true_macros": {
+            "carbs_g": 93.58,
+            "protein_g": 28.79,
+            "fat_g": 14.4,
+            "fiber_g": 4.8
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m003",
+          "kind": "dinner",
+          "template": "pizza_slices",
+          "true_time": "2026-10-02T01:17:04.402763Z",
+          "true_macros": {
+            "carbs_g": 93.19,
+            "protein_g": 32.74,
+            "fat_g": 35.26,
+            "fiber_g": 5.04
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m004",
+          "kind": "breakfast",
+          "template": "oatmeal_berries",
+          "true_time": "2026-10-02T13:34:20.325841Z",
+          "true_macros": {
+            "carbs_g": 51.3,
+            "protein_g": 8.55,
+            "fat_g": 5.7,
+            "fiber_g": 7.6
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m005",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-02T18:30:59.794121Z",
+          "true_macros": {
+            "carbs_g": 97.17,
+            "protein_g": 18.96,
+            "fat_g": 11.85,
+            "fiber_g": 7.11
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m006",
+          "kind": "snack",
+          "template": "apple",
+          "true_time": "2026-10-02T22:20:50.575800Z",
+          "true_macros": {
+            "carbs_g": 24.59,
+            "protein_g": 0.0,
+            "fat_g": 0.0,
+            "fiber_g": 3.93
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m007",
+          "kind": "dinner",
+          "template": "lentil_curry_rice",
+          "true_time": "2026-10-03T00:02:11.165334Z",
+          "true_macros": {
+            "carbs_g": 60.96,
+            "protein_g": 17.65,
+            "fat_g": 9.62,
+            "fiber_g": 11.23
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m008",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-03T13:51:13.969570Z",
+          "true_macros": {
+            "carbs_g": 33.09,
+            "protein_g": 22.06,
+            "fat_g": 17.65,
+            "fiber_g": 4.41
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m009",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-03T18:55:18.641508Z",
+          "true_macros": {
+            "carbs_g": 50.91,
+            "protein_g": 30.99,
+            "fat_g": 15.5,
+            "fiber_g": 5.53
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m010",
+          "kind": "snack",
+          "template": "granola_bar",
+          "true_time": "2026-10-03T19:58:32.507559Z",
+          "true_macros": {
+            "carbs_g": 28,
+            "protein_g": 4,
+            "fat_g": 7,
+            "fiber_g": 3
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m011",
+          "kind": "snack",
+          "template": "granola_bar",
+          "true_time": "2026-10-03T22:28:46.663976Z",
+          "true_macros": {
+            "carbs_g": 33.75,
+            "protein_g": 4.82,
+            "fat_g": 8.44,
+            "fiber_g": 3.62
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m012",
+          "kind": "dinner",
+          "template": "stir_fry_noodles",
+          "true_time": "2026-10-04T01:09:15.518588Z",
+          "true_macros": {
+            "carbs_g": 100.72,
+            "protein_g": 27.7,
+            "fat_g": 20.14,
+            "fiber_g": 6.3
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m013",
+          "kind": "breakfast",
+          "template": "oatmeal_berries",
+          "true_time": "2026-10-04T13:55:16.195091Z",
+          "true_macros": {
+            "carbs_g": 61.05,
+            "protein_g": 10.17,
+            "fat_g": 6.78,
+            "fiber_g": 9.04
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m014",
+          "kind": "lunch",
+          "template": "burrito",
+          "true_time": "2026-10-04T18:12:31.890401Z",
+          "true_macros": {
+            "carbs_g": 66.53,
+            "protein_g": 24.71,
+            "fat_g": 20.91,
+            "fiber_g": 8.55
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m015",
+          "kind": "snack",
+          "template": "banana",
+          "true_time": "2026-10-04T19:10:14.175446Z",
+          "true_macros": {
+            "carbs_g": 27,
+            "protein_g": 1,
+            "fat_g": 0,
+            "fiber_g": 3
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m016",
+          "kind": "snack",
+          "template": "banana",
+          "true_time": "2026-10-04T21:22:46.026236Z",
+          "true_macros": {
+            "carbs_g": 21.83,
+            "protein_g": 0.81,
+            "fat_g": 0.0,
+            "fiber_g": 2.43
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m017",
+          "kind": "dinner",
+          "template": "lentil_curry_rice",
+          "true_time": "2026-10-05T00:48:42.026479Z",
+          "true_macros": {
+            "carbs_g": 66.52,
+            "protein_g": 19.26,
+            "fat_g": 10.5,
+            "fiber_g": 12.25
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m018",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-05T13:34:35.022326Z",
+          "true_macros": {
+            "carbs_g": 32.4,
+            "protein_g": 21.6,
+            "fat_g": 17.28,
+            "fiber_g": 4.32
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m019",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-05T19:14:40.876698Z",
+          "true_macros": {
+            "carbs_g": 71.67,
+            "protein_g": 13.98,
+            "fat_g": 8.74,
+            "fiber_g": 5.24
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m020",
+          "kind": "snack",
+          "template": "crackers_cheese",
+          "true_time": "2026-10-05T21:26:11.751431Z",
+          "true_macros": {
+            "carbs_g": 23.33,
+            "protein_g": 9.07,
+            "fat_g": 11.67,
+            "fiber_g": 1.3
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m021",
+          "kind": "dinner",
+          "template": "pizza_slices",
+          "true_time": "2026-10-06T00:42:36.947514Z",
+          "true_macros": {
+            "carbs_g": 70.3,
+            "protein_g": 24.7,
+            "fat_g": 26.6,
+            "fiber_g": 3.8
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m022",
+          "kind": "breakfast",
+          "template": "bagel_cream_cheese",
+          "true_time": "2026-10-06T14:12:00.767622Z",
+          "true_macros": {
+            "carbs_g": 48.28,
+            "protein_g": 9.99,
+            "fat_g": 9.99,
+            "fiber_g": 1.66
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m023",
+          "kind": "lunch",
+          "template": "chicken_salad",
+          "true_time": "2026-10-06T19:13:09.570148Z",
+          "true_macros": {
+            "carbs_g": 16.69,
+            "protein_g": 31.52,
+            "fat_g": 16.69,
+            "fiber_g": 6.49
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m024",
+          "kind": "snack",
+          "template": "banana",
+          "true_time": "2026-10-06T22:16:00.575625Z",
+          "true_macros": {
+            "carbs_g": 23.53,
+            "protein_g": 0.87,
+            "fat_g": 0.0,
+            "fiber_g": 2.61
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m025",
+          "kind": "dinner",
+          "template": "stir_fry_noodles",
+          "true_time": "2026-10-07T01:23:32.597407Z",
+          "true_macros": {
+            "carbs_g": 89.72,
+            "protein_g": 24.67,
+            "fat_g": 17.94,
+            "fiber_g": 5.61
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m026",
+          "kind": "breakfast",
+          "template": "yogurt_granola",
+          "true_time": "2026-10-07T13:17:24.440925Z",
+          "true_macros": {
+            "carbs_g": 37.6,
+            "protein_g": 11.75,
+            "fat_g": 7.05,
+            "fiber_g": 3.13
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m027",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-07T19:01:47.548628Z",
+          "true_macros": {
+            "carbs_g": 53.18,
+            "protein_g": 32.37,
+            "fat_g": 16.18,
+            "fiber_g": 5.78
+          }
+        },
+        {
+          "meal_id": "synthetic_p005_m028",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-08T00:41:15.301700Z",
+          "true_macros": {
+            "carbs_g": 36.87,
+            "protein_g": 38.72,
+            "fat_g": 23.97,
+            "fiber_g": 4.61
+          }
+        }
+      ]
+    },
+    "synthetic_p006": {
+      "params": {
+        "participant_id": "synthetic_p006",
+        "display_name": "Participant 006",
+        "timezone": "America/Phoenix",
+        "baseline_mg_dl": 110,
+        "carb_sensitivity": 1.1,
+        "time_to_peak_min": 55,
+        "circadian_amp": 0.15,
+        "dawn_rise_mg_dl": 8,
+        "activity_sensitivity": 0.0,
+        "resting_hr": 72,
+        "hr_activity_gain": 0.0,
+        "drift_sd": 1.3,
+        "sensor_noise_sd": 3.0,
+        "cgm_offset_min": 0,
+        "has_heart_rate": false,
+        "has_activity": false,
+        "snack_rate": 0.5,
+        "overlap_rate": 0.2,
+        "walks_per_day": [
+          0,
+          0
+        ],
+        "post_meal_walk_rate": 0.0,
+        "medications": [],
+        "carbs_only_snack_logging": false,
+        "gap_blocks": [
+          [
+            6,
+            "01:00",
+            70
+          ]
+        ]
+      },
+      "meals": [
+        {
+          "meal_id": "synthetic_p006_m001",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-01T15:07:59.636926Z",
+          "true_macros": {
+            "carbs_g": 25.89,
+            "protein_g": 17.26,
+            "fat_g": 13.81,
+            "fiber_g": 3.45
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m002",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-01T19:46:57.435345Z",
+          "true_macros": {
+            "carbs_g": 77.2,
+            "protein_g": 15.06,
+            "fat_g": 9.41,
+            "fiber_g": 5.65
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m003",
+          "kind": "dinner",
+          "template": "lentil_curry_rice",
+          "true_time": "2026-10-02T02:27:38.438468Z",
+          "true_macros": {
+            "carbs_g": 92.66,
+            "protein_g": 26.82,
+            "fat_g": 14.63,
+            "fiber_g": 17.07
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m004",
+          "kind": "breakfast",
+          "template": "smoothie",
+          "true_time": "2026-10-02T15:00:13.072625Z",
+          "true_macros": {
+            "carbs_g": 50.48,
+            "protein_g": 6.51,
+            "fat_g": 3.26,
+            "fiber_g": 4.89
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m005",
+          "kind": "lunch",
+          "template": "turkey_sandwich",
+          "true_time": "2026-10-02T19:11:43.101277Z",
+          "true_macros": {
+            "carbs_g": 47.03,
+            "protein_g": 28.63,
+            "fat_g": 14.31,
+            "fiber_g": 5.11
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m006",
+          "kind": "snack",
+          "template": "cookie",
+          "true_time": "2026-10-02T20:18:22.222484Z",
+          "true_macros": {
+            "carbs_g": 22,
+            "protein_g": 2,
+            "fat_g": 8,
+            "fiber_g": 1
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m007",
+          "kind": "dinner",
+          "template": "lentil_curry_rice",
+          "true_time": "2026-10-03T01:45:55.200662Z",
+          "true_macros": {
+            "carbs_g": 95.27,
+            "protein_g": 27.58,
+            "fat_g": 15.04,
+            "fiber_g": 17.55
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m008",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-03T14:42:41.735793Z",
+          "true_macros": {
+            "carbs_g": 32.57,
+            "protein_g": 21.71,
+            "fat_g": 17.37,
+            "fiber_g": 4.34
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m009",
+          "kind": "lunch",
+          "template": "rice_bowl",
+          "true_time": "2026-10-03T19:12:48.988857Z",
+          "true_macros": {
+            "carbs_g": 67.81,
+            "protein_g": 20.86,
+            "fat_g": 10.43,
+            "fiber_g": 3.48
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m010",
+          "kind": "snack",
+          "template": "chips",
+          "true_time": "2026-10-03T23:21:36.058402Z",
+          "true_macros": {
+            "carbs_g": 19.43,
+            "protein_g": 2.43,
+            "fat_g": 12.14,
+            "fiber_g": 1.21
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m011",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-04T01:52:09.700918Z",
+          "true_macros": {
+            "carbs_g": 43.02,
+            "protein_g": 28.13,
+            "fat_g": 16.55,
+            "fiber_g": 4.96
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m012",
+          "kind": "breakfast",
+          "template": "eggs_toast",
+          "true_time": "2026-10-04T14:17:30.778711Z",
+          "true_macros": {
+            "carbs_g": 34.68,
+            "protein_g": 23.12,
+            "fat_g": 18.5,
+            "fiber_g": 4.62
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m013",
+          "kind": "lunch",
+          "template": "burrito",
+          "true_time": "2026-10-04T19:55:18.101243Z",
+          "true_macros": {
+            "carbs_g": 79.95,
+            "protein_g": 29.7,
+            "fat_g": 25.13,
+            "fiber_g": 10.28
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m014",
+          "kind": "snack",
+          "template": "granola_bar",
+          "true_time": "2026-10-04T23:31:51.543279Z",
+          "true_macros": {
+            "carbs_g": 34.89,
+            "protein_g": 4.98,
+            "fat_g": 8.72,
+            "fiber_g": 3.74
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m015",
+          "kind": "dinner",
+          "template": "steak_potato",
+          "true_time": "2026-10-05T01:34:25.474867Z",
+          "true_macros": {
+            "carbs_g": 32.2,
+            "protein_g": 33.8,
+            "fat_g": 20.93,
+            "fiber_g": 4.02
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m016",
+          "kind": "breakfast",
+          "template": "oatmeal_berries",
+          "true_time": "2026-10-05T14:16:16.353052Z",
+          "true_macros": {
+            "carbs_g": 47.84,
+            "protein_g": 7.97,
+            "fat_g": 5.32,
+            "fiber_g": 7.09
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m017",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-05T20:04:01.833336Z",
+          "true_macros": {
+            "carbs_g": 79.09,
+            "protein_g": 15.43,
+            "fat_g": 9.64,
+            "fiber_g": 5.79
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m018",
+          "kind": "snack",
+          "template": "crackers_cheese",
+          "true_time": "2026-10-05T21:22:33.570167Z",
+          "true_macros": {
+            "carbs_g": 18,
+            "protein_g": 7,
+            "fat_g": 9,
+            "fiber_g": 1
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m019",
+          "kind": "dinner",
+          "template": "stir_fry_noodles",
+          "true_time": "2026-10-06T01:26:26.646583Z",
+          "true_macros": {
+            "carbs_g": 96.43,
+            "protein_g": 26.52,
+            "fat_g": 19.29,
+            "fiber_g": 6.03
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m020",
+          "kind": "breakfast",
+          "template": "oatmeal_berries",
+          "true_time": "2026-10-06T15:05:38.097093Z",
+          "true_macros": {
+            "carbs_g": 65.3,
+            "protein_g": 10.88,
+            "fat_g": 7.26,
+            "fiber_g": 9.67
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m021",
+          "kind": "lunch",
+          "template": "chicken_salad",
+          "true_time": "2026-10-06T20:07:12.306436Z",
+          "true_macros": {
+            "carbs_g": 15.81,
+            "protein_g": 29.86,
+            "fat_g": 15.81,
+            "fiber_g": 6.15
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m022",
+          "kind": "snack",
+          "template": "granola_bar",
+          "true_time": "2026-10-06T22:25:07.471468Z",
+          "true_macros": {
+            "carbs_g": 23.22,
+            "protein_g": 3.32,
+            "fat_g": 5.8,
+            "fiber_g": 2.49
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m023",
+          "kind": "dinner",
+          "template": "pizza_slices",
+          "true_time": "2026-10-07T02:38:19.153261Z",
+          "true_macros": {
+            "carbs_g": 67.59,
+            "protein_g": 23.75,
+            "fat_g": 25.58,
+            "fiber_g": 3.65
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m024",
+          "kind": "breakfast",
+          "template": "yogurt_granola",
+          "true_time": "2026-10-07T14:44:39.949675Z",
+          "true_macros": {
+            "carbs_g": 38.09,
+            "protein_g": 11.9,
+            "fat_g": 7.14,
+            "fiber_g": 3.17
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m025",
+          "kind": "lunch",
+          "template": "pasta_tomato",
+          "true_time": "2026-10-07T19:15:01.803995Z",
+          "true_macros": {
+            "carbs_g": 90.09,
+            "protein_g": 17.58,
+            "fat_g": 10.99,
+            "fiber_g": 6.59
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m026",
+          "kind": "snack",
+          "template": "crackers_cheese",
+          "true_time": "2026-10-07T22:02:28.588696Z",
+          "true_macros": {
+            "carbs_g": 18.09,
+            "protein_g": 7.03,
+            "fat_g": 9.04,
+            "fiber_g": 1.0
+          }
+        },
+        {
+          "meal_id": "synthetic_p006_m027",
+          "kind": "dinner",
+          "template": "salmon_rice_veg",
+          "true_time": "2026-10-08T02:58:08.678148Z",
+          "true_macros": {
+            "carbs_g": 53.37,
+            "protein_g": 34.89,
+            "fat_g": 20.53,
+            "fiber_g": 6.16
+          }
+        }
+      ]
+    }
+  }
+}
