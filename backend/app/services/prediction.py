@@ -286,6 +286,15 @@ class PredictionService:
         # Double it, floored at 24 h, so a sensor gap at the window edge cannot
         # silently cost us the baseline reading.
         lookback = dt.timedelta(minutes=max(needed_minutes * 2.0, 24 * 60.0))
+
+        # fs-1.2: the historical-response fingerprint summarizes this participant's
+        # OWN earlier meals, so it needs a window long enough to contain several of
+        # them. 8 days matches the Day-8 prior-context rule the model is evaluated
+        # under. Measured cost of widening 24 h -> 8 days on CGMacros: 34 ms -> 259 ms
+        # for the fetch, which is still far cheaper than the 663 ms full-history read
+        # this replaced.
+        if any(name.startswith("r_hist_") for name in artifact.feature_names):
+            lookback = max(lookback, dt.timedelta(days=8))
         return as_of_fetch(participant_id, meal_timestamp, lookback)
 
     def compare(

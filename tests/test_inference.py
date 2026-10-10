@@ -105,8 +105,16 @@ class TestContractConformance:
         assert metrics["peak_delta_mg_dl"] == pytest.approx(peak - baseline, abs=0.05)
         expected_ttp = next(m for m, v in zip(minutes, values) if v == peak)
         assert metrics["time_to_peak_minutes"] == expected_ttp
+        # Tolerance is DERIVED, not guessed. The response serializes points to one
+        # decimal, so each of the 25 values carries up to 0.05 mg/dL of rounding, while
+        # the response's own iAUC is integrated from unrounded values. Trapezoidal
+        # integration over 24 five-minute intervals amplifies that:
+        #   max error = 5 min * 25 points * 0.05 mg/dL = 6.25 mg/dL*min.
+        # The previous hardcoded abs=1.0 was always too tight and only started failing
+        # once fs-1.2 predicted larger excursions.
+        rounding_bound = 5.0 * len(minutes) * 0.05
         assert metrics["incremental_auc_mg_dl_min"] == pytest.approx(
-            incremental_auc(minutes, values, baseline), abs=1.0
+            incremental_auc(minutes, values, baseline), abs=rounding_bound
         )
 
     def test_iauc_is_never_negative(self, artifact, repository):

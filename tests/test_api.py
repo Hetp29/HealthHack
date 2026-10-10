@@ -521,9 +521,14 @@ class TestModelEndpoints:
         payload = client.get("/api/model/info").json()
         assert payload["model_version"] == "v0.1.0"
         assert payload["data_source"] == "synthetic_dev"
-        # fs-1.1: time-of-day features became optional when the local clock is
-        # unknowable (ruling D3), which changed the feature block's contract.
-        assert payload["feature_set_version"] == "fs-1.1"
+        # The feature contract is versioned and inference refuses a mismatched
+        # artifact, so this pins the CURRENT version rather than any version.
+        # fs-1.1: time-of-day became optional when the local clock is unknowable.
+        # fs-1.2: added glucose-dynamics and historical-response-fingerprint signals
+        # that improved both within-person and cold-start validation.
+        from ml.config import FEATURE_SET_VERSION
+
+        assert payload["feature_set_version"] == FEATURE_SET_VERSION == "fs-1.2"
         assert payload["trained_at"] is not None
         assert payload["limitations"]
 

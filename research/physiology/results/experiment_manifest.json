@@ -1,0 +1,92 @@
+{
+  "stage": "combos",
+  "n_folds": 4,
+  "dev_pool": 1171,
+  "reserved_test_not_loaded": 394,
+  "signal_columns": [
+    "g_slope_10",
+    "g_slope_15",
+    "g_slope_60",
+    "g_accel",
+    "g_rise_fraction",
+    "g_cv_60",
+    "g_range_120",
+    "g_dev_from_night",
+    "m_carb_mob_exp60",
+    "m_carb_mob_exp120",
+    "m_fat_mob_exp120",
+    "m_meals_4h",
+    "m_carbs_24h",
+    "a_carb_sat",
+    "a_carb_x_fat",
+    "a_carb_x_fiber",
+    "a_carb_x_protein",
+    "a_carb_frac_kcal",
+    "a_fat_frac_kcal",
+    "a_net_carbs",
+    "r_hist_peak_delta",
+    "r_hist_per_carb",
+    "r_hist_ttp",
+    "r_hist_recovery",
+    "r_hist_n",
+    "p_a1c",
+    "p_bmi",
+    "p_age",
+    "p_fasting_glucose",
+    "p_homa_ir",
+    "p_cohort_ord",
+    "v_activity_kcal_60",
+    "v_mets_mean_60",
+    "v_activity_decay",
+    "v_hr_dev_baseline"
+  ],
+  "production_features": [
+    "premeal_glucose_mg_dl",
+    "cgm_slope_30min_mg_dl_per_min",
+    "cgm_mean_60min_mg_dl",
+    "cgm_std_60min_mg_dl",
+    "minutes_since_last_cgm",
+    "carbs_g",
+    "protein_g",
+    "fat_g",
+    "fiber_g",
+    "calories_kcal",
+    "tod_sin",
+    "tod_cos",
+    "minutes_since_prior_meal",
+    "prior_meal_carbs_g",
+    "hr_mean_30min_bpm",
+    "medication_exposure_recent"
+  ],
+  "folds": [
+    {
+      "index": 0,
+      "train": 838,
+      "validate": 333
+    },
+    {
+      "index": 1,
+      "train": 904,
+      "validate": 267
+    },
+    {
+      "index": 2,
+      "train": 893,
+      "validate": 278
+    },
+    {
+      "index": 3,
+      "train": 878,
+      "validate": 293
+    }
+  ],
+  "candidates": [
+    "BASELINE (production features)",
+    "+ glucose",
+    "+ response",
+    "+ profile",
+    "+ glucose + response",
+    "+ glucose + response + profile",
+    "+ ALL groups"
+  ]
+}

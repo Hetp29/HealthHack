@@ -4,7 +4,14 @@
 
 ---
 
-> **SUPERSEDED HEADLINE.** The model was improved after this was written. The
+> **SUPERSEDED HEADLINE (twice).** The current production model is the fs-1.2
+> `blend_personalized` family, which scores **21.90 mg/dL MAE** on the same 394
+> reference episodes, with peak MAE 24.29 and time-to-peak MAE 26.93 min. It adds
+> glucose-dynamics and historical-response-fingerprint signals selected on BOTH
+> within-person and cold-start validation. Four other physiological signal groups were
+> tested and rejected. See **[`research/physiology_research_report.md`](research/physiology_research_report.md)**.
+>
+> **SUPERSEDED HEADLINE (first round).** The model was improved after this was written. The
 > selected production family is now `blend_personalized` (Ridge averaged 50/50 with a
 > regularized gradient booster, then participant-calibrated), which scores **23.22
 > mg/dL MAE** on the same 394 reference episodes versus 23.97 for the model documented

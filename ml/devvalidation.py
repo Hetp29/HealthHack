@@ -118,6 +118,49 @@ def rolling_folds(
     return folds
 
 
+def participant_holdout_folds(
+    episodes: list[Episode], config: Config, n_folds: int = 4, seed: int = 20261011
+) -> list[Fold]:
+    """Cold-start folds: entire participants are held out, deterministically.
+
+    WHY THIS EXISTS. A static per-participant covariate (A1c, BMI, HOMA-IR) can improve
+    within-person validation for an uninteresting reason: it acts as a participant
+    IDENTITY proxy. The folds above validate on later meals from participants the model
+    already trained on, so "the participant whose A1c is 8.5 runs high" is learnable --
+    and that is exactly what the per-participant calibration is already meant to do.
+
+    If such a covariate encodes genuine metabolic phenotype it must also help on
+    participants never seen in training. If it only encodes identity, it will help
+    within-person and do nothing here. That asymmetry is the test.
+
+    No embargo is needed: folds share no participant, so no response window can be
+    shared either.
+    """
+    participants = sorted({e.participant_id for e in episodes})
+    rng = np.random.default_rng(seed)
+    shuffled = list(participants)
+    rng.shuffle(shuffled)
+    blocks = [list(part) for part in np.array_split(np.array(shuffled, dtype=object), n_folds)]
+
+    folds: list[Fold] = []
+    for index, block in enumerate(blocks):
+        held_out = set(block)
+        train = [e for e in episodes if e.participant_id not in held_out]
+        validate = [e for e in episodes if e.participant_id in held_out]
+        if not validate or not train:
+            continue
+        key = lambda e: (e.meal_timestamp, e.meal_id or "")  # noqa: E731
+        fold = Fold(index, sorted(train, key=key), sorted(validate, key=key))
+        train_ids = {e.participant_id for e in fold.train}
+        validate_ids = {e.participant_id for e in fold.validate}
+        if train_ids & validate_ids:
+            raise DevValidationError(
+                f"cold-start fold {index}: participants appear in both folds"
+            )
+        folds.append(fold)
+    return folds
+
+
 def _assert_fold_is_purged(fold: Fold, config: Config) -> None:
     """Fail loudly if a fold's own guarantees do not hold."""
     embargo = dt.timedelta(minutes=config.day8.embargo_minutes)

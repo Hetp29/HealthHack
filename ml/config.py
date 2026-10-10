@@ -26,7 +26,7 @@ HORIZON_WINDOW_MINUTES = 120
 
 #: Version of the feature contract. Inference refuses an artifact whose feature set
 #: version does not match the running code, rather than silently mis-ordering columns.
-FEATURE_SET_VERSION = "fs-1.1"
+FEATURE_SET_VERSION = "fs-1.2"
 
 #: Model artifact version. Bumped when the trained model's semantics change.
 MODEL_VERSION = "v0.1.0"
@@ -98,6 +98,10 @@ class FeatureConfig:
     #: Minimum CGM samples required in a window before a statistic is considered
     #: observed rather than missing.
     min_samples_for_window: int = 2
+
+    #: Shrinkage constant for the historical-response fingerprint (fs-1.2), matching
+    #: the participant-calibration k so both personal corrections are damped alike.
+    fingerprint_shrinkage_k: float = 3.0
 
 
 @dataclass(frozen=True)

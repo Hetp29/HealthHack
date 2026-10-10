@@ -18,6 +18,7 @@ missing until a pipeline fitted on training data fills it.
 
 from __future__ import annotations
 
+import bisect
 import datetime as dt
 import math
 from dataclasses import dataclass
@@ -25,7 +26,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from ml.config import FEATURE_SET_VERSION, FeatureConfig
+from ml.config import FEATURE_SET_VERSION, HORIZON_WINDOW_MINUTES, FeatureConfig
 from ml.schema import MealRecord, ParticipantHistory, require_utc
 
 # --------------------------------------------------------------------------- #
@@ -70,6 +71,34 @@ FEATURE_NAMES: tuple[str, ...] = (
     "hr_mean_30min_bpm",
     # -- medication exposure (presence/recency only, never an efficacy assumption) --
     "medication_exposure_recent",
+    # ------------------------------------------------------------------ fs-1.2 --
+    # Added after physiological-signal research (research/physiology/,
+    # docs/research/physiology_research_report.md). Only the two groups that improved
+    # BOTH within-person and cold-start (unseen-participant) validation are here.
+    # Rejected: participant lab profile (A1c/BMI/HOMA-IR -- helped within-person but
+    # its cold-start CI spanned zero, i.e. largely a participant-identity proxy),
+    # meal-on-board, macronutrient interactions, and activity load (which made
+    # cold-start significantly worse).
+    #
+    # -- glucose dynamic state: richer backward windows than slope_30 alone --
+    "g_slope_10",
+    "g_slope_15",
+    "g_slope_60",
+    "g_accel",
+    "g_rise_fraction",
+    "g_cv_60",
+    "g_range_120",
+    "g_dev_from_night",
+    # -- observed historical response fingerprint (evidence Level C: a summary of
+    #    this participant's OWN earlier measured responses, not a physiological
+    #    measurement). This is what makes cold-start personalization work: a brand-new
+    #    participant gets individualized after a few logged meals, with no retraining
+    #    and no fitted calibration offset.
+    "r_hist_peak_delta",
+    "r_hist_per_carb",
+    "r_hist_ttp",
+    "r_hist_recovery",
+    "r_hist_n",
 )
 
 #: Features that may legitimately be absent. These are median-imputed by the fitted
@@ -87,6 +116,19 @@ OPTIONAL_FEATURES: frozenset[str] = frozenset(
         # `ml/provenance.py`.
         "tod_sin",
         "tod_cos",
+        # fs-1.2: every added signal can legitimately be unavailable.
+        "g_slope_10",
+        "g_slope_15",
+        "g_slope_60",
+        "g_accel",
+        "g_rise_fraction",
+        "g_cv_60",
+        "g_range_120",
+        "g_dev_from_night",
+        "r_hist_peak_delta",
+        "r_hist_per_carb",
+        "r_hist_ttp",
+        "r_hist_recovery",
     }
 )
 
@@ -108,6 +150,19 @@ FEATURE_LABELS: dict[str, str] = {
     "prior_meal_carbs_g": "previous meal carbohydrate",
     "hr_mean_30min_bpm": "mean heart rate (prior 30 min)",
     "medication_exposure_recent": "recent medication exposure",
+    "g_slope_10": "glucose momentum (10 min)",
+    "g_slope_15": "glucose momentum (15 min)",
+    "g_slope_60": "glucose drift (60 min)",
+    "g_accel": "glucose acceleration",
+    "g_rise_fraction": "rise persistence",
+    "g_cv_60": "relative glucose variability (60 min)",
+    "g_range_120": "glucose range (prior 120 min)",
+    "g_dev_from_night": "elevation above own overnight floor",
+    "r_hist_peak_delta": "own typical past excursion",
+    "r_hist_per_carb": "own past response per gram of carbohydrate",
+    "r_hist_ttp": "own typical past time to peak",
+    "r_hist_recovery": "own typical past 2-hour clearance",
+    "r_hist_n": "number of own past meals observed",
 }
 
 
@@ -409,6 +464,55 @@ def build_features(
     )
     values["medication_exposure_recent"] = 1.0 if recent_medication else 0.0
 
+    # -- fs-1.2: glucose dynamic state ---------------------------------------- #
+    for label, window in (("g_slope_10", 10.0), ("g_slope_15", 15.0), ("g_slope_60", 60.0)):
+        times, levels = _window_values(past.cgm, meal_timestamp, window, "glucose_mg_dl")
+        values[label] = (
+            _least_squares_slope(times, levels)
+            if times.size >= config.min_samples_for_window
+            else math.nan
+        )
+    values["g_accel"] = (
+        (values["g_slope_15"] - values["cgm_slope_30min_mg_dl_per_min"]) / 15.0
+        if not (
+            math.isnan(values["g_slope_15"])
+            or math.isnan(values["cgm_slope_30min_mg_dl_per_min"])
+        )
+        else math.nan
+    )
+
+    recent = [point.glucose_mg_dl for point in past.cgm[-6:]]
+    values["g_rise_fraction"] = (
+        float((np.diff(np.asarray(recent, dtype="float64")) > 0).mean())
+        if len(recent) >= 3
+        else math.nan
+    )
+
+    values["g_cv_60"] = (
+        float(var_values.std(ddof=1) / var_values.mean())
+        if var_values.size >= config.min_samples_for_window and var_values.mean() > 0
+        else math.nan
+    )
+    _, range_values = _window_values(
+        past.cgm, meal_timestamp, 120.0, "glucose_mg_dl"
+    )
+    values["g_range_120"] = (
+        float(range_values.max() - range_values.min())
+        if range_values.size >= config.min_samples_for_window
+        else math.nan
+    )
+    overnight = [
+        point.glucose_mg_dl for point in past.cgm if 2 <= point.timestamp.hour < 6
+    ]
+    values["g_dev_from_night"] = (
+        float(baseline - float(np.median(overnight))) if overnight else math.nan
+    )
+
+    # -- fs-1.2: observed historical response fingerprint --------------------- #
+    values.update(
+        _historical_response_fingerprint(past, meal_timestamp, config)
+    )
+
     missing = tuple(
         name for name in FEATURE_NAMES if math.isnan(values[name])
     )
@@ -426,6 +530,81 @@ def build_features(
         baseline_glucose_mg_dl=baseline,
         missing_features=missing,
     )
+
+
+def _historical_response_fingerprint(
+    past: ParticipantHistory, meal_timestamp: dt.datetime, config: FeatureConfig
+) -> dict[str, float]:
+    """Shrunk summary of this participant's OWN earlier measured meal responses.
+
+    For each meal strictly before `meal_timestamp`, the observed response is
+    reconstructed from CGM that was recorded in that meal's own 0-120 minute window --
+    all of which lies in the past relative to the meal being forecast. The strict `<`
+    comparison means a meal can never contribute to its own fingerprint.
+
+    Shrinkage is `n/(n+k)` with the same k as the participant calibration, so a
+    fingerprint built from two meals is pulled most of the way to zero.
+
+    EVIDENCE LEVEL C. These are summaries of observed glucose curves, not measurements
+    of insulin secretion, glucose disposal or gastric emptying. They are predictive
+    state estimates with no independent physiological ground truth.
+
+    Why this matters: unlike the fitted per-participant calibration offset, this works
+    for a participant who was never in the training set. Cold-start validation showed
+    it is the single most valuable signal group there (+2.1 mg/dL MAE alone).
+    """
+    names = (
+        "r_hist_peak_delta",
+        "r_hist_per_carb",
+        "r_hist_ttp",
+        "r_hist_recovery",
+        "r_hist_n",
+    )
+    prior_meals = [meal for meal in past.meals if meal.timestamp < meal_timestamp]
+    peaks: list[float] = []
+    per_carb: list[float] = []
+    time_to_peak: list[float] = []
+    recovery: list[float] = []
+
+    timestamps = [point.timestamp for point in past.cgm]
+    for meal in prior_meals:
+        window_end = meal.timestamp + dt.timedelta(minutes=HORIZON_WINDOW_MINUTES)
+        if window_end >= meal_timestamp:
+            # The response window has not fully elapsed yet, so it is not observable.
+            continue
+        lo = bisect.bisect_left(timestamps, meal.timestamp)
+        hi = bisect.bisect_right(timestamps, window_end)
+        window = past.cgm[lo:hi]
+        if len(window) < 8:
+            continue
+
+        # Baseline for THAT meal: the last reading at or before it.
+        if lo == 0:
+            continue
+        meal_baseline = float(past.cgm[lo - 1].glucose_mg_dl)
+        levels = [float(point.glucose_mg_dl) for point in window]
+        peak = max(levels)
+        peak_index = levels.index(peak)
+        elapsed = (window[peak_index].timestamp - meal.timestamp).total_seconds() / 60.0
+
+        peaks.append(peak - meal_baseline)
+        per_carb.append((peak - meal_baseline) / max(float(meal.carbs_g or 0.0), 10.0))
+        time_to_peak.append(elapsed)
+        recovery.append(peak - levels[-1])
+
+    n = len(peaks)
+    out: dict[str, float] = {"r_hist_n": float(n)}
+    if n == 0:
+        for name in names[:-1]:
+            out[name] = math.nan
+        return out
+
+    factor = n / (n + config.fingerprint_shrinkage_k)
+    out["r_hist_peak_delta"] = float(np.mean(peaks) * factor)
+    out["r_hist_per_carb"] = float(np.mean(per_carb) * factor)
+    out["r_hist_ttp"] = float(np.mean(time_to_peak) * factor)
+    out["r_hist_recovery"] = float(np.mean(recovery) * factor)
+    return out
 
 
 def rows_to_frame(rows: list[FeatureRow]) -> pd.DataFrame:
