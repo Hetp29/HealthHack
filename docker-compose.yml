@@ -1,0 +1,53 @@
+# Local full-stack bring-up.
+#
+# STATUS: UNVERIFIED -- see the note at the top of the Dockerfile. The development
+# machine has no Docker daemon. The verified path today is the local one in README.md.
+#
+#   docker compose up --build        # backend on :8000
+#   docker compose --profile frontend up --build   # once frontend/ exists
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: glucotwin-backend:v0.1.0
+    ports:
+      - "8000:8000"
+    environment:
+      GLUCOTWIN_CONTRACT_VERSION: "1.0.0"
+      GLUCOTWIN_DATA_BACKEND: "synthetic_dev"
+      GLUCOTWIN_MODEL_ARTIFACT: "ml/artifacts/model.joblib"
+      GLUCOTWIN_METRICS_PATH: "ml/artifacts/metrics.json"
+      # Explicit origins, never a wildcard. The service logs a warning on "*".
+      GLUCOTWIN_CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
+      GLUCOTWIN_LOG_LEVEL: "INFO"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - |
+          import sys, urllib.request
+          sys.exit(0 if urllib.request.urlopen("http://127.0.0.1:8000/health", timeout=4).status == 200 else 1)
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # Neil's app. Enabled only when frontend/ exists, so `docker compose up` does not
+  # fail for someone who only wants the API.
+  frontend:
+    profiles: ["frontend"]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: glucotwin-frontend:v0.1.0
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: "http://localhost:8000"
+    depends_on:
+      backend:
+        condition: service_healthy
