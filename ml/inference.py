@@ -44,6 +44,7 @@ from ml.features import (
     rows_to_frame,
 )
 from ml.metrics import CurveSummary, build_curve, summarize_curve
+from ml.provenance import describe_time_basis, resolve_time_basis
 from ml.schema import ParticipantHistory, ParticipantSummary, require_utc
 
 PredictionStatus = Literal["personalized", "generalized_fallback"]
@@ -132,6 +133,7 @@ def forecast(
     participant: ParticipantSummary | None = None,
     override: ContextOverride | None = None,
     model: ModelChoice = "personalized",
+    time_basis: str = "utc",
 ) -> ForecastResult:
     """Produce one forecast.
 
@@ -148,6 +150,7 @@ def forecast(
         composition=composition,
         config=config.features,
         timezone_name=participant.timezone if participant else None,
+        time_basis=time_basis,
         override=override,
     )
     design = rows_to_frame([features])
@@ -246,11 +249,13 @@ def forecast(
             f"{config.model.clip_glucose_max_mg_dl:g} mg/dL; the raw model output went "
             "outside it, which indicates an input far from the training distribution."
         )
-    if participant is None or not participant.timezone:
-        limitations.append(
-            "No participant timezone was available, so time-of-day features were "
-            "computed in UTC and may be shifted relative to the participant's local day."
-        )
+    # Accurate clock caveat, derived from the dataset's recorded time_basis rather
+    # than from the absence of a timezone string (ruling D3).
+    clock_caveat = describe_time_basis(
+        time_basis, participant.timezone if participant else None
+    )
+    if clock_caveat:
+        limitations.append(clock_caveat)
     if artifact.data_source == "synthetic_dev":
         limitations.append(
             "Produced by a model trained on synthetic development fixtures, not on "
@@ -300,8 +305,11 @@ def main(argv: list[str] | None = None) -> int:
         description="Generate one forecast from a trained GlucoTwin artifact."
     )
     parser.add_argument("--artifact", default="ml/artifacts/model.joblib")
-    parser.add_argument("--source", default="synthetic_dev")
-    parser.add_argument("--days", type=int, default=7)
+    parser.add_argument(
+        "--source", default="synthetic_dev", choices=["synthetic_dev", "sqlite"]
+    )
+    parser.add_argument("--db-url", default=None, help="for --source sqlite")
+    parser.add_argument("--days", type=int, default=16)
     parser.add_argument("--seed", type=int, default=20261011)
     parser.add_argument(
         "--participant", default="synthetic_p001", help="participant_id to forecast for"
@@ -323,7 +331,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     artifact = load_artifact(pathlib.Path(args.artifact))
-    repository = build_repository(args.source, args.days, args.seed)
+    repository = build_repository(args.source, args.days, args.seed, args.db_url)
 
     summary = repository.get_participant(args.participant)
     if summary is None:
@@ -333,12 +341,14 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"participant {args.participant!r} has no logged meals")
 
     meal = history.meals[args.meal_index]
+    time_basis, _ = resolve_time_basis(repository, args.participant, summary.timezone)
     result = forecast(
         artifact,
         history,
         meal.timestamp,
         MealComposition.from_meal_record(meal),
         participant=summary,
+        time_basis=time_basis,
     )
     payload = result.to_contract_dict()
     print(json.dumps(payload, indent=2))

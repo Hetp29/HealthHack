@@ -57,13 +57,43 @@ from ml.metrics import (
     summarize_observed,
 )
 from ml.personalization import PersonalizationModel
+from ml.provenance import resolve_data_source
 from ml.targets import Episode, build_episodes
 from ml.train import GeneralizedModel, episodes_to_matrices
 
-PROTOCOLS = ("within_person_chronological", "cohort_holdout")
+PROTOCOLS = ("day8_holdout", "within_person_chronological", "cohort_holdout")
+
+#: Contract v1.0 freezes `evaluation_protocol.name` to two values. `day8_holdout` IS a
+#: within-person chronological split -- the Day-8 rule restricts which episodes may
+#: enter the TEST set, it does not change the split mechanism -- so it is reported
+#: under that name, with the inclusion rule, the embargo and the train/validation
+#: separation spelled out in `description`. No public field was added.
+CONTRACT_PROTOCOL_NAME = {
+    "day8_holdout": "within_person_chronological",
+    "within_person_chronological": "within_person_chronological",
+    "cohort_holdout": "cohort_holdout",
+}
 MODEL_NAMES = ("persistence", "cohort_mean_delta", "generalized", "personalized")
 
 PROTOCOL_DESCRIPTIONS = {
+    "day8_holdout": (
+        "PRIMARY protocol. Per participant, the held-out TEST set is restricted to "
+        "Day-8-eligible meals: at least {history_days} days of prior CGM history with "
+        "at least {coverage:.0%} of the nominal 5-minute readings present, a baseline "
+        "reading within 15 min before the meal, and an observed reading within +/-10 "
+        "min of t+30/60/90/120. Episodes with another logged meal inside the "
+        "120-minute window are excluded from the test set because their observed "
+        "response blends two meals; they remain in training, tagged. "
+        "Training uses only that participant's episodes strictly before the test "
+        "cutoff, further purged by a {embargo:.0f}-minute EMBARGO so that no training "
+        "episode's 120-minute response window can overlap a held-out window. The "
+        "latest {validation:.0%} of each participant's pre-cutoff pool is held back as "
+        "a VALIDATION set and is what selects the Ridge penalty; the test set is never "
+        "used for tuning, model selection or calibration. Splits are by whole meal "
+        "episode -- five-minute CGM rows are never split. Imputation medians, scaler "
+        "statistics and the per-participant calibration offsets are fitted on the "
+        "training fold only."
+    ),
     "within_person_chronological": (
         "Per participant, meal episodes are ordered by timestamp; the earliest "
         "{train_pct:.0f}% train and the latest {test_pct:.0f}% are held out. Splits are "
@@ -123,6 +153,117 @@ def split_within_person(
     return train, test
 
 
+def split_day8_holdout(
+    episodes: list[Episode], config: Config
+) -> tuple[list[Episode], list[Episode], list[Episode]]:
+    """Return `(train, validation, test)` under the Day-8 rule (ruling D1).
+
+    Per participant:
+      1. test candidates = Day-8-eligible episodes, minus overlapping ones;
+      2. cutoff = the earliest test-candidate meal time;
+      3. pool = episodes at or before `cutoff - embargo` (purging any whose response
+         window could overlap a held-out window);
+      4. validation = the latest `validation_fraction` of that pool;
+      5. train = the remainder of the pool.
+
+    A participant with no test candidate contributes its whole pool to training: it
+    still informs the cohort model, it just cannot be scored on a Day-8 meal. Train,
+    validation and test are therefore disjoint by construction, which is exactly what
+    ruling D1 requires -- never training on all episodes and scoring an overlapping
+    subset.
+    """
+    day8 = config.day8
+    embargo = dt.timedelta(minutes=day8.embargo_minutes)
+
+    by_participant: dict[str, list[Episode]] = {}
+    for episode in episodes:
+        by_participant.setdefault(episode.participant_id, []).append(episode)
+
+    train: list[Episode] = []
+    validation: list[Episode] = []
+    test: list[Episode] = []
+
+    for participant_id in sorted(by_participant):
+        owned = sorted(by_participant[participant_id], key=lambda e: e.meal_timestamp)
+
+        candidates = [
+            episode
+            for episode in owned
+            if episode.context is not None and episode.context.day8_eligible
+        ]
+        if day8.exclude_overlap_from_test:
+            candidates = [
+                episode
+                for episode in candidates
+                if not episode.target.has_overlapping_meal
+            ]
+
+        if not candidates:
+            train.extend(owned)
+            continue
+
+        cutoff = min(episode.meal_timestamp for episode in candidates)
+        pool = [
+            episode for episode in owned if episode.meal_timestamp <= cutoff - embargo
+        ]
+
+        if not pool:
+            # No purge-safe history for this participant: it cannot contribute a
+            # held-out episode without its own training data being contaminated.
+            train.extend(owned)
+            continue
+
+        n_validation = int(round(len(pool) * day8.validation_fraction))
+        n_validation = min(max(n_validation, 0), max(0, len(pool) - 1))
+        split_at = len(pool) - n_validation
+        train.extend(pool[:split_at])
+        validation.extend(pool[split_at:])
+        test.extend(candidates)
+
+    key = lambda e: (e.meal_timestamp, e.meal_id or "")  # noqa: E731
+    return sorted(train, key=key), sorted(validation, key=key), sorted(test, key=key)
+
+
+def _assert_day8_separation(
+    train: list[Episode], validation: list[Episode], test: list[Episode], config: Config
+) -> None:
+    """Fail the run unless train/validation/test are disjoint, purged and ordered."""
+    embargo = dt.timedelta(minutes=config.day8.embargo_minutes)
+
+    ids = [{id(e) for e in group} for group in (train, validation, test)]
+    if ids[0] & ids[1] or ids[0] & ids[2] or ids[1] & ids[2]:
+        raise LeakageError("day8_holdout: train/validation/test are not disjoint")
+
+    earliest_test: dict[str, dt.datetime] = {}
+    for episode in test:
+        current = earliest_test.get(episode.participant_id)
+        if current is None or episode.meal_timestamp < current:
+            earliest_test[episode.participant_id] = episode.meal_timestamp
+
+    for name, group in (("train", train), ("validation", validation)):
+        for episode in group:
+            cutoff = earliest_test.get(episode.participant_id)
+            if cutoff is None:
+                continue
+            if episode.meal_timestamp > cutoff - embargo:
+                raise LeakageError(
+                    f"day8_holdout: {name} episode {episode.meal_id!r} at "
+                    f"{episode.meal_timestamp.isoformat()} violates the "
+                    f"{config.day8.embargo_minutes:g}-minute embargo before the test "
+                    f"cutoff {cutoff.isoformat()}"
+                )
+
+    for episode in test:
+        if episode.context is None or not episode.context.day8_eligible:
+            raise LeakageError(
+                f"day8_holdout: test episode {episode.meal_id!r} is not Day-8 eligible"
+            )
+        if config.day8.exclude_overlap_from_test and episode.target.has_overlapping_meal:
+            raise LeakageError(
+                f"day8_holdout: test episode {episode.meal_id!r} overlaps another meal"
+            )
+
+
 def split_cohort_holdout(
     episodes: list[Episode], config: Config
 ) -> tuple[list[Episode], list[Episode]]:
@@ -177,14 +318,23 @@ def _assert_no_leakage(
 # --------------------------------------------------------------------------- #
 
 
-def _fit_models(train_matrices, config: Config):
-    """Fit all four models on the training fold only."""
+def _fit_models(train_matrices, config: Config, validation_matrices=None):
+    """Fit all four models on the training fold only.
+
+    `validation_matrices`, when given, selects the Ridge penalty. It is a held-back
+    slice of the TRAINING pool, never the test set.
+    """
     persistence = PersistenceBaseline().fit(train_matrices.features, train_matrices.deltas)
     cohort_mean = CohortMeanDeltaBaseline().fit(
         train_matrices.features, train_matrices.deltas
     )
+    validation = (
+        (validation_matrices.features, validation_matrices.deltas)
+        if validation_matrices is not None and len(validation_matrices) > 0
+        else None
+    )
     generalized = GeneralizedModel().fit(
-        train_matrices.features, train_matrices.deltas, config
+        train_matrices.features, train_matrices.deltas, config, validation=validation
     )
 
     # Personal offsets from the cohort model's residuals on TRAINING episodes only.
@@ -322,14 +472,27 @@ def _personalization_comparison(
 
 
 def _sample_counts(
-    train: list[Episode], test: list[Episode], personalization: PersonalizationModel
+    train: list[Episode],
+    test: list[Episode],
+    personalization: PersonalizationModel,
+    validation: list[Episode] | None = None,
 ) -> dict:
-    train_counts = pd.Series([e.participant_id for e in train]).value_counts().to_dict()
+    """Counts in the frozen `sample_counts` shape.
+
+    Contract v1.0 fixes the member list and sets `additionalProperties: false`, so
+    there is no `validation_episodes` field and adding one would be a contract change.
+    Validation episodes are part of the training pool from the API's point of view --
+    they are fitted/tuned on, never scored -- so they are counted inside
+    `train_episodes`. The exact train/validation breakdown is reported in the
+    evaluation detail file and in docs/validation.md.
+    """
+    fitting = list(train) + list(validation or [])
+    train_counts = pd.Series([e.participant_id for e in fitting]).value_counts().to_dict()
     test_counts = pd.Series([e.participant_id for e in test]).value_counts().to_dict()
     all_ids = sorted(set(train_counts) | set(test_counts))
     return {
         "participants": len(all_ids),
-        "train_episodes": len(train),
+        "train_episodes": len(fitting),
         "test_episodes": len(test),
         "by_participant": [
             {
@@ -350,7 +513,7 @@ def evaluate(
     config: Config = DEFAULT_CONFIG,
     *,
     protocol: str = "within_person_chronological",
-    data_source: str = "synthetic_dev",
+    data_source: str | None = None,
     exclude_overlapping: bool = False,
 ) -> dict:
     """Run one protocol end to end.
@@ -363,20 +526,31 @@ def evaluate(
     if protocol not in PROTOCOLS:
         raise ValueError(f"unknown protocol {protocol!r}; expected one of {PROTOCOLS}")
 
+    # Ruling D2: provenance comes from the records, not from a CLI flag.
+    if data_source is None:
+        data_source = resolve_data_source(repository)
+
     episodes, exclusions = build_episodes(
         repository, config, exclude_overlapping=exclude_overlapping
     )
     if not episodes:
         raise ValueError("no usable meal episodes to evaluate")
 
-    if protocol == "within_person_chronological":
+    validation: list[Episode] = []
+    if protocol == "day8_holdout":
+        train, validation, test = split_day8_holdout(episodes, config)
+        _assert_day8_separation(train, validation, test, config)
+        # Reported as the share of scored episodes among all usable ones.
+        total = len(train) + len(validation) + len(test)
+        test_fraction = round(len(test) / total, 4) if total else 0.0
+    elif protocol == "within_person_chronological":
         train, test = split_within_person(episodes, config)
         test_fraction = config.evaluation.test_fraction
+        _assert_no_leakage(protocol, train, test)
     else:
         train, test = split_cohort_holdout(episodes, config)
         test_fraction = config.evaluation.cohort_test_fraction
-
-    _assert_no_leakage(protocol, train, test)
+        _assert_no_leakage(protocol, train, test)
 
     limitations: list[str] = [RESEARCH_DISCLAIMER]
 
@@ -403,13 +577,23 @@ def evaluate(
             limitations=limitations,
             exclude_overlapping=exclude_overlapping,
         )
-        return empty, {"protocol": protocol, "exclusions": exclusions.as_dict()}
+        return empty, {
+            "protocol": protocol,
+            "contract_protocol_name": CONTRACT_PROTOCOL_NAME[protocol],
+            "exclusions": exclusions.as_dict(),
+            "fold_sizes": {
+                "train_episodes": len(train),
+                "validation_episodes": len(validation),
+                "test_episodes": 0,
+            },
+        }
 
     train_matrices = episodes_to_matrices(train)
     test_matrices = episodes_to_matrices(test)
+    validation_matrices = episodes_to_matrices(validation) if validation else None
 
     persistence, cohort_mean, generalized, personalization = _fit_models(
-        train_matrices, config
+        train_matrices, config, validation_matrices
     )
     predictions = _predict_all(
         test_matrices, persistence, cohort_mean, generalized, personalization
@@ -435,10 +619,9 @@ def evaluate(
     comparison = _personalization_comparison(test_matrices, predictions, personalization)
 
     # Honest framing of what the numbers do and do not establish.
+    counts = _sample_counts(train, test, personalization, validation)
     personalized_participants = [
-        row["participant_id"]
-        for row in _sample_counts(train, test, personalization)["by_participant"]
-        if row["personalized"]
+        row["participant_id"] for row in counts["by_participant"] if row["personalized"]
     ]
     if protocol == "cohort_holdout":
         limitations.insert(
@@ -489,10 +672,7 @@ def evaluate(
         data_source=data_source,
         by_model=by_model,
         by_horizon=primary_by_horizon,
-        sample_counts={
-            **_sample_counts(train, test, personalization),
-            "excluded_episodes": exclusions.as_dict()["excluded"],
-        },
+        sample_counts={**counts, "excluded_episodes": exclusions.as_dict()["excluded"]},
         personalization=comparison,
         limitations=limitations,
         exclude_overlapping=exclude_overlapping,
@@ -503,8 +683,26 @@ def evaluate(
     # reshaping.
     detail = {
         "protocol": protocol,
+        "contract_protocol_name": CONTRACT_PROTOCOL_NAME[protocol],
         "exclusions": exclusions.as_dict(),
         "personalization_model": personalization.as_dict(),
+        # Breakdown the frozen sample_counts shape has no slot for.
+        "fold_sizes": {
+            "train_episodes": len(train),
+            "validation_episodes": len(validation),
+            "test_episodes": len(test),
+        },
+        "day8": {
+            "history_days": config.day8.history_days,
+            "min_history_coverage": config.day8.min_history_coverage,
+            "embargo_minutes": config.day8.embargo_minutes,
+            "validation_fraction": config.day8.validation_fraction,
+            "exclude_overlap_from_test": config.day8.exclude_overlap_from_test,
+            "eligible_episodes_total": exclusions.day8_eligible,
+        },
+        "chosen_alpha": {
+            str(h): a for h, a in sorted(generalized.chosen_alpha.items())
+        },
     }
     return report, detail
 
@@ -522,12 +720,17 @@ def _report(
     exclude_overlapping: bool,
 ) -> dict:
     description = PROTOCOL_DESCRIPTIONS[protocol].format(
-        train_pct=100.0 * (1.0 - test_fraction), test_pct=100.0 * test_fraction
+        train_pct=100.0 * (1.0 - test_fraction),
+        test_pct=100.0 * test_fraction,
+        history_days=DEFAULT_CONFIG.day8.history_days,
+        coverage=DEFAULT_CONFIG.day8.min_history_coverage,
+        embargo=DEFAULT_CONFIG.day8.embargo_minutes,
+        validation=DEFAULT_CONFIG.day8.validation_fraction,
     )
     report = {
         "dataset_source": data_source,
         "evaluation_protocol": {
-            "name": protocol,
+            "name": CONTRACT_PROTOCOL_NAME[protocol],
             "description": description,
             "split_unit": "meal_episode",
             "test_fraction": test_fraction,
@@ -606,19 +809,20 @@ def _print_summary(report: dict) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    from ml.train import build_repository
+    from ml.train import add_source_arguments, build_repository
 
     parser = argparse.ArgumentParser(
         description="Evaluate GlucoTwin models with leakage-safe chronological splits."
     )
-    parser.add_argument("--source", default="synthetic_dev")
-    parser.add_argument("--days", type=int, default=7)
-    parser.add_argument("--seed", type=int, default=DEFAULT_CONFIG.model.random_seed)
+    add_source_arguments(parser)
     parser.add_argument(
         "--protocol",
-        default="within_person_chronological",
+        default="day8_holdout",
         choices=[*PROTOCOLS, "all"],
-        help="protocol to run; 'all' runs both and makes the first the primary report",
+        help=(
+            "protocol to run; 'all' runs every protocol and makes the first "
+            "(day8_holdout, the primary result) the served report"
+        ),
     )
     parser.add_argument("--out", default="ml/artifacts")
     parser.add_argument(
@@ -628,7 +832,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    repository = build_repository(args.source, args.days, args.seed)
+    repository = build_repository(args.source, args.days, args.seed, args.db_url)
     config = dataclasses.replace(
         DEFAULT_CONFIG,
         model=dataclasses.replace(DEFAULT_CONFIG.model, random_seed=args.seed),
@@ -644,7 +848,7 @@ def main(argv: list[str] | None = None) -> int:
             repository,
             config,
             protocol=protocol,
-            data_source=args.source,
+            # data_source=None -> resolved from the participant records (ruling D2).
             exclude_overlapping=args.exclude_overlapping,
         )
         reports[protocol] = report

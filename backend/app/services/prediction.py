@@ -49,6 +49,7 @@ from ml.features import (
     MealComposition,
 )
 from ml.inference import ForecastResult, forecast
+from ml.provenance import resolve_time_basis
 
 logger = logging.getLogger("glucotwin.prediction")
 
@@ -196,6 +197,13 @@ class PredictionService:
                 as_of=override.get("as_of"),
             )
 
+        # What this participant's timestamps mean (ruling D3). Resolved from the
+        # repository so the clock caveat in `limitations` is accurate for the dataset
+        # actually loaded, rather than inferred from a missing timezone string.
+        time_basis, _ = resolve_time_basis(
+            self.repository(), participant_id, summary.timezone
+        )
+
         try:
             result = forecast(
                 artifact,
@@ -204,6 +212,7 @@ class PredictionService:
                 composition,
                 participant=summary,
                 override=context,
+                time_basis=time_basis,
             )
         except InsufficientPremealContext as error:
             raise errors.ApiError(

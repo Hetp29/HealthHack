@@ -58,7 +58,8 @@ from ml.config import (
 )
 from ml.features import FEATURE_NAMES, rows_to_frame
 from ml.personalization import PersonalizationModel
-from ml.targets import Episode, build_episodes
+from ml.provenance import resolve_data_source
+from ml.targets import Episode, build_episodes  # noqa: F401  (Episode used in annotations)
 
 ARTIFACT_DIR = pathlib.Path("ml/artifacts")
 ARTIFACT_NAME = "model.joblib"
@@ -147,8 +148,23 @@ class GeneralizedModel:
     fit_episode_counts: dict[int, int] = field(default_factory=dict)
 
     def fit(
-        self, features: pd.DataFrame, deltas: pd.DataFrame, config: Config
+        self,
+        features: pd.DataFrame,
+        deltas: pd.DataFrame,
+        config: Config,
+        validation: tuple[pd.DataFrame, pd.DataFrame] | None = None,
     ) -> GeneralizedModel:
+        """Fit one Ridge pipeline per horizon on the training fold.
+
+        When `validation` is supplied, the Ridge penalty is chosen by error on that
+        explicit held-back set instead of by an inner `TimeSeriesSplit`. That is
+        required for real data: the organizer timestamps are date-shifted per
+        participant, so a globally sorted "chronological" inner split is not a
+        chronology at all (participants were recorded in different years). The
+        validation set is each participant's own LATEST pre-cutoff slice, so it is
+        participant-aware and chronological within person, and it is never the final
+        test set.
+        """
         seed = config.model.random_seed
         self.pipelines = {}
         self.chosen_alpha = {}
@@ -164,7 +180,18 @@ class GeneralizedModel:
             if len(y) == 0:
                 raise ValueError(f"no training episodes with a target at t+{horizon} min")
 
-            alpha = self._select_alpha(X, y, config)
+            if validation is not None:
+                val_features, val_deltas = validation
+                val_mask = val_deltas[horizon].notna().to_numpy()
+                alpha = self._select_alpha_on_validation(
+                    X,
+                    y,
+                    val_features.loc[val_mask].reset_index(drop=True),
+                    val_deltas.loc[val_mask, horizon].to_numpy(dtype="float64"),
+                    config,
+                )
+            else:
+                alpha = self._select_alpha(X, y, config)
             pipeline = make_pipeline(alpha, seed).fit(X, y)
 
             self.pipelines[horizon] = pipeline
@@ -192,6 +219,31 @@ class GeneralizedModel:
             n_jobs=1,
         ).fit(X, y)
         return float(search.best_params_["ridge__alpha"])
+
+    def _select_alpha_on_validation(
+        self,
+        X: pd.DataFrame,
+        y: np.ndarray,
+        X_val: pd.DataFrame,
+        y_val: np.ndarray,
+        config: Config,
+    ) -> float:
+        """Pick the penalty with the lowest MAE on the explicit validation slice.
+
+        Falls back to the middle of the grid when the validation slice is too small to
+        discriminate, rather than selecting on two or three points.
+        """
+        alphas = list(config.model.ridge_alphas)
+        if len(y_val) < 8 or len(y) < 12:
+            return float(alphas[len(alphas) // 2])
+
+        best_alpha, best_error = alphas[0], float("inf")
+        for alpha in alphas:
+            pipeline = make_pipeline(alpha, config.model.random_seed).fit(X, y)
+            error = float(np.mean(np.abs(pipeline.predict(X_val) - y_val)))
+            if error < best_error:
+                best_alpha, best_error = alpha, error
+        return float(best_alpha)
 
     def predict_deltas(self, features: pd.DataFrame) -> dict[int, np.ndarray]:
         if not self.pipelines:
@@ -290,8 +342,9 @@ def train(
     repository,
     config: Config = DEFAULT_CONFIG,
     *,
-    data_source: str = "synthetic_dev",
+    data_source: str | None = None,
     exclude_overlapping: bool = False,
+    holdout: str = "none",
 ) -> TrainedArtifact:
     """Fit all three models on every usable episode and return the artifact.
 
@@ -306,6 +359,12 @@ def train(
     held-out comparison in `ml/evaluate.py` fits calibration on the training fold only
     and scores it on unseen later meals.
     """
+    # Ruling D2: the public `data_source` label is read off the participant records,
+    # never taken from a CLI flag. "sqlite" is a storage backend, not an origin, and
+    # it is not a value the frozen contract enum permits.
+    if data_source is None:
+        data_source = resolve_data_source(repository)
+
     episodes, exclusions = build_episodes(
         repository, config, exclude_overlapping=exclude_overlapping
     )
@@ -314,11 +373,39 @@ def train(
             "no usable meal episodes; check CGM coverage and macro completeness"
         )
 
+    # Ruling D1: "never train, calibrate, preprocess, tune or select models using
+    # target responses reserved for final evaluation." With holdout="day8" the
+    # artifact is fitted on the Day-8 training pool ONLY, so the 394 held-out Day-8
+    # responses are untouched by the SERVED model too -- not just by the evaluation
+    # run. A Day-8 meal predicted in the demo is then genuinely out of sample.
+    validation_split: list[Episode] = []
+    if holdout == "day8":
+        from ml.evaluate import _assert_day8_separation, split_day8_holdout
+
+        fit_episodes, validation_split, reserved = split_day8_holdout(episodes, config)
+        _assert_day8_separation(fit_episodes, validation_split, reserved, config)
+        if not fit_episodes:
+            raise ValueError(
+                "the Day-8 split left no training episodes; check prior-history coverage"
+            )
+        episodes = fit_episodes + validation_split
+        episodes.sort(key=lambda e: (e.meal_timestamp, e.meal_id or ""))
+    elif holdout != "none":
+        raise ValueError(f"unknown holdout {holdout!r}; expected 'none' or 'day8'")
+
     matrices = episodes_to_matrices(episodes)
 
     persistence = PersistenceBaseline().fit(matrices.features, matrices.deltas)
     cohort_mean = CohortMeanDeltaBaseline().fit(matrices.features, matrices.deltas)
-    generalized = GeneralizedModel().fit(matrices.features, matrices.deltas, config)
+    # Alpha selected on the held-back validation slice when we have one; never on the
+    # reserved Day-8 responses.
+    validation = None
+    if validation_split:
+        validation_matrices = episodes_to_matrices(validation_split)
+        validation = (validation_matrices.features, validation_matrices.deltas)
+    generalized = GeneralizedModel().fit(
+        matrices.features, matrices.deltas, config, validation=validation
+    )
 
     # Residuals of the cohort model on the fitting episodes -> personal offsets.
     cohort_predictions = generalized.predict_deltas(matrices.features)
@@ -344,6 +431,9 @@ def train(
         },
         "exclusions": exclusions.as_dict(),
         "exclude_overlapping": exclude_overlapping,
+        "holdout": holdout,
+        "fitted_episodes": len(episodes),
+        "validation_episodes": len(validation_split),
         "target_availability": {
             str(horizon): int(valid_masks[horizon].sum()) for horizon in HORIZONS
         },
@@ -401,32 +491,80 @@ def load_artifact(path: pathlib.Path) -> TrainedArtifact:
     return artifact
 
 
-def build_repository(source: str, days: int, seed: int):
-    """Resolve a data source name to a repository implementation."""
+#: Source names the ML CLIs accept. `synthetic_dev` is the labelled in-memory
+#: development fixture; `sqlite` is the canonical data layer (owner: Het) that the
+#: organizer datasets are ingested into.
+SOURCES = ("synthetic_dev", "sqlite")
+
+
+def build_repository(
+    source: str, days: int = 16, seed: int = 20261011, db_url: str | None = None
+):
+    """Resolve a data source name to a repository implementation.
+
+    The branches are mutually exclusive on purpose. Selecting `sqlite` must NEVER fall
+    back to the synthetic fixture: a fixture-backed run reported as a real-data result
+    would be the most damaging mistake this project could make. An unopenable or empty
+    database therefore raises rather than degrading.
+    """
     if source == "synthetic_dev":
         from ml.devfixture import SyntheticDevRepository
 
         return SyntheticDevRepository(days=days, seed=seed)
-    raise SystemExit(
-        f"unknown --source {source!r}. Only 'synthetic_dev' exists until the canonical "
-        "data layer (data/**) lands; then pass 'sqlite'."
-    )
+
+    if source == "sqlite":
+        from data.storage.repository import SqliteDataRepository
+
+        try:
+            repository = SqliteDataRepository(db_url)
+        except Exception as error:
+            raise SystemExit(
+                f"could not open the canonical database "
+                f"({db_url or '$GLUCOTWIN_DB_URL'}): {error}\n"
+                "Build one first, e.g.\n"
+                "  python -m data.storage.init_db --db-url sqlite:///data/local/cgmacros.db\n"
+                "  python -m data.adapters.cgmacros --path <CGMacros dir> "
+                "--db-url sqlite:///data/local/cgmacros.db"
+            ) from error
+
+        if not repository.list_participants():
+            raise SystemExit(
+                f"the canonical database ({db_url or '$GLUCOTWIN_DB_URL'}) has no "
+                "participants. Refusing to train on an empty database rather than "
+                "quietly producing a model from nothing."
+            )
+        return repository
+
+    raise SystemExit(f"unknown --source {source!r}; expected one of {SOURCES}")
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Train GlucoTwin forecasting models.")
+def add_source_arguments(parser: argparse.ArgumentParser) -> None:
+    """Shared `--source` / `--db-url` / fixture arguments for the ML CLIs."""
     parser.add_argument(
         "--source",
         default="synthetic_dev",
-        help="data source name (currently only 'synthetic_dev')",
+        choices=list(SOURCES),
+        help="'synthetic_dev' in-memory fixture, or 'sqlite' canonical database",
     )
-    parser.add_argument("--days", type=int, default=7, help="fixture days to generate")
+    parser.add_argument(
+        "--db-url",
+        default=None,
+        help="database URL for --source sqlite (default: $GLUCOTWIN_DB_URL)",
+    )
+    parser.add_argument(
+        "--days", type=int, default=16, help="fixture days (synthetic_dev only)"
+    )
     parser.add_argument(
         "--seed",
         type=int,
         default=DEFAULT_CONFIG.model.random_seed,
         help="deterministic seed",
     )
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Train GlucoTwin forecasting models.")
+    add_source_arguments(parser)
     parser.add_argument(
         "--out", default=str(ARTIFACT_DIR), help="artifact output directory"
     )
@@ -435,9 +573,19 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="drop episodes with another meal inside the 120-minute window",
     )
+    parser.add_argument(
+        "--holdout",
+        default="none",
+        choices=["none", "day8"],
+        help=(
+            "'day8' fits on the Day-8 training pool only, leaving the held-out Day-8 "
+            "responses untouched by the served model as well as by evaluation "
+            "(required for real-data artifacts under ruling D1)"
+        ),
+    )
     args = parser.parse_args(argv)
 
-    repository = build_repository(args.source, args.days, args.seed)
+    repository = build_repository(args.source, args.days, args.seed, args.db_url)
     config = dataclasses.replace(
         DEFAULT_CONFIG,
         model=dataclasses.replace(DEFAULT_CONFIG.model, random_seed=args.seed),
@@ -446,8 +594,9 @@ def main(argv: list[str] | None = None) -> int:
     artifact = train(
         repository,
         config,
-        data_source=args.source,
+        # data_source=None -> resolved from the participant records (ruling D2).
         exclude_overlapping=args.exclude_overlapping,
+        holdout=args.holdout,
     )
     artifact_path, manifest_path = save_artifact(artifact, pathlib.Path(args.out))
 
@@ -457,6 +606,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"data_source          {artifact.data_source}")
     print(f"trained_at           {artifact.trained_at.isoformat()}")
     print(f"episodes             {summary['episodes']} across {summary['participants']} participants")
+    print(f"holdout              {summary['holdout']} (fitted {summary['fitted_episodes']}, validation {summary['validation_episodes']})")
     print(f"exclusions           {summary['exclusions']['excluded']} {summary['exclusions']['reasons']}")
     print(f"overlapping tagged   {summary['exclusions']['overlapping_tagged']}")
     print(f"chosen alpha         {artifact.generalized.chosen_alpha}")

@@ -521,7 +521,9 @@ class TestModelEndpoints:
         payload = client.get("/api/model/info").json()
         assert payload["model_version"] == "v0.1.0"
         assert payload["data_source"] == "synthetic_dev"
-        assert payload["feature_set_version"] == "fs-1.0"
+        # fs-1.1: time-of-day features became optional when the local clock is
+        # unknowable (ruling D3), which changed the feature block's contract.
+        assert payload["feature_set_version"] == "fs-1.1"
         assert payload["trained_at"] is not None
         assert payload["limitations"]
 

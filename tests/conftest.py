@@ -50,14 +50,35 @@ def _run_module(module: str, *args: str) -> None:
         )
 
 
-@pytest.fixture(scope="session", autouse=True)
-def ensure_trained_artifacts() -> None:
-    """Provision `model.joblib` and `metrics.json` if a clean clone lacks them.
+def _artifact_is_current() -> bool:
+    """True when the on-disk artifact matches the running feature contract.
 
-    Deliberately NOT a rebuild: an existing artifact is left alone so local
-    experiments are not silently overwritten mid-test-run.
+    A feature-set bump (fs-1.0 -> fs-1.1) makes an existing artifact unloadable:
+    `load_artifact` refuses it rather than serving coefficients that correspond to a
+    different column layout. Without this check the suite would fail on every machine
+    that had trained before the bump, for a reason that has nothing to do with the
+    code under test.
     """
     if not ARTIFACT_PATH.exists():
+        return False
+    try:
+        from ml.train import load_artifact
+
+        load_artifact(ARTIFACT_PATH)
+        return True
+    except Exception:
+        return False
+
+
+@pytest.fixture(scope="session", autouse=True)
+def ensure_trained_artifacts() -> None:
+    """Provision `model.joblib` and `metrics.json` when absent or stale.
+
+    Only regenerates the synthetic-fixture artifact under `ml/artifacts/`. Real-data
+    artifacts live in `ml/artifacts_<dataset>/` and are never touched by the tests.
+    """
+    if not _artifact_is_current():
         _run_module("ml.train", "--source", "synthetic_dev")
-    if not METRICS_PATH.exists():
+        _run_module("ml.evaluate", "--protocol", "all")
+    elif not METRICS_PATH.exists():
         _run_module("ml.evaluate", "--protocol", "all")

@@ -33,6 +33,7 @@ def _build(history: ParticipantHistory, **kwargs):
         composition=COMPOSITION,
         config=DEFAULT_CONFIG.features,
         timezone_name=kwargs.pop("timezone_name", "UTC"),
+        time_basis=kwargs.pop("time_basis", "utc"),
         **kwargs,
     )
 
@@ -199,11 +200,42 @@ class TestTimingFeatures:
         ny = _build(history, timezone_name="America/New_York")
         assert utc.values["tod_sin"] != pytest.approx(ny.values["tod_sin"])
 
-    def test_unknown_timezone_falls_back_to_utc_without_crashing(self):
+    def test_an_unparseable_timezone_is_refused_not_quietly_replaced_by_utc(self):
+        """Ruling D3: never silently substitute UTC for an unusable local clock.
+
+        This test previously asserted the OPPOSITE -- that a bogus timezone fell back
+        to UTC and matched it. That fallback manufactured a time of day the data does
+        not support.
+
+        A malformed timezone is a data-layer defect, not a legitimate unknown: the
+        data layer validates timezone names at ingestion (`data.timeutil
+        .is_valid_timezone`), so one cannot legitimately reach the model. It therefore
+        fails loudly, surfacing the upstream bug, instead of being imputed around.
+        Contrast `test_absent_timezone_on_utc_data_yields_missing_time_of_day`, where
+        the clock is genuinely unknown and the feature IS recorded missing.
+        """
         history = _history(cgm=[CgmPoint(MEAL_TIME, 100.0)])
-        bogus = _build(history, timezone_name="Not/AZone")
-        utc = _build(history, timezone_name="UTC")
-        assert bogus.values["tod_sin"] == pytest.approx(utc.values["tod_sin"])
+        with pytest.raises(FeatureError, match="local time of day"):
+            _build(history, timezone_name="Not/AZone")
+
+    def test_absent_timezone_on_utc_data_yields_missing_time_of_day(self):
+        """A genuinely unknown local clock is recorded missing, never guessed."""
+        history = _history(cgm=[CgmPoint(MEAL_TIME, 100.0)])
+        row = _build(history, timezone_name=None)
+        assert math.isnan(row.values["tod_sin"])
+        assert math.isnan(row.values["tod_cos"])
+        assert "tod_sin" in row.missing_features
+        assert "tod_cos" in row.missing_features
+
+    def test_source_local_basis_tolerates_a_stray_timezone(self):
+        """Floating local time needs no conversion, so a stray zone cannot corrupt it."""
+        history = _history(cgm=[CgmPoint(MEAL_TIME, 100.0)])
+        row = _build(
+            history, timezone_name="Not/AZone", time_basis="source_local_unknown_tz"
+        )
+        assert row.values["tod_sin"] == pytest.approx(
+            _build(history, time_basis="source_local_unknown_tz").values["tod_sin"]
+        )
 
     def test_prior_meal_gap_is_capped(self):
         old_meal = MealRecord(

@@ -82,6 +82,11 @@ OPTIONAL_FEATURES: frozenset[str] = frozenset(
         "minutes_since_prior_meal",
         "prior_meal_carbs_g",
         "hr_mean_30min_bpm",
+        # Time of day is unknowable for a real-UTC dataset with no recorded timezone.
+        # It is left missing in that case rather than guessed -- see ruling D3 and
+        # `ml/provenance.py`.
+        "tod_sin",
+        "tod_cos",
     }
 )
 
@@ -223,23 +228,50 @@ def _least_squares_slope(times: np.ndarray, values: np.ndarray) -> float:
     return float(np.sum(spread * (values - values.mean())) / denominator)
 
 
-def _minutes_of_day(timestamp: dt.datetime, tz_name: str | None) -> float:
-    """Minutes since local midnight, localized when the participant timezone is known.
+def _minutes_of_day(
+    timestamp: dt.datetime, time_basis: str, tz_name: str | None
+) -> float | None:
+    """Minutes since the participant's LOCAL midnight, or `None` when unknowable.
 
-    Falls back to UTC when no timezone is supplied. That fallback is a real limitation:
-    the circadian features become offset by the participant's true UTC offset. The data
-    layer supplies `timezone` on the participant record precisely so this does not
-    happen, and the API reports the fallback in `limitations`.
+    Delegates to the data layer's `local_minutes_of_day`, which is the single
+    authority on what a canonical timestamp means (ruling D3):
+
+    * `source_local_unknown_tz` -- the stored value encodes the source's local wall
+      clock under a `+00:00` label, so its clock reading IS the local time of day.
+      Read it directly; converting would corrupt it.
+    * `utc` with a known IANA timezone -- convert, then read the clock.
+    * `utc` with no timezone -- the local time of day is genuinely unknown. Return
+      `None` so the caller records the feature as missing. Guessing UTC here would
+      silently shift every circadian feature by the participant's true offset.
+
+    The previous implementation did the last case wrong in a way that mattered: it
+    assumed UTC and described that as a mild limitation. For the organizer datasets
+    the assumption happened to be harmless (their stored clock already IS local), but
+    the reasoning was inverted, so the code was right by accident rather than by
+    construction.
     """
-    local = timestamp
-    if tz_name:
-        try:
-            from zoneinfo import ZoneInfo
+    if timestamp.tzinfo is None:
+        raise FeatureError("meal_timestamp must be offset-aware")
+    try:
+        from data.timeutil import local_minutes_of_day
+    except Exception:  # pragma: no cover - data layer always present in this repo
+        # Degrade to the documented `utc` semantics rather than failing a forecast.
+        if time_basis == "utc" and not tz_name:
+            return None
+        local = timestamp
+        if tz_name:
+            try:
+                from zoneinfo import ZoneInfo
 
-            local = timestamp.astimezone(ZoneInfo(tz_name))
-        except Exception:
-            local = timestamp
-    return local.hour * 60.0 + local.minute + local.second / 60.0
+                local = timestamp.astimezone(ZoneInfo(tz_name))
+            except Exception:
+                return None
+        return local.hour * 60.0 + local.minute + local.second / 60.0
+
+    try:
+        return local_minutes_of_day(timestamp, time_basis, tz_name)
+    except Exception as error:
+        raise FeatureError(f"cannot establish local time of day: {error}") from error
 
 
 # --------------------------------------------------------------------------- #
@@ -255,6 +287,7 @@ def build_features(
     *,
     meal_id: str | None = None,
     timezone_name: str | None = None,
+    time_basis: str = "utc",
     override: ContextOverride | None = None,
 ) -> FeatureRow:
     """Extract the prediction-time feature vector for one meal.
@@ -329,10 +362,15 @@ def build_features(
     values["calories_kcal"] = composition.calories_kcal
 
     # -- timing --------------------------------------------------------------- #
-    minutes_of_day = _minutes_of_day(meal_timestamp, timezone_name)
-    angle = 2.0 * math.pi * minutes_of_day / 1440.0
-    values["tod_sin"] = math.sin(angle)
-    values["tod_cos"] = math.cos(angle)
+    minutes_of_day = _minutes_of_day(meal_timestamp, time_basis, timezone_name)
+    if minutes_of_day is None:
+        # Unknowable local clock: record missing, let the fitted imputer handle it.
+        values["tod_sin"] = math.nan
+        values["tod_cos"] = math.nan
+    else:
+        angle = 2.0 * math.pi * minutes_of_day / 1440.0
+        values["tod_sin"] = math.sin(angle)
+        values["tod_cos"] = math.cos(angle)
 
     # Strictly earlier meals only: `<` excludes the meal being forecast, which appears
     # in `past` when scoring a logged meal.

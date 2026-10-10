@@ -20,6 +20,8 @@ venv/
 # Generated ML artifacts (reproduce with `python -m ml.train`)
 ml/artifacts/*
 !ml/artifacts/.gitkeep
+# Per-dataset artifact directories (real-data models are rebuilt from the local DBs)
+ml/artifacts_*/
 
 # Generated dev scratch data (NOT the canonical data layer)
 ml/_devdata/
