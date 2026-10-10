@@ -212,18 +212,29 @@ class TestBackendResolution:
         with pytest.raises(DataLayerError, match="unknown GLUCOTWIN_DATA_BACKEND"):
             build_repository(settings)
 
-    def test_sqlite_backend_resolves_to_the_canonical_repository(self, seeded_sqlite_url):
-        """Replaces the old negative test, which asserted data/ did not exist yet.
+    # --- approved replacement for the obsolete negative test, from Het (8e436e5) ---
+    # Replaces `test_sqlite_backend_fails_informatively_until_the_data_layer_lands`, which
+    # asserted the data layer was absent; it has landed (approved replacement).
+    def test_sqlite_backend_binds_the_canonical_repository(self, tmp_path):
+        from data.adapters import import_fixture
+        from data.storage.db import init_db, make_engine
 
-        Het's layer has landed (commit 0a72229), so the meaningful assertion is now
-        that selecting it actually yields a working Protocol implementation.
-        """
-        settings = Settings(data_backend="sqlite", db_url=seeded_sqlite_url)
-        repository = build_repository(settings)
-        assert type(repository).__name__ == "SqliteDataRepository"
+        url = f"sqlite:///{tmp_path / 'canonical.db'}"
+        engine = make_engine(url)
+        init_db(engine)
+        import_fixture(engine=engine, report_dir=tmp_path / "reports")
+        repository = build_repository(Settings(data_backend="sqlite", db_url=url))
         assert isinstance(repository, DataRepository)
-        assert repository.list_participants()
+        assert type(repository).__name__ == "SqliteDataRepository"
+        assert [s.participant_id for s in repository.list_participants()][:1] == ["synthetic_p001"]
 
+    def test_sqlite_backend_fails_informatively_without_a_database(self, tmp_path):
+        """An uninitialized database must say what to run, not fail opaquely."""
+        settings = Settings(data_backend="sqlite", db_url=f"sqlite:///{tmp_path / 'missing.db'}")
+        with pytest.raises(RuntimeError, match="not initialized"):
+            build_repository(settings)
+
+    # --- additional integration coverage (Ruhaan) ---
     def test_switching_backends_is_the_only_change_needed(self, seeded_sqlite_url):
         """The two implementations must agree on the roster the API will serve."""
         memory = build_repository(Settings(data_backend="synthetic_dev"))

@@ -27,6 +27,7 @@ from sqlalchemy.engine import Engine
 
 from data.storage import tables
 from data.storage.db import is_initialized, make_engine
+from data.timeutil import local_minutes_of_day
 from ml.schema import (
     ActivityEvent,
     CgmPoint,
@@ -196,6 +197,27 @@ class SqliteDataRepository:
         rows = self._select(tables.cgm_secondary, participant_id, _bound(start, "start"), _bound(end, "end"),
                             ("timestamp", "sensor"))
         return [(r["timestamp"], r["sensor"], r["glucose_mg_dl"]) for r in rows]
+
+    def get_time_basis(self, participant_id: str) -> dict | None:
+        """``{"time_basis", "timezone"}``. ``source_local_unknown_tz`` means canonical
+        timestamps are source wall clock with a +00:00 label, not real UTC instants."""
+        row = self._participant_row(participant_id)
+        return None if row is None else {"time_basis": row["time_basis"], "timezone": row["timezone"]}
+
+    def local_minutes_of_day(self, participant_id: str, timestamp: dt.datetime) -> float | None:
+        """Local time of day (minutes since midnight) for this participant, or None if unknowable."""
+        basis = self.get_time_basis(participant_id)
+        if basis is None:
+            return None
+        return local_minutes_of_day(require_utc(timestamp, "timestamp"), basis["time_basis"], basis["timezone"])
+
+    def get_source_attributes(self, participant_id: str) -> list[dict]:
+        """Preserved source fields with no canonical home (data layer only; not in the API)."""
+        t = tables.source_attributes
+        stmt = (select(t).where(t.c.participant_id == participant_id)
+                .order_by(t.c.entity_type, t.c.entity_id, t.c.attribute))
+        with self.engine.connect() as conn:
+            return [{k: v for k, v in dict(r).items() if k != "ingestion_run_id"} for r in conn.execute(stmt).mappings()]
 
     def get_participant_metadata(self, participant_id: str) -> dict | None:
         """Full participant row including provenance (source_dataset, data_source, run)."""

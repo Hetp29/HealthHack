@@ -115,7 +115,7 @@ def test_cgmacros_sensor_identity_and_provenance(cgm_repo, cgm_source):
     report = cgm_repo._results[0].report
     assert report["input_sha256"] == sha256_file(cgm_source / "CGMacros-001" / "CGMacros-001.csv")
     codes = {w["code"] for w in report["batch_warnings"]}
-    assert {"cgm_deinterpolated", "timestamps_floating_local_wall_clock", "medications_absent_in_source",
+    assert {"cgm_deinterpolated", "time_basis_source_local_unknown_tz", "medications_absent_in_source",
             "end_of_meal_photos_not_counted_as_meals"} <= codes
 
 
@@ -259,3 +259,53 @@ def test_audit_reports_are_reproducible(cgm_source, mn_path, tmp_path):
     assert json.loads((tmp_path / "a" / "metabonet_schema.json").read_text())["subject_ids_shared_across_sources"] == 1
     d8 = pd.read_csv(tmp_path / "a" / "day8_eligibility.csv")
     assert set(d8.dataset) == {"cgmacros", "metabonet"}
+
+
+# ------------------------------------------------------------------ time basis + attributes
+
+
+def test_unknown_timezone_is_explicit_and_original_text_preserved(cgm_repo):
+    from data.storage import tables
+    from sqlalchemy import select
+
+    basis = cgm_repo.get_time_basis("cgmacros_001")
+    assert basis == {"time_basis": "source_local_unknown_tz", "timezone": None}
+    with cgm_repo.engine.connect() as conn:
+        ts, src = conn.execute(
+            select(tables.meals.c.timestamp, tables.meals.c.source_timestamp)
+            .where(tables.meals.c.participant_id == "cgmacros_001").order_by(tables.meals.c.timestamp)
+        ).first()
+    assert src == "2020-05-01 08:07:00"  # exactly as written in the source file
+    assert cgm_repo.local_minutes_of_day("cgmacros_001", ts) == 8 * 60 + 7  # local clock, not a UTC shift
+
+
+def test_local_time_of_day_rules():
+    from data.timeutil import local_minutes_of_day
+
+    t = dt.datetime(2026, 10, 8, 12, 30, tzinfo=UTC)
+    assert local_minutes_of_day(t, "source_local_unknown_tz", None) == 750
+    assert local_minutes_of_day(t, "utc", "America/New_York") == 8 * 60 + 30
+    assert local_minutes_of_day(t, "utc", None) is None  # real UTC, unknown zone: not guessed
+
+
+def test_amount_consumed_and_a1c_are_preserved_outside_the_api(cgm_source, tmp_path):
+    (cgm_source / "bio.csv").write_text("subject,Age,A1c PDL (Lab)\n1,30,5.4\n2,41,6.1\n")
+    engine = temp_engine(tmp_path)
+    cgmacros.import_cgmacros(cgm_source, engine=engine, report_dir=tmp_path / "reports")
+    repo = SqliteDataRepository(engine=engine)
+    attrs = repo.get_source_attributes("cgmacros_001")
+    a1c = [a for a in attrs if a["attribute"] == "a1c_lab"]
+    assert len(a1c) == 1 and a1c[0]["value_num"] == 5.4 and a1c[0]["entity_type"] == "participant"
+    consumed = [a for a in attrs if a["attribute"] == "amount_consumed_pct"]
+    assert len(consumed) == 27 and {a["value_num"] for a in consumed} == {100.0} and consumed[0]["unit"] == "%"
+    assert "Age" not in {a["attribute"] for a in attrs}  # only the approved fields
+    meal = repo.get_meals("cgmacros_001")[0]
+    assert not hasattr(meal, "amount_consumed_pct")  # API record types unchanged
+
+
+def test_metabonet_time_basis(mn_path, tmp_path):
+    engine = temp_engine(tmp_path)
+    metabonet.import_metabonet(mn_path, engine=engine, report_dir=tmp_path / "reports", max_subjects=1)
+    repo = SqliteDataRepository(engine=engine)
+    pid = repo.list_participants()[0].participant_id
+    assert repo.get_time_basis(pid) == {"time_basis": "source_local_unknown_tz", "timezone": None}

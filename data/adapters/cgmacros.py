@@ -23,10 +23,13 @@ What this adapter does, and why
 * **Activity.** METs (stored as MET x10 per the data dictionary, converted to MET),
   Fitbit ``Intensity`` level, ``Steps`` and ``Calories (Activity)`` (kcal/min), per minute.
 * **Time.** Timestamps are date-shifted, offset-naive local wall clock with no stated
-  timezone. They are stored as UTC-labelled wall clock ("floating time") via an explicit
-  ``assume_timezone="UTC"`` policy, and ``participant.timezone`` is left null (unknown).
-  Within-participant order, durations and time-of-day are preserved; absolute instants
-  are not comparable across participants.
+  timezone. The original text is preserved in ``source_timestamp`` on every row; the
+  participant is marked ``time_basis="source_local_unknown_tz"`` with ``timezone`` null.
+  The canonical ``timestamp`` (which the frozen contract requires to carry an offset)
+  encodes that wall clock with a +00:00 label as an ordering key: it is NOT a real UTC
+  instant. Within-participant order, durations and local time-of-day are exact.
+* **Preserved source fields.** ``Amount Consumed`` (per meal) and ``bio.csv`` A1c (per
+  participant) go to the data-layer-only ``source_attributes`` table, unexposed by the API.
 * **Medications.** CGMacros has none. Absent means unrecorded, not "not taking any".
 """
 
@@ -122,7 +125,21 @@ def _ts(value) -> str:
     return value.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def build_prepared(csv_path: Path, primary: str = "dexcom") -> tuple[PreparedSource, dict]:
+def read_bio(root: Path) -> dict[str, dict]:
+    """A1c per participant number from ``bio.csv`` (if present). Other columns stay in the file."""
+    path = Path(root) / "bio.csv"
+    if not path.is_file():
+        return {}
+    frame = pd.read_csv(path)
+    frame.columns = [c.strip() for c in frame.columns]
+    out = {}
+    for i, r in frame.iterrows():
+        a1c = pd.to_numeric(r.get("A1c PDL (Lab)"), errors="coerce")
+        out[f"{int(r['subject']):03d}"] = {"row": i + 2, "a1c": None if pd.isna(a1c) else float(a1c)}
+    return out
+
+
+def build_prepared(csv_path: Path, primary: str = "dexcom", bio: dict | None = None) -> tuple[PreparedSource, dict]:
     """Canonical rows + an audit record for one participant file."""
     folder = csv_path.parent
     number = FOLDER_RE.match(folder.name).group(1)
@@ -139,9 +156,16 @@ def build_prepared(csv_path: Path, primary: str = "dexcom") -> tuple[PreparedSou
 
     rows: dict[str, list[RawRow]] = {
         "participants": [raw(0, {"participant_id": pid, "display_name": f"CGMacros {number}",
-                                 "timezone": None, "source_dataset": DATASET})],
-        "cgm": [], "cgm_secondary": [], "heart_rate": [], "meals": [], "activity": [],
+                                 "timezone": None, "source_dataset": DATASET,
+                                 "time_basis": "source_local_unknown_tz"})],
+        "cgm": [], "cgm_secondary": [], "heart_rate": [], "meals": [], "activity": [], "source_attributes": [],
     }
+    if bio is not None and bio.get("a1c") is not None:
+        rows["source_attributes"].append(RawRow("bio.csv", int(bio["row"]), {
+            "participant_id": pid, "entity_type": "participant", "entity_id": pid, "attribute": "a1c_lab",
+            "value_num": bio["a1c"], "unit": None,
+            "value_text": "bio.csv 'A1c PDL (Lab)'; dictionary says mmol/mol, values 4.6-8.5 look like %",
+        }))
     for key, spec in SENSORS.items():
         kept, stats = native_readings(frame, spec["column"], spec["cadence_min"])
         audit[f"{key}_stats"] = stats
@@ -178,8 +202,15 @@ def build_prepared(csv_path: Path, primary: str = "dexcom") -> tuple[PreparedSou
             else:
                 missing_photos += 1
         ts = m["_ts"]
+        meal_id = f"{pid}_meal_{ts:%Y%m%dT%H%M}" if pd.notna(ts) else None
+        consumed = pd.to_numeric(m.get("Amount Consumed"), errors="coerce")
+        if meal_id and pd.notna(consumed):
+            rows["source_attributes"].append(raw(m["_row"], {
+                "participant_id": pid, "entity_type": "meal", "entity_id": meal_id,
+                "attribute": "amount_consumed_pct", "value_num": float(consumed), "unit": "%",
+            }))
         rows["meals"].append(raw(m["_row"], {
-            "meal_id": f"{pid}_meal_{ts:%Y%m%dT%H%M}" if pd.notna(ts) else None,
+            "meal_id": meal_id,
             "participant_id": pid,
             "timestamp": _ts(ts) if pd.notna(ts) else None,
             "carbs_g": _num(m.get("Carbs")), "protein_g": _num(m.get("Protein")), "fat_g": _num(m.get("Fat")),
@@ -202,8 +233,10 @@ def build_prepared(csv_path: Path, primary: str = "dexcom") -> tuple[PreparedSou
     notes = [
         {"code": "cgm_deinterpolated", "sensor": SENSORS[k]["name"], **audit[f"{k}_stats"]} for k in SENSORS
     ] + [
-        {"code": "timestamps_floating_local_wall_clock", "detail": "date-shifted, offset-naive; stored as UTC-labelled wall clock"},
-        {"code": "non_canonical_fields_not_stored", "fields": ["Meal Type", "Amount Consumed", "Sugar", "RecordIndex"]},
+        {"code": "time_basis_source_local_unknown_tz",
+         "detail": "date-shifted, offset-naive local wall clock; original text in source_timestamp"},
+        {"code": "preserved_in_source_attributes", "fields": ["Amount Consumed", "bio.csv A1c"]},
+        {"code": "non_canonical_fields_not_stored", "fields": ["Meal Type", "Sugar", "RecordIndex"]},
         {"code": "medications_absent_in_source"},
     ]
     if audit["photo_rows_without_meal_type"]:
@@ -216,7 +249,7 @@ def build_prepared(csv_path: Path, primary: str = "dexcom") -> tuple[PreparedSou
         sha256=sha256_file(csv_path),
         data_source="official",
         rows=rows,
-        assume_timezone="UTC",
+        assume_timezone="floating",
         notes=notes,
     )
     return prepared, audit
@@ -243,9 +276,11 @@ def import_cgmacros(
         raise FileNotFoundError(f"no CGMacros-NNN/CGMacros-NNN.csv files under {root}")
     if engine is None and not dry_run:
         engine = make_engine(db_url)
+    bio = read_bio(root)
     results = []
     for path in files:
-        prepared, _audit = build_prepared(path, primary)
+        number = FOLDER_RE.match(path.parent.name).group(1)
+        prepared, _audit = build_prepared(path, primary, bio.get(number))
         results.append(run_prepared_ingestion(prepared, engine, dry_run=dry_run, report_dir=report_dir))
     return results
 

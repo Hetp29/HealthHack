@@ -40,7 +40,7 @@ from data.validation import (
 )
 
 DEFAULT_REPORT_DIR = REPO_ROOT / "data" / "reports" / "runs"
-EVENT_MODALITIES = ("cgm", "cgm_secondary", "heart_rate", "meals", "medications", "activity")
+EVENT_MODALITIES = ("cgm", "cgm_secondary", "heart_rate", "meals", "medications", "activity", "source_attributes")
 REQUIRED_MODALITIES = ("cgm",)
 # A participant-level median below this is far below any physiologic mg/dL level and
 # typical of mmol/L values mislabeled as mg/dL.
@@ -201,7 +201,7 @@ class _Run:
 
     def _warn_unmapped(self) -> None:
         for modality in MODALITIES:
-            if modality not in self.mapping.modalities and modality not in ("participants", "cgm_secondary"):
+            if modality not in self.mapping.modalities and modality not in ("participants", "cgm_secondary", "source_attributes"):
                 self.batch_warnings.append({"code": "modality_not_mapped", "modality": modality})
 
     # ------------------------------------------------------------ validation
@@ -498,6 +498,8 @@ def _count_out_of_order(rows: list[_Candidate]) -> int:
     last: dict[str, datetime] = {}
     count = 0
     for cand in rows:
+        if "timestamp" not in cand.record:
+            continue
         pid, ts = cand.record["participant_id"], cand.record["timestamp"]
         if pid in last and ts < last[pid]:
             count += 1

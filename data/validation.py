@@ -70,7 +70,10 @@ class ValidationContext:
     data_source: str
     null_tokens: frozenset[str] = frozenset({"", "NA", "N/A", "n/a", "null", "NULL", "None"})
     timestamp_format: str | None = None
-    # None -> reject naive timestamps; "participant" -> participant's timezone; else IANA.
+    # None -> reject naive timestamps; "participant" -> participant's timezone;
+    # "floating" -> source-local wall clock with UNKNOWN timezone: encoded with a +00:00
+    # label as an ordering key (participant.time_basis = "source_local_unknown_tz");
+    # otherwise an IANA zone name.
     assume_timezone: str | None = None
     participant_timezones: dict[str, str | None] = field(default_factory=dict)
     # Used by the "participant" policy for participants with no known timezone.
@@ -128,7 +131,9 @@ def _participant_id(row: dict, ctx: ValidationContext, reasons: list[str]) -> st
 
 def _timestamp(row: dict, pid: str | None, ctx: ValidationContext, reasons: list[str]):
     assume = ctx.assume_timezone
-    if assume == "participant":
+    if assume == "floating":
+        assume = "UTC"  # label only; time_basis records that this is NOT a real UTC instant
+    elif assume == "participant":
         assume = (ctx.participant_timezones.get(pid) if pid else None) or ctx.default_participant_timezone
     raw = row.get("timestamp")
     if _is_null(raw, ctx):
@@ -139,6 +144,17 @@ def _timestamp(row: dict, pid: str | None, ctx: ValidationContext, reasons: list
     except TimestampError as exc:
         reasons.append(exc.code)
         return None
+
+
+def _source_timestamp(row: dict) -> str | None:
+    """The timestamp exactly as the source wrote it (preserved alongside the canonical one)."""
+    raw = row.get("timestamp")
+    if raw is None:
+        return None
+    return raw.isoformat() if hasattr(raw, "isoformat") else str(raw).strip() or None
+
+
+TIME_BASES = ("utc", "source_local_unknown_tz")
 
 
 def stable_id(prefix: str, *parts: Any) -> str:
@@ -161,6 +177,13 @@ def validate_participant(row: dict, ctx: ValidationContext) -> RowResult:
     if tz is not None and not is_valid_timezone(tz):
         warnings.append("invalid_timezone_set_null")
         tz = None
+    time_basis = _text(row.get("time_basis"), ctx) or (
+        "source_local_unknown_tz" if ctx.assume_timezone == "floating" else "utc"
+    )
+    if time_basis not in TIME_BASES:
+        reasons.append("invalid_time_basis")
+    if time_basis == "source_local_unknown_tz" and tz is not None:
+        reasons.append("timezone_conflicts_with_time_basis")
     if reasons:
         return RowResult(None, reasons, warnings)
     return RowResult(
@@ -169,6 +192,7 @@ def validate_participant(row: dict, ctx: ValidationContext) -> RowResult:
             "display_name": display_name,
             "timezone": tz,
             "source_dataset": _text(row.get("source_dataset"), ctx),
+            "time_basis": time_basis,
             "data_source": ctx.data_source,
         },
         reasons,
@@ -204,6 +228,7 @@ def validate_cgm(row: dict, ctx: ValidationContext) -> RowResult:
         {
             "participant_id": pid,
             "timestamp": ts,
+            "source_timestamp": _source_timestamp(row),
             "glucose_mg_dl": glucose,
             "sensor": _text(row.get("sensor"), ctx),
             "data_source": ctx.data_source,
@@ -246,6 +271,7 @@ def validate_heart_rate(row: dict, ctx: ValidationContext) -> RowResult:
         {
             "participant_id": pid,
             "timestamp": ts,
+            "source_timestamp": _source_timestamp(row),
             "heart_rate_bpm": hr,
             "resting_heart_rate_bpm": resting,
             "data_source": ctx.data_source,
@@ -321,6 +347,7 @@ def validate_meal(row: dict, ctx: ValidationContext) -> RowResult:
             "meal_id": meal_id,
             "participant_id": pid,
             "timestamp": ts,
+            "source_timestamp": _source_timestamp(row),
             **values,
             "image_ref": image_ref,
             "data_source": ctx.data_source,
@@ -358,6 +385,7 @@ def validate_medication(row: dict, ctx: ValidationContext) -> RowResult:
             "id": med_id,
             "participant_id": pid,
             "timestamp": ts,
+            "source_timestamp": _source_timestamp(row),
             "medication_class": med_class,
             "dose": dose,
             "dose_unit": unit,
@@ -390,12 +418,47 @@ def validate_activity(row: dict, ctx: ValidationContext) -> RowResult:
             "id": stable_id("act", pid, to_storage(ts), unit),
             "participant_id": pid,
             "timestamp": ts,
+            "source_timestamp": _source_timestamp(row),
             "activity_value": value,
             "activity_unit": unit,
             "data_source": ctx.data_source,
         },
         reasons,
         warnings,
+    )
+
+
+def validate_source_attribute(row: dict, ctx: ValidationContext) -> RowResult:
+    reasons: list[str] = []
+    pid = _participant_id(row, ctx, reasons)
+    entity_type = _text(row.get("entity_type"), ctx)
+    if entity_type not in ("participant", "meal"):
+        reasons.append("invalid_entity_type")
+    entity_id = _text(row.get("entity_id"), ctx)
+    attribute = _text(row.get("attribute"), ctx)
+    if entity_id is None:
+        reasons.append("missing_entity_id")
+    if attribute is None:
+        reasons.append("missing_attribute")
+    value_num = _number(row.get("value_num"), "value_num", ctx, reasons)
+    value_text = _text(row.get("value_text"), ctx)
+    if value_num is None and value_text is None and not any(r.endswith("value_num") for r in reasons):
+        reasons.append("empty_attribute")
+    if reasons:
+        return RowResult(None, reasons, [])
+    return RowResult(
+        {
+            "entity_type": entity_type,
+            "entity_id": entity_id,
+            "attribute": attribute,
+            "participant_id": pid,
+            "value_num": value_num,
+            "value_text": value_text,
+            "unit": _text(row.get("unit"), ctx),
+            "data_source": ctx.data_source,
+        },
+        [],
+        [],
     )
 
 
@@ -407,6 +470,7 @@ VALIDATORS: dict[str, Callable[[dict, ValidationContext], RowResult]] = {
     "meals": validate_meal,
     "medications": validate_medication,
     "activity": validate_activity,
+    "source_attributes": validate_source_attribute,
 }
 
 # Natural key per modality: duplicates are detected on these, and the DB upserts on them.
@@ -418,6 +482,7 @@ NATURAL_KEYS: dict[str, tuple[str, ...]] = {
     "meals": ("meal_id",),
     "medications": ("participant_id", "timestamp", "medication_class"),
     "activity": ("participant_id", "timestamp", "activity_unit"),
+    "source_attributes": ("entity_type", "entity_id", "attribute"),
 }
 
 # Storage primary key per modality (what an UPDATE targets).
@@ -429,4 +494,5 @@ PRIMARY_KEYS: dict[str, tuple[str, ...]] = {
     "meals": ("meal_id",),
     "medications": ("id",),
     "activity": ("id",),
+    "source_attributes": ("entity_type", "entity_id", "attribute"),
 }
