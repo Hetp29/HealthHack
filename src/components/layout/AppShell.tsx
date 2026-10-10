@@ -26,14 +26,18 @@ const CONN: Record<Connectivity, { label: string; dot: string }> = {
   connected: { label: "Backend connected", dot: "bg-primary" },
   model_unavailable: { label: "Model unavailable", dot: "bg-warning-border" },
   unavailable: { label: "Backend unavailable", dot: "bg-destructive" },
-  fixture: { label: "Fixture mode", dot: "bg-warning-border" },
+  fixture: { label: "Demo data", dot: "bg-warning-border" },
 };
 
 const tabs = [
   { to: "/", label: "Patient Overview" },
   { to: "/predict", label: "Predict Meal Trajectory" },
   { to: "/insights", label: "Model Insights" },
+  { to: "/profile", label: "My Profile" },
 ] as const;
+
+/** User-facing names for the two data modes (internal values stay "live" / "fixture"). */
+const MODE_LABEL = { live: "Real data", fixture: "Demo data" } as const;
 
 function StatusCluster() {
   const { mode, setMode, connectivity, dataSource, recheck } = useAppState();
@@ -59,11 +63,11 @@ function StatusCluster() {
             aria-pressed={mode === m}
             onClick={() => setMode(m)}
             className={cn(
-              "rounded-full px-2.5 py-0.5 font-medium uppercase tracking-wide transition-colors duration-150",
+              "rounded-full px-2.5 py-0.5 font-medium transition-colors duration-150",
               mode === m ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
             )}
           >
-            {m}
+            {MODE_LABEL[m]}
           </button>
         ))}
       </div>
@@ -126,8 +130,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="mx-auto flex max-w-[1520px] items-center gap-2 px-4 py-2 text-[13px] text-warning-foreground md:px-8">
             <FlaskConical className="h-4 w-4 shrink-0" aria-hidden />
             <span>
-              <strong className="font-semibold">Development fixture mode.</strong> All data shown is local demonstration
-              data — not live predictions or real observations. Switch to LIVE to use the FastAPI backend.
+              <strong className="font-semibold">Demo data.</strong> Everything shown is sample data for demonstration,
+              not real observations or model predictions. Switch to Real data to use the GlucoTwin model.
             </span>
           </div>
         </div>

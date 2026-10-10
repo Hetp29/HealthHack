@@ -9,7 +9,7 @@ const STATUS_LABEL: Record<string, string> = {
   personalized: "Personalized Response",
   generalized_fallback: "Generalized Fallback",
   generalized: "Generalized Fallback",
-  fixture: "Development Fixture",
+  fixture: "Demo Forecast",
 };
 
 export function PredictionResults({ result, stale }: { result: PredictResponse; stale: boolean }) {

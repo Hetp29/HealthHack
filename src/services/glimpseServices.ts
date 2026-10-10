@@ -65,6 +65,6 @@ export async function getModelInfo(mode: DataMode, signal?: AbortSignal): Promis
 }
 
 export async function getModelMetrics(mode: DataMode, signal?: AbortSignal): Promise<ModelMetrics> {
-  if (mode === "fixture") throw new ApiError("not_found", "No validation metrics in fixture mode", 404);
+  if (mode === "fixture") throw new ApiError("not_found", "No validation metrics with demo data", 404);
   return apiRequest("/api/model/metrics", modelMetricsSchema, { signal });
 }

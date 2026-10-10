@@ -29,7 +29,7 @@ export const fmtDate = (iso: string | null | undefined) => {
 
 const SOURCE_LABELS: Record<string, string> = {
   synthetic_dev: "Synthetic (dev)",
-  development_fixture: "Development fixture",
+  development_fixture: "Demo data",
   official_synthetic: "Official synthetic dataset",
 };
 export const fmtSource = (s: string | null | undefined) =>
