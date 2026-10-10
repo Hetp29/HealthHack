@@ -26,7 +26,13 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from ml.config import FEATURE_SET_VERSION, HORIZON_WINDOW_MINUTES, FeatureConfig
+from ml.config import (
+    FEATURE_SET_VERSION,
+    FORECAST_MINUTES,
+    HORIZON_WINDOW_MINUTES,
+    HORIZONS,
+    FeatureConfig,
+)
 from ml.schema import MealRecord, ParticipantHistory, require_utc
 
 # --------------------------------------------------------------------------- #
@@ -99,6 +105,23 @@ FEATURE_NAMES: tuple[str, ...] = (
     "r_hist_ttp",
     "r_hist_recovery",
     "r_hist_n",
+    # ------------------------------------------------------------------ fs-1.3 --
+    # Retrieval-augmented personalization (research/advanced/, promoted after the
+    # cold-start CI excluded zero: +0.786 mg/dL [+0.277, +1.285]). Instead of
+    # averaging ALL of the participant's earlier responses the way r_hist_* does,
+    # retrieve their k most SIMILAR earlier meals and kernel-weight those curves.
+    # Exposed as features rather than blended at a fixed weight, so the learner
+    # decides how much to trust them.
+    "q_retr_delta_30",
+    "q_retr_delta_60",
+    "q_retr_delta_90",
+    "q_retr_delta_120",
+    "q_retr_n",
+    "q_retr_weight",
+    "q_retr_mean_distance",
+    "q_retr_peak_delta",
+    "q_retr_ttp",
+    "q_retr_curve_spread",
 )
 
 #: Features that may legitimately be absent. These are median-imputed by the fitted
@@ -129,6 +152,17 @@ OPTIONAL_FEATURES: frozenset[str] = frozenset(
         "r_hist_per_carb",
         "r_hist_ttp",
         "r_hist_recovery",
+        # fs-1.3: absent when the participant has no retrievable earlier meal.
+        # `q_retr_n` and `q_retr_weight` are NOT optional: zero retrieved is a
+        # genuine measurement, not a missing value.
+        "q_retr_delta_30",
+        "q_retr_delta_60",
+        "q_retr_delta_90",
+        "q_retr_delta_120",
+        "q_retr_mean_distance",
+        "q_retr_peak_delta",
+        "q_retr_ttp",
+        "q_retr_curve_spread",
     }
 )
 
@@ -163,6 +197,16 @@ FEATURE_LABELS: dict[str, str] = {
     "r_hist_ttp": "own typical past time to peak",
     "r_hist_recovery": "own typical past 2-hour clearance",
     "r_hist_n": "number of own past meals observed",
+    "q_retr_delta_30": "similar past meals' response at 30 min",
+    "q_retr_delta_60": "similar past meals' response at 60 min",
+    "q_retr_delta_90": "similar past meals' response at 90 min",
+    "q_retr_delta_120": "similar past meals' response at 120 min",
+    "q_retr_n": "number of similar past meals retrieved",
+    "q_retr_weight": "total retrieval similarity weight",
+    "q_retr_mean_distance": "how similar the retrieved meals were",
+    "q_retr_peak_delta": "similar past meals' peak response",
+    "q_retr_ttp": "similar past meals' time to peak",
+    "q_retr_curve_spread": "disagreement among retrieved responses",
 }
 
 
@@ -509,9 +553,23 @@ def build_features(
     )
 
     # -- fs-1.2: observed historical response fingerprint --------------------- #
-    values.update(
-        _historical_response_fingerprint(past, meal_timestamp, config)
+    priors = _prior_observed_responses(past, meal_timestamp, config)
+    values.update(_historical_response_fingerprint(past, meal_timestamp, config))
+
+    # -- fs-1.3: retrieval over the participant's most similar earlier meals ---- #
+    query = np.asarray(
+        [
+            composition.carbs_g,
+            composition.fat_g,
+            composition.protein_g,
+            composition.fiber_g,
+            baseline,
+            values["tod_sin"] if not math.isnan(values["tod_sin"]) else 0.0,
+            values["tod_cos"] if not math.isnan(values["tod_cos"]) else 1.0,
+        ],
+        dtype="float64",
     )
+    values.update(_retrieval_features(priors, query, config))
 
     missing = tuple(
         name for name in FEATURE_NAMES if math.isnan(values[name])
@@ -530,6 +588,173 @@ def build_features(
         baseline_glucose_mg_dl=baseline,
         missing_features=missing,
     )
+
+
+@dataclass(frozen=True)
+class _PriorResponse:
+    """One of the participant's own earlier meals whose response fully elapsed.
+
+    `curve` holds the observed DELTA on the 25-point five-minute grid, interpolated
+    between that meal's native CGM readings. That interpolation is of already-observed
+    past data inside a completed response window -- it is never a prediction target and
+    never counted as an independent measurement.
+    """
+
+    peak_delta: float
+    time_to_peak: float
+    delta_120: float
+    curve: np.ndarray
+    vector: np.ndarray
+
+
+#: Similarity space for retrieval. Order is fixed so distances are reproducible.
+RETRIEVAL_SIMILARITY_KEYS = (
+    "carbs_g",
+    "fat_g",
+    "protein_g",
+    "fiber_g",
+    "premeal_glucose_mg_dl",
+    "tod_sin",
+    "tod_cos",
+)
+
+
+def _prior_observed_responses(
+    past: ParticipantHistory, meal_timestamp: dt.datetime, config: FeatureConfig
+) -> list[_PriorResponse]:
+    """The participant's earlier meals whose 120-minute response had fully elapsed.
+
+    THE single causal filter behind both fs-1.2's fingerprint and fs-1.3's retrieval,
+    so the two can never disagree about which history is admissible:
+
+      * strict `meal.timestamp < meal_timestamp`, so a meal never sees itself;
+      * `meal.timestamp + 120 min < meal_timestamp`, so the whole response was
+        observable at prediction time -- a meal 30 minutes ago is excluded, a meal
+        4 hours ago is included;
+      * a baseline reading must exist at or before that earlier meal;
+      * at least `retrieval_min_curve_points` native grid points, else the curve is
+        not characterized well enough to use.
+    """
+    timestamps = [point.timestamp for point in past.cgm]
+    grid = np.asarray(FORECAST_MINUTES, dtype="float64")
+    out: list[_PriorResponse] = []
+
+    for meal in past.meals:
+        if meal.timestamp >= meal_timestamp:
+            continue
+        window_end = meal.timestamp + dt.timedelta(minutes=HORIZON_WINDOW_MINUTES)
+        if window_end >= meal_timestamp:
+            continue
+        lo = bisect.bisect_left(timestamps, meal.timestamp)
+        hi = bisect.bisect_right(timestamps, window_end)
+        if lo == 0 or hi - lo < config.retrieval_min_curve_points:
+            continue
+
+        meal_baseline = float(past.cgm[lo - 1].glucose_mg_dl)
+        window = past.cgm[lo:hi]
+        offsets = np.asarray(
+            [(p.timestamp - meal.timestamp).total_seconds() / 60.0 for p in window],
+            dtype="float64",
+        )
+        deltas = np.asarray(
+            [float(p.glucose_mg_dl) - meal_baseline for p in window], dtype="float64"
+        )
+        curve = np.interp(grid, offsets, deltas)
+        curve[0] = 0.0
+
+        peak_index = int(np.argmax(deltas))
+        minutes_of_day = _minutes_of_day_or_nan(meal.timestamp)
+        angle = 2.0 * math.pi * minutes_of_day / 1440.0 if minutes_of_day is not None else 0.0
+        out.append(
+            _PriorResponse(
+                peak_delta=float(deltas[peak_index]),
+                time_to_peak=float(offsets[peak_index]),
+                delta_120=float(deltas[-1]),
+                curve=curve,
+                vector=np.asarray(
+                    [
+                        float(meal.carbs_g or 0.0),
+                        float(meal.fat_g or 0.0),
+                        float(meal.protein_g or 0.0),
+                        float(meal.fiber_g or 0.0),
+                        meal_baseline,
+                        math.sin(angle),
+                        math.cos(angle),
+                    ],
+                    dtype="float64",
+                ),
+            )
+        )
+    return out
+
+
+def _minutes_of_day_or_nan(timestamp: dt.datetime) -> float:
+    """Clock reading of a stored timestamp. See `_minutes_of_day` for the basis rules.
+
+    Retrieval only needs earlier meals to be comparable WITH EACH OTHER inside one
+    participant, and every one of that participant's timestamps shares the same basis,
+    so the raw clock reading is the right comparable here.
+    """
+    return timestamp.hour * 60.0 + timestamp.minute + timestamp.second / 60.0
+
+
+def _retrieval_features(
+    priors: list[_PriorResponse],
+    query: np.ndarray,
+    config: FeatureConfig,
+) -> dict[str, float]:
+    """Kernel-weighted average of the k most similar earlier responses.
+
+    Distances are standardized by the POOL's own spread, so no training-fold statistic
+    enters, and the bandwidth is the median retrieved distance, so a participant with a
+    narrow dietary range still gets sensible weighting.
+    """
+    names = (
+        *(f"q_retr_delta_{h}" for h in HORIZONS),
+        "q_retr_mean_distance",
+        "q_retr_peak_delta",
+        "q_retr_ttp",
+        "q_retr_curve_spread",
+    )
+    out: dict[str, float] = {name: math.nan for name in names}
+    out["q_retr_n"] = 0.0
+    out["q_retr_weight"] = 0.0
+
+    # Insufficient-history fallback: with too few retrievable meals, the "most similar"
+    # neighbours are mostly noise and measurably worse than the fingerprint mean over
+    # all history. Emit nothing and let the model fall back. `q_retr_n` still reports
+    # the true count, so the fallback is observable rather than silent.
+    if len(priors) < config.retrieval_min_history:
+        out["q_retr_n"] = float(len(priors))
+        return out
+
+    matrix = np.vstack([prior.vector for prior in priors])
+    scale = matrix.std(axis=0, ddof=0)
+    scale[scale <= 1e-9] = 1.0
+    distances = np.sqrt(np.sum(((matrix - query) / scale) ** 2, axis=1))
+
+    order = np.argsort(distances)[: config.retrieval_k]
+    chosen_distances = distances[order]
+    bandwidth = float(np.median(chosen_distances))
+    if bandwidth <= 1e-9:
+        bandwidth = 1.0
+    weights = np.exp(-((chosen_distances / bandwidth) ** 2))
+    total = float(weights.sum())
+    if total <= 0:
+        return out
+
+    curves = np.vstack([priors[i].curve for i in order])
+    blended = (weights[:, None] * curves).sum(axis=0) / total
+    minutes = list(FORECAST_MINUTES)
+    for horizon in HORIZONS:
+        out[f"q_retr_delta_{horizon}"] = float(blended[minutes.index(horizon)])
+    out["q_retr_n"] = float(len(order))
+    out["q_retr_weight"] = total
+    out["q_retr_mean_distance"] = float(chosen_distances.mean())
+    out["q_retr_peak_delta"] = float(blended.max())
+    out["q_retr_ttp"] = float(minutes[int(np.argmax(blended))])
+    out["q_retr_curve_spread"] = float(curves.std(axis=0).mean())
+    return out
 
 
 def _historical_response_fingerprint(
@@ -560,37 +785,13 @@ def _historical_response_fingerprint(
         "r_hist_recovery",
         "r_hist_n",
     )
-    prior_meals = [meal for meal in past.meals if meal.timestamp < meal_timestamp]
-    peaks: list[float] = []
-    per_carb: list[float] = []
-    time_to_peak: list[float] = []
-    recovery: list[float] = []
-
-    timestamps = [point.timestamp for point in past.cgm]
-    for meal in prior_meals:
-        window_end = meal.timestamp + dt.timedelta(minutes=HORIZON_WINDOW_MINUTES)
-        if window_end >= meal_timestamp:
-            # The response window has not fully elapsed yet, so it is not observable.
-            continue
-        lo = bisect.bisect_left(timestamps, meal.timestamp)
-        hi = bisect.bisect_right(timestamps, window_end)
-        window = past.cgm[lo:hi]
-        if len(window) < 8:
-            continue
-
-        # Baseline for THAT meal: the last reading at or before it.
-        if lo == 0:
-            continue
-        meal_baseline = float(past.cgm[lo - 1].glucose_mg_dl)
-        levels = [float(point.glucose_mg_dl) for point in window]
-        peak = max(levels)
-        peak_index = levels.index(peak)
-        elapsed = (window[peak_index].timestamp - meal.timestamp).total_seconds() / 60.0
-
-        peaks.append(peak - meal_baseline)
-        per_carb.append((peak - meal_baseline) / max(float(meal.carbs_g or 0.0), 10.0))
-        time_to_peak.append(elapsed)
-        recovery.append(peak - levels[-1])
+    priors = _prior_observed_responses(past, meal_timestamp, config)
+    peaks = [prior.peak_delta for prior in priors]
+    time_to_peak = [prior.time_to_peak for prior in priors]
+    recovery = [prior.peak_delta - prior.delta_120 for prior in priors]
+    per_carb = [
+        prior.peak_delta / max(prior.vector[0], 10.0) for prior in priors
+    ]
 
     n = len(peaks)
     out: dict[str, float] = {"r_hist_n": float(n)}

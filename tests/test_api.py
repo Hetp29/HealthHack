@@ -528,7 +528,9 @@ class TestModelEndpoints:
         # that improved both within-person and cold-start validation.
         from ml.config import FEATURE_SET_VERSION
 
-        assert payload["feature_set_version"] == FEATURE_SET_VERSION == "fs-1.2"
+        # fs-1.3: retrieval-augmented personalization promoted from research after its
+        # cold-start CI excluded zero.
+        assert payload["feature_set_version"] == FEATURE_SET_VERSION == "fs-1.3"
         assert payload["trained_at"] is not None
         assert payload["limitations"]
 

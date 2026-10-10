@@ -26,7 +26,7 @@ HORIZON_WINDOW_MINUTES = 120
 
 #: Version of the feature contract. Inference refuses an artifact whose feature set
 #: version does not match the running code, rather than silently mis-ordering columns.
-FEATURE_SET_VERSION = "fs-1.2"
+FEATURE_SET_VERSION = "fs-1.3"
 
 #: Model artifact version. Bumped when the trained model's semantics change.
 MODEL_VERSION = "v0.1.0"
@@ -102,6 +102,24 @@ class FeatureConfig:
     #: Shrinkage constant for the historical-response fingerprint (fs-1.2), matching
     #: the participant-calibration k so both personal corrections are damped alike.
     fingerprint_shrinkage_k: float = 3.0
+
+    #: fs-1.3 retrieval: how many of the participant's most similar earlier meals to
+    #: retrieve. k=5 was selected on development validation (research/advanced/), never
+    #: on the reserved reference set.
+    retrieval_k: int = 5
+
+    #: Minimum native CGM grid points an earlier meal's response needs before it may be
+    #: retrieved. Below this the curve is not characterized well enough to average.
+    retrieval_min_curve_points: int = 20
+
+    #: INSUFFICIENT-HISTORY FALLBACK. Minimum retrievable earlier meals before the
+    #: retrieval features are emitted at all. Below it they are left missing, so the
+    #: model falls back to the generalized + fingerprint prediction.
+    #:
+    #: This exists because the few-shot breakdown showed retrieval HURTS when history
+    #: is very thin: averaging 1-2 "most similar" meals is noisier than the plain
+    #: fingerprint mean over everything. Threshold selected on development folds.
+    retrieval_min_history: int = 5
 
 
 @dataclass(frozen=True)
