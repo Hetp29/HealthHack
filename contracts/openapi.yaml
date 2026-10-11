@@ -31,7 +31,7 @@ servers:
   - url: http://localhost:8000
     description: Local development
   - url: "{deployedBaseUrl}"
-    description: Deployed instance (set via VITE_API_BASE_URL / GLIMPSE_API_BASE_URL)
+    description: Deployed instance (set via VITE_API_BASE_URL / GLUCOTWIN_API_BASE_URL)
     variables:
       deployedBaseUrl:
         default: http://localhost:8000

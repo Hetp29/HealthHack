@@ -208,7 +208,7 @@ Owner: Ruhaan · Consumer: Neil · Auth: bearer + **C**
 | GET | `/predictions` | Newest first, `limit` ≤ 100. | — | — |
 | GET | `/predictions/{prediction_id}` | The stored record. Never changes after creation. | 404 | — |
 | POST | `/predictions/{prediction_id}/reproduce` | Re-runs the model on the stored inputs; `reproduced: true` if identical. | 404 | `prediction_reproduced` |
-| GET | `/meals/{meal_id}/outcome` | Observed versus forecast. | 409 `no_prediction` | `outcome_pending`, `outcome_scored` |
+| GET | `/meals/{meal_id}/outcome` | Observed versus forecast. For a meal entered into a demonstration account: `status: "not_applicable"`, `reason: "hypothetical_demo_meal"`, no observed values (D-019). | 409 `no_prediction` | `outcome_pending`, `outcome_scored` |
 
 **`forecast` is exactly the frozen contract v1.0 `ForecastResponse`** — 25 points at
 minutes 0, 5, …, 120; `glucose_at_minutes`; `metrics`; `drivers`;

@@ -40,6 +40,7 @@ from starlette.testclient import TestClient
 
 from backend.app.v2 import core
 from backend.app.v2.db import tables as t
+from backend.app.v2.services import meal_provenance
 from backend.app.v2.demo import profile, sim_devices, source
 from backend.app.v2.demo.source import Bundle
 from backend.app.v2.deps import V2Context
@@ -191,7 +192,9 @@ class _Api:
 
     def call(self, method: str, path: str, **kwargs):
         return self._client.request(
-            method, path, headers={"Authorization": f"Bearer {self._token}"}, **kwargs)
+            method, path,
+            headers={"Authorization": f"Bearer {self._token}", **meal_provenance.replay_headers()},
+            **kwargs)
 
     def ok(self, method: str, path: str, **kwargs) -> dict:
         response = self.call(method, path, **kwargs)

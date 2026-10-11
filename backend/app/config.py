@@ -17,21 +17,8 @@ from dataclasses import dataclass, field
 CONTRACT_VERSION_DEFAULT = "1.0.0"
 
 
-#: Settings were renamed GLUCOTWIN_* -> GLIMPSE_* (team decision 2026-10-11). The new
-#: name wins; the legacy name is still honoured so existing .env files and deployments
-#: keep working unchanged.
-_PREFIX, _LEGACY_PREFIX = "GLIMPSE_", "GLUCOTWIN_"
-
-
-def _raw_env(name: str) -> str | None:
-    value = os.environ.get(name)
-    if (value is None or value.strip() == "") and name.startswith(_PREFIX):
-        value = os.environ.get(_LEGACY_PREFIX + name[len(_PREFIX):])
-    return value
-
-
 def _env(name: str, default: str) -> str:
-    value = _raw_env(name)
+    value = os.environ.get(name)
     return default if value is None or value.strip() == "" else value.strip()
 
 
@@ -59,7 +46,7 @@ class Settings:
     log_level: str = "INFO"
     #: Dev-fixture parameters; ignored once the canonical data layer is bound.
     #: 16 days so the fixture can exercise the Day-8 primary protocol (see
-    #: ml/devfixture.py). Override with GLIMPSE_FIXTURE_DAYS.
+    #: ml/devfixture.py). Override with GLUCOTWIN_FIXTURE_DAYS.
     fixture_days: int = 16
     fixture_seed: int = 20261011
 
@@ -76,22 +63,22 @@ def load_settings() -> Settings:
     than a convenience.
     """
     return Settings(
-        contract_version=_env("GLIMPSE_CONTRACT_VERSION", CONTRACT_VERSION_DEFAULT),
+        contract_version=_env("GLUCOTWIN_CONTRACT_VERSION", CONTRACT_VERSION_DEFAULT),
         model_artifact=pathlib.Path(
-            _env("GLIMPSE_MODEL_ARTIFACT", "ml/artifacts/model.joblib")
+            _env("GLUCOTWIN_MODEL_ARTIFACT", "ml/artifacts/model.joblib")
         ),
         metrics_path=pathlib.Path(
-            _env("GLIMPSE_METRICS_PATH", "ml/artifacts/metrics.json")
+            _env("GLUCOTWIN_METRICS_PATH", "ml/artifacts/metrics.json")
         ),
-        data_backend=_env("GLIMPSE_DATA_BACKEND", "synthetic_dev"),
-        db_url=_env("GLIMPSE_DB_URL", "sqlite:///data/glucotwin.db"),
+        data_backend=_env("GLUCOTWIN_DATA_BACKEND", "synthetic_dev"),
+        db_url=_env("GLUCOTWIN_DB_URL", "sqlite:///data/glucotwin.db"),
         cors_origins=_split_origins(
             _env(
-                "GLIMPSE_CORS_ORIGINS",
+                "GLUCOTWIN_CORS_ORIGINS",
                 "http://localhost:5173,http://127.0.0.1:5173",
             )
         ),
-        log_level=_env("GLIMPSE_LOG_LEVEL", "INFO").upper(),
-        fixture_days=_env_int("GLIMPSE_FIXTURE_DAYS", 16),
-        fixture_seed=_env_int("GLIMPSE_FIXTURE_SEED", 20261011),
+        log_level=_env("GLUCOTWIN_LOG_LEVEL", "INFO").upper(),
+        fixture_days=_env_int("GLUCOTWIN_FIXTURE_DAYS", 16),
+        fixture_seed=_env_int("GLUCOTWIN_FIXTURE_SEED", 20261011),
     )

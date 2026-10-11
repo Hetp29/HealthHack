@@ -27,7 +27,7 @@ from sqlalchemy.engine import Connection
 from backend.app.v2 import core
 from backend.app.v2.db import tables as t
 from backend.app.v2.deps import CONSENT_PERSONALIZATION, V2Context, has_consent
-from backend.app.v2.services import glucose
+from backend.app.v2.services import glucose, meal_provenance
 from ml.config import DEFAULT_CONFIG, HORIZONS, HORIZON_WINDOW_MINUTES
 from ml.metrics import summarize_observed
 from ml.schema import CgmPoint, MealRecord, ParticipantHistory
@@ -45,7 +45,7 @@ DISQUALIFYING = frozenset({
     "missing_horizon_targets", "insufficient_curve_points", "intervening_meal",
     "sensor_correction_in_window", "quality_flagged_readings", "meal_not_eaten",
     "meal_partially_eaten", "inputs_unconfirmed", "personalization_consent_absent",
-    "meal_inputs_revised", "meal_voided",
+    "meal_inputs_revised", "meal_voided", meal_provenance.REASON_HYPOTHETICAL,
 })
 
 
@@ -86,6 +86,14 @@ def _score(conn: Connection, ctx: V2Context, episode: dict, now: dt.datetime, *,
                 "ineligibility_reasons": ["meal_voided"], "scored_at": now,
                 "score_revision": episode["score_revision"] + 1}
 
+    if meal_provenance.is_hypothetical(conn, user_id, dict(meal)):
+        # A meal entered into a demonstration was never eaten by the recorded
+        # participant: there is no observed response to score it against.
+        return {"status": "voided", "eligible_for_personalization": False,
+                "ineligibility_reasons": [meal_provenance.REASON_HYPOTHETICAL], "scored_at": now,
+                "coverage": {}, "observed": {}, "errors": {},
+                "score_revision": episode["score_revision"] + 1}
+
     start = meal["occurred_at"]
     end = start + WINDOW
     device = (snapshot_context.get("cgm") or {}).get("device") or {}
@@ -97,12 +105,18 @@ def _score(conn: Connection, ctx: V2Context, episode: dict, now: dt.datetime, *,
     ]
     in_window = [r for r in rows if start < r["observed_at"] <= end]
 
+    intervening = and_(
+        t.meals.c.user_id == user_id, t.meals.c.meal_id != meal["meal_id"],
+        t.meals.c.status == "confirmed", t.meals.c.consumption_status != "not_eaten",
+        t.meals.c.occurred_at > start, t.meals.c.occurred_at <= end,
+    )
+    # A hypothetical demonstration meal was not eaten, so it cannot have disturbed
+    # this response and must not disqualify it.
+    authentic = meal_provenance.authentic_meals_only(conn, user_id)
+    if authentic is not None:
+        intervening = and_(intervening, authentic)
     others = conn.execute(
-        select(t.meals.c.meal_id, t.meals.c.occurred_at).where(and_(
-            t.meals.c.user_id == user_id, t.meals.c.meal_id != meal["meal_id"],
-            t.meals.c.status == "confirmed", t.meals.c.consumption_status != "not_eaten",
-            t.meals.c.occurred_at > start, t.meals.c.occurred_at <= end,
-        ))
+        select(t.meals.c.meal_id, t.meals.c.occurred_at).where(intervening)
     ).mappings().all()
 
     history = ParticipantHistory(
@@ -252,6 +266,34 @@ def reopen_affected_episodes(conn: Connection, user_id: str, first: dt.datetime,
         )).values(status="pending", eligible_for_personalization=False)
     )
     return result.rowcount or 0
+
+
+def not_applicable_payload(episode: dict | None, prediction: dict, meal_id: str | None = None) -> dict:
+    """The outcome of a hypothetical demonstration meal: explicitly none.
+
+    Distinct from `pending` (an outcome is coming) and from `scored`. No observed
+    value, error or coverage is returned, whatever an older episode row may hold.
+    """
+    episode = episode or {}
+    return {
+        "episode_id": episode.get("episode_id"),
+        "prediction_id": episode.get("prediction_id") or prediction.get("prediction_id"),
+        "meal_id": episode.get("meal_id") or meal_id,
+        "status": meal_provenance.OUTCOME_NOT_APPLICABLE,
+        "reason": meal_provenance.REASON_HYPOTHETICAL,
+        "message": ("This meal was entered into a historical demonstration. The recorded "
+                    "participant did not eat it, so no observed glucose response exists for it."),
+        "window_end_at": None, "scoring_not_before": None, "scored_at": None,
+        "score_revision": episode.get("score_revision", 0),
+        "eligible_for_personalization": False,
+        "ineligibility_reasons": [meal_provenance.REASON_HYPOTHETICAL],
+        "coverage": None, "observed": None, "errors": None,
+        "predicted": {
+            "glucose_at_minutes": prediction["forecast"]["glucose_at_minutes"],
+            "metrics": prediction["forecast"]["metrics"],
+        },
+        "units": {"glucose": "mg/dL", "time": "minutes"},
+    }
 
 
 def episode_payload(episode: dict, prediction: dict) -> dict:

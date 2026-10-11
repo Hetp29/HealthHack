@@ -43,10 +43,10 @@ def main() -> int:
     args = ap.parse_args()
 
     before = {f.name: sha(f) for f in sorted(ART.iterdir())}
-    os.environ["GLIMPSE_MODEL_ARTIFACT"] = str(ART / "model.joblib")
-    os.environ["GLIMPSE_METRICS_PATH"] = str(ART / "metrics.json")
-    os.environ["GLIMPSE_DATA_BACKEND"] = "sqlite"
-    os.environ["GLIMPSE_DB_URL"] = args.db_url
+    os.environ["GLUCOTWIN_MODEL_ARTIFACT"] = str(ART / "model.joblib")
+    os.environ["GLUCOTWIN_METRICS_PATH"] = str(ART / "metrics.json")
+    os.environ["GLUCOTWIN_DATA_BACKEND"] = "sqlite"
+    os.environ["GLUCOTWIN_DB_URL"] = args.db_url
 
     import tracemalloc
 

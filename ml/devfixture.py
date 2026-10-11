@@ -20,7 +20,7 @@ What this is explicitly NOT:
     presented as physiology, as a validation result, or as evidence that the
     model works. Metrics computed on it are pipeline self-consistency checks.
 
-Retirement plan: once `data/` lands, set `GLIMPSE_DATA_BACKEND=sqlite`. This
+Retirement plan: once `data/` lands, set `GLUCOTWIN_DATA_BACKEND=sqlite`. This
 module then survives only as a test fixture. Delete it before submission if the
 official dataset covers the test cases.
 """

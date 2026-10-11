@@ -438,6 +438,103 @@ model version (the model id and frozen files). None was done.
 
 ---
 
+## D-019 · A meal entered into a demonstration is hypothetical: forecast, never scored
+
+**Status:** decided and implemented (2026-10-11, release integration). **Owner:** Ruhaan.
+
+**Problem.** A demonstration account replays one CGMacros participant's recorded
+glucose. Anyone exploring it can add a meal by hand or by photo. Before this decision
+the backend treated that meal like any other: it scored the forecast against the
+participant's subsequent recorded glucose, could mark it eligible as personal history,
+used it as a prior meal for later forecasts, let it disqualify a genuine meal as an
+"intervening meal", and let its alert put a genuine meal's alert into cooldown. All
+five are wrong for the same reason: the participant never ate that meal.
+
+**Decision.** In a demonstration account (one with a `demo_replay_state` row) a meal is
+either
+
+* **authentic recorded** — logged by the governed replay from the dataset; or
+* **hypothetical** — everything else.
+
+A hypothetical meal still receives a genuine fs-1.3 forecast from the recorded glucose
+history. Beyond that it is inert:
+
+| | Authentic recorded meal | Hypothetical meal |
+|---|---|---|
+| Forecast | yes | yes |
+| Response episode created | yes | **no** |
+| `GET /meals/{id}/outcome` | pending → scored | `status: "not_applicable"`, `reason: "hypothetical_demo_meal"`, no observed values |
+| `outcome_status` on the forecast | pending / scored / … | `"not_applicable"` |
+| Eligible as personal history | by the usual rules | **never** |
+| Counted as a prior meal / "minutes since prior meal" | yes | **no**, for any forecast |
+| Can make another meal an `intervening_meal` case | yes | **no** |
+| Its alert counts towards an authentic meal's cooldown | yes | **no** |
+
+`not_applicable` is deliberately distinct from `pending` and `scored`: an absent outcome
+is never presented as a successful one.
+
+**How the two are told apart.** By the meal's note. The replay writes a reserved prefix
+(`Research dataset meal record` / `Generated test-fixture meal record`). The public API
+now rejects that prefix (422) unless the request carries the replay's in-process token,
+which is generated at start-up and never leaves the process, so the label cannot be
+forged through the API. This needed **no schema change and no migration**.
+
+**What did not change.** The frozen model, its features, retrieval rules and artifact;
+Contract v1.0; every non-demonstration account (all of whose meals are the user's own);
+and the scripted replay itself. `tests/v2/test_hypothetical_meal_isolation.py` replays
+the whole scenario twice, once clean and once with hypothetical meals inserted before
+every event, and requires identical forecasts, scores, eligibility and alert results
+for every recorded meal.
+
+**Legacy rows.** A database that already holds an episode for a hypothetical meal is
+safe: the eligibility query ignores it, the outcome endpoint reports `not_applicable`,
+and a rescore voids it with reason `hypothetical_demo_meal`.
+
+**API surface (v2, additive).** `outcome_status` and outcome `status` gain the value
+`not_applicable`; the outcome body gains `reason` and `message` in that case.
+
+## D-020 · The freeze record is not re-recorded; GLIMPSE_* reaches frozen code by alias
+
+**Status:** decided and implemented (2026-10-11). **Owner:** Ruhaan (freeze owner).
+
+**What happened.** Commit `4a2d59f` on `main` ("rename: settings GLUCOTWIN_* ->
+GLIMPSE_* with legacy fallback") edited five files that are part of freeze
+`FS13_MODEL_FREEZE_V1` — `backend/app/config.py`, `backend/app/main.py`,
+`backend/app/services/data_access.py`, `ml/train.py` and `contracts/openapi.yaml` —
+and then replaced their checksums in `docs/governance/fs13_integrity_manifest.json`,
+`research/freeze/results/phase1_integrity.json` and `tests/test_freeze_integrity.py`,
+adding a "rehash_log" that said the freeze owner had approved it. He had not. Because
+the records were rewritten together with the files, every integrity check kept passing.
+
+The edits were small (an env-var prefix in comments, messages and setting names, a
+legacy-name fallback in the v1 settings reader, one description line in the contract)
+and the model artifact was never touched. That is beside the point: a frozen file is
+identified by its bytes, and a freeze record that can be re-recorded by whoever changes
+a file records nothing.
+
+**Decision.**
+
+1. The five files, the manifest, `phase1_integrity.json`, `tests/test_freeze_integrity.py`,
+   `research/freeze/verify_api.py` and `ml/devfixture.py` are restored to their content
+   before `4a2d59f`. The manifest is again byte-identical to the one committed at the
+   freeze (`e362e88`); all 23 frozen source files, the contract
+   (`be836ddd…00f4`) and the artifact (`12ed0602…15fe`) match it.
+2. The rename itself stays everywhere it is allowed to be: the v2 settings reader,
+   Dockerfile, compose, scripts, infra and documents may use `GLIMPSE_*`.
+3. Frozen code keeps reading `GLUCOTWIN_*`. `backend/app/env_aliases.py` (not frozen)
+   copies each `GLIMPSE_X` onto `GLUCOTWIN_X` when `backend.app` is first imported, so a
+   deployment configured only with the new names still configures the frozen engine,
+   and one configured with the old names is untouched. If both are set the new name
+   wins, the same rule the v2 reader uses.
+4. `tests/test_freeze_record_agreement.py` pins the manifest to its SHA-256 at the
+   freeze and checks every frozen file against it. Changing a frozen file now fails the
+   suite until a new freeze is made.
+5. Changing a frozen file requires a new freeze, authorized by the freeze owner in
+   this log, with a new freeze id. A commit message or a relayed approval is not that.
+
+**Supersedes** the "re-hashed, approved" statements about this rename in
+`HANDOFF_HET.md`, `DEMO_HANDOFF_HET.md`, `infra/README.md` and elsewhere.
+
 ## Open decisions (nobody has decided these)
 
 | # | decision | who | blocks |

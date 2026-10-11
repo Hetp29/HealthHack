@@ -17,7 +17,7 @@ from backend.app.v2.deps import (
 )
 from backend.app.v2.schemas import Macros, Strict
 from backend.app.v2.services import meals as meal_service
-from backend.app.v2.services import orchestrator, outcomes
+from backend.app.v2.services import meal_provenance, orchestrator, outcomes
 
 router = APIRouter(tags=["meals"])
 
@@ -39,17 +39,26 @@ class ConsumptionUpdate(Strict):
     consumption_status: Literal["as_logged", "partial", "not_eaten"]
 
 
+def _check_note(request: Request, note: str | None) -> None:
+    """The replay's provenance label is not the caller's to write (DECISIONS D-019)."""
+    if meal_provenance.has_reserved_prefix(note) and not meal_provenance.is_replay_request(request.headers):
+        raise core.invalid("That note begins with wording reserved for recorded dataset meals.",
+                           {"field": "note"})
+
+
 async def _raw_body(request: Request, ctx: V2Context = Depends(get_ctx)) -> bytes:
     return await read_limited_body(request, ctx.settings.max_image_bytes, "image_too_large")
 
 
 @router.post("/meals", status_code=201, summary="Log a meal without a photo")
 def create_meal(
+    request: Request,
     body: MealCreate,
     user: dict = Depends(require_processing_consent),
     ctx: V2Context = Depends(get_ctx),
     conn: Connection = Depends(get_conn),
 ) -> dict:
+    _check_note(request, body.note)
     meal = meal_service.create_meal(conn, ctx, user["user_id"], body.occurred_at, "manual", body.note)
     if body.macros is not None:
         meal_service.confirm(conn, ctx, user["user_id"], meal, body.macros.model_dump())
@@ -78,6 +87,7 @@ def upload_meal_image(
     The image is validated, decoded and re-encoded before anything is stored. EXIF
     metadata, including location, is discarded.
     """
+    _check_note(request, note)
     meal = meal_service.create_meal(conn, ctx, user["user_id"], occurred_at, "photo", note)
     meal_service.attach_photo(conn, ctx, user["user_id"], meal["meal_id"], data,
                               request.headers.get("content-type"))
@@ -253,12 +263,24 @@ def meal_outcome(
 ) -> dict:
     meal = meal_service.get_owned(conn, user["user_id"], meal_id)
     outcomes.score_due(conn, ctx, user["user_id"])
+    hypothetical = meal_provenance.is_hypothetical(conn, user["user_id"], meal)
     row = conn.execute(
         select(t.response_episodes, t.predictions.c.forecast)
         .select_from(t.response_episodes.join(t.predictions))
         .where(t.response_episodes.c.meal_id == meal_id)
         .order_by(t.predictions.c.created_at.desc()).limit(1)
     ).mappings().first()
+    if hypothetical:
+        # The recording that follows belongs to what the participant really ate, so
+        # there is no outcome -- which is reported, not left looking like "pending".
+        prediction = conn.execute(
+            select(t.predictions.c.prediction_id, t.predictions.c.forecast)
+            .where(t.predictions.c.meal_id == meal_id)
+            .order_by(t.predictions.c.created_at.desc()).limit(1)
+        ).mappings().first()
+        if prediction is not None:
+            return outcomes.not_applicable_payload(
+                dict(row) if row is not None else None, dict(prediction), meal_id)
     if row is None:
         raise core.conflict("no_prediction", "This meal has no forecast, so there is no outcome.",
                             {"meal_status": meal["status"]})
