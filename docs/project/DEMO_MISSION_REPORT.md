@@ -252,3 +252,41 @@ were not in the fit. Neither is independent validation.
 
 **Contract:** no OpenAPI schema changed. Additive fields on the replay state are
 flagged for the shared interface review (DECISIONS D-016). Two example payloads added.
+
+---
+
+## Addendum 2 — simulated connected-health sources (2026-10-10)
+
+**Starting commit:** `72dc33653ab955039595f35920896bf2e407f718`
+
+Four simulated wearable sources (Apple Health, Apple Watch, Fitbit, WHOOP) can be
+switched on in either demo account. Their values are generated in code from a fixed
+seed, stored through the existing wearable ingestion service with `data_class: demo`,
+and released by the existing replay clock. The glucose remains the genuine CGMacros
+recording. Nothing contacts a vendor; no token or OAuth exchange exists.
+
+**Reused, not rebuilt:** the wearable store and ingestion service, the metric/unit
+table, the device-connection table, the replay clock and release hook, the demo
+router and its authorization. **Added:** one module (`demo/sim_devices.py`), three
+demo routes, one connection status (`demo_simulated`, migration `0003`), an optional
+`provider` filter on the existing observations endpoint.
+
+**Both scenarios preserved.** With every simulated source on, the NEW USER end-state
+fingerprint is still `5a17f51a…adad5` and the RETURNING USER one is still
+`cd96f4d8…9a0f` — forecasts, feature snapshots, outcomes and glucose are identical.
+
+| check | result |
+|---|---|
+| `python -m pytest -q -rsxX` | **1020 passed, 1 skipped, 0 failed (703 original + 317 v2; the skip is the opt-in real-OpenAI call)** |
+| `python -m research.freeze.verify_artifacts` | **PASS; artifact and Contract v1.0 checksums unchanged** |
+| `python -m contracts.v2.build_contract --check` | **pass** |
+| `alembic upgrade head` / `check` / `downgrade base` (SQLite, incl. `0003`) | **pass** |
+| `python -m scripts.demo_verify` (both scenarios, third pass with devices on) | **72 of 72 checks (34 NEW USER + 38 RETURNING USER); both fingerprints match** |
+| `smoke_demo.py` NEW USER, live server | **33 of 33 steps** |
+| `smoke_demo.py --scenario returning_user`, live server | **34 of 34 steps** |
+| `smoke_v2.py`, same server | **21 of 21 steps** |
+
+**Limitations.** The wearable values are invented and have no physiological link to
+the real glucose beside them. This is not an Apple, Fitbit or WHOOP integration and
+none of those is verified. Migration `0003`, like the others, has not run on
+PostgreSQL.

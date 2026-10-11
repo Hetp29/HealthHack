@@ -88,11 +88,31 @@ def main(argv: list[str] | None = None) -> int:
     step("research data is not presented as a connected device",
          all(d["status"] != "connected" and not d["authentic_data_received"] for d in devices))
 
+    devices = client.get("/demo/devices", headers=headers).json()
+    step("simulated sources start inactive",
+         all(p["status"] == "inactive" for p in devices["profiles"])
+         and client.get("/wearables/observations", headers=headers, params={
+             "start": "2000-01-01T00:00:00Z", "end": "2100-01-01T00:00:00Z"}).json()["observations"] == [])
+    step("the glucose source is a research replay, not a simulated or connected device",
+         devices["glucose_source"]["simulated"] is False
+         and devices["glucose_source"]["data_class"] == "research_dataset")
+    first = client.post("/demo/devices/apple_health/activate", headers=headers).json()
+    client.post("/demo/devices/apple_watch/activate", headers=headers)
+    repeat = client.post("/demo/devices/apple_health/activate", headers=headers).json()
+    step("activating Apple Health shows simulated history; repeating it is a no-op",
+         first["observations_released"] > 0 and repeat["already_active"] and repeat["observations_released"] == 0,
+         f"{first['observations_released']} observations")
+
+    def wearable_rows() -> list[dict]:
+        return client.get("/wearables/observations", headers=headers, params={
+            "start": "2000-01-01T00:00:00Z", "end": "2100-01-01T00:00:00Z", "limit": 5000}).json()["observations"]
+
     def latest_visible(position: str) -> str | None:
         readings = client.get("/cgm/readings", headers=headers, params={
             "start": state["window"]["start"], "end": "2100-01-01T00:00:00Z", "limit": 5000}).json()["readings"]
         return readings[-1]["observed_at"] if readings else None
 
+    wearable_leak_free = True
     leak_free = prospective = genuine = reproducible = True
     admissible, checkpoints = [], [c for c in state["checkpoints"]]
     for checkpoint in checkpoints:
@@ -105,6 +125,8 @@ def main(argv: list[str] | None = None) -> int:
         leak_free &= visible is not None and visible <= current["position"]
         leak_free &= all(m["occurred_at"] <= current["position"]
                          for m in client.get("/meals", headers=headers, params={"limit": 200}).json()["meals"])
+        wearable_leak_free &= all((r["observed_end_at"] or r["observed_at"]) <= current["position"]
+                                  and r["received_at"] <= current["position"] for r in wearable_rows())
         if checkpoint["kind"] != "meal_forecast":
             continue
         result = next(c["result"] for c in current["checkpoints"] if c["id"] == checkpoint["id"])
@@ -141,6 +163,26 @@ def main(argv: list[str] | None = None) -> int:
         step("personal history was already active at the first presented meal",
              admissible[first_display - 1] >= 5, f"{admissible[first_display - 1]} admissible prior meals")
 
+    for name in ("fitbit", "whoop"):
+        client.post(f"/demo/devices/{name}/activate", headers=headers)
+    rows = wearable_rows()
+    step("no simulated observation was visible before its replay time", wearable_leak_free)
+    step("all four simulated sources supplied labelled demo data",
+         {r["provider"] for r in rows} == {"demo_apple_health", "demo_apple_watch", "demo_fitbit", "demo_whoop"}
+         and all(r["data_class"] == "demo" and r["detail"].get("simulated") is True
+                 and r["used_by_forecast_model"] is False for r in rows), f"{len(rows)} observations")
+    connections = client.get("/devices", headers=headers).json()["connections"]
+    step("simulated sources are demo_simulated; nothing is authorized or connected",
+         sum(1 for c in connections if c["status"] == "demo_simulated") == 4
+         and not [c for c in connections if c["status"] in ("authorized", "connected")]
+         and not any(c["authentic_data_received"] for c in connections))
+    timeline = client.get("/demo/health-timeline", headers=headers, params={"hours": 72}).json()
+    stamps = [i["at"] for i in timeline["items"]]
+    step("health timeline is ordered, provenance-tagged and stops at the replay position",
+         stamps == sorted(stamps) and all(s <= timeline["position"] for s in stamps)
+         and {"wearable", "meal"} <= {i["type"] for i in timeline["items"]}
+         and all("data_class" in i and "simulated" in i for i in timeline["items"]), f"{len(stamps)} items")
+
     outcomes = [c["result"] for c in final["checkpoints"] if c["kind"] == "outcome_reveal"]
     step("every outcome was scored once revealed", all(o["outcome"] == "scored" for o in outcomes))
     step("ineligible meals were excluded, with reasons",
@@ -163,6 +205,9 @@ def main(argv: list[str] | None = None) -> int:
     headers = login()
     if args.leave_at:
         client.post("/demo/replay/advance", headers=headers, json={"to": args.leave_at})
+    after_reset = client.get("/demo/devices", headers=headers).json()
+    step("reset returned every simulated source to inactive",
+         all(p["status"] == "inactive" for p in after_reset["profiles"]) and wearable_rows() == [])
     left = client.get("/demo/replay", headers=headers).json()
     step("left reset for the presentation", left["status"] == "ready" and left["mode"] == args.scenario,
          f"{left['mode_label']} at event {left['event_index']}, replay time {left['position']}")

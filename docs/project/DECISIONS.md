@@ -373,6 +373,35 @@ checkpoint `phase`, `provenance.backfilled_history`, two aliases) are **flagged 
 the shared interface review**. No existing field changed and no OpenAPI schema
 changed.
 
+## D-017 · Simulated wearable sources get their own status and provider ids
+
+**Status:** PROPOSED · **Owner:** Ruhaan
+
+The demo shows connected-health data without any vendor connection. To keep that
+honest in the data model, not just in the UI:
+
+* **A new connection status, `demo_simulated`** (migration `0003`), rather than
+  reusing `authorized` or `connected`. Backward compatible: no existing value changes
+  meaning. It can be set only by the demo routes, which do not exist unless
+  `GLUCOTWIN_DEMO_MODE` is on.
+* **Separate provider ids** (`demo_apple_health`, `demo_apple_watch`, `demo_fitbit`,
+  `demo_whoop`). The real provider ids are never used for simulated data, and the
+  OAuth and sync code does not know the simulated ones.
+* **Existing provenance classes are sufficient**: `demo` for simulated observations,
+  `research_dataset` for the replayed glucose, `user_device` for genuine devices. No
+  new class was added.
+* **Generated in code from a fixed seed**, released by the existing replay clock,
+  stored through the existing wearable ingestion service. No new table, service or
+  bundle. The generator reads only meal *times* from the recording, to avoid placing a
+  simulated sleep or workout on a recorded meal.
+* **Not a model input.** The forecast path does not read the wearable store
+  (D-008); both demo fingerprints are identical with every simulated source on.
+
+Additive contract changes, **for shared review**: three demo routes (`GET
+/demo/devices`, `POST /demo/devices/{profile}/activate`, `GET /demo/health-timeline`);
+an optional `provider` filter on `GET /wearables/observations`; the status value
+`demo_simulated`. No existing schema changed.
+
 ---
 
 ## Open decisions (nobody has decided these)

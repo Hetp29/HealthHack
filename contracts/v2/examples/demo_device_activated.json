@@ -1,0 +1,188 @@
+{
+  "request": "POST /api/v2/demo/devices/apple_watch/activate",
+  "status": 200,
+  "body": {
+    "profile": "apple_watch",
+    "already_active": false,
+    "observations_released": 318,
+    "position": "2026-09-18T19:00:00Z",
+    "simulation_version": "sim-1",
+    "disclaimer": "Simulated sample data for demonstration. No Apple, Fitbit or WHOOP account is connected and no real device produced these values. They are not inputs to the glucose forecast.",
+    "profiles": [
+      {
+        "profile": "apple_health",
+        "provider": "demo_apple_health",
+        "label": "Apple Health",
+        "kind": "health_data_platform",
+        "description": "Simulated Apple Health. Apple Health is a platform that aggregates data from other devices and apps; it is not itself a sensor.",
+        "status": "inactive",
+        "simulated": true,
+        "data_class": "demo",
+        "display_label": "Apple Health (simulated sample)",
+        "authorization": "none - no account was linked and no provider was contacted",
+        "metrics": [
+          {
+            "metric": "steps_daily",
+            "unit": "count",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "resting_heart_rate",
+            "unit": "bpm",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "sleep_duration",
+            "unit": "min",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "workout",
+            "unit": "min",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          }
+        ],
+        "notes": {
+          "aggregation": "Its daily steps and workouts repeat the simulated Apple Watch's, as an aggregator would."
+        }
+      },
+      {
+        "profile": "apple_watch",
+        "provider": "demo_apple_watch",
+        "label": "Apple Watch",
+        "kind": "wearable_device",
+        "description": "Simulated Apple Watch.",
+        "status": "demo_simulated",
+        "simulated": true,
+        "data_class": "demo",
+        "display_label": "Apple Watch (simulated sample)",
+        "authorization": "none - no account was linked and no provider was contacted",
+        "metrics": [
+          {
+            "metric": "heart_rate",
+            "unit": "bpm",
+            "observations_visible": 313,
+            "latest_observed_at": "2026-09-18T19:00:00Z"
+          },
+          {
+            "metric": "steps_daily",
+            "unit": "count",
+            "observations_visible": 2,
+            "latest_observed_at": "2026-09-17T00:00:00Z"
+          },
+          {
+            "metric": "workout",
+            "unit": "min",
+            "observations_visible": 3,
+            "latest_observed_at": "2026-09-18T18:15:00Z"
+          }
+        ],
+        "notes": {
+          "heart_rate": "One simulated sample every 15 minutes."
+        }
+      },
+      {
+        "profile": "fitbit",
+        "provider": "demo_fitbit",
+        "label": "Fitbit",
+        "kind": "wearable_device",
+        "description": "Simulated Fitbit.",
+        "status": "inactive",
+        "simulated": true,
+        "data_class": "demo",
+        "display_label": "Fitbit (simulated sample)",
+        "authorization": "none - no account was linked and no provider was contacted",
+        "metrics": [
+          {
+            "metric": "heart_rate",
+            "unit": "bpm",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "steps_daily",
+            "unit": "count",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "sleep_duration",
+            "unit": "min",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "resting_heart_rate",
+            "unit": "bpm",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          }
+        ],
+        "notes": {
+          "heart_rate": "One simulated sample every 30 minutes."
+        }
+      },
+      {
+        "profile": "whoop",
+        "provider": "demo_whoop",
+        "label": "WHOOP",
+        "kind": "wearable_device",
+        "description": "Simulated WHOOP.",
+        "status": "inactive",
+        "simulated": true,
+        "data_class": "demo",
+        "display_label": "WHOOP (simulated sample)",
+        "authorization": "none - no account was linked and no provider was contacted",
+        "metrics": [
+          {
+            "metric": "recovery_score",
+            "unit": "percent",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "sleep_duration",
+            "unit": "min",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "resting_heart_rate",
+            "unit": "bpm",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          },
+          {
+            "metric": "hrv_rmssd",
+            "unit": "ms",
+            "observations_visible": 0,
+            "latest_observed_at": null
+          }
+        ],
+        "notes": {
+          "heart_rate": "None. WHOOP's developer API does not expose a continuous heart-rate stream, so the simulation does not invent one."
+        }
+      }
+    ],
+    "glucose_source": {
+      "provider": "demo",
+      "label": "Generated test fixture",
+      "kind": "historical_replay",
+      "simulated": true,
+      "data_class": "demo",
+      "status": "replaying",
+      "description": "Generated arithmetic. Not real data.",
+      "readings_visible": 949,
+      "latest_observed_at": "2026-09-18T19:00:00Z"
+    },
+    "used_by_forecast_model": {
+      "glucose_source": true,
+      "simulated_profiles": false,
+      "explanation": "The frozen fs-1.3 forecast uses the glucose history, the confirmed meal's macronutrients, meal timing and the account's own completed meal responses. It does not use heart rate, steps, sleep, recovery, workouts or medication records."
+    }
+  }
+}

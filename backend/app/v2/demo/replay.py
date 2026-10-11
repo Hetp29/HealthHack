@@ -40,7 +40,7 @@ from starlette.testclient import TestClient
 
 from backend.app.v2 import core
 from backend.app.v2.db import tables as t
-from backend.app.v2.demo import profile, source
+from backend.app.v2.demo import profile, sim_devices, source
 from backend.app.v2.demo.source import Bundle
 from backend.app.v2.deps import V2Context
 from backend.app.v2.services import glucose
@@ -229,6 +229,9 @@ def _release(ctx: V2Context, user_id: str, bundle: Bundle, after: dt.datetime | 
     path stores them, so validation and de-duplication apply as for any source.
     """
     readings = bundle.readings_between(after, upto)
+    if after is not None:
+        # Simulated wearable sources the user has switched on follow the same clock.
+        sim_devices.release(ctx, user_id, bundle, after, upto)
     if not readings:
         return 0
     provider, data_class = bundle.store_labels
@@ -655,3 +658,40 @@ def digest(ctx: V2Context, user_id: str) -> dict:
     overall = hashlib.sha256(json.dumps(sections, sort_keys=True).encode()).hexdigest()
     return {"digest": overall, "sections": sections,
             "counts": {name: len(value) for name, value in parts.items()}}
+
+
+# --------------------------------------------------------------------------- #
+# simulated connected-health sources
+# --------------------------------------------------------------------------- #
+
+
+def _demo_row(ctx: V2Context, user_id: str) -> tuple[dict, Bundle]:
+    _require_enabled(ctx)
+    row = _state_row(ctx, user_id)
+    if row is None:
+        raise demo_error(403, "not_demo_account", "This account is not a demo replay account.")
+    return row, get_bundle(ctx, mode_of(ctx, user_id))
+
+
+def devices(ctx: V2Context, user_id: str) -> dict:
+    row, bundle = _demo_row(ctx, user_id)
+    return sim_devices.listing(ctx, user_id, bundle, row["position"])
+
+
+def activate_device(ctx: V2Context, user_id: str, profile_name: str) -> dict:
+    """Switch one simulated source on for this demo account. Idempotent."""
+    with _LOCK:
+        row, bundle = _demo_row(ctx, user_id)
+        result = sim_devices.activate(ctx, user_id, profile_name, bundle, row["position"])
+    logger.info("demo_device_activated profile=%s released=%d", profile_name,
+                result["observations_released"])
+    return {**result, **sim_devices.listing(ctx, user_id, bundle, row["position"])}
+
+
+def health_timeline(ctx: V2Context, user_id: str, hours: int, limit: int) -> dict:
+    row, _ = _demo_row(ctx, user_id)
+    end = row["position"]
+    start = end - dt.timedelta(hours=hours)
+    return {"start": core.rfc3339(start), "end": core.rfc3339(end),
+            "position": core.rfc3339(end), "disclaimer": sim_devices.DISCLAIMER,
+            "items": sim_devices.timeline(ctx, user_id, start, end, limit)}

@@ -1,0 +1,17 @@
+{
+  "request": "POST /api/v2/demo/devices/garmin/activate",
+  "status": 404,
+  "body": {
+    "code": "unknown_demo_device",
+    "message": "No such simulated device profile.",
+    "request_id": "req_00000000000000000000",
+    "details": {
+      "allowed": [
+        "apple_health",
+        "apple_watch",
+        "fitbit",
+        "whoop"
+      ]
+    }
+  }
+}

@@ -1,0 +1,592 @@
+{
+  "request": "GET /api/v2/demo/health-timeline",
+  "status": 200,
+  "body": {
+    "start": "2026-09-17T13:00:00Z",
+    "end": "2026-09-18T19:00:00Z",
+    "position": "2026-09-18T19:00:00Z",
+    "disclaimer": "Simulated sample data for demonstration. No Apple, Fitbit or WHOOP account is connected and no real device produced these values. They are not inputs to the glucose forecast.",
+    "items": [
+      {
+        "at": "2026-09-15T19:10:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Watch",
+        "provider": "demo_apple_watch",
+        "metric": "workout",
+        "value": 40.0,
+        "unit": "min",
+        "observed_at": "2026-09-15T18:30:00Z",
+        "observed_end_at": "2026-09-15T19:10:00Z",
+        "detail": {
+          "sport": "cycling"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-15T19:10:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "workout",
+        "value": 40.0,
+        "unit": "min",
+        "observed_at": "2026-09-15T18:30:00Z",
+        "observed_end_at": "2026-09-15T19:10:00Z",
+        "detail": {
+          "sport": "cycling"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-16T06:45:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "hrv_rmssd",
+        "value": 46.9,
+        "unit": "ms",
+        "observed_at": "2026-09-16T06:45:00Z",
+        "observed_end_at": null,
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-16T06:45:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "recovery_score",
+        "value": 57.0,
+        "unit": "percent",
+        "observed_at": "2026-09-16T06:45:00Z",
+        "observed_end_at": null,
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-16T06:45:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "resting_heart_rate",
+        "value": 60.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-16T06:45:00Z",
+        "observed_end_at": null,
+        "detail": {
+          "local_date": "2026-09-16"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-16T06:45:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "resting_heart_rate",
+        "value": 59.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-16T06:45:00Z",
+        "observed_end_at": null,
+        "detail": {
+          "local_date": "2026-09-16"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-16T06:45:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "sleep_duration",
+        "value": 413.0,
+        "unit": "min",
+        "observed_at": "2026-09-15T23:24:00Z",
+        "observed_end_at": "2026-09-16T06:45:00Z",
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-16T06:45:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "sleep_duration",
+        "value": 407.0,
+        "unit": "min",
+        "observed_at": "2026-09-15T23:24:00Z",
+        "observed_end_at": "2026-09-16T06:45:00Z",
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-16T18:45:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Watch",
+        "provider": "demo_apple_watch",
+        "metric": "workout",
+        "value": 45.0,
+        "unit": "min",
+        "observed_at": "2026-09-16T18:00:00Z",
+        "observed_end_at": "2026-09-16T18:45:00Z",
+        "detail": {
+          "sport": "cycling"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-16T18:45:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "workout",
+        "value": 45.0,
+        "unit": "min",
+        "observed_at": "2026-09-16T18:00:00Z",
+        "observed_end_at": "2026-09-16T18:45:00Z",
+        "detail": {
+          "sport": "cycling"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T00:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Watch",
+        "provider": "demo_apple_watch",
+        "metric": "steps_daily",
+        "value": 9512.0,
+        "unit": "count",
+        "observed_at": "2026-09-16T00:00:00Z",
+        "observed_end_at": "2026-09-17T00:00:00Z",
+        "detail": {
+          "local_date": "2026-09-16"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T00:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "steps_daily",
+        "value": 9512.0,
+        "unit": "count",
+        "observed_at": "2026-09-16T00:00:00Z",
+        "observed_end_at": "2026-09-17T00:00:00Z",
+        "detail": {
+          "local_date": "2026-09-16"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T06:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "hrv_rmssd",
+        "value": 50.9,
+        "unit": "ms",
+        "observed_at": "2026-09-17T06:00:00Z",
+        "observed_end_at": null,
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T06:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "recovery_score",
+        "value": 66.0,
+        "unit": "percent",
+        "observed_at": "2026-09-17T06:00:00Z",
+        "observed_end_at": null,
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T06:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "resting_heart_rate",
+        "value": 58.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-17T06:00:00Z",
+        "observed_end_at": null,
+        "detail": {
+          "local_date": "2026-09-17"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T06:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "resting_heart_rate",
+        "value": 57.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-17T06:00:00Z",
+        "observed_end_at": null,
+        "detail": {
+          "local_date": "2026-09-17"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T06:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "sleep_duration",
+        "value": 399.0,
+        "unit": "min",
+        "observed_at": "2026-09-16T22:53:00Z",
+        "observed_end_at": "2026-09-17T06:00:00Z",
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T06:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "sleep_duration",
+        "value": 393.0,
+        "unit": "min",
+        "observed_at": "2026-09-16T22:53:00Z",
+        "observed_end_at": "2026-09-17T06:00:00Z",
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T17:00:00Z",
+        "type": "alert",
+        "alert_id": "alt_00000000000000000000000000000a39",
+        "status": "active",
+        "data_class": "model_output",
+        "simulated": false,
+        "source": "GlucoTwin forecast alert (informational)"
+      },
+      {
+        "at": "2026-09-17T17:00:00Z",
+        "type": "meal",
+        "meal_id": "meal_00000000000000000000000000000a34",
+        "data_class": "demo",
+        "simulated": false,
+        "source": "Generated test-fixture meal record (not real data): fixture_meal_02",
+        "used_by_forecast_model": true
+      },
+      {
+        "at": "2026-09-17T17:20:00Z",
+        "type": "alert",
+        "alert_id": "alt_00000000000000000000000000000a45",
+        "status": "suppressed_cooldown",
+        "data_class": "model_output",
+        "simulated": false,
+        "source": "GlucoTwin forecast alert (informational)"
+      },
+      {
+        "at": "2026-09-17T17:20:00Z",
+        "type": "meal",
+        "meal_id": "meal_00000000000000000000000000000a40",
+        "data_class": "demo",
+        "simulated": false,
+        "source": "Generated test-fixture meal record (not real data): fixture_meal_03",
+        "used_by_forecast_model": true
+      },
+      {
+        "at": "2026-09-17T20:10:00Z",
+        "type": "medication_dose",
+        "dose_id": "dos_00000000000000000000000000000a6b",
+        "action": "taken",
+        "data_class": "fictional",
+        "simulated": true,
+        "source": "Fictional medication record",
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-17T22:00:00Z",
+        "type": "alert",
+        "alert_id": "alt_00000000000000000000000000000a8a",
+        "status": "active",
+        "data_class": "model_output",
+        "simulated": false,
+        "source": "GlucoTwin forecast alert (informational)"
+      },
+      {
+        "at": "2026-09-17T22:00:00Z",
+        "type": "meal",
+        "meal_id": "meal_00000000000000000000000000000a85",
+        "data_class": "demo",
+        "simulated": false,
+        "source": "Generated test-fixture meal record (not real data): fixture_meal_04",
+        "used_by_forecast_model": true
+      },
+      {
+        "at": "2026-09-18T00:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Watch",
+        "provider": "demo_apple_watch",
+        "metric": "steps_daily",
+        "value": 7813.0,
+        "unit": "count",
+        "observed_at": "2026-09-17T00:00:00Z",
+        "observed_end_at": "2026-09-18T00:00:00Z",
+        "detail": {
+          "local_date": "2026-09-17"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T00:00:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "steps_daily",
+        "value": 7813.0,
+        "unit": "count",
+        "observed_at": "2026-09-17T00:00:00Z",
+        "observed_end_at": "2026-09-18T00:00:00Z",
+        "detail": {
+          "local_date": "2026-09-17"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T06:15:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "hrv_rmssd",
+        "value": 45.1,
+        "unit": "ms",
+        "observed_at": "2026-09-18T06:15:00Z",
+        "observed_end_at": null,
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T06:15:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "recovery_score",
+        "value": 79.0,
+        "unit": "percent",
+        "observed_at": "2026-09-18T06:15:00Z",
+        "observed_end_at": null,
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T06:15:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "resting_heart_rate",
+        "value": 59.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T06:15:00Z",
+        "observed_end_at": null,
+        "detail": {
+          "local_date": "2026-09-18"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T06:15:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "resting_heart_rate",
+        "value": 58.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T06:15:00Z",
+        "observed_end_at": null,
+        "detail": {
+          "local_date": "2026-09-18"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T06:15:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "sleep_duration",
+        "value": 404.0,
+        "unit": "min",
+        "observed_at": "2026-09-17T23:03:00Z",
+        "observed_end_at": "2026-09-18T06:15:00Z",
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T06:15:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "WHOOP",
+        "provider": "demo_whoop",
+        "metric": "sleep_duration",
+        "value": 398.0,
+        "unit": "min",
+        "observed_at": "2026-09-17T23:03:00Z",
+        "observed_end_at": "2026-09-18T06:15:00Z",
+        "detail": {},
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T08:10:00Z",
+        "type": "medication_dose",
+        "dose_id": "dos_00000000000000000000000000000b09",
+        "action": "skipped",
+        "data_class": "fictional",
+        "simulated": true,
+        "source": "Fictional medication record",
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T09:00:00Z",
+        "type": "alert",
+        "alert_id": "alt_00000000000000000000000000000b1c",
+        "status": "active",
+        "data_class": "model_output",
+        "simulated": false,
+        "source": "GlucoTwin forecast alert (informational)"
+      },
+      {
+        "at": "2026-09-18T09:00:00Z",
+        "type": "meal",
+        "meal_id": "meal_00000000000000000000000000000b17",
+        "data_class": "demo",
+        "simulated": false,
+        "source": "Generated test-fixture meal record (not real data): fixture_meal_05",
+        "used_by_forecast_model": true
+      },
+      {
+        "at": "2026-09-18T14:00:00Z",
+        "type": "alert",
+        "alert_id": "alt_00000000000000000000000000000b61",
+        "status": "active",
+        "data_class": "model_output",
+        "simulated": false,
+        "source": "GlucoTwin forecast alert (informational)"
+      },
+      {
+        "at": "2026-09-18T14:00:00Z",
+        "type": "meal",
+        "meal_id": "meal_00000000000000000000000000000b5c",
+        "data_class": "demo",
+        "simulated": false,
+        "source": "Generated test-fixture meal record (not real data): fixture_meal_06",
+        "used_by_forecast_model": true
+      },
+      {
+        "at": "2026-09-18T18:40:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Watch",
+        "provider": "demo_apple_watch",
+        "metric": "workout",
+        "value": 25.0,
+        "unit": "min",
+        "observed_at": "2026-09-18T18:15:00Z",
+        "observed_end_at": "2026-09-18T18:40:00Z",
+        "detail": {
+          "sport": "walking"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T18:40:00Z",
+        "type": "wearable",
+        "data_class": "demo",
+        "simulated": true,
+        "source": "Apple Health",
+        "provider": "demo_apple_health",
+        "metric": "workout",
+        "value": 25.0,
+        "unit": "min",
+        "observed_at": "2026-09-18T18:15:00Z",
+        "observed_end_at": "2026-09-18T18:40:00Z",
+        "detail": {
+          "sport": "walking"
+        },
+        "used_by_forecast_model": false
+      },
+      {
+        "at": "2026-09-18T19:00:00Z",
+        "type": "alert",
+        "alert_id": "alt_00000000000000000000000000000ba6",
+        "status": "active",
+        "data_class": "model_output",
+        "simulated": false,
+        "source": "GlucoTwin forecast alert (informational)"
+      },
+      {
+        "at": "2026-09-18T19:00:00Z",
+        "type": "meal",
+        "meal_id": "meal_00000000000000000000000000000ba1",
+        "data_class": "demo",
+        "simulated": false,
+        "source": "Generated test-fixture meal record (not real data): fixture_meal_07",
+        "used_by_forecast_model": true
+      }
+    ]
+  }
+}

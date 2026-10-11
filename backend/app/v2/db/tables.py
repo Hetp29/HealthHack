@@ -179,6 +179,9 @@ device_connections = Table(
     Column("kind", String(16), nullable=False),
     #: `authorized` = OAuth completed, no data yet. `connected` is reserved for a
     #: connection that has actually delivered authentic observations.
+    #: `demo_simulated` = a labelled sample source in a demo account: no provider was
+    #: contacted, no credential exists, and its observations are generated. It is a
+    #: status of its own so that neither `authorized` nor `connected` ever means that.
     Column("status", String(24), nullable=False),
     Column("scopes", JSON, nullable=False),
     Column("external_user_id", String(128), nullable=True),
@@ -196,7 +199,8 @@ device_connections = Table(
     UniqueConstraint("user_id", "provider", name="uq_device_connections_user_provider"),
     CheckConstraint("kind IN ('cgm','wearable')", name="kind"),
     CheckConstraint(
-        "status IN ('pending','authorized','connected','error','revoked','disconnected')",
+        "status IN ('pending','authorized','connected','error','revoked','disconnected',"
+        "'demo_simulated')",
         name="status",
     ),
 )

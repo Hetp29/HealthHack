@@ -99,6 +99,11 @@ logged dose changes nothing about a forecast or an alert (tested).
 
 ## Never model inputs
 
+This includes the **simulated** wearable data in the demonstration accounts
+(`data_class: demo`, providers `demo_*`): it is stored and displayed only. With every
+simulated source switched on, all 39 feature values and every forecast are identical
+to a run without them.
+
 Questionnaire answers, diagnosis, HbA1c, weight, wearable sleep / HRV / recovery /
 steps / workouts, medication names and doses, meal photographs and image embeddings,
 AI confidence labels, and the account identity. None has a slot in the 39-column

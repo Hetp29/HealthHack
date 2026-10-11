@@ -292,6 +292,7 @@ Owner: Ruhaan · Consumer: Neil (UI), Het (redirect URIs, secrets)
 | `pending` | connect started | "Connecting…" |
 | `authorized` | account linked, **no data received** | "Linked — waiting for data" |
 | `connected` | authentic observations are stored | "Connected" |
+| `demo_simulated` | a labelled sample source in a demo account; nothing was contacted, data is generated | "Simulated sample" — never "Connected" |
 | `error` | last attempt failed (`last_error_code`) | error + retry |
 | `revoked` | the provider withdrew access | "Reconnect" |
 | `disconnected` | disconnected by the user | — |
@@ -309,7 +310,7 @@ Owner: Ruhaan · Consumer: Neil; a future native iOS client · Auth: bearer + **
 | method | route | notes | failures | example |
 |---|---|---|---|---|
 | POST | `/wearables/observations` | Native-bridge upload, ≤ 5000 samples, `source`: `healthkit_bridge`, `demo`. **Idempotent** on `source_record_id`; a changed value updates. | 422 | `wearables_pushed` |
-| GET | `/wearables/observations` | `metric`, `start`, `end`. Default last 7 days. | — | — |
+| GET | `/wearables/observations` | `metric`, `provider` *(new, for review)*, `start`, `end`. Default last 7 days. | — | `demo_wearable_observations_daily`, `demo_wearable_observations_heart_rate` |
 
 Metrics and their one accepted unit: `heart_rate` bpm, `resting_heart_rate` bpm,
 `steps_daily` count, `sleep_duration` min, `hrv_rmssd` ms, `hrv_sdnn` ms,
@@ -388,6 +389,9 @@ demo mode on so the schemas are available.) `GET /status` → `demo_mode` says w
 | GET | `/demo/replay` | Replay position, checkpoints, personalization progress, provenance labels. | 403 `not_demo_account`, 503 `demo_data_unavailable` | `demo_replay_state_initial` |
 | POST | `/demo/replay/advance` | `{to}`, `{minutes}`, optional `expected_event_index`. Forward only; a passed checkpoint or stale index is a no-op with `advanced: false`. **Idempotent** with `expected_event_index`. | 403, 409 `demo_bundle_changed`, 422 `unknown_checkpoint`, 503 `demo_requires_frozen_model` | `demo_replay_advance_meal_forecast`, `demo_replay_advance_outcome_reveal`, `demo_replay_advance_minutes`, `demo_replay_state_retrieval_active`, `demo_replay_retry_is_no_op` |
 | POST | `/demo/replay/reset` | Deletes and re-creates the demo account. The caller's token stops working. Touches no other account. | 403, 409 `demo_email_in_use` | `demo_replay_reset` |
+| GET | `/demo/devices` | Four simulated wearable profiles (`inactive` / `demo_simulated`) with per-metric counts, plus the glucose source (a research replay, not simulated). | 403, 503 | `demo_devices_initial` |
+| POST | `/demo/devices/{profile}/activate` | Switch on `apple_health`, `apple_watch`, `fitbit` or `whoop`. No body. **Idempotent.** No provider contacted, no token. | 403, 404 `unknown_demo_device` | `demo_device_activated`, `demo_device_activate_repeat_is_no_op` |
+| GET | `/demo/health-timeline` | `hours` ≤ 240, `limit` ≤ 1000. Meals, alerts, doses and wearable summaries ordered up to the replay position, each tagged with `data_class` and `simulated`. | 403 | `demo_health_timeline` |
 
 * Timestamps: `position` and every checkpoint `at` are instants on the **recording's
   historical timeline**; `wall_clock` is the real time. Never display `position` as
@@ -403,6 +407,9 @@ demo mode on so the schemas are available.) `GET /status` → `demo_mode` says w
   `returning_user`. Which one a request acts on is decided solely by which demo
   account is signed in; there is no mode parameter. Reset affects the caller's mode
   only.
+* **Added for simulated devices — FOR SHARED REVIEW:** the three `/demo/devices` and
+  `/demo/health-timeline` routes above, the `provider` filter on
+  `GET /wearables/observations`, and the connection status `demo_simulated`.
 * **Added for the returning-user mode — FOR SHARED REVIEW:** state fields `mode`,
   `mode_label`, `display_from_meal`; checkpoint field `phase` (`backfill` /
   `display`); `provenance.backfilled_history`; aliases `backfill_complete`,
@@ -439,6 +446,7 @@ Full consumer guide: `DEMO_HANDOFF_NEIL.md`. Scenario: `DEMO_SCENARIO_SPEC.md`.
 | WHOOP | IMPLEMENTED, mock-tested. **BLOCKED BY EXTERNAL SERVICE** — never contacted |
 | Apple Health / Apple Watch | Server ingest IMPLEMENTED AND VERIFIED. Native client **NOT IMPLEMENTED — REQUIRES TEAM DECISION** (B-003) |
 | Real-time CGM for live forecasts | **BLOCKED** (B-001) |
+| Simulated connected-health sources (demo only) | **IMPLEMENTED AND VERIFIED** locally. Generated data, labelled `demo` / `demo_simulated`. **Not** an Apple, Fitbit or WHOOP integration; none of those is verified |
 | Demonstration replay (seed, advance, reset, verify) | **IMPLEMENTED AND VERIFIED** locally with genuine CGMacros data and the frozen artifact, in-process and over HTTP. Not run on any deployed server |
 | Frontend consuming v2 | **NOT IMPLEMENTED** (B-009) |
 | Local-clock policy across DST | **IMPLEMENTED AND VERIFIED** — IANA, per observation (D-006, conditionally approved) |
