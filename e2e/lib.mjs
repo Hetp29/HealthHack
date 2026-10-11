@@ -8,7 +8,9 @@ import { chromium } from "playwright-core";
 export const BASE = (process.env.E2E_BASE_URL ?? "http://localhost:5173").replace(/\/$/, "");
 export const API =
   (process.env.E2E_API_URL ?? "http://localhost:8000").replace(/\/$/, "") + "/api/v2";
-export const DEMO_PASSWORD = process.env.GLUCOTWIN_DEMO_PASSWORD ?? "";
+// The setting was renamed GLUCOTWIN_* -> GLIMPSE_*; either name works.
+export const DEMO_PASSWORD =
+  process.env.GLIMPSE_DEMO_PASSWORD ?? process.env.GLUCOTWIN_DEMO_PASSWORD ?? "";
 export const DEMO_EMAILS = {
   new_user: "demo@glimpse.example",
   returning_user: "demo-returning@glimpse.example",
@@ -29,7 +31,7 @@ export async function launch(viewport = DESKTOP) {
   });
   const context = await browser.newContext({ viewport });
   const page = await context.newPage();
-  page.setDefaultTimeout(30_000);
+  page.setDefaultTimeout(Number(process.env.E2E_TIMEOUT_MS ?? 30_000));
   const problems = [];
   page.on("pageerror", (error) => problems.push(`page error: ${error.message.slice(0, 300)}`));
   page.on("response", (response) => {

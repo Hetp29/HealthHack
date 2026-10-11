@@ -8,6 +8,7 @@ const JOURNEYS = {
   "demo-new-user": { file: "./journeys/demo-new-user.mjs", demo: true },
   "demo-returning": { file: "./journeys/demo-returning.mjs", demo: true },
   "meal-to-home": { file: "./journeys/meal-to-home.mjs", demo: true },
+  "edge-cases": { file: "./journeys/edge-cases.mjs", demo: true },
   "photo-analysis": { file: "./journeys/photo-analysis.mjs", demo: true },
 };
 

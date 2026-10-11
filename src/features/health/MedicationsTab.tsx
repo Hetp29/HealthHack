@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { BookOpen, Check, Clock, Pill as PillIcon, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,6 +21,7 @@ import { useDoses, useDueReminders, useEducation, useRefreshAll, useRegimens } f
 import { useSession } from "@/lib/session";
 import { toInstant } from "@/lib/time";
 import type { Dose, Regimen } from "@/lib/types";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 const CLASSES = [
   ["", "Not sure"],
@@ -51,7 +51,7 @@ const doseText = (dose: Regimen["dose"]) =>
 function useRecordDose() {
   const refreshAll = useRefreshAll();
   const { clock } = useSession();
-  return useMutation({
+  return useGuardedMutation({
     mutationFn: (input: {
       regimen_id: string;
       action: "taken" | "skipped" | "snoozed";
@@ -174,7 +174,7 @@ function DueList({ due }: { due: Dose[] }) {
 function RegimenRow({ regimen }: { regimen: Regimen }) {
   const refreshAll = useRefreshAll();
   const record = useRecordDose();
-  const patch = useMutation({
+  const patch = useGuardedMutation({
     mutationFn: (changes: Record<string, unknown>) => api.patchRegimen(regimen.regimen_id, changes),
     onSuccess: () => void refreshAll(),
     onError: (error) => toast.error(api.describeError(error)),
@@ -270,7 +270,7 @@ function AddRegimen({ onDone }: { onDone: () => void }) {
   const nameError = name.trim() ? null : "Enter the medication's name.";
   const amountError =
     amount.trim() && !(Number(amount) > 0) ? "Enter the dose as a number above 0." : null;
-  const create = useMutation({
+  const create = useGuardedMutation({
     mutationFn: () =>
       api.createRegimen({
         name: name.trim(),

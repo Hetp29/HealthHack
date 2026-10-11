@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Camera, Eye, EyeOff, History, LineChart, ShieldCheck, UserPlus } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
@@ -8,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import * as api from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 export const Route = createFileRoute("/auth")({ component: AuthPage });
 
@@ -66,7 +66,7 @@ function AuthPage() {
   };
   const invalid = Object.values(errors).some(Boolean);
 
-  const submit = useMutation({
+  const submit = useGuardedMutation({
     mutationFn: () =>
       mode === "sign_in"
         ? api.login(email.trim(), password)

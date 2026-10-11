@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Check, FastForward, History, RotateCcw, SkipForward } from "lucide-react";
 import { useState } from "react";
@@ -28,6 +27,7 @@ import { useRefreshAll } from "@/lib/queries";
 import { useSession } from "@/lib/session";
 import type { Checkpoint, ReplayState } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 export function describeCheckpoint(
   checkpoint: Pick<Checkpoint, "kind" | "meal">,
@@ -55,7 +55,7 @@ export function DemoControls({
   const navigate = useNavigate();
   const [confirmReset, setConfirmReset] = useState(false);
 
-  const advance = useMutation({
+  const advance = useGuardedMutation({
     mutationFn: ({ minutes }: { minutes?: number; checkpointId?: string }) =>
       api.advanceReplay({
         expected_event_index: replay!.event_index,
@@ -105,7 +105,7 @@ export function DemoControls({
     },
   });
 
-  const reset = useMutation({
+  const reset = useGuardedMutation({
     mutationFn: api.resetReplay,
     onSuccess: async () => {
       setConfirmReset(false);

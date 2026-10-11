@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -37,6 +36,7 @@ import { useCgmStatus, useMeal, useRefreshMeals } from "@/lib/queries";
 import { useSession } from "@/lib/session";
 import { formatSpan, toInstant } from "@/lib/time";
 import type { Meal, MealEstimate } from "@/lib/types";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 export const Route = createFileRoute("/meals/log")({
   component: LogMealPage,
@@ -157,7 +157,7 @@ function LogMealPage() {
    * Uploads the photo once, then asks for one analysis. Analysis is a paid call, so it
    * only ever runs from this button: never automatically and never as a silent retry.
    */
-  const analyze = useMutation({
+  const analyze = useGuardedMutation({
     retry: false,
     mutationFn: async (withAnalysis: boolean) => {
       let current = meal;
@@ -177,7 +177,7 @@ function LogMealPage() {
     },
   });
 
-  const finish = useMutation({
+  const finish = useGuardedMutation({
     retry: false,
     mutationFn: async () => {
       const values = draftToMacros(macros);

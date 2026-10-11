@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { FileUp } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -6,6 +5,7 @@ import { Field, Notice, Spinner, inputClass } from "@/components/glimpse/primiti
 import { Button } from "@/components/ui/button";
 import * as api from "@/lib/api";
 import { useRefreshAll } from "@/lib/queries";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 const MAX_BYTES = 20 * 1024 * 1024;
 
@@ -20,7 +20,7 @@ export function CgmImport() {
   const [file, setFile] = useState<File | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
 
-  const upload = useMutation({
+  const upload = useGuardedMutation({
     mutationFn: () => api.importCgmFile(file!, format, dateOrder || undefined),
     onSuccess: () => {
       setFile(null);

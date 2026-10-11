@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ClipboardList, History, LogOut } from "lucide-react";
 import { useState } from "react";
@@ -32,6 +32,7 @@ import { useRefreshAll } from "@/lib/queries";
 import { keys, useSession } from "@/lib/session";
 import type { Consent, GlucoseUnit } from "@/lib/types";
 import { useUnits } from "@/lib/units";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 export const Route = createFileRoute("/settings")({ component: SettingsPage });
 
@@ -50,7 +51,7 @@ function ProfilePanel() {
   const nameError = name.trim() ? null : "Enter a name.";
   const changed = name.trim() !== (user?.display_name ?? "") || timezone.trim() !== user?.timezone;
 
-  const save = useMutation({
+  const save = useGuardedMutation({
     mutationFn: () =>
       api.patchMe({
         display_name: name.trim(),
@@ -132,7 +133,7 @@ function PrivacyPanel() {
   const { processingAllowed, personalizationAllowed } = useSession();
   const refreshAll = useRefreshAll();
   const [confirm, setConfirm] = useState(false);
-  const change = useMutation({
+  const change = useGuardedMutation({
     mutationFn: (input: { type: Consent["consent_type"]; state: "granted" | "withdrawn" }) =>
       api.putConsent(input.type, input.state),
     onSuccess: async (_result, input) => {
@@ -229,7 +230,7 @@ function DeleteAccount() {
   const { signOut } = useSession();
   const [open, setOpen] = useState(false);
   const [password, setPassword] = useState("");
-  const remove = useMutation({
+  const remove = useGuardedMutation({
     mutationFn: () => api.deleteAccount(password),
     onSuccess: async () => {
       api.clearToken();

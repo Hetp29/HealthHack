@@ -10,7 +10,7 @@ import {
   useRouter,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { CloudOff } from "lucide-react";
+import { CloudOff, ShieldAlert } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 
 import { Logo, Spinner } from "@/components/glimpse/primitives";
@@ -188,9 +188,32 @@ function Gate() {
   }
   if (session.phase === "starting" || target) return <Splash />;
   if (onAuth || onOnboarding) return <Outlet />;
+  // Without the required permission the server refuses every health-data request, so
+  // no screen but Settings has anything to show: say so once, in one place.
+  const needsPermission = !session.processingAllowed && !pathname.startsWith("/settings");
+  return <AppShell>{needsPermission ? <PermissionRequired /> : <Outlet />}</AppShell>;
+}
+
+function PermissionRequired() {
   return (
-    <AppShell>
-      <Outlet />
-    </AppShell>
+    <div
+      className="card-surface mx-auto mt-6 max-w-xl p-8 text-center"
+      data-testid="permission-required"
+    >
+      <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+        <ShieldAlert className="h-6 w-6" />
+      </span>
+      <h1 className="mt-4 text-xl font-semibold">GLIMPSE needs your permission</h1>
+      <p className="mt-2 text-muted-foreground">
+        Processing of your meals and glucose data is switched off, so there is nothing to show here
+        and nothing can be logged or forecast. Nothing has been deleted. You can switch it back on
+        in Settings.
+      </p>
+      <Button asChild className="mt-6">
+        <Link to="/settings" hash="privacy">
+          Review permissions
+        </Link>
+      </Button>
+    </div>
   );
 }

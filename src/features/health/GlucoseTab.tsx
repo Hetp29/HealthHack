@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { Activity, Plus } from "lucide-react";
 import { useState } from "react";
 
@@ -26,6 +25,7 @@ import { formatSpan, toInstant } from "@/lib/time";
 import type { GlucoseUnit } from "@/lib/types";
 import { toMgDl, useUnits } from "@/lib/units";
 import { cn } from "@/lib/utils";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 const RANGES = [
   { hours: 24, label: "24 h" },
@@ -59,7 +59,7 @@ function ManualReading() {
       ? "Choose a time that isn't in the future."
       : null;
 
-  const save = useMutation({
+  const save = useGuardedMutation({
     mutationFn: () =>
       api.pushReading({ observed_at: toInstant(new Date(at)), value: Number(value), unit }),
     onSuccess: () => {

@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Bell, Check } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -24,6 +23,7 @@ import { useSession } from "@/lib/session";
 import type { AlertEvent, AlertSettings, GlucoseUnit } from "@/lib/types";
 import { toMgDl, useUnits } from "@/lib/units";
 import { cn } from "@/lib/utils";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 const STATUS: Record<AlertEvent["status"], string> = {
   active: "Raised",
@@ -62,7 +62,7 @@ function SettingsForm({ settings }: { settings: AlertSettings }) {
       ? "Enter minutes between 0 and 1440."
       : null;
 
-  const save = useMutation({
+  const save = useGuardedMutation({
     mutationFn: () =>
       api.putAlertSettings({
         enabled,
@@ -191,7 +191,7 @@ export function AlertsTab() {
   const settings = useAlertSettings();
   const alerts = useAlerts();
   const deliveries = useNotifications();
-  const acknowledge = useMutation({
+  const acknowledge = useGuardedMutation({
     mutationFn: api.acknowledgeAlert,
     onSuccess: () => void refreshAll(),
     onError: (error) => toast.error(api.describeError(error)),

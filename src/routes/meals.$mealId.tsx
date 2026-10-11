@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, LineChart, Sparkles, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -39,6 +39,7 @@ import {
 } from "@/lib/queries";
 import { useSession } from "@/lib/session";
 import type { Meal } from "@/lib/types";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 export const Route = createFileRoute("/meals/$mealId")({ component: MealPage });
 
@@ -90,12 +91,12 @@ function MealPage() {
   // back `not_applicable`, because the recording belongs to what the participant ate.
   const outcome = useOutcome(mealId, !!meal.data?.prediction_id);
 
-  const forecast = useMutation({
+  const forecast = useGuardedMutation({
     retry: false,
     mutationFn: () => api.predictMeal(mealId),
     onSuccess: () => void refreshMeals(),
   });
-  const remove = useMutation({
+  const remove = useGuardedMutation({
     mutationFn: () => api.deleteMeal(mealId),
     onSuccess: async () => {
       await refreshMeals();
@@ -145,6 +146,25 @@ function MealPage() {
     );
 
   const m = meal.data;
+  if (m.status === "voided") {
+    return (
+      <>
+        <PageHeader title="Meal" eyebrow={back} />
+        <Panel>
+          <EmptyState
+            title="This meal isn't here"
+            action={
+              <Button asChild>
+                <Link to="/meals">Back to meals</Link>
+              </Button>
+            }
+          >
+            It was deleted. Its forecast is kept on record but is no longer shown or scored.
+          </EmptyState>
+        </Panel>
+      </>
+    );
+  }
   const status = mealStatus(m);
   const observed =
     outcome.data?.status === "scored" ? (outcome.data.observed?.curve ?? null) : null;

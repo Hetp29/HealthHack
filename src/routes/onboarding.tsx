@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -44,6 +44,7 @@ import { keys, useSession } from "@/lib/session";
 import type { GlucoseUnit } from "@/lib/types";
 import { useUnits } from "@/lib/units";
 import { cn } from "@/lib/utils";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 export const Route = createFileRoute("/onboarding")({ component: OnboardingPage });
 
@@ -226,7 +227,7 @@ function OnboardingPage() {
   };
 
   /** Saves what this step owns. Nothing is reported as saved unless the server accepted it. */
-  const save = useMutation({
+  const save = useGuardedMutation({
     mutationFn: async (target: StepId) => {
       if (target === "consent") {
         if (necessary !== session.processingAllowed)

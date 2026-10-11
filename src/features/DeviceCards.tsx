@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Activity, FileUp, HeartPulse, Layers, Smartphone, Watch } from "lucide-react";
 import type { ComponentType } from "react";
@@ -17,6 +16,7 @@ import * as api from "@/lib/api";
 import { useDemoDevices, useDevices, useRefreshAll } from "@/lib/queries";
 import { useSession } from "@/lib/session";
 import type { DemoDeviceProfile, DeviceProfileId, ProviderCapability } from "@/lib/types";
+import { useGuardedMutation } from "@/lib/useGuardedMutation";
 
 export const METRIC_LABELS: Record<string, string> = {
   heart_rate: "Heart rate",
@@ -70,7 +70,7 @@ function Shell({
 function SimulatedCard({ profile }: { profile: DemoDeviceProfile }) {
   const { clock } = useSession();
   const refreshAll = useRefreshAll();
-  const activate = useMutation({
+  const activate = useGuardedMutation({
     mutationFn: () => api.activateDemoDevice(profile.profile as DeviceProfileId),
     onSuccess: async (result) => {
       await refreshAll();
@@ -219,7 +219,7 @@ function ProviderCard({
   status: string | null;
 }) {
   const refreshAll = useRefreshAll();
-  const connect = useMutation({
+  const connect = useGuardedMutation({
     mutationFn: () => api.connectProvider(provider.provider),
     onSuccess: (result) => window.location.assign(result.authorization_url),
     onError: (error) =>
@@ -229,7 +229,7 @@ function ProviderCard({
           : api.describeError(error),
       ),
   });
-  const disconnect = useMutation({
+  const disconnect = useGuardedMutation({
     mutationFn: () => api.disconnectProvider(provider.provider),
     onSuccess: async () => {
       await refreshAll();
