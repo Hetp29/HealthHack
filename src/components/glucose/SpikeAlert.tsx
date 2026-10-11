@@ -45,7 +45,7 @@ export function SpikeAlert({
               to use the right threshold.{" "}
             </>
           )}
-          Informational forecast, not medical advice.
+          Glucose forecasts, spike notifications, medication logs, and nutritional estimates are strictly informational and do NOT constitute clinical diagnosis, medical advice, or insulin dose instructions.
         </div>
       </div>
     </div>

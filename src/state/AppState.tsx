@@ -17,6 +17,10 @@ interface AppState {
   selectedId: string | null;
   setSelectedId: (id: string) => void;
   selected: Participant | null;
+  isAuthenticated: boolean;
+  isOnboarded: boolean;
+  authenticate: () => void;
+  completeOnboarding: () => void;
 }
 
 const Ctx = createContext<AppState | null>(null);
@@ -32,6 +36,16 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
   const [pTick, setPTick] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isOnboarded, setIsOnboarded] = useState(false);
+
+  const authenticate = useCallback(() => {
+    setIsAuthenticated(true);
+  }, []);
+
+  const completeOnboarding = useCallback(() => {
+    setIsOnboarded(true);
+  }, []);
 
   const setMode = useCallback((m: DataMode) => {
     setModeRaw(m);
@@ -87,8 +101,12 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
       selectedId,
       setSelectedId,
       selected,
+      isAuthenticated,
+      isOnboarded,
+      authenticate,
+      completeOnboarding,
     }),
-    [mode, setMode, connectivity, dataSource, participants, selectedId, selected],
+    [mode, setMode, connectivity, dataSource, participants, selectedId, selected, isAuthenticated, isOnboarded, authenticate, completeOnboarding],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

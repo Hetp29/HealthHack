@@ -59,8 +59,6 @@ export interface PredictResponse {
   limitations: string[];
 }
 
-/* ---------- ASSUMED adapter schemas ---------- */
-
 export interface Participant {
   participant_id: string;
   label?: string | null | undefined;
@@ -142,4 +140,113 @@ export interface ModelMetrics {
     win_rate_definition?: string | null | undefined;
     compared_samples?: number | null | undefined;
   } | null | undefined;
+}
+
+/* ---------- NEIL PROPOSED CONTRACTS (v2) ---------- */
+
+export interface QuestionnaireAnswers {
+  // Section 1: Basics
+  dob?: string;
+  sex_assigned_at_birth?: 'male' | 'female' | 'intersex' | 'prefer_not_to_say';
+  height_cm?: number;
+  weight_kg?: number;
+  primary_goal?: 'meal_responses' | 'spike_awareness' | 'diabetes_mgmt' | 'metabolic_exploration' | 'other';
+  
+  // Section 2: Metabolic
+  diagnosis_status?: 'type_1' | 'type_2' | 'prediabetes' | 'gestational' | 'unknown' | 'none';
+  diagnosis_year?: number;
+  hba1c_value?: number;
+  hba1c_unit?: '%' | 'mmol/mol';
+  fasting_glucose_value?: number;
+  fasting_glucose_unit?: 'mg/dL' | 'mmol/L';
+  clinician_plan_summary?: string;
+
+  // Section 3: Monitoring
+  monitoring_method?: 'cgm' | 'finger_prick' | 'both' | 'none';
+  cgm_brand?: string;
+  connect_preference?: 'now' | 'later' | 'no';
+  cgm_usage_duration?: string;
+
+  // Section 4: Meds
+  takes_glucose_meds?: boolean;
+  prescribed_medications?: Array<{
+    name: string;
+    dose: string;
+    unit: string;
+    schedule: string;
+    times_per_day?: number;
+    since?: string;
+  }>;
+  uses_insulin?: boolean;
+  wants_medication_reminders?: boolean;
+
+  // Section 5: Meals
+  meals_per_day?: number;
+  meals?: Array<{
+    name: string;
+    details?: string;
+  }>;
+  dietary_pattern?: string;
+  dietary_restrictions?: string[];
+  meal_logging_method?: 'photo' | 'manual' | 'both';
+
+  // Section 6: Wearables
+  uses_wearable?: boolean;
+  wearable_brand?: string;
+  wearable_version?: string;
+  wearable_other?: string;
+  wearable_connect_preference?: 'now' | 'later' | 'no';
+
+  // Section 7: Alerts
+  enable_spike_alerts?: boolean;
+  spike_threshold_value?: number;
+  spike_threshold_unit?: 'mg/dL' | 'mmol/L';
+  alert_channels?: ('push' | 'email' | 'in_app')[];
+  quiet_hours_start?: string; // HH:mm
+  quiet_hours_end?: string;   // HH:mm
+
+  // Section 8: Consent
+  necessary_processing_consent: boolean; // MUST BE TRUE
+  optional_personal_history_consent: boolean;
+}
+
+export type DoseStatus = 'taken' | 'skipped' | 'snoozed' | 'unknown';
+
+export interface MedicationRegimen {
+  regimen_id: string;
+  user_id: string;
+  drug_name: string;
+  dose: string;
+  unit: string;
+  schedule: string;
+  status: 'active' | 'discontinued';
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface DoseEvent {
+  dose_id: string;
+  regimen_id: string;
+  scheduled_at: string; // ISO 8601 UTC
+  actual_at?: string | null;
+  status: DoseStatus;
+  actor: 'user' | 'system';
+}
+
+export interface MedicationEducation {
+  drug_class: string;
+  potential_glucose_effect: string;
+  hypo_risk: boolean;
+  source_citation: string;
+  verification_date: string;
+}
+
+export interface AlertRule {
+  rule_id: string;
+  user_id: string;
+  enabled: boolean;
+  threshold_mg_dl: number;
+  channels: ('push' | 'email' | 'in_app')[];
+  quiet_hours_start?: string;
+  quiet_hours_end?: string;
 }

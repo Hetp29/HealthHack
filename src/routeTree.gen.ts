@@ -10,7 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ConnectDevicesRouteImport } from './routes/connect-devices'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as MedicationsRouteImport } from './routes/medications'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PredictRouteImport } from './routes/predict'
 import { Route as ProfileRouteImport } from './routes/profile'
 
@@ -19,9 +23,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnectDevicesRoute = ConnectDevicesRouteImport.update({
+  id: '/connect-devices',
+  path: '/connect-devices',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MedicationsRoute = MedicationsRouteImport.update({
+  id: '/medications',
+  path: '/medications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PredictRoute = PredictRouteImport.update({
@@ -37,34 +61,75 @@ const ProfileRoute = ProfileRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/connect-devices': typeof ConnectDevicesRoute
   '/insights': typeof InsightsRoute
+  '/medications': typeof MedicationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/predict': typeof PredictRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/connect-devices': typeof ConnectDevicesRoute
   '/insights': typeof InsightsRoute
+  '/medications': typeof MedicationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/predict': typeof PredictRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/connect-devices': typeof ConnectDevicesRoute
   '/insights': typeof InsightsRoute
+  '/medications': typeof MedicationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/predict': typeof PredictRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/insights' | '/predict' | '/profile'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/connect-devices'
+    | '/insights'
+    | '/medications'
+    | '/onboarding'
+    | '/predict'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/insights' | '/predict' | '/profile'
-  id: '__root__' | '/' | '/insights' | '/predict' | '/profile'
+  to:
+    | '/'
+    | '/auth'
+    | '/connect-devices'
+    | '/insights'
+    | '/medications'
+    | '/onboarding'
+    | '/predict'
+    | '/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/connect-devices'
+    | '/insights'
+    | '/medications'
+    | '/onboarding'
+    | '/predict'
+    | '/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  ConnectDevicesRoute: typeof ConnectDevicesRoute
   InsightsRoute: typeof InsightsRoute
+  MedicationsRoute: typeof MedicationsRoute
+  OnboardingRoute: typeof OnboardingRoute
   PredictRoute: typeof PredictRoute
   ProfileRoute: typeof ProfileRoute
 }
@@ -78,11 +143,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connect-devices': {
+      id: '/connect-devices'
+      path: '/connect-devices'
+      fullPath: '/connect-devices'
+      preLoaderRoute: typeof ConnectDevicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/insights': {
       id: '/insights'
       path: '/insights'
       fullPath: '/insights'
       preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/medications': {
+      id: '/medications'
+      path: '/medications'
+      fullPath: '/medications'
+      preLoaderRoute: typeof MedicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/predict': {
@@ -104,7 +197,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  ConnectDevicesRoute: ConnectDevicesRoute,
   InsightsRoute: InsightsRoute,
+  MedicationsRoute: MedicationsRoute,
+  OnboardingRoute: OnboardingRoute,
   PredictRoute: PredictRoute,
   ProfileRoute: ProfileRoute,
 }

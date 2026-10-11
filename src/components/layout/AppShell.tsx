@@ -32,6 +32,7 @@ const CONN: Record<Connectivity, { label: string; dot: string }> = {
 const tabs = [
   { to: "/", label: "Patient Overview" },
   { to: "/predict", label: "Predict Meal Trajectory" },
+  { to: "/medications", label: "Medications" },
   { to: "/insights", label: "Model Insights" },
   { to: "/profile", label: "My Profile" },
 ] as const;

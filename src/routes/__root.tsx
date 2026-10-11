@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
+  useLocation,
+  useNavigate,
   createRootRouteWithContext,
   useRouter,
   HeadContent,
@@ -13,7 +15,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/layout/AppShell";
-import { AppStateProvider } from "@/state/AppState";
+import { AppStateProvider, useAppState } from "@/state/AppState";
 
 function NotFoundComponent() {
   return (
@@ -123,13 +125,29 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AppStateProvider>
-        <div suppressHydrationWarning>
-          <AppShell>
-            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-            <Outlet />
-          </AppShell>
-        </div>
+        <AuthenticatedApp />
       </AppStateProvider>
     </QueryClientProvider>
+  );
+}
+
+function AuthenticatedApp() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, isOnboarded } = useAppState();
+  const publicPath = location.pathname === "/auth";
+
+  useEffect(() => {
+    if (!isAuthenticated && !publicPath) void navigate({ to: "/auth", replace: true });
+    else if (isAuthenticated && publicPath) void navigate({ to: isOnboarded ? "/" : "/connect-devices", replace: true });
+    else if (isAuthenticated && !isOnboarded && !["/connect-devices", "/onboarding"].includes(location.pathname)) {
+      void navigate({ to: "/connect-devices", replace: true });
+    }
+  }, [isAuthenticated, isOnboarded, publicPath, location.pathname, navigate]);
+
+  return (
+    <div suppressHydrationWarning>
+      {publicPath ? <Outlet /> : <AppShell><Outlet /></AppShell>}
+    </div>
   );
 }

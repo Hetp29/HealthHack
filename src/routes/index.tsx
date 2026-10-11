@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { HistoryChart } from "@/components/glucose/HistoryChart";
 import { Card, CardTitle, EmptyState, ErrorState, MetricCard, PageHeader, Skeleton } from "@/components/common/States";
 import { HistoricalMeals } from "@/components/meals/HistoricalMeals";
-import { ParticipantSelector } from "@/components/participants/ParticipantSelector";
 import { useHistory } from "@/hooks/useHistory";
 import { fmtGlucose, fmtNumber } from "@/lib/formatting";
 import { useAppState } from "@/state/AppState";
@@ -30,8 +29,7 @@ function Index() {
     <div suppressHydrationWarning>
       <PageHeader
         title="Patient overview"
-        subtitle="Review glucose history, heart rate, and meal context for a selected participant."
-        aside={<ParticipantSelector />}
+        subtitle="Review your glucose history, heart rate, and meal context."
       />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -45,7 +43,7 @@ function Index() {
         <MetricCard
           label="Glucose observations"
           value={history?.glucose.length ?? "—"}
-          hint={history ? "Available in selected period" : "Select a participant"}
+          hint={history ? "Available in your profile" : "Waiting for observations"}
           loading={status.state === "loading"}
         />
         <MetricCard
@@ -74,14 +72,14 @@ function Index() {
             mounted && history ? <HistoryChart history={history} /> : <Skeleton className="h-[340px] w-full" />
           )}
           {status.state === "loading" && <Skeleton className="h-[340px] w-full" />}
-          {status.state === "idle" && <EmptyState title="Select a participant" body="Choose a participant to load their history." />}
+          {status.state === "idle" && <EmptyState title="No observations yet" body="Connect a data source to load your history." />}
         </Card>
         <Card>
           <CardTitle>Historical meals</CardTitle>
           {status.state === "error" && <ErrorState error={status.error} onRetry={retry} />}
           {status.state === "success" && history && <HistoricalMeals meals={history.meals ?? []} />}
           {status.state === "loading" && <Skeleton className="h-48 w-full" />}
-          {status.state === "idle" && <EmptyState title="No participant selected" />}
+          {status.state === "idle" && <EmptyState title="No meal history yet" />}
         </Card>
       </div>
     </div>

@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Card, CardTitle, EmptyState, ErrorState, PageHeader } from "@/components/common/States";
 import { PredictionResults } from "@/components/glucose/PredictionResults";
 import { SpikeAlert } from "@/components/glucose/SpikeAlert";
-import { ParticipantSelector } from "@/components/participants/ParticipantSelector";
 import { isoToLocalInput, localInputToIso } from "@/lib/formatting";
 import { atwaterKcal, MEAL_PRESETS } from "@/lib/mealPresets";
 import { loadProfile, type UserProfile } from "@/lib/profile";
@@ -128,10 +127,12 @@ function PredictPage() {
 
   return (
     <div>
+      <div className="mb-6 rounded-xl border border-amber-400/60 bg-amber-50 p-3 text-xs text-amber-900">
+        Glucose forecasts, spike notifications, medication logs, and nutritional estimates are strictly informational and do NOT constitute clinical diagnosis, medical advice, or insulin dose instructions.
+      </div>
       <PageHeader
         title="Predict meal trajectory"
-        subtitle="Enter a meal to forecast this participant's glucose over the next 2 hours."
-        aside={<ParticipantSelector />}
+        subtitle="Enter a meal to forecast your glucose over the next 2 hours."
       />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(320px,420px)_minmax(0,1fr)]">
