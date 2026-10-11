@@ -91,6 +91,9 @@ def materialize_reminders(conn: Connection, ctx: V2Context, user_id: str | None 
     query = select(r).where(and_(r.c.status == "current", r.c.reminders_enabled.is_(True)))
     if user_id is not None:
         query = query.where(r.c.user_id == user_id)
+    else:
+        # Global (worker) pass: wall clock only. Demo accounts run on replay time.
+        query = query.where(r.c.user_id.not_in(select(t.demo_replay_state.c.user_id)))
     created = 0
     for regimen in conn.execute(query).mappings().all():
         zone = ZoneInfo(regimen["timezone"])

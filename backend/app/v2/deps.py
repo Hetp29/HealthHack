@@ -41,8 +41,19 @@ class V2Context:
     http_client_factory: Callable[[], Any] | None = None
     clock: Callable[[], dt.datetime] = core.now_utc
     model_integrity: dict = field(default_factory=dict)
+    #: Test hook: a bundle to replay instead of the one on disk.
+    demo_bundle: Any = None
 
     def now(self) -> dt.datetime:
+        """The current instant for whoever is being served.
+
+        The wall clock, except inside a request (or a replay step) for a demo account,
+        where it is that account's replay position.
+        """
+        return core.clock_override.get() or self.clock()
+
+    def wall_now(self) -> dt.datetime:
+        """The real clock, regardless of any replay. For sessions and bookkeeping."""
         return self.clock()
 
 
@@ -75,7 +86,7 @@ async def read_limited_body(request: Request, limit: int, code: str) -> bytes:
     return b"".join(chunks)
 
 
-def current_user(
+def _authenticate(
     request: Request,
     ctx: V2Context = Depends(get_ctx),
     conn: Connection = Depends(get_conn),
@@ -87,19 +98,35 @@ def current_user(
 
     row = conn.execute(
         select(t.users, t.auth_sessions.c.session_id, t.auth_sessions.c.expires_at,
-               t.auth_sessions.c.revoked_at)
-        .select_from(t.auth_sessions.join(t.users))
+               t.auth_sessions.c.revoked_at,
+               t.demo_replay_state.c.position.label("replay_position"))
+        .select_from(
+            t.auth_sessions.join(t.users)
+            .outerjoin(t.demo_replay_state, t.demo_replay_state.c.user_id == t.users.c.user_id))
         .where(t.auth_sessions.c.token_hash == core.sha256_hex(token.strip()))
     ).mappings().first()
 
-    if row is None or row["revoked_at"] is not None or row["expires_at"] <= ctx.now():
+    # Sessions always live on the real clock, including a demo account's.
+    if row is None or row["revoked_at"] is not None or row["expires_at"] <= ctx.wall_now():
         raise core.V2Error(401, "session_expired", "The session is invalid or has expired.")
     if row["status"] != "active":
         raise core.V2Error(403, "account_disabled", "This account is not active.")
 
     user = dict(row)
+    user["is_demo"] = user["replay_position"] is not None
     request.state.user_id = user["user_id"]
     request.state.session_id = user["session_id"]
+    return user
+
+
+async def current_user(user: dict = Depends(_authenticate)) -> dict:
+    """The signed-in user, with the request's clock set for them.
+
+    Deliberately `async` and deliberately does no I/O: a context variable set here, in
+    the request's own task, is inherited by the worker thread that runs the endpoint.
+    Set from the synchronous `_authenticate` it would be lost when that thread returns.
+    """
+    core.clock_override.set(user["replay_position"])
     return user
 
 

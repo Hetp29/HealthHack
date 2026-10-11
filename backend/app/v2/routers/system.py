@@ -41,6 +41,7 @@ def status(ctx: V2Context = Depends(get_ctx)) -> dict:
             "loaded": bool(ctx.prediction_service.model_ready),
         },
         "personalization_policy": ctx.settings.personalization_policy,
+        "demo_mode": ctx.settings.demo_mode,
         "meal_analysis": {
             "provider": "openai",
             "configured": ctx.vision is not None,

@@ -87,7 +87,7 @@ def _user_payload(conn: Connection, user: dict) -> dict:
 
 def _issue_session(conn: Connection, ctx: V2Context, user_id: str) -> dict:
     token = core.new_token()
-    now = ctx.now()
+    now = ctx.wall_now()
     expires = now + dt.timedelta(hours=ctx.settings.session_ttl_hours)
     conn.execute(
         t.auth_sessions.insert().values(
@@ -164,7 +164,7 @@ def logout(
     conn.execute(
         update(t.auth_sessions)
         .where(t.auth_sessions.c.session_id == user["session_id"])
-        .values(revoked_at=ctx.now())
+        .values(revoked_at=ctx.wall_now())
     )
     return Response(status_code=204)
 

@@ -218,6 +218,10 @@ def score_due(conn: Connection, ctx: V2Context, user_id: str | None = None, *,
     query = select(e).where(ready).order_by(e.c.window_end_at)
     if user_id is not None:
         query = query.where(e.c.user_id == user_id)
+    else:
+        # A global pass runs on the wall clock. A demo account's episodes live on its
+        # replay timeline and are scored only by requests made as that account.
+        query = query.where(e.c.user_id.not_in(select(t.demo_replay_state.c.user_id)))
 
     tally = {"examined": 0, "scored": 0, "insufficient_data": 0, "voided": 0, "left_pending": 0}
     for episode in conn.execute(query).mappings().all():

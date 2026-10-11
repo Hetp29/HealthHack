@@ -633,3 +633,31 @@ audit_events = Table(
     Column("request_id", String(40), nullable=True),
     Column("created_at", UTCDateTime, nullable=False),
 )
+
+# --------------------------------------------------------------------------- #
+# demonstration replay
+# --------------------------------------------------------------------------- #
+
+#: One row per DEMO account that is replaying a historical research recording. Its
+#: presence is what makes an account a demo account: for that account alone, "now"
+#: is `position` instead of the wall clock. Observations later than `position` are
+#: not in this database at all -- they are released from the source bundle only as
+#: the replay advances.
+demo_replay_state = Table(
+    "demo_replay_state",
+    metadata,
+    _user_fk(primary_key=True),
+    Column("scenario_id", String(64), nullable=False),
+    Column("bundle_sha256", String(64), nullable=False),
+    #: The simulated instant, on the recording's own (historical) timeline.
+    Column("position", UTCDateTime, nullable=False),
+    #: How many timeline events have been executed.
+    Column("event_index", Integer, nullable=False, default=0),
+    Column("status", String(16), nullable=False, default="ready"),
+    #: What each executed event did: ids of the records it created. No health values.
+    Column("log", JSON, nullable=False),
+    #: Wall-clock bookkeeping, deliberately separate from `position`.
+    Column("initialized_at", UTCDateTime, nullable=False),
+    Column("updated_at", UTCDateTime, nullable=False),
+    CheckConstraint("status IN ('ready','complete')", name="status"),
+)

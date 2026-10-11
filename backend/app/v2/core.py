@@ -6,6 +6,8 @@ Small on purpose. Everything here is used by more than one router.
 from __future__ import annotations
 
 import base64
+import contextlib
+import contextvars
 import datetime as dt
 import hashlib
 import hmac
@@ -33,6 +35,23 @@ def new_id(prefix: str) -> str:
 
 def now_utc() -> dt.datetime:
     return dt.datetime.now(UTC)
+
+
+#: Per-request clock override. Set only for a demo account that is replaying
+#: historical data, so that "now" for that account is its replay position. It is
+#: `None` for every ordinary account, which therefore always runs on the wall clock.
+clock_override: contextvars.ContextVar[dt.datetime | None] = contextvars.ContextVar(
+    "glucotwin_clock_override", default=None)
+
+
+@contextlib.contextmanager
+def replay_clock(position: dt.datetime | None):
+    """Run a block with "now" pinned to a replay position (or cleared, for `None`)."""
+    token = clock_override.set(position)
+    try:
+        yield
+    finally:
+        clock_override.reset(token)
 
 
 def rfc3339(value: dt.datetime | None) -> str | None:

@@ -98,6 +98,15 @@ class V2Settings:
     fitbit: OAuthClient = field(default_factory=OAuthClient)
     whoop: OAuthClient = field(default_factory=OAuthClient)
 
+    # -- demonstration replay ---------------------------------------------- #
+    #: Off by default. When off, the /demo routes do not exist in the application.
+    demo_mode: bool = False
+    demo_email: str = "demo@glucotwin.example"
+    #: Required to seed or reset the demo account. No default.
+    demo_password: str | None = None
+    #: The research-data bundle to replay. Never committed; see DEMO_HANDOFF_HET.md.
+    demo_bundle_path: pathlib.Path = pathlib.Path("data/local/demo/cgmacros_demo_bundle.json")
+
     @property
     def vision_configured(self) -> bool:
         return bool(self.openai_api_key and self.openai_vision_model)
@@ -133,6 +142,11 @@ def load_v2_settings() -> V2Settings:
         token_encryption_key=_env("GLUCOTWIN_TOKEN_ENCRYPTION_KEY"),
         public_api_base_url=_env("GLUCOTWIN_PUBLIC_API_BASE_URL"),
         frontend_return_url=_env("GLUCOTWIN_FRONTEND_RETURN_URL"),
+        demo_mode=_env_bool("GLUCOTWIN_DEMO_MODE", False),
+        demo_email=_env("GLUCOTWIN_DEMO_EMAIL", "demo@glucotwin.example"),
+        demo_password=_env("GLUCOTWIN_DEMO_PASSWORD"),
+        demo_bundle_path=pathlib.Path(
+            _env("GLUCOTWIN_DEMO_BUNDLE", "data/local/demo/cgmacros_demo_bundle.json")),
         dexcom=OAuthClient(_env("DEXCOM_CLIENT_ID"), _env("DEXCOM_CLIENT_SECRET")),
         dexcom_environment=_env("DEXCOM_ENVIRONMENT", "sandbox"),
         fitbit=OAuthClient(_env("FITBIT_CLIENT_ID"), _env("FITBIT_CLIENT_SECRET")),
