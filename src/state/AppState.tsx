@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { DataMode, Participant } from "@/types/contracts";
-import { getHealth, getParticipants } from "@/services/glimpseServices";
+import { getOnboarding, getStatus, hasV2Session } from "@/services/v2Client";
 import { ApiError } from "@/services/apiClient";
 
 export type Connectivity = "checking" | "connected" | "model_unavailable" | "unavailable" | "fixture";
@@ -26,7 +26,7 @@ interface AppState {
 const Ctx = createContext<AppState | null>(null);
 
 const envMode = (import.meta.env["VITE_DATA_MODE"] as string | undefined)?.toLowerCase();
-export const INITIAL_MODE: DataMode = envMode === "live" ? "live" : "fixture";
+export const INITIAL_MODE: DataMode = envMode === "fixture" ? "fixture" : "live";
 
 export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { children: ReactNode; initialMode?: DataMode }) {
   const [mode, setModeRaw] = useState<DataMode>(initialMode);
@@ -36,7 +36,7 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
   const [pTick, setPTick] = useState(0);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => hasV2Session());
   const [isOnboarded, setIsOnboarded] = useState(false);
 
   const authenticate = useCallback(() => {
@@ -47,6 +47,16 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
     setIsOnboarded(true);
   }, []);
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    getOnboarding()
+      .then((onboarding) => setIsOnboarded(onboarding.completed))
+      .catch(() => {
+        // The route guard remains conservative when the backend cannot confirm completion.
+        setIsOnboarded(false);
+      });
+  }, [isAuthenticated]);
+
   const setMode = useCallback((m: DataMode) => {
     setModeRaw(m);
     setSelectedId(null);
@@ -55,35 +65,29 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
   useEffect(() => {
     const ctrl = new AbortController();
     setConnectivity("checking");
-    getHealth(mode, ctrl.signal)
-      .then((h) => {
-        if (mode === "fixture") setConnectivity("fixture");
-        else setConnectivity(h.model_loaded === false ? "model_unavailable" : "connected");
-        if (h.data_source) setDataSource(h.data_source);
+    if (!isAuthenticated) {
+      setConnectivity("unavailable");
+      return () => ctrl.abort();
+    }
+    if (mode === "fixture") {
+      setConnectivity("unavailable");
+      return () => ctrl.abort();
+    }
+    getStatus()
+      .then((status) => {
+        setConnectivity("connected");
+        setDataSource(status.demo_mode ? "authenticated v2 demo" : "authenticated v2");
       })
       .catch((e) => {
         if (e instanceof ApiError && e.kind === "aborted") return;
         setConnectivity(e instanceof ApiError && e.kind === "model_unavailable" ? "model_unavailable" : "unavailable");
       });
     return () => ctrl.abort();
-  }, [mode, tick]);
+  }, [mode, tick, isAuthenticated]);
 
   useEffect(() => {
-    const ctrl = new AbortController();
-    setParticipants({ state: "loading" });
-    getParticipants(mode, ctrl.signal)
-      .then((r) => {
-        setParticipants({ state: "success", data: r.participants });
-        setDataSource(r.data_source);
-        setSelectedId((cur) =>
-          cur && r.participants.some((p) => p.participant_id === cur) ? cur : r.participants[0]?.participant_id ?? null,
-        );
-      })
-      .catch((e) => {
-        if (e instanceof ApiError && e.kind === "aborted") return;
-        setParticipants({ state: "error", error: e });
-      });
-    return () => ctrl.abort();
+    setParticipants({ state: "success", data: [] });
+    setSelectedId(null);
   }, [mode, pTick]);
 
   const selected =

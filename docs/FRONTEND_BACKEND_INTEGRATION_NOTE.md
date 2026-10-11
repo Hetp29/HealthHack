@@ -1,10 +1,26 @@
 # Frontend/backend integration note
 
-Glimpse currently runs in fixture mode by default. The data-mode control in `AppShell` switches to live mode, which routes requests through `src/services/apiClient.ts` and `src/services/glimpseServices.ts`.
+The v2 Glimpse client routes authenticated requests through `src/services/v2Client.ts` to `/api/v2`. It stores only the backend-issued opaque bearer session in `sessionStorage`; credentials are never embedded in the frontend bundle.
 
 ## Authentication and consent
 
-The `/auth` screen is intentionally a frontend gateway. Replace `authenticate()` in `src/state/AppState.tsx` with the session callback from the identity provider. The callback must set the authenticated user only after credentials, Terms, and Privacy Policy consent have been accepted. Persist the provider session securely; do not put access tokens in local storage.
+The The `/auth` screen calls `POST /api/v2/auth/login` for the new-user and returning-user demo accounts, or `POST /api/v2/auth/register` for a new account. It records necessary consent through `PUT /api/v2/consents/necessary_processing`. The frontend must continue to treat the backend session as authoritative and must not put access tokens in local storage.
+
+## v2 endpoints currently used
+
+- `POST /api/v2/auth/login`
+- `POST /api/v2/auth/register`
+- `PUT /api/v2/consents/{consent_type}`
+- `GET /api/v2/onboarding`, `PATCH /api/v2/onboarding`
+- `GET /api/v2/status`
+- `GET /api/v2/demo/replay`, `POST /api/v2/demo/replay/advance`
+- `GET /api/v2/demo/devices`, `POST /api/v2/demo/devices/{profile}/activate`
+- `GET /api/v2/cgm/readings`
+- `GET /api/v2/wearables/observations`
+- `GET /api/v2/meals`, `POST /api/v2/meals`, `POST /api/v2/meals/{meal_id}/predict`
+- `GET /api/v2/predictions/{prediction_id}`, `GET /api/v2/meals/{meal_id}/outcome`
+- `GET /api/v2/medications`, `GET /api/v2/medication-reminders/due`, `GET /api/v2/medication-doses`, `POST /api/v2/medication-doses`
+- `GET /api/v2/alerts`
 
 ## Device connections
 

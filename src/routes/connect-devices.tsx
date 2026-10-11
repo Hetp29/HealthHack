@@ -1,44 +1,62 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Apple } from "lucide-react";
-import { useState } from "react";
+import { Apple, HeartPulse, Loader2, Watch } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAppState } from "@/state/AppState";
+import { ApiError } from "@/services/apiClient";
+import { activateDemoDevice, getDemoDevices } from "@/services/v2Client";
+import type { DemoDevices, DemoDeviceProfile } from "@/services/v2Types";
 
 export const Route = createFileRoute("/connect-devices")({ component: ConnectDevicesPage });
-type Status = "Not connected" | "Connected" | "Demo / Fixture Data" | "Permissions Denied";
+
+const icons = { apple_health: Apple, apple_watch: Watch, fitbit: Watch, whoop: HeartPulse };
 
 function ConnectDevicesPage() {
   const navigate = useNavigate();
-  const { completeOnboarding } = useAppState();
-  const [statuses, setStatuses] = useState<Record<string, Status>>({});
-  const connect = (name: string) => {
-    setStatuses((current) => ({ ...current, [name]: "Connected" }));
-    if (name === "Apple Health") {
-      completeOnboarding();
-      void navigate({ to: "/" });
+  const [devices, setDevices] = useState<DemoDevices | null>(null);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [demoUnavailable, setDemoUnavailable] = useState(false);
+
+  const refresh = async () => {
+    try {
+      setDevices(await getDemoDevices());
+    } catch (reason) {
+      if (reason instanceof ApiError && reason.status === 404) setDemoUnavailable(true);
+      else setError(reason instanceof Error ? reason.message : "Unable to load demo device status.");
     }
   };
-  const devices: readonly [string, string, string][] = [
-    ["Apple Health", "Connect with Apple Health", "Native bridge sync / OAuth mock"],
-    ["CGM", "Connect Continuous Glucose Monitor (CGM)", "Dexcom, Libre, or CSV import"],
-    ["Wearable", "Connect Smartwatch / Wearable", "Oura, Garmin, or Fitbit"],
-  ];
+  useEffect(() => { void refresh(); }, []);
+
+  const activate = async (profile: DemoDeviceProfile["profile"]) => {
+    setBusy(profile);
+    setError("");
+    try {
+      setDevices(await activateDemoDevice(profile));
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to activate simulated data.");
+    } finally {
+      setBusy(null);
+    }
+  };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12">
-      <p className="text-sm font-medium text-primary">STEP 2 OF 3</p>
-      <h1 className="mt-2 text-3xl font-semibold">Connect your health data</h1>
-      <p className="mt-2 text-muted-foreground">Choose what you want to share. You can change these choices later.</p>
-      <div className="mt-8 grid gap-4">
-        {devices.map(([key, label, detail]) => (
-          <Card key={key}><CardHeader><CardTitle className="flex items-center justify-between text-lg">{key === "Apple Health" ? <span className="flex items-center gap-2"><Apple className="h-5 w-5" aria-hidden />{label}</span> : label}<span className="rounded-full border px-2 py-1 text-xs font-normal">{statuses[key] ?? "Not connected"}</span></CardTitle></CardHeader><CardContent><p className="mb-4 text-sm text-muted-foreground">{detail}</p><Button onClick={() => connect(key)}>{key === "Apple Health" ? "Connect with Apple Health" : "Authorize"}</Button></CardContent></Card>
-        ))}
+    <main className="mx-auto max-w-4xl px-4 py-10">
+      <p className="text-sm font-medium text-primary">SAMPLE DATA CONNECTIONS</p>
+      <h1 className="mt-2 text-3xl font-semibold">Choose simulated health sources</h1>
+      <p className="mt-2 max-w-2xl text-muted-foreground">These controls add generated sample wearable observations to the demo account. No Apple, Fitbit, WHOOP, or other vendor account is contacted.</p>
+      {devices && <p className="mt-4 rounded-lg border border-amber-400/60 bg-amber-50 p-3 text-sm text-amber-900">{devices.disclaimer}</p>}
+      {error && <p role="alert" className="mt-4 text-sm text-destructive">{error}</p>}
+      {demoUnavailable && <p className="mt-6 rounded-lg border p-4 text-sm text-muted-foreground">Demo device controls are unavailable on this server. Continue to the dashboard to use the authenticated account.</p>}
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        {devices?.profiles.map((device) => {
+          const Icon = icons[device.profile];
+          const active = device.status === "demo_simulated";
+          return <Card key={device.profile}><CardHeader><CardTitle className="flex items-center justify-between text-lg"><span className="flex items-center gap-2"><Icon className="h-5 w-5" aria-hidden />{device.display_label}</span><span className="rounded-full border px-2 py-1 text-xs font-normal">{active ? "Simulated sample" : "Inactive"}</span></CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{device.description}</p><p className="mt-2 text-xs text-muted-foreground">{device.metrics.map((metric) => `${metric.metric}: ${metric.observations_visible}`).join(" · ")}</p><Button className="mt-4" variant={active ? "outline" : "default"} disabled={active || busy !== null} onClick={() => void activate(device.profile)}>{busy === device.profile ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Simulating…</> : active ? "Simulated sample active" : `Simulate ${device.label} connection`}</Button></CardContent></Card>;
+        })}
       </div>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Button onClick={() => void navigate({ to: "/onboarding" })}>Skip for Now / Continue to Onboarding</Button>
-        <Button variant="outline" onClick={() => void navigate({ to: "/onboarding" })}>Continue</Button>
-      </div>
+      {devices && <Card className="mt-4"><CardHeader><CardTitle className="text-lg">Glucose source</CardTitle></CardHeader><CardContent><p className="font-medium">{devices.glucose_source.label}</p><p className="mt-1 text-sm text-muted-foreground">{devices.glucose_source.description}</p><span className="mt-3 inline-flex rounded-full border px-2 py-1 text-xs">Sample data source · research dataset</span></CardContent></Card>}
+      <div className="mt-8 flex flex-wrap gap-3"><Button onClick={() => void navigate({ to: "/" })}>Continue to dashboard</Button><Button variant="outline" onClick={() => void navigate({ to: "/onboarding" })}>Review profile setup</Button></div>
     </main>
   );
 }

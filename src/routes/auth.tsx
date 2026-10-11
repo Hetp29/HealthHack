@@ -6,26 +6,40 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAppState } from "@/state/AppState";
+import { getOnboarding, login, putConsent, register } from "@/services/v2Client";
 
 export const Route = createFileRoute("/auth")({ component: AuthPage });
 
 function AuthPage() {
   const navigate = useNavigate();
-  const { authenticate } = useAppState();
+  const { authenticate, completeOnboarding } = useAppState();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [consented, setConsented] = useState(false);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("demo@glucotwin.example");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const finish = () => {
-    if (username !== "user01" || password !== "pass1234") {
-      setError("Use test username user01 and password pass1234.");
-      return;
-    }
+  const [busy, setBusy] = useState(false);
+  const [scenario, setScenario] = useState<"new" | "returning">("new");
+
+  const finish = async () => {
+    setBusy(true);
     setError("");
-    authenticate();
-    void navigate({ to: "/connect-devices" });
+    try {
+      if (mode === "sign-in") {
+        await login(email, password);
+      } else {
+        await register(email, password, scenario === "new" ? "Demo User" : "Returning Demo User");
+      }
+      await putConsent("necessary_processing", "granted");
+      authenticate();
+      if ((await getOnboarding()).completed) completeOnboarding();
+      void navigate({ to: "/connect-devices" });
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to authenticate with the v2 backend.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -44,14 +58,17 @@ function AuthPage() {
               </button>
             ))}
           </div>
-          <div className="space-y-2"><Label htmlFor="username">Username</Label><Input id="username" value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" required /></div>
+          <div className="space-y-2"><Label htmlFor="email">Demo account email</Label><Input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></div>
           <div className="space-y-2"><Label htmlFor="password">Password</Label><Input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /></div>
+          {mode === "sign-in" && <div className="grid grid-cols-2 gap-2">
+            <Button type="button" variant={scenario === "new" ? "default" : "outline"} onClick={() => { setScenario("new"); setEmail("demo@glucotwin.example"); }}>New-user demo</Button>
+            <Button type="button" variant={scenario === "returning" ? "default" : "outline"} onClick={() => { setScenario("returning"); setEmail("demo-returning@glucotwin.example"); }}>Returning demo</Button>
+          </div>}
           <label className="flex items-start gap-2 text-sm text-muted-foreground">
             <Checkbox checked={consented} onCheckedChange={(value) => setConsented(Boolean(value))} />
             <span>I agree to the Terms and Privacy Policy and consent to the processing described below.</span>
           </label>
-          <Button className="w-full" disabled={!consented} onClick={finish}>{mode === "sign-in" ? "Sign in" : "Create account"}</Button>
-          <Button variant="outline" className="w-full" disabled={!consented} onClick={finish}>Sign in with Apple</Button>
+          <Button className="w-full" disabled={!consented || busy || !email || !password} onClick={() => void finish()}>{busy ? "Connecting…" : mode === "sign-in" ? "Sign in" : "Create account"}</Button>
           {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
           <p className="text-center text-xs text-muted-foreground">This prototype uses synthetic data and is not for clinical decision-making.</p>
         </CardContent>

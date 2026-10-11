@@ -11,8 +11,8 @@ import { assessSpike } from "@/lib/spikeAlert";
 import { cn } from "@/lib/utils";
 import { ApiError } from "@/services/apiClient";
 import { predict } from "@/services/glimpseServices";
-import { useAppState } from "@/state/AppState";
 import type { MealMacros, PredictResponse } from "@/types/contracts";
+import { createMeal, getReplay, predictMeal } from "@/services/v2Client";
 
 export const Route = createFileRoute("/predict")({
   head: () => ({ meta: [{ title: "Glimpse — predict" }] }),
@@ -55,7 +55,6 @@ function parse(form: Form): { macros: MealMacros | null; errors: Partial<Record<
 }
 
 function PredictPage() {
-  const { mode, selected, selectedId } = useAppState();
   const [form, setForm] = useState<Form>(EMPTY);
   const [presetId, setPresetId] = useState<string | null>(null);
   const [mealTime, setMealTime] = useState("");
@@ -67,18 +66,16 @@ function PredictPage() {
   useEffect(() => setProfile(loadProfile()), []);
   useEffect(() => () => ctrl.current?.abort(), []);
 
-  // Default the meal time to the participant's suggested Day-8 time; clear stale results.
+  // Use the replay clock so hand-entered demo meals share the backend's simulated timeline.
   useEffect(() => {
     ctrl.current?.abort();
     setRun({ state: "idle" });
-    setMealTime(
-      selected?.prediction_timestamp ? isoToLocalInput(selected.prediction_timestamp) : "",
-    );
-  }, [selectedId, mode, selected?.prediction_timestamp]);
+    getReplay().then((state) => setMealTime(isoToLocalInput(state.position))).catch(() => setMealTime(""));
+  }, []);
 
   const { macros, errors } = parse(form);
   const timeError = mealTime ? null : "Required";
-  const requestKey = JSON.stringify({ selectedId, mealTime, macros });
+  const requestKey = JSON.stringify({ mealTime, macros });
   const stale = run.state === "success" && run.key !== requestKey;
   const spike = useMemo(
     () => (run.state === "success" ? assessSpike(run.data, profile) : null),
@@ -101,24 +98,16 @@ function PredictPage() {
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setTouched(true);
-    if (!macros || !selectedId || timeError) return;
+    if (!macros || timeError) return;
     ctrl.current?.abort();
     const c = new AbortController();
     ctrl.current = c;
     const key = requestKey;
     setRun({ state: "loading" });
     try {
-      const data = await predict(
-        mode,
-        {
-          participant_id: selectedId,
-          meal_timestamp: localInputToIso(mealTime),
-          meal: macros,
-          context_override: null,
-        },
-        c.signal,
-      );
-      if (!c.signal.aborted) setRun({ state: "success", data, key });
+      const meal = await createMeal(localInputToIso(mealTime), macros);
+      const prediction = await predictMeal(meal.meal_id);
+      if (!c.signal.aborted) setRun({ state: "success", data: prediction.forecast, key });
     } catch (error) {
       if (error instanceof ApiError && error.kind === "aborted") return;
       if (!c.signal.aborted) setRun({ state: "error", error });
@@ -132,7 +121,7 @@ function PredictPage() {
       </div>
       <PageHeader
         title="Predict meal trajectory"
-        subtitle="Enter a meal to forecast your glucose over the next 2 hours."
+        subtitle="Enter a meal to create a real v2 forecast on the replay clock."
       />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(320px,420px)_minmax(0,1fr)]">
@@ -224,7 +213,7 @@ function PredictPage() {
 
             <button
               type="submit"
-              disabled={run.state === "loading" || !selectedId}
+              disabled={run.state === "loading"}
               className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-[14px] font-semibold text-primary-foreground transition-colors duration-150 hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
               {run.state === "loading" ? (
