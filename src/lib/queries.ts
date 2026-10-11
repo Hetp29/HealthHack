@@ -186,8 +186,33 @@ export const useModelInfo = () =>
     retry: noRetryOn4xx,
   });
 
-/** After anything that moves the account forward, every screen's data is stale. */
+/**
+ * After anything that moves the whole account forward (the replay, a consent change).
+ * Screens that are not open are refetched too, so the next one visited never opens on
+ * data from before the change.
+ */
 export function useRefreshAll() {
   const queryClient = useQueryClient();
-  return useCallback(() => queryClient.invalidateQueries(), [queryClient]);
+  return useCallback(() => queryClient.invalidateQueries({ refetchType: "all" }), [queryClient]);
+}
+
+/** What a meal, its nutrition or its forecast can change: and nothing else. */
+const MEAL_DEPENDENT = ["meals", "predictions", "outcomes", "alerts"] as const;
+
+/**
+ * After a meal is uploaded, analysed, confirmed, forecast or deleted. Refetches the meal
+ * and forecast lists Home and Meals read (open or not) and leaves glucose, wearables
+ * and medications alone: a meal does not change a measurement.
+ */
+export function useRefreshMeals() {
+  const queryClient = useQueryClient();
+  return useCallback(
+    () =>
+      Promise.all(
+        MEAL_DEPENDENT.map((key) =>
+          queryClient.invalidateQueries({ queryKey: [key], refetchType: "all" }),
+        ),
+      ),
+    [queryClient],
+  );
 }

@@ -32,7 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { METRIC_LABELS } from "@/features/DeviceCards";
 import { PersonalizationPill } from "@/features/ForecastView";
-import { macroSummary, mealStatus } from "@/features/mealText";
+import { isRecordedMeal, latestForecast, macroSummary, mealStatus } from "@/features/mealText";
 import {
   useAlerts,
   useCgmReadings,
@@ -232,12 +232,14 @@ function LatestForecast() {
   const { clock } = useSession();
   const { unit, glucose } = useUnits();
   const predictions = usePredictions();
+  const meals = useMeals();
   return (
     <Panel title="Latest forecast">
       <Async query={predictions} compact>
         {({ predictions: list }) => {
-          const latest = list[0];
-          if (!latest) {
+          const found = meals.data ? latestForecast(list, meals.data.meals) : null;
+          if (!meals.data && list.length > 0) return <SkeletonLines lines={3} />;
+          if (!found) {
             return (
               <EmptyState
                 icon={LineChart}
@@ -256,19 +258,34 @@ function LatestForecast() {
               </EmptyState>
             );
           }
+          const { prediction: latest, meal } = found;
           const { metrics, glucose_at_minutes: at } = latest.forecast;
           return (
-            <div>
+            <div
+              data-testid="home-latest-forecast"
+              data-meal-id={latest.meal_id}
+              data-prediction-id={latest.prediction_id}
+            >
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-sm text-muted-foreground">
-                  Meal at {clock.dateTime(latest.forecast.meal_timestamp)}
+                <span className="text-sm font-medium text-foreground">
+                  Meal at {clock.dateTime(meal.occurred_at)}
                 </span>
                 <PersonalizationPill prediction={latest} />
               </div>
+              <p
+                className="mt-1 text-[13px] text-muted-foreground"
+                data-testid="home-latest-forecast-meal"
+              >
+                {macroSummary(meal.confirmation)}
+              </p>
               <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
                 <Stat
                   label="Forecast peak"
-                  value={glucose(metrics.peak_mg_dl)}
+                  value={
+                    <span data-testid="home-latest-forecast-peak">
+                      {glucose(metrics.peak_mg_dl)}
+                    </span>
+                  }
                   unit={unit}
                   tone="predicted"
                 />
@@ -291,7 +308,15 @@ function LatestForecast() {
 
 function RecentMeals() {
   const { clock } = useSession();
+  const { unit, glucose } = useUnits();
   const meals = useMeals();
+  const predictions = usePredictions();
+  const peaks = new Map(
+    (predictions.data?.predictions ?? []).map((p) => [
+      p.prediction_id,
+      p.forecast.metrics.peak_mg_dl,
+    ]),
+  );
   return (
     <Panel
       title="Recent meals"
@@ -303,8 +328,14 @@ function RecentMeals() {
     >
       <Async query={meals} compact>
         {({ meals: list }) => {
+          // Newest first; at one replay instant, a meal the person added follows the recorded one.
           const recent = [...list]
-            .sort((a, b) => b.occurred_at.localeCompare(a.occurred_at))
+            .sort(
+              (a, b) =>
+                b.occurred_at.localeCompare(a.occurred_at) ||
+                Number(isRecordedMeal(a)) - Number(isRecordedMeal(b)) ||
+                a.meal_id.localeCompare(b.meal_id),
+            )
             .slice(0, 4);
           if (!recent.length) {
             return (
@@ -317,8 +348,9 @@ function RecentMeals() {
             <ul className="-mx-2 divide-y divide-border">
               {recent.map((meal) => {
                 const status = mealStatus(meal);
+                const peak = meal.prediction_id ? peaks.get(meal.prediction_id) : undefined;
                 return (
-                  <li key={meal.meal_id}>
+                  <li key={meal.meal_id} data-testid="home-meal-row" data-meal-id={meal.meal_id}>
                     <Link
                       to="/meals/$mealId"
                       params={{ mealId: meal.meal_id }}
@@ -338,6 +370,14 @@ function RecentMeals() {
                         <span className="block truncate text-[13px] text-muted-foreground">
                           {macroSummary(meal.confirmation)}
                         </span>
+                        {peak !== undefined && (
+                          <span
+                            className="block text-[13px] text-predicted"
+                            data-testid="home-meal-peak"
+                          >
+                            Forecast peak {glucose(peak)} {unit}
+                          </span>
+                        )}
                       </span>
                       <Pill tone={status.tone} className="hidden sm:inline-flex">
                         {status.label}
@@ -560,7 +600,9 @@ function MedicationsPanel() {
 function PersonalizationPanel() {
   const { replay, personalizationAllowed } = useSession();
   const predictions = usePredictions();
-  const latest = predictions.data?.predictions[0]?.personalization;
+  const meals = useMeals();
+  const latest = latestForecast(predictions.data?.predictions ?? [], meals.data?.meals ?? [])
+    ?.prediction.personalization;
   const progress = replay?.personalization_progress;
   const count = latest?.admissible_prior_meals ?? progress?.admissible_prior_meals ?? null;
   const needed = latest?.retrieval_min_history ?? progress?.retrieval_min_history ?? 5;

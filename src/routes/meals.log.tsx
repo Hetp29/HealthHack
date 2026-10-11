@@ -33,7 +33,7 @@ import {
   type MacroDraft,
 } from "@/features/MacroForm";
 import * as api from "@/lib/api";
-import { useCgmStatus, useMeal, useRefreshAll } from "@/lib/queries";
+import { useCgmStatus, useMeal, useRefreshMeals } from "@/lib/queries";
 import { useSession } from "@/lib/session";
 import { formatSpan, toInstant } from "@/lib/time";
 import type { Meal, MealEstimate } from "@/lib/types";
@@ -78,7 +78,7 @@ function LogMealPage() {
   const { clock, isDemoAccount } = session;
   const search = Route.useSearch();
   const navigate = useNavigate();
-  const refreshAll = useRefreshAll();
+  const refreshMeals = useRefreshMeals();
   const cgm = useCgmStatus();
   const resumed = useMeal(search.meal);
 
@@ -173,7 +173,7 @@ function LogMealPage() {
         setEstimate(result);
         if (result.totals) setMacros(macrosToDraft(result.totals));
       }
-      void refreshAll();
+      void refreshMeals();
     },
   });
 
@@ -200,10 +200,10 @@ function LogMealPage() {
       return current.meal_id;
     },
     onSuccess: async (mealId) => {
-      await refreshAll();
+      await refreshMeals();
       void navigate({ to: "/meals/$mealId", params: { mealId } });
     },
-    onError: () => void refreshAll(),
+    onError: () => void refreshMeals(),
   });
 
   const submit = () => {

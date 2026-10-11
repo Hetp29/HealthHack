@@ -30,7 +30,13 @@ import { Button } from "@/components/ui/button";
 import { ForecastView, OutcomeView } from "@/features/ForecastView";
 import { MACRO_FIELDS, isRecordedMeal, mealStatus } from "@/features/mealText";
 import * as api from "@/lib/api";
-import { useAlertSettings, useMeal, useOutcome, usePrediction, useRefreshAll } from "@/lib/queries";
+import {
+  useAlertSettings,
+  useMeal,
+  useOutcome,
+  usePrediction,
+  useRefreshMeals,
+} from "@/lib/queries";
 import { useSession } from "@/lib/session";
 import type { Meal } from "@/lib/types";
 
@@ -74,7 +80,7 @@ function MealPage() {
   const { mealId } = Route.useParams();
   const { clock, isDemoAccount } = useSession();
   const navigate = useNavigate();
-  const refreshAll = useRefreshAll();
+  const refreshMeals = useRefreshMeals();
   const meal = useMeal(mealId);
   const prediction = usePrediction(meal.data?.prediction_id);
   const settings = useAlertSettings();
@@ -87,12 +93,12 @@ function MealPage() {
   const forecast = useMutation({
     retry: false,
     mutationFn: () => api.predictMeal(mealId),
-    onSuccess: () => void refreshAll(),
+    onSuccess: () => void refreshMeals(),
   });
   const remove = useMutation({
     mutationFn: () => api.deleteMeal(mealId),
     onSuccess: async () => {
-      await refreshAll();
+      await refreshMeals();
       toast.success("Meal deleted");
       void navigate({ to: "/meals" });
     },

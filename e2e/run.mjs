@@ -7,6 +7,7 @@ const JOURNEYS = {
   "new-account": { file: "./journeys/new-account.mjs", demo: false },
   "demo-new-user": { file: "./journeys/demo-new-user.mjs", demo: true },
   "demo-returning": { file: "./journeys/demo-returning.mjs", demo: true },
+  "meal-to-home": { file: "./journeys/meal-to-home.mjs", demo: true },
   "photo-analysis": { file: "./journeys/photo-analysis.mjs", demo: true },
 };
 

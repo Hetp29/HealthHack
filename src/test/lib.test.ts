@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { macroErrors } from "@/features/MacroForm";
-import { isRecordedMeal } from "@/features/mealText";
+import { isRecordedMeal, latestForecast } from "@/features/mealText";
 import * as api from "@/lib/api";
 import { makeClock } from "@/lib/time";
-import type { ReplayState } from "@/lib/types";
+import type { Meal, Prediction, ReplayState } from "@/lib/types";
 import { formatGlucose, toMgDl } from "@/lib/units";
 import { DEMO_ACCOUNTS } from "@/routes/auth";
 
@@ -73,6 +73,45 @@ describe("meal rules", () => {
     ).toBe(true);
     expect(isRecordedMeal({ note: null })).toBe(false);
     expect(isRecordedMeal({ note: "Lunch" })).toBe(false);
+  });
+});
+
+describe("latest forecast on Home", () => {
+  const meal = (id: string, at: string, prediction: string | null, note: string | null = null) =>
+    ({ meal_id: id, occurred_at: at, prediction_id: prediction, note }) as Meal;
+  const forecast = (id: string, mealId: string, at: string) =>
+    ({ prediction_id: id, meal_id: mealId, created_at: at }) as Prediction;
+  const RECORDED = "Research dataset meal record (CGMacros v1.0.0): x";
+
+  it("is the most recently made forecast, with its meal", () => {
+    const found = latestForecast(
+      [forecast("p1", "m1", "2026-09-20T12:00:00Z"), forecast("p2", "m2", "2026-09-20T16:00:00Z")],
+      [meal("m1", "2026-09-20T12:00:00Z", "p1"), meal("m2", "2026-09-20T16:00:00Z", "p2")],
+    );
+    expect(found?.prediction.prediction_id).toBe("p2");
+    expect(found?.meal.meal_id).toBe("m2");
+  });
+
+  it("ignores forecasts of deleted meals and forecasts made before the meal was edited", () => {
+    const found = latestForecast(
+      [
+        forecast("gone", "deleted", "2026-09-20T18:00:00Z"),
+        forecast("old", "m1", "2026-09-20T17:00:00Z"),
+        forecast("new", "m1", "2026-09-20T16:00:00Z"),
+      ],
+      [meal("m1", "2026-09-20T12:00:00Z", "new")],
+    );
+    expect(found?.prediction.prediction_id).toBe("new");
+    expect(latestForecast([forecast("gone", "deleted", "2026-09-20T18:00:00Z")], [])).toBeNull();
+  });
+
+  it("prefers a meal the person added when a replay instant holds a recorded one too, whatever the server's order", () => {
+    const at = "2020-05-08T13:26:00Z";
+    const meals = [meal("rec", at, "p-rec", RECORDED), meal("mine", at, "p-mine")];
+    const a = latestForecast([forecast("p-rec", "rec", at), forecast("p-mine", "mine", at)], meals);
+    const b = latestForecast([forecast("p-mine", "mine", at), forecast("p-rec", "rec", at)], meals);
+    expect(a?.meal.meal_id).toBe("mine");
+    expect(b?.meal.meal_id).toBe("mine");
   });
 });
 
