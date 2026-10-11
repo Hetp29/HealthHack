@@ -171,13 +171,11 @@ export default async function edgeCases() {
         .setInputFiles({ name: "clarity.csv", mimeType: "text/csv", buffer: Buffer.from(csv) });
       await page.getByRole("button", { name: "Import readings" }).click();
       await page.getByText("No new readings").waitFor(); // the same file twice stores nothing twice
-      await page
-        .locator("#cgm-file")
-        .setInputFiles({
-          name: "broken.csv",
-          mimeType: "text/csv",
-          buffer: Buffer.from("not,a,real,export\n1,2,3,4\n"),
-        });
+      await page.locator("#cgm-file").setInputFiles({
+        name: "broken.csv",
+        mimeType: "text/csv",
+        buffer: Buffer.from("not,a,real,export\n1,2,3,4\n"),
+      });
       await page.getByRole("button", { name: "Import readings" }).click();
       await page.getByText("The file wasn't imported").waitFor();
     },
@@ -283,21 +281,17 @@ export default async function edgeCases() {
     async () => {
       await page.goto(`${BASE}/meals/log`);
       const before = (await get(page, "/meals?include_voided=true")).meals.length;
-      await page
-        .getByTestId("photo-input")
-        .setInputFiles({
-          name: "huge.jpg",
-          mimeType: "image/jpeg",
-          buffer: Buffer.alloc(10 * 1024 * 1024 + 10, 1),
-        });
+      await page.getByTestId("photo-input").setInputFiles({
+        name: "huge.jpg",
+        mimeType: "image/jpeg",
+        buffer: Buffer.alloc(10 * 1024 * 1024 + 10, 1),
+      });
       await page.getByText(/Choose one under 10 MB/).waitFor();
-      await page
-        .getByTestId("photo-input")
-        .setInputFiles({
-          name: "broken.jpg",
-          mimeType: "image/jpeg",
-          buffer: Buffer.from("this is not a jpeg at all, just text pretending"),
-        });
+      await page.getByTestId("photo-input").setInputFiles({
+        name: "broken.jpg",
+        mimeType: "image/jpeg",
+        buffer: Buffer.from("this is not a jpeg at all, just text pretending"),
+      });
       await page.getByRole("button", { name: "Save photo, enter values myself" }).click();
       await page.getByText("The photo wasn't uploaded").waitFor();
       expect(

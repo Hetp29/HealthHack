@@ -1,0 +1,33 @@
+# GLIMPSE bug register
+
+Every defect found during release work, with how it was reproduced, fixed and pinned.
+Severity: P0 core/data/security/scientific failure · P1 broken journey or wrong visible
+data · P2 recoverable defect · P3 minor.
+
+## Fixed
+
+| ID | Sev | Component | Reproduction | Root cause | Fix | Regression test | Verified | Status |
+|---|---|---|---|---|---|---|---|---|
+| BUG-001 | **P0** | Backend: outcomes, history, alerts (demo) | In a demonstration, add a meal by hand or photo, then advance the replay. | The recorded participant's glucose was treated as the response to a meal they never ate. Five paths: the meal was scored against the recording; could become personal history; counted as a prior meal for later forecasts; could disqualify a recorded meal as "intervening"; its alert could suppress a recorded meal's alert via the cooldown. | A meal entered into a demonstration is *hypothetical*: forecast only, no response episode, outcome `not_applicable`, invisible to every recorded meal. The replay's provenance note is reserved and cannot be forged through the API. No schema change. `4dfa155`, decision D-019. | `tests/v2/test_hypothetical_meal_isolation.py` (8 tests, incl. the whole replay clean vs. with hypothetical meals before every event: identical). E2E `demo-new-user`, `meal-to-home`. | Browser, real CGMacros replay: recorded meal scored and eligible with two hypothetical meals inside its window; activation at exactly five. | Fixed |
+| BUG-002 | P1 | Home: Latest forecast | Demo: advance to a recorded meal, then log your own meal at the same replay time; open Home. | Forecasts made at one replay position share a timestamp and the server keeps no insertion order, so "newest" was arbitrary; a deleted or since-edited meal's forecast could be shown. | Home shows only a meal's current forecast, prefers a meal the person added at that instant, and names the meal's nutrition. `fe87896` | `src/test/lib.test.ts` "latest forecast on Home" (3). E2E `meal-to-home`. | Browser: Home names the photo meal ("30 g carbs…", peak 127) after confirmation, without reload. | Fixed (same-instant ordering of two *hand-added* meals remains, see OPEN-2) |
+| BUG-003 | P2 | Home/Meals: cache | Confirm a meal, click Home at once. | Lists not on screen were only marked stale, so the next screen opened on old data and then changed. | Meal changes refetch the meal, forecast, outcome and alert lists whether on screen or not, and nothing else. `fe87896` | E2E `meal-to-home` (in-app navigation, no reload). | Browser. | Fixed |
+| BUG-004 | P2 | Home: Recent meals | Log a meal; Home's list showed nutrition but no forecast. | The list never read the forecast. | Each row shows its forecast peak. `fe87896` | E2E `meal-to-home`. | Browser, each row compared with the server. | Fixed |
+| BUG-005 | P1 | Shell: required consent withdrawn | Settings → switch off "Process my meals and glucose data" → open Meals, a meal, or Log a meal. | Those screens' requests are (correctly) not sent without consent, and the screens showed a loading skeleton forever. | One permission screen in the shell for every page except Settings. `94b59ee` | E2E `edge-cases` "withdrawing the required consent…" (also asserts the API answers 403). | Browser: Home, Meals, Insights, Health, Log a meal and a meal page all explain; data returns intact on re-grant. | Fixed |
+| BUG-006 | P2 | All writes: double click | Health → Medications → double-click "Log a dose taken now": two doses recorded. | The second click can arrive before React re-renders the button as disabled. | `useGuardedMutation`: every write ignores a call while one is in flight (meals, doses, analysis, registration, imports, replay). `94b59ee` | `src/test/guarded-mutation.test.tsx` (2). E2E `edge-cases` (dose, account, replay), `meal-to-home` (meal). | Browser: one dose, one account, one meal, one replay event per double click. | Fixed |
+| BUG-007 | P2 | Meal page | Delete a meal, reopen its address. | The server still returns a deleted meal (status `voided`); the page drew it as a live meal. | The page says the meal was deleted. `94b59ee` | E2E `edge-cases` "deleting a meal…". | Browser. | Fixed |
+| BUG-008 | P1 | Demo controls (returning user) | Returning demo → Advance: wrong or missing notification, no "View" link. | The code indexed `checkpoints[event_index - 1]`; that list is not aligned with the event index when earlier history was backfilled. | Find the checkpoint that was "next" when the button was pressed. (in `15f7ef0`) | E2E `demo-returning`. | Browser. | Fixed |
+| BUG-009 | P2 | Layout (phone) | Home at 390 px scrolled sideways by 11 px. | Grid children without `min-width: 0`. | Single-column grids and `min-w-0`. (in `15f7ef0`) | E2E `demo-new-user` phone check on 11 screens. | Browser. | Fixed |
+| BUG-010 | P1 | Build | `npm ci` failed on `main`. | `package-lock.json` out of sync. | Lock repaired (`92526a8`; also repaired independently on `main`). | `npm ci` in the release checks. | Run. | Fixed |
+| BUG-011 | P1 | Old frontend (replaced) | Sign-in defaulted to `demo@glucotwin.example`; cards read `meal.macros`, alert `level/headline`; errors lost the server's code; a live/fixture toggle could show invented data. | Bindings written against an imagined API. | Replaced by the redesign, bound only to `/api/v2`. `15f7ef0` | `src/test/lib.test.ts`, all E2E journeys. | Browser. | Fixed |
+
+## Open
+
+| ID | Sev | Component | What | Why it is open | Owner |
+|---|---|---|---|---|---|
+| OPEN-1 | P2 (security) | Backend / edge | No throttling on sign-in or uploads: 25 wrong passwords in a row all answered 401. | Recorded team decision (BLOCKERS B-005, infra audit F10): rate-limit `/api/v2/auth/*` and uploads at the edge. Not app code. **Must be in place before a public deployment.** | Het |
+| OPEN-2 | P3 | Backend schema | Two meals the person adds at the *same* replay position cannot be ordered; Home always shows the same one, described truthfully. | Needs an insertion-order column: a migration, which needs approval. | Ruhaan |
+| OPEN-3 | P3 | Routing | Opening a deep link while signed out lands on Home after sign-in, not on the link. | Cosmetic; not worth the risk now. | — |
+| OPEN-4 | P3 | Home: Personal history | Shows the eligible-meal count as of the latest forecast; a meal scored since appears with the next forecast (Insights shows it at once). | It is what the server reports for that forecast; changing it means inventing a number. | — |
+| OPEN-5 | P3 | Resume | Resuming an unanalysed photo meal asks again whether to analyse or type values. | Deliberate: analysis is paid and must be asked for. | — |
+
+No P0 or P1 defect is known to be open.

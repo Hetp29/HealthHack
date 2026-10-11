@@ -16,7 +16,7 @@ backend. Nothing is mocked. They are the release check for the working prototype
 Start the backend in demo mode and the frontend (see `docs/release/RUNBOOK.md`), then:
 
 ```bash
-export GLUCOTWIN_DEMO_PASSWORD='the server's demo password'
+export GLIMPSE_DEMO_PASSWORD='the server's demo password'
 npm run test:e2e                      # everything except the paid test
 npm run test:e2e -- demo-new-user     # one journey
 ```
@@ -25,10 +25,10 @@ npm run test:e2e -- demo-new-user     # one journey
 | ----------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `E2E_BASE_URL`                | `http://localhost:5173` | the frontend                                                                                                                                          |
 | `E2E_API_URL`                 | `http://localhost:8000` | the backend origin                                                                                                                                    |
-| `GLUCOTWIN_DEMO_PASSWORD`     | —                       | the demonstration password the server was started with                                                                                                |
+| `GLIMPSE_DEMO_PASSWORD`     | —                       | the demonstration password the server was started with                                                                                                |
 | `E2E_OPENAI`                  | unset                   | `1` runs the paid photo-analysis journey                                                                                                              |
 | `E2E_MEAL_PHOTO`              | —                       | path to a JPEG/PNG/WebP you are allowed to send to OpenAI                                                                                             |
-| `E2E_EXPECT_ANALYSIS_FAILURE` | unset                   | `1` adds the failed-analysis check to `meal-to-home`; start the backend with `GLUCOTWIN_VISION_DAILY_LIMIT=0` so it refuses without contacting OpenAI |
+| `E2E_EXPECT_ANALYSIS_FAILURE` | unset                   | `1` adds the failed-analysis check to `meal-to-home`; start the backend with `GLIMPSE_VISION_DAILY_LIMIT=0` so it refuses without contacting OpenAI |
 | `E2E_HEADED`                  | unset                   | `1` shows the browser                                                                                                                                 |
 | `E2E_BROWSER_CHANNEL`         | `chrome`                | installed browser to drive; empty uses Playwright's Chromium                                                                                          |
 
