@@ -95,8 +95,11 @@ adapters against fixtures; migrations on SQLite.
 * Model artifact SHA-256 `12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe`,
   verified by the freeze check and by the server at start-up. No model code, weight,
   feature or retrieval rule was changed by the release or the audit.
-* Contract v1.0: changed on `main` by the settings rename (one description line); see
-  `RELEASE_BLOCKERS.md` "Things to confirm".
+* Contract v1.0 and four frozen source files had been edited and re-recorded on `main`
+  by the settings rename (`4a2d59f`), without the freeze owner's authorization. They are
+  restored on this branch: the freeze manifest is byte-identical to the one committed
+  at the freeze, and all 23 frozen files, the contract (`be836ddd…00f4`) and the artifact
+  match it (BUG-012, decision D-020).
 * Replay end-state fingerprints match the recorded ones for both scenarios, before and
   after every fix.
 * The app shows no range, band or probability; says wearables and medications are not

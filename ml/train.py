@@ -639,7 +639,7 @@ def build_repository(
         except Exception as error:
             raise SystemExit(
                 f"could not open the canonical database "
-                f"({db_url or '$GLIMPSE_DB_URL'}): {error}\n"
+                f"({db_url or '$GLUCOTWIN_DB_URL'}): {error}\n"
                 "Build one first, e.g.\n"
                 "  python -m data.storage.init_db --db-url sqlite:///data/local/cgmacros.db\n"
                 "  python -m data.adapters.cgmacros --path <CGMacros dir> "
@@ -648,7 +648,7 @@ def build_repository(
 
         if not repository.list_participants():
             raise SystemExit(
-                f"the canonical database ({db_url or '$GLIMPSE_DB_URL'}) has no "
+                f"the canonical database ({db_url or '$GLUCOTWIN_DB_URL'}) has no "
                 "participants. Refusing to train on an empty database rather than "
                 "quietly producing a model from nothing."
             )
@@ -668,7 +668,7 @@ def add_source_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--db-url",
         default=None,
-        help="database URL for --source sqlite (default: $GLIMPSE_DB_URL)",
+        help="database URL for --source sqlite (default: $GLUCOTWIN_DB_URL)",
     )
     parser.add_argument(
         "--days", type=int, default=16, help="fixture days (synthetic_dev only)"

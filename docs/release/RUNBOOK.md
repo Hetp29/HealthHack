@@ -16,9 +16,10 @@ The server refuses to start forecasting if the model's SHA-256 is not
 `12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe`. It never trains or
 substitutes a model.
 
-> **Setting names.** Settings were renamed `GLUCOTWIN_*` → `GLIMPSE_*` on 2026-10-11. The
-> server reads the new name first and falls back to the old one, so an existing `.env`
-> keeps working. Lines that start with `#` in `.env` are comments and are ignored:
+> **Setting names.** A setting may be given as `GLIMPSE_X` or as the original
+> `GLUCOTWIN_X`; if both are set, `GLIMPSE_X` wins. The frozen fs-1.3 engine itself reads
+> only `GLUCOTWIN_*` and is not edited: `backend/app/env_aliases.py` copies each
+> `GLIMPSE_X` onto `GLUCOTWIN_X` when the application starts (DECISIONS D-020). Lines that start with `#` in `.env` are comments and are ignored:
 > `GLIMPSE_DEMO_MODE` and `GLIMPSE_DEMO_PASSWORD` must be uncommented to take effect.
 
 ## A. Run locally without Docker (what was verified for this release)
@@ -81,7 +82,7 @@ Both demonstration cards are on the sign-in screen whenever the server is in dem
 # backend
 .venv/bin/python -m pytest -q                         # full suite
 .venv/bin/python -m research.freeze.verify_artifacts  # frozen artifact
-shasum -a 256 contracts/openapi.yaml                  # eb27926630ec6f6c…  (Contract v1.0)
+shasum -a 256 contracts/openapi.yaml                  # be836dddaac5ed4c…  (Contract v1.0, as frozen)
 .venv/bin/python -m scripts.demo_verify               # replay determinism and leak checks
 .venv/bin/python scripts/smoke_v2.py   http://localhost:8000
 .venv/bin/python scripts/smoke_demo.py http://localhost:8000 --scenario new_user
