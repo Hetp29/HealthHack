@@ -1,332 +1,221 @@
-# GLIMPSE
+GLIMPSE
+Glucose Learning through Integrated Multimodal Prediction and Sensor Evidence
+See beyond the reading. Understand the response.
+Rutgers HealthHack 2026 · Challenge 3 — Predict My Glucose Response
+GLIMPSE is an AWS-deployed metabolic-health research prototype that brings two-hour glucose forecasting, adaptive personalization from meal-response history, AI-assisted food logging, and integrated health-data visualization into one responsive application.
+A user can photograph a meal, review and correct estimated macronutrients, request a genuine model-generated glucose forecast, and explore what the forecast means. Two built-in demonstration journeys make the complete experience explorable without owning a CGM or granting access to a personal health account.
+Research and demonstration use only. GLIMPSE is not a medical device and is not validated for diagnosis, treatment, insulin dosing, or clinical decision-making. Historical research CGM recordings and simulated wearable/profile data are identified as such. Forecast uncertainty is not clinically calibrated.
 
-> **GLIMPSE** — Glucose Learning through Integrated Multimodal Prediction and Sensor Evidence. Formerly named Glucotwin; some technical
-> identifiers keep the old name (see `docs/project/DECISIONS.md`, D-018).
+Links: Source repository · [Release runbook](docs/release/RUNBOOK.md) · [Technical documentation](docs/project/) · [Model validation](docs/validation.md)
+Live application: AWS deployment is reported complete. Add the final verified public HTTPS URL here before submission. Do not substitute a local development address.
 
-**Personalized postprandial glucose response forecasting.**
-Rutgers HealthHack 2026 — Challenge 3: *Predict My Glucose Response*.
+The challenge
+Glucose is personal. Two individuals may eat similar meals yet experience different responses; one individual's response also changes with meal composition, timing, and baseline conditions. CGMs reveal what has happened, but a stream of readings alone does not answer the practical question: “How might my glucose respond to this meal?”
+GLIMPSE addresses four related gaps:
+1. From observation to prediction: Forecast the full post-meal trajectory, rather than display only retrospective glucose readings.
+2. From generic to personal: Use eligible prior meal-response history to adapt forecasts to the individual's observed patterns.
+3. From friction to understanding: Convert a meal photograph into an editable nutritional estimate, explicitly confirmed before inference.
+4. From fragmented dashboards to one experience: Present glucose, food, activity, heart-rate, sleep, medication, and alert information in a coherent application, with transparent data provenance.
+What the prototype does
+Capability	Implemented experience
+Glucose forecasting	Frozen, real ML inference yielding a 25-point trajectory over 0–120 minutes; 30/60/90/120-minute estimates and forecast summaries
+Adaptive personalization	Retrieval of the user's eligible, completed historical meal responses; enabled once five qualifying earlier meals exist
+AI meal analysis	Image upload → real OpenAI food/nutrition estimate → editable macros → explicit confirmation → forecast
+Home and meal history	Glucose charts, meal records, saved forecasts, statuses, and relevant dashboard updates sourced from backend records
+Outcome comparison	Recorded post-meal CGM response revealed only after the historical replay reaches the eligible outcome window
+Health context	Historical research CGM plus clearly simulated Apple Health, Apple Watch, Fitbit, and WHOOP observations, including heart-rate information
+Medications and alerts	Fictional demo regimens, persisted Taken/Skipped events, and informational model-related alerts
+Accounts and privacy	Authentication, consent, onboarding, per-account records, and permission-aware access
+Full demo mode	New-user and returning-user journeys with controlled chronological replay and deterministic reset
 
-Given a participant's continuous-glucose history and a meal's macronutrients,
-GLIMPSE forecasts the next two hours of glucose: the 30/60/90/120-minute values, the
-full five-minute trajectory, the peak and when it arrives, the two-hour excursion, and
-a model-grounded explanation of **why** this person is predicted to respond this way.
 
-> **Research prototype on synthetic data.** Not a medical device, not for clinical
-> decision-making. It gives no medication dosing, diagnostic or treatment advice.
-> Prospective clinical validation would be required for any care-related use.
+How our forecasting model works
+Model development and selection
+We iterated through forecasting approaches and evaluation protocols before freezing a model suitable for reproducible, low-latency inference. The final architecture balances a regularized linear model against nonlinear function fitting:
+- Ridge regression: A stable, regularized component that learns broad feature–response relationships.
+- Histogram Gradient Boosting (HGB): A nonlinear component that captures interactions missed by linear regression.
+- Ensemble: A 50/50 blend of the two components.
+The resulting fs-1.3 model uses 39 engineered features to produce a 25-point glucose trajectory at five-minute intervals, from minute 0 through minute 120. Minute 0 is grounded in the eligible pre-meal CGM baseline rather than an invented reading.
+The production model identity remains glucotwin-fs13-blend-personalized (v0.1.0) for reproducibility, even though the product is branded GLIMPSE.
+Frozen model artifact SHA-256:
+12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
+Adaptive learning from personal history
+GLIMPSE's history-based adaptive personalization makes new forecasts sensitive to a person's eligible previous meal responses. Once five completed qualifying earlier meals are available, the application can retrieve pertinent historical patterns and incorporate them into subsequent forecasts. It enforces chronological eligibility to prevent future measurements from leaking into predictions.
+This is adaptive retrieval, not online weight retraining. Model parameters remain frozen. Personalization can change because the admissible history available at prediction time changes.
+Evaluation and limitations
+The model was assessed on historical CGM and recorded meals with chronology-aware evaluation and integrity checks. Development evaluation results include approximately 23.09 mg/dL MAE on one reported held-out protocol and 23.55 mg/dL on a reported within-person evaluation; these are development/research evaluations, not prospective clinical accuracy claims. Dataset splits, exclusions, and detailed definitions must be checked against the authoritative model-evaluation records before quoting these numbers externally.
+The selected demonstration episodes were reviewed during development and must not be represented as an independent external validation cohort. Uncertainty bounds are not calibrated; GLIMPSE does not invent probability estimates or clinical confidence intervals.
+See [validation documentation](docs/validation.md), [governance records](docs/governance/), and the frozen model manifest for precise methodologies and verified values.
+End-to-end user experience
+Sign in / Create account
+         ↓
+Consent + guided onboarding
+         ↓
+Home dashboard / historical CGM / simulated health sources
+         ↓
+Upload meal photo or enter nutrition manually
+         ↓
+OpenAI-assisted food and nutrition estimate
+         ↓
+Review and edit macronutrients → Confirm meal
+         ↓
+Genuine fs-1.3 two-hour glucose forecast
+         ↓
+Inspect forecast, threshold information, and meal history
+         ↓
+For authentic recorded meals: reveal observed CGM outcomes
+         ↓
+Accumulated eligible history → adaptive personalization
+Every prediction is tied to a confirmed meal and relevant glucose context. Dashboard meal and forecast summaries are backed by application records; uploading a photograph does not fabricate CGM observations, change wearable readings, or imply that a user ate the pictured food in the historical recording.
+Try the two built-in demos
+Demo	What it shows
+New user	Historical CGM replay, genuine meal forecasts, outcome reveals, and progression from no eligible personal history to retrieval activation at five meals
+Returning user	An established eligible history and history-based personalization already active at the start
 
----
 
-## The problem
+Both demos are accessible from the normal sign-in experience using privately configured demo credentials. They share the real application, persistent backend, and frozen model rather than using frontend-only screenshots or prediction fixtures.
+Provenance: Historical CGM and recorded meals come from CGMacros research data; Apple Health, Apple Watch, Fitbit, and WHOOP observations are simulated. Demo profiles and medications are fictional. A new manually entered demo meal receives a conditional forecast, not a fabricated recorded outcome; it cannot contaminate the authentic research-history retrieval set.
+Architecture and technology
+                  ┌────────────────────────────┐
+                  │ GLIMPSE Web Application    │
+                  │ React · TypeScript         │
+                  │ TanStack Start / Router    │
+                  └──────────────┬─────────────┘
+                                 │ authenticated HTTPS / REST
+                  ┌──────────────▼─────────────┐
+                  │ FastAPI Application (v2)   │
+                  │ Auth · Consent · Meals     │
+                  │ Forecasts · Alerts · Demo  │
+                  └──────┬────────┬────────────┘
+                         │        │
+             ┌───────────▼─┐  ┌──▼──────────────────┐
+             │ PostgreSQL  │  │ Frozen fs-1.3 model │
+             │ Persistent  │  │ Ridge + HGB ensemble│
+             │ records     │  │ Historical retrieval│
+             └─────────────┘  └─────────────────────┘
+                         │
+                 ┌───────▼──────────┐
+                 │ OpenAI API       │
+                 │ Server-side food │
+                 │ image analysis   │
+                 └──────────────────┘
 
-Two people can eat the identical meal and see entirely different glucose responses.
-Population-average nutrition guidance cannot tell them apart, so advice that is right
-on average is wrong for individuals — and the individual is who has to live with it.
+             Private model artifacts + demo bundles
+             Integrity checked outside public Git
+Layer	Tools and responsibilities
+Frontend	React, TypeScript, TanStack Start/Router, responsive UI components, accessible glucose visualizations
+API	Python, FastAPI, typed request/response contracts, authentication, authorization, upload and inference orchestration
+Forecasting	scikit-learn, Ridge, Histogram Gradient Boosting, 39-feature fs-1.3 model, history retrieval, artifact verification
+Food recognition	OpenAI vision-capable API; estimates editable before confirmation; keys remain server-side
+Persistence	PostgreSQL with Alembic migrations
+Packaging	Docker; health probes, startup gating, reproducible environment configuration
+Cloud	AWS-hosted application. Confirm the exact provisioned AWS service inventory in the final infrastructure handoff before describing individual managed services as deployed.
+Quality	Python/TypeScript tests, real-browser E2E, Docker + PostgreSQL smoke tests, frozen-model and demo replay verification
 
-GLIMPSE models the response **per person**, from that person's own recent history,
-and is explicit about when it cannot.
 
-## The approach
+The cloud deployment is reported complete. The public URL, region, and final service topology should be copied from the verified AWS deployment handoff before submission—not inferred from the original architecture plan.
+API compatibility
+- Frozen API v1: Retained for research reproducibility and immutable contract compatibility.
+- Application API v2: Authenticated user accounts, consent, onboarding, meals, photos, confirmation, predictions, outcomes, alerts, medications, and demo orchestration.
+The v2 application is layered around the frozen forecasting engine rather than replacing it. See [`contracts/README.md`](contracts/README.md), [`contracts/v2/`](contracts/v2/), and [`docs/project/API_INTERFACE_REGISTRY.md`](docs/project/API_INTERFACE_REGISTRY.md).
+Installation and deployment
+Start with the authoritative [release runbook](docs/release/RUNBOOK.md). The commands below are a high-level local development guide. Exact dependencies, environment settings, credentials, and artifact paths depend on the verified release configuration.
 
-Three models, each a falsifiable step up from the last:
-
-| | Model | What it establishes |
-|---|---|---|
-| **0** | Persistence — glucose does not move | The floor. Beating it means the model learned *something*. |
-| **1** | Generalized Ridge, per horizon | Beating a cohort-mean benchmark means it learned about **this meal**. |
-| **2** | Shrunk per-participant calibration | Beating Model 1 on strictly later meals means it learned about **this person**. |
-
-Each is evaluated on held-out meals the model has never seen, split chronologically, and
-reported with its sample count. The personalization result is **mixed — 3 participants
-improved, 2 worsened** — and is reported that way, because a personalization claim that
-cannot fail is not a finding.
-
-Full measured results: **[`docs/validation.md`](docs/validation.md)**.
-
----
-
-## Quickstart
-
-Requires Python 3.12.
-
-```bash
+Requirements
+- Git, Python 3.12, Node.js and npm
+- PostgreSQL, or the repository's supported Docker-based local stack
+- Privately provisioned frozen model artifact and both demonstration bundles
+- Backend environment configuration (database, session/authentication secrets, demo settings)
+- Optional server-side OpenAI API key for actual image analysis
+1. Clone the repository
 git clone https://github.com/Hetp29/HealthHack.git
 cd HealthHack
-
-python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
+Check out the team's verified final release commit, rather than an unreviewed development branch.
+2. Set up Python dependencies
+python3.12 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements-dev.txt
-
-python -m ml.train    --source synthetic_dev           # ~15 s → ml/artifacts/model.joblib
-python -m ml.evaluate --protocol all                   # ~30 s → ml/artifacts/metrics.json
-
-uvicorn backend.app.main:app --reload                  # http://localhost:8000
-```
-
-`ml/artifacts/` is gitignored, so training is a required setup step. Until you run it
-the API stays up and returns `503 model_not_trained` from `/api/predict` — deliberately,
-so you can see *why* prediction is unavailable rather than meeting a dead process.
-
-### Check it works
-
-```bash
-curl localhost:8000/health
-# {"status":"ok","version":"1.0.0"}
-
-curl -s -X POST localhost:8000/api/predict \
-  -H 'Content-Type: application/json' \
-  -d '{"participant_id":"synthetic_p002",
-       "meal_timestamp":"2026-10-05T12:30:00Z",
-       "meal":{"carbs_g":85,"protein_g":24,"fat_g":18,"fiber_g":7,"calories_kcal":600},
-       "context_override":null}'
-```
-
-Returns 25 points at minutes 0–120, the four horizon values, peak/time-to-peak/iAUC,
-ranked drivers, and the caveats that apply to that specific forecast.
-
-Interactive docs: <http://localhost:8000/docs>
-
-### Run the tests
-
-```bash
-python -m pytest -q          # 385 passed
-```
-
-The suite is self-sufficient on a clean clone: `tests/conftest.py` trains the model
-once if `ml/artifacts/` is empty, so `pytest` is a reliable signal even before you have
-run `ml.train` yourself. An existing artifact is left alone.
-
-**Verified from a clean clone** at commit `b949fb8`: 385 passed, then
-`ml.train` + `ml.evaluate` + `uvicorn` reproduced every number in this README exactly.
-
----
-
-## Repository layout
-
-```
-contracts/      FROZEN cross-team interface v1.0 -- openapi.yaml is the source of truth
-  openapi.yaml            all 7 endpoints, 27 schemas
-  schemas/                generated JSON Schema, for any validator
-  examples/               example payloads, incl. two from a real trained model
-  canonical_schema_v1.md  canonical records, units, timestamp rules
-
-ml/             modelling core
-  features.py             prediction-time features, truncated at the meal
-  targets.py              supervised targets + meal-episode assembly
-  baselines.py            Model 0 and the cohort-mean benchmark
-  train.py                Model 1 + Model 2, artifact + manifest
-  personalization.py      shrunk per-participant calibration
-  inference.py            artifact -> 25-point forecast
-  evaluate.py             leakage-safe chronological evaluation
-  explain.py              exact Ridge attribution
-  metrics.py              frozen curve math
-  devfixture.py           TEMPORARY labelled synthetic fixture
-
-backend/        FastAPI service
-  app/schemas.py          typed models, extra="forbid"
-  app/errors.py           uniform {code, message, detail} envelope
-  app/routes/             participants · predict · model
-  app/services/           prediction.py · data_access.py (the DataRepository seam)
-
-data/           canonical data layer                        [owner: Het]
-frontend/       React + TypeScript dashboard                [owner: Neil]
-tests/          385 tests
-docs/           architecture · methodology · validation · deployment · handoff
-presentation/   demo script
-```
-
----
-
-## API — contract v1.0
-
-| Method | Path | Purpose |
-|---|---|---|
-| GET | `/health` | Liveness. 200 whenever the process serves. |
-| GET | `/api/participants` | Participant roster. |
-| GET | `/api/participants/{id}/history` | Observed CGM / meals / heart rate. |
-| POST | `/api/predict` | Forecast one meal. |
-| POST | `/api/compare` | The same meal under two participant contexts. |
-| GET | `/api/model/metrics` | **Measured** held-out results. |
-| GET | `/api/model/info` | Model provenance and readiness. |
-
-`/health` reports liveness only. For readiness read `/api/model/info` — `model_version`
-is the literal string `"none"` when no artifact is loaded.
-
-Errors use one envelope, `{code, message, detail}`, with `detail` always an object.
-Branch on `code`: `participant_not_found` (404), `invalid_request` /
-`naive_datetime` / `future_context_override` / `insufficient_premeal_context` (422),
-`model_not_trained` / `data_layer_unavailable` / `not_implemented` (503).
-
-Full reference and the consumer guide: **[`contracts/README.md`](contracts/README.md)**.
-
----
-
-## Application API — v2 (proposed)
-
-Authenticated, persistent, per-user orchestration around the frozen model: accounts
-and consent, meal photo → AI nutrition estimate → user confirmation, glucose import,
-stored forecasts, outcome scoring, the personal-history cycle, medications, alerts and
-device connections. It lives beside contract v1.0 without changing it.
-
-```bash
+3. Configure services and research artifacts
+1. Set backend environment variables following the supplied example configuration and release runbook.
+2. Start PostgreSQL and configure the application database connection.
+3. Provision the genuine frozen model and the authorized historical demo bundles outside the public repository.
+4. Verify model checksums. Do not retrain or use the old synthetic-development quickstart as a replacement for the frozen release artifact.
+5. Set OPENAI_API_KEY on the backend only if real image analysis is required.
+4. Apply migrations and start the backend
 alembic upgrade head
-uvicorn backend.app.v2.asgi:app --port 8000     # serves v1 unchanged AND /api/v2
+uvicorn backend.app.v2.asgi:app --host 127.0.0.1 --port 8000
+If configuration is held in .env, use the startup mechanism documented in the runbook so the server actually receives those values (for example, Uvicorn's --env-file option where supported).
+API: http://localhost:8000 · Interactive API docs: http://localhost:8000/docs
+5. Start the frontend
+Run the following commands from the actual frontend package directory defined in the repository:
+npm ci
+npm run dev
+Local application: http://localhost:5173
+For the production frontend bundle:
+npm run build
+6. Validate the working prototype
+Use the documented smoke and browser test commands:
 python scripts/smoke_v2.py http://127.0.0.1:8000
-```
+npm run test:e2e
+Run the browser command from its configured package directory, with the environment and demo credentials required by the release runbook. The end-to-end suite may reset both demo accounts; do not run it casually against a public demonstration environment.
+Additional deployment checks:
+bash infra/local/verify_postgres.sh
+bash infra/local/container_smoke.sh
+These checks require the appropriate PostgreSQL/Docker prerequisites and privately provisioned artifacts.
+7. Deploy on AWS
+Follow [`docs/release/RUNBOOK.md`](docs/release/RUNBOOK.md) and the infrastructure handoff. Deploy the exact reviewed commit, provision database and private model/data assets, configure backend secrets and HTTPS/CORS, and verify the public application through normal browser use.
+For deterministic demo replay, preserve the verified single backend worker configuration. Apply and verify sign-in/upload rate limiting before exposing the service publicly. After the final end-to-end test, reset both demo scenarios to their starting states.
+Verification and release status
+The corrected local release baseline c7e485e was reported to pass:
+Verification	Reported result
+Backend regression suite	1,071 passed; 1 skipped
+Frontend suite	35 passed, TypeScript clean, production build successful
+Frozen model and original v1 contract	Original integrity checks restored and passed
+Both demo scenarios	Smoke, replay, and real-browser journeys passed
+Meal photo → confirmed macros → forecast → Home	End-to-end browser flow passed locally
+PostgreSQL 16	Migrations verified; 332 tests passed, 2 failed due to reported shared-database harness isolation in specific tests
+Docker acceptance	Full container check passed, including checksum refusal gate and single-worker replay
 
-| | |
-|---|---|
-| Endpoints, guarantees, real implementation status | [`docs/project/API_INTERFACE_REGISTRY.md`](docs/project/API_INTERFACE_REGISTRY.md) |
-| Schema and example payloads (generated from the code) | [`contracts/v2/`](contracts/v2/) |
-| What is blocked, and on whom | [`docs/project/BLOCKERS.md`](docs/project/BLOCKERS.md) |
-| Decisions awaiting sign-off | [`docs/project/DECISIONS.md`](docs/project/DECISIONS.md) |
 
-No external provider (OpenAI, Dexcom, Fitbit, WHOOP, Apple Health) has been contacted
-from this code; those integrations are tested against mocks only. See the registry's
-status table before describing anything as working.
+The two PostgreSQL test failures remain a documented test-harness limitation, not two passing checks. The last reviewed baseline was locally verified and subsequently prepared for deployment. Update this table from the final merged/deployed commit's verification report before making a final deployed-test claim.
+Frozen contract protection
+The product name is GLIMPSE, but some legacy glucotwin identifiers remain intentionally unchanged for reproducibility. This includes the frozen model ID and historical contract text. Internal configuration compatibility is maintained outside frozen source files.
+Original frozen Contract v1.0 SHA-256:
+be836dddaac5ed4cd78af7adac02bf9b7a1b77133143b84df34621f1be9200f4
+See [`docs/project/DECISIONS.md`](docs/project/DECISIONS.md) and [`docs/governance/`](docs/governance/) for the freeze and brand-migration decisions.
+Privacy, data provenance, and responsible use
+- Real research data: Selected CGMacros historical glucose and meal records, governed by their permitted use and provenance.
+- Simulated wearable data: Apple Health, Apple Watch, Fitbit, WHOOP, heart rate, steps, sleep, and recovery observations in Demo Mode are illustrative sample data, not live vendor connections.
+- User-entered meals: Confirmed nutrition is used for conditional forecasting; a hypothetical replay meal cannot acquire an unrelated historical glucose outcome.
+- AI limitations: Photograph-derived nutrient estimates require user review and may be inaccurate. Images are transmitted to OpenAI when the real analysis feature is invoked; use only authorized images.
+- Clinical limitations: GLIMPSE does not provide diagnoses, dosing instructions, emergency monitoring, or treatment advice. Accuracy has not been established through prospective clinical trials.
+- Secrets and artifacts: Credentials, private research bundles, and model artifacts are not intended to be included in the public source repository.
+Repository guide
+Location	Description
+[`frontend/`](frontend/)	GLIMPSE responsive application, charts, onboarding, meal and demo UX
+[`backend/`](backend/)	FastAPI app, v1/v2 routes, authentication, persistence and services
+[`ml/`](ml/)	Frozen forecasting pipeline, features, inference, training/evaluation code and provenance
+[`research/`](research/)	Research evaluation and model governance support
+[`contracts/`](contracts/)	Frozen v1 contract and v2 API schemas/examples
+[`data/`](data/)	Data ingestion and canonical data-layer code; research assets are distributed separately
+[`infra/`](infra/)	Container, PostgreSQL and infrastructure/deployment checks
+[`scripts/`](scripts/)	API smoke and demo verification tooling
+[`tests/`](tests/)	Backend, research, integrity and integration tests
+[`docs/release/`](docs/release/)	Release runbook, final audits, test matrix and deployment handoff
+[`docs/project/`](docs/project/)	Architecture decisions, interface registry and team handoffs
+[`docs/governance/`](docs/governance/)	Original frozen model/contract verification records
+[`presentation/`](presentation/)	Presentation and demo materials
 
----
 
-## What the model guarantees
+Directory names reflect the established repository organization; consult the verified release tree for the actual frontend package location and exact commands.
+Team
+Contributor	Primary responsibilities
+Ruhaan Shah	Forecasting research, model evaluation and freeze, FastAPI/backend, integrations, product and release coordination
+Het Patel	Data layer, PostgreSQL, Docker, AWS infrastructure and deployment verification
+Neil Barot	React/TypeScript user experience, onboarding, dashboard, charts and application integration
 
-**No forecast reads the future.** `build_features` begins with
-`history.truncated_at(meal_timestamp)`, so post-meal observations are *absent* from the
-object the feature extractors see — not merely unused. A window bug cannot reach forward
-in time. `tests/test_leakage.py` buries 400 mg/dL post-meal readings in the history and
-asserts the feature vector is byte-identical.
 
-**Splits are by whole meal episode, never by CGM row.** Five-minute rows inside one
-120-minute window are not independent; splitting them would put part of an episode's
-answer into training. Chronology is *asserted* at run time, and the guard is itself
-tested against a deliberately bad split.
-
-**Transforms cannot leak across folds.** Imputation, scaling and the Ridge penalty are
-pipeline steps, so they are fitted on training rows only and reused at serve time —
-identical train-time and serve-time behaviour by construction. Proven by a test that
-predicts one row alone and inside a batch and requires the same answer.
-
-**Minute 0 is a measurement, not a prediction.** If no CGM reading exists within 15
-minutes before the meal, the request is refused with `422
-insufficient_premeal_context` rather than served with an invented baseline.
-
-**Explanations are exact, not approximate.** For the Ridge family,
-`intercept + Σ contributions == prediction` to floating-point tolerance, asserted in
-tests. No LLM, no surrogate, no SHAP approximation. If a model family has no additive
-decomposition, `drivers` is `[]` with an honest note — an empty list is correct, a
-plausible-sounding invented one is a defect.
-
-**Uncertainty is absent rather than fabricated.** `uncertainty_status` is
-`not_calibrated` and all bounds are `null`. 33 held-out episodes cannot support a
-credible coverage estimate, and a band computed from training residuals would look
-authoritative while meaning nothing.
-
-**Honest degradation is a feature.** A participant with too little history returns
-`generalized_fallback` with the reason — actual episode count and threshold — as
-`limitations[0]`. A participant with no wearable data still gets a forecast, with the
-imputation disclosed.
-
----
-
-## Measured results
-
-`within_person_chronological` · 102 train / 33 held-out episodes · 6 participants ·
-`synthetic_dev` fixtures · errors in mg/dL.
-
-| Model | MAE | RMSE | @30 | @60 | @90 | @120 |
-|---|---|---|---|---|---|---|
-| Model 0 · persistence | 24.91 | 32.84 | 18.98 | 30.04 | 27.58 | 23.04 |
-| Benchmark · cohort mean | 17.88 | 21.78 | 12.44 | 19.12 | 20.83 | 19.12 |
-| Model 1 · generalized | 9.07 | 11.75 | 5.90 | 7.70 | 10.83 | 11.85 |
-| **Model 2 · personalized** | **8.75** | **10.96** | 5.97 | 7.39 | 9.78 | 11.83 |
-
-Curve metrics (personalized): peak MAE **8.42** mg/dL, iAUC MAE **656** mg/dL·min,
-time-to-peak MAE **19.85** min. Cold-start (`cohort_holdout`, unseen participants):
-generalized MAE **9.96**.
-
-> **These numbers are measured on synthetic development fixtures, because the organizer
-> dataset had not been released.** They establish that the pipeline is leakage-safe,
-> chronologically split and reproducible. They establish **nothing** about accuracy on
-> real human physiology — the fixture's response curves were written by us. No external
-> validity is claimed.
-
-Reproduce: `python -m ml.train --source synthetic_dev && python -m ml.evaluate --protocol all`.
-Two fresh cycles produce a byte-identical report.
-
-**Where it is weak**, stated plainly: time-to-peak MAE is ~20 minutes and the
-cohort-mean benchmark beats both trained models on that one metric. The model learns
-four knots (30/60/90/120) and a piecewise-linear curve attains its maximum *at* a knot,
-so predicted peak timing can only be 0/30/60/90/120. More knots would fix it; we have
-not measured that, so we do not claim it. Full discussion in
-[`docs/validation.md`](docs/validation.md).
-
----
-
-## Dataset provenance
-
-| | |
-|---|---|
-| **Current source** | `synthetic_dev` — deterministic in-memory fixtures from `ml/devfixture.py` |
-| **Participants** | 6 synthetic, 7 days, 5-minute CGM, heart rate, meals, medications |
-| **Real patient data** | **None.** No identifiable data of any kind is used or committed. |
-| **Organizer dataset** | Not yet released at the time of writing. Het's adapter maps it to the same canonical records; `data_source` becomes `official` and nothing in the display logic changes. |
-
-The fixture is deliberately heterogeneous so the pipeline meets its edge cases: a steep
-carbohydrate responder, a flat responder, a late peaker, one participant with **no
-heart-rate data at all**, one **sparse logger** who triggers the generalized fallback,
-plus scattered dropout and a 90-minute sensor outage per participant.
-
-Every record carries `data_source`; every forecast echoes it; every artifact manifest
-records it with a SHA-256 checksum. The fixture is a scaffold for building and testing
-the pipeline — **nothing learned from it is presented as physiology.**
-
----
-
-## Cloud
-
-**Not yet deployed.** AWS Workshop Studio permissions had not been enumerated at the
-time of writing, and the master plan is explicit that cloud selection waits on *verified*
-available services rather than assumed ones.
-
-The local path above is the verified one and is a complete fallback. `Dockerfile` and
-`docker-compose.yml` exist and are **labelled unverified** — the development machine has
-no Docker daemon, so they have not been built or run. Deployment target, verification
-steps and the smoke checklist: [`docs/deployment.md`](docs/deployment.md).
-
-Nothing about AWS is claimed in the presentation unless it is deployed and reproducible.
-
----
-
-## Documentation
-
-| Document | Contents |
-|---|---|
-| [`contracts/README.md`](contracts/README.md) | Frozen API, hard invariants, error codes, consumer guide |
-| [`contracts/canonical_schema_v1.md`](contracts/canonical_schema_v1.md) | Canonical records, units, timestamps, repository interface |
-| [`docs/architecture.md`](docs/architecture.md) | System shape, the two seams, request path, ownership |
-| [`docs/methodology.md`](docs/methodology.md) | Features, targets, the three models, curve math, explanations |
-| [`docs/validation.md`](docs/validation.md) | Protocols, measured results, personalization, limitations |
-| [`docs/deployment.md`](docs/deployment.md) | Local run, container, AWS decision process |
-| [`docs/handoff.md`](docs/handoff.md) | What Het and Neil need from this branch |
-| [`docs/project/`](docs/project/) | Project plan, v2 audit, API registry, decisions, blockers, handoffs to Het and Neil, fs-1.3 input mapping |
-| [`docs/governance/`](docs/governance/) | fs-1.3 model freeze and integrity manifest |
-| [`presentation/demo_script.md`](presentation/demo_script.md) | Four-minute demo script |
-
----
-
-## Team
-
-| Owner | Scope |
-|---|---|
-| **Neil Barot** | Frontend dashboard, prediction journey, model insights |
-| **Ruhaan Shah** | ML, backend, contracts, deployment, integration, submission |
-| **Het Patel** | Canonical data layer, ingestion, provenance, quality reporting |
-
-Branches: `ruhaan`, `het`, `neil`. `main` must always run.
-
-## Third-party components
-
-FastAPI, Uvicorn, Pydantic (MIT) · scikit-learn, NumPy, pandas, joblib (BSD-3-Clause) ·
-python-dateutil (Apache-2.0 / BSD-3-Clause) · pytest, httpx, PyYAML, jsonschema (MIT).
-Pinned in `requirements.txt` / `requirements-dev.txt`. No third-party dataset is
-redistributed in this repository.
-
-**Repository:** <https://github.com/Hetp29/HealthHack>
+What's next
+GLIMPSE demonstrates the feasibility of pairing a reproducible glucose-forecasting engine with everyday nutritional input and history-based personalization. Next research steps include evaluating on larger independent cohorts, calibrating predictive uncertainty, rigorously assessing additional wearable predictors such as heart rate and sleep, and testing safe per-user calibration or retraining under prospective validation.
+GLIMPSE does not aim to replace medical judgment. It aims to make the emerging possibilities of personalized metabolic prediction understandable, testable, and accessible.
+Built for Rutgers HealthHack 2026. Research prototype; not for clinical use.
