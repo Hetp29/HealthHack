@@ -34,8 +34,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--scenario", choices=["new_user", "returning_user"], default="new_user")
     args = parser.parse_args(argv)
     returning = args.scenario == "returning_user"
-    email = (os.environ.get("GLUCOTWIN_DEMO_RETURNING_EMAIL", "demo-returning@glucotwin.example") if returning
-             else os.environ.get("GLUCOTWIN_DEMO_EMAIL", "demo@glucotwin.example"))
+    email = (os.environ.get("GLUCOTWIN_DEMO_RETURNING_EMAIL", "demo-returning@glimpse.example") if returning
+             else os.environ.get("GLUCOTWIN_DEMO_EMAIL", "demo@glimpse.example"))
     password = os.environ.get("GLUCOTWIN_DEMO_PASSWORD")
     if not password:
         print("ERROR: GLUCOTWIN_DEMO_PASSWORD is not set", file=sys.stderr)

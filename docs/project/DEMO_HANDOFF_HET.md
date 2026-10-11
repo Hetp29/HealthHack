@@ -9,8 +9,8 @@ General deployment requirements: `HANDOFF_HET.md` (still current).
 
 | scenario | flag | account | starts with | data file |
 |---|---|---|---|---|
-| **NEW USER** (default) | *(none)* or `--scenario new_user` | `demo@glucotwin.example` | no meals; history builds over nine meals | `cgmacros_demo_bundle.json` |
-| **RETURNING USER** (optional) | `--scenario returning_user` | `demo-returning@glucotwin.example` | 31 earlier meals already replayed; personal history active | `cgmacros_returning_user_bundle.json` |
+| **NEW USER** (default) | *(none)* or `--scenario new_user` | `demo@glimpse.example` | no meals; history builds over nine meals | `cgmacros_demo_bundle.json` |
+| **RETURNING USER** (optional) | `--scenario returning_user` | `demo-returning@glimpse.example` | 31 earlier meals already replayed; personal history active | `cgmacros_returning_user_bundle.json` |
 
 They are separate accounts with the same password (`GLUCOTWIN_DEMO_PASSWORD`). Seed
 either or both; they never share state, and resetting one does not touch the other.
@@ -57,9 +57,9 @@ The 568 MB warehouse is **not** needed in a deployment. Only the bundle is.
 | `GLUCOTWIN_DEMO_MODE` | no | `1` — **only in the demo environment** |
 | `GLUCOTWIN_DEMO_PASSWORD` | **yes** | you choose it (10+ chars); give it to Neil for the demo login |
 | `GLUCOTWIN_DEMO_BUNDLE` | no | path to the bundle; default `data/local/demo/cgmacros_demo_bundle.json` |
-| `GLUCOTWIN_DEMO_EMAIL` | no | optional; default `demo@glucotwin.example` |
+| `GLUCOTWIN_DEMO_EMAIL` | no | optional; default `demo@glimpse.example` |
 | `GLUCOTWIN_DEMO_RETURNING_BUNDLE` | no | path to the returning-user bundle; default `data/local/demo/cgmacros_returning_user_bundle.json` |
-| `GLUCOTWIN_DEMO_RETURNING_EMAIL` | no | optional; default `demo-returning@glucotwin.example` |
+| `GLUCOTWIN_DEMO_RETURNING_EMAIL` | no | optional; default `demo-returning@glimpse.example` |
 
 Plus the standing ones, which the demo **requires**:
 

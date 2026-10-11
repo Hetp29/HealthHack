@@ -12,7 +12,7 @@ routes are PROPOSED like the rest of v2. The GLIMPSE frontend has not been wired
 
 | | NEW USER (default) | RETURNING USER (optional) |
 |---|---|---|
-| Sign in as | `demo@glucotwin.example` | `demo-returning@glucotwin.example` |
+| Sign in as | `demo@glimpse.example` | `demo-returning@glimpse.example` |
 | Display name | Demo User (fictional) | Returning Demo User (fictional) |
 | Starts with | no meals, no personal history | 31 earlier meals with forecasts and outcomes |
 | First presented forecast | 0 admissible meals, retrieval **off** | 27 admissible meals, retrieval **on** |
@@ -62,7 +62,7 @@ arithmetic numbers.
 ## 3 · Sign in
 
 ```
-POST /api/v2/auth/login   {"email": "demo@glucotwin.example", "password": "<GLUCOTWIN_DEMO_PASSWORD>"}
+POST /api/v2/auth/login   {"email": "demo@glimpse.example", "password": "<GLUCOTWIN_DEMO_PASSWORD>"}
 ```
 
 A normal session token. Do not hard-code the password in the frontend bundle; take

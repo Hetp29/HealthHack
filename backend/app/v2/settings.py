@@ -101,13 +101,13 @@ class V2Settings:
     # -- demonstration replay ---------------------------------------------- #
     #: Off by default. When off, the /demo routes do not exist in the application.
     demo_mode: bool = False
-    demo_email: str = "demo@glucotwin.example"
+    demo_email: str = "demo@glimpse.example"
     #: Required to seed or reset the demo account. No default.
     demo_password: str | None = None
     #: The research-data bundle to replay. Never committed; see DEMO_HANDOFF_HET.md.
     demo_bundle_path: pathlib.Path = pathlib.Path("data/local/demo/cgmacros_demo_bundle.json")
     #: The optional returning-user demonstration: a second, separate demo account.
-    demo_returning_email: str = "demo-returning@glucotwin.example"
+    demo_returning_email: str = "demo-returning@glimpse.example"
     demo_returning_bundle_path: pathlib.Path = pathlib.Path(
         "data/local/demo/cgmacros_returning_user_bundle.json")
 
@@ -147,11 +147,11 @@ def load_v2_settings() -> V2Settings:
         public_api_base_url=_env("GLUCOTWIN_PUBLIC_API_BASE_URL"),
         frontend_return_url=_env("GLUCOTWIN_FRONTEND_RETURN_URL"),
         demo_mode=_env_bool("GLUCOTWIN_DEMO_MODE", False),
-        demo_email=_env("GLUCOTWIN_DEMO_EMAIL", "demo@glucotwin.example"),
+        demo_email=_env("GLUCOTWIN_DEMO_EMAIL", "demo@glimpse.example"),
         demo_password=_env("GLUCOTWIN_DEMO_PASSWORD"),
         demo_bundle_path=pathlib.Path(
             _env("GLUCOTWIN_DEMO_BUNDLE", "data/local/demo/cgmacros_demo_bundle.json")),
-        demo_returning_email=_env("GLUCOTWIN_DEMO_RETURNING_EMAIL", "demo-returning@glucotwin.example"),
+        demo_returning_email=_env("GLUCOTWIN_DEMO_RETURNING_EMAIL", "demo-returning@glimpse.example"),
         demo_returning_bundle_path=pathlib.Path(_env(
             "GLUCOTWIN_DEMO_RETURNING_BUNDLE", "data/local/demo/cgmacros_returning_user_bundle.json")),
         dexcom=OAuthClient(_env("DEXCOM_CLIENT_ID"), _env("DEXCOM_CLIENT_SECRET")),

@@ -420,15 +420,20 @@ and changing it would break something that is frozen or already in use:
 | Environment variables | `GLUCOTWIN_MODEL_ARTIFACT`, `GLUCOTWIN_APP_DB_URL`, `GLUCOTWIN_DEMO_MODE`, … | the frozen v1 config reads this prefix, and existing `.env` files and deployment configuration use it. A second prefix for v2 only would be worse than one consistent prefix |
 | Logger names | `glucotwin`, `glucotwin.v2.*` | v2 loggers inherit the handler the frozen v1 app installs on `glucotwin` |
 | Demo data identifiers | bundle schema `glucotwin-demo-bundle/1`, simulation seed | they feed the bundle checksums and the simulated values; changing them would invalidate the verified demo fingerprints |
-| Demo account emails | `demo@glucotwin.example` | already handed to Neil and Het; `.example` is a reserved, non-routable domain |
 | File and image names | `00_MASTER_GlucoTwin_Project_Plan.md`, `glucotwin_app.db`, `glucotwin-backend` | paths teammates were given; local database files |
 | Governance and research records | `docs/governance/`, `research/`, `docs/research/` | historical records of what was verified, under the name it had |
 | Het's data layer, pre-existing tests | `data/`, `tests/test_*.py` | not Ruhaan's to edit / assert frozen strings |
 
 The frontend was already called "Glimpse"; documents now say "the GLIMPSE frontend".
 
+The demo account emails **were** renamed on 2026-10-11, to `demo@glimpse.example` and
+`demo-returning@glimpse.example`. This is a breaking change for anyone holding the old
+addresses: an already-seeded demo database still has the old accounts, so re-seed
+(`python -m scripts.demo_reset`, and `--scenario returning_user`) and give Neil and Het
+the new addresses.
+
 Renaming any of the identifiers above is possible but is a coordinated breaking
-change (environment variables and demo emails across all three workstreams) or a new
+change (environment variables across all three workstreams) or a new
 model version (the model id and frozen files). None was done.
 
 ---

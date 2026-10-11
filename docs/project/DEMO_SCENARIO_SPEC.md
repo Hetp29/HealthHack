@@ -34,7 +34,7 @@ No clinical value is invented: the questionnaire's HbA1c and fasting glucose are
 
 | | |
 |---|---|
-| Email | `demo@glucotwin.example` (`GLUCOTWIN_DEMO_EMAIL`) |
+| Email | `demo@glimpse.example` (`GLUCOTWIN_DEMO_EMAIL`) |
 | Password | the value of `GLUCOTWIN_DEMO_PASSWORD` — chosen by whoever seeds; no default exists |
 | Display name | `Demo User (fictional)` |
 | Timezone | `UTC` (see §4) |
@@ -315,7 +315,7 @@ parameter is fitted, at setup or afterwards. Level B stays off.
 
 ### 13.5 Everything else
 
-Identity: `demo-returning@glucotwin.example`, display name "Returning Demo User
+Identity: `demo-returning@glimpse.example`, display name "Returning Demo User
 (fictional)", same password variable, its own `gtp_…` participant id. Same fictional
 questionnaire and medications (dose history is longer: the scripted taken/skipped
 pattern runs across the whole recording). Same 140 mg/dL sample alert setting.
