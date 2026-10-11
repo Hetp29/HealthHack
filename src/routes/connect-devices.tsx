@@ -41,7 +41,7 @@ function ConnectDevicesPage() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-10">
+    <div className="mx-auto max-w-4xl px-4 py-10">
       <p className="text-sm font-medium text-primary">SAMPLE DATA CONNECTIONS</p>
       <h1 className="mt-2 text-3xl font-semibold">Choose simulated health sources</h1>
       <p className="mt-2 max-w-2xl text-muted-foreground">These controls add generated sample wearable observations to the demo account. No Apple, Fitbit, WHOOP, or other vendor account is contacted.</p>
@@ -57,6 +57,6 @@ function ConnectDevicesPage() {
       </div>
       {devices && <Card className="mt-4"><CardHeader><CardTitle className="text-lg">Glucose source</CardTitle></CardHeader><CardContent><p className="font-medium">{devices.glucose_source.label}</p><p className="mt-1 text-sm text-muted-foreground">{devices.glucose_source.description}</p><span className="mt-3 inline-flex rounded-full border px-2 py-1 text-xs">Sample data source · research dataset</span></CardContent></Card>}
       <div className="mt-8 flex flex-wrap gap-3"><Button onClick={() => void navigate({ to: "/" })}>Continue to dashboard</Button><Button variant="outline" onClick={() => void navigate({ to: "/onboarding" })}>Review profile setup</Button></div>
-    </main>
+    </div>
   );
 }
