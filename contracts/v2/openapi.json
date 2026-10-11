@@ -1679,6 +1679,134 @@
         ]
       }
     },
+    "/demo/devices": {
+      "get": {
+        "description": "Every simulated device profile with its status (`inactive` or `demo_simulated`)\nand what it has made visible so far, plus the glucose source -- which is NOT\nsimulated: it is a historical research recording being replayed.",
+        "operationId": "list_demo_devices_demo_devices_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response List Demo Devices Demo Devices Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Simulated connected-health sources and the glucose source",
+        "tags": [
+          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+        ]
+      }
+    },
+    "/demo/devices/{profile}/activate": {
+      "post": {
+        "description": "Marks the profile `demo_simulated` and makes its simulated observations up to\nthe current replay position visible through `GET /wearables/observations`. Later\nones appear as the replay advances. **Idempotent.**\n\nNo provider is contacted, no account is linked and no token is created. Profiles:\n`apple_health`, `apple_watch`, `fitbit`, `whoop`.",
+        "operationId": "activate_demo_device_demo_devices__profile__activate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile",
+            "required": true,
+            "schema": {
+              "title": "Profile",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Activate Demo Device Demo Devices  Profile  Activate Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Switch a simulated source on",
+        "tags": [
+          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+        ]
+      }
+    },
+    "/demo/health-timeline": {
+      "get": {
+        "description": "Each item says where it came from (`data_class`, `simulated`, `source`) and\nwhether the forecast model uses that kind of data. Glucose readings and heart-rate\nsamples are series: read them from `/cgm/readings` and `/wearables/observations`.",
+        "operationId": "demo_health_timeline_demo_health_timeline_get",
+        "parameters": [
+          {
+            "description": "How far back from the replay position",
+            "in": "query",
+            "name": "hours",
+            "required": false,
+            "schema": {
+              "default": 24,
+              "description": "How far back from the replay position",
+              "maximum": 240,
+              "minimum": 1,
+              "title": "Hours",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 1000,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Demo Health Timeline Demo Health Timeline Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Meals, alerts, doses and wearable summaries in one ordered list",
+        "tags": [
+          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+        ]
+      }
+    },
     "/demo/replay": {
       "get": {
         "operationId": "get_replay_demo_replay_get",
@@ -3351,6 +3479,25 @@
                 }
               ],
               "title": "Metric"
+            }
+          },
+          {
+            "description": "Only this source",
+            "in": "query",
+            "name": "provider",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only this source",
+              "title": "Provider"
             }
           },
           {

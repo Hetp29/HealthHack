@@ -321,3 +321,86 @@ questionnaire and medications (dose history is longer: the scripted taken/skippe
 pattern runs across the whole recording). Same 140 mg/dL sample alert setting.
 Same failure behaviour, same reset strategy — per mode: resetting one never touches
 the other or any ordinary account.
+
+## 14 · Simulated connected-health sources (both scenarios)
+
+**Status:** implemented and verified locally. Neither scenario's forecasts, outcomes
+or glucose changed: both end-state fingerprints are identical with every simulated
+source switched on.
+
+Either demo account can switch on four **simulated** sources — Apple Health, Apple
+Watch, Fitbit, WHOOP — to show how wearable data enters GlucoTwin. They start
+inactive and are activated one at a time from the demo-only routes.
+
+### 14.1 What is what
+
+| source | nature | `data_class` | connection status |
+|---|---|---|---|
+| Glucose | **genuine** CGMacros Dexcom G6 Pro readings, replayed in order | `research_dataset` | not a connection; shown as a replaying research source |
+| Apple Health, Apple Watch, Fitbit, WHOOP | **generated** sample values | `demo` | `demo_simulated` |
+| A real person's real device | — | `user_device` | does not occur in the demo |
+
+`demo_simulated` is a status of its own, added so that `authorized` and `connected`
+never mean "simulated". No token, scope, external account id or OAuth state exists
+for a simulated source, no provider callback is fabricated, and no vendor API is
+called. The real provider ids (`fitbit`, `whoop`, `dexcom_api`) are untouched and
+still report `provider_not_configured`.
+
+### 14.2 Generation rules (`backend/app/v2/demo/sim_devices.py`, version `sim-1`)
+
+Deterministic: a fixed seed, the profile name and the calendar date. Same inputs,
+same values, on every run.
+
+* **One simulated person-day** is drawn per date — steps (weekday ≈ 7,800, weekend
+  ≈ 9,200), sleep (≈ 415 / 445 min), wake time, resting heart rate (≈ 61 bpm), HRV
+  (≈ 48 ms), a recovery score, and on about two days in three a 25–45 minute
+  workout. All four sources describe that same day, so they agree with each other.
+* **Each source applies a small fixed difference** (Fitbit counts ≈ 4 % more steps,
+  WHOOP reports slightly less sleep), as two real trackers would.
+* **Apple Health repeats the Apple Watch's steps and workouts**: it is an aggregation
+  platform, not a second sensor.
+* **Heart rate** (Apple Watch every 15 min, Fitbit every 30 min) follows a daily
+  curve above the day's resting rate, drops during the simulated sleep, and rises
+  during the simulated workout. **WHOOP has no heart-rate series**: its API does not
+  expose one, so none is invented.
+* **Coherence with the recording:** the only thing read from the research data is the
+  *time* of each logged meal, so a simulated sleep never covers a recorded meal (sleep
+  starts 45 minutes after a late meal) and a workout that would contain one is
+  dropped. No glucose value, macronutrient or forecast is read.
+* Every value lies inside the replayed observation period.
+
+Each stored observation carries: `provider` (`demo_<profile>`), `metric`, `value`,
+canonical `unit`, `observed_at` / `observed_end_at`, `received_at` (the replay
+position at which it was released), `data_class: "demo"`, and `detail` with
+`simulated: true`, `device_profile`, `source_label` and `simulation_version`.
+
+### 14.3 Chronology
+
+A simulated observation is released only when the replay position reaches the moment
+it could exist: a heart-rate sample at its own instant, a day's step total at the end
+of that day, a sleep session when it ends. Activating a source reveals its history up
+to the current position; advancing the replay reveals more. Reset returns every
+source to inactive and removes its observations; the same actions then reproduce the
+same data.
+
+### 14.4 What the forecast uses — and does not
+
+The frozen fs-1.3 forecast uses: the glucose history, the confirmed meal's five
+macronutrient values, meal timing, and the account's own completed, eligible meal
+responses. It does **not** use heart rate, steps, sleep, recovery, HRV, workouts,
+medication records or questionnaire answers. The model's one wearable-shaped input
+(`hr_mean_30min_bpm`) is left missing for every app account, and stays missing with
+simulated devices on — verified, along with every forecast being byte-identical.
+
+Showing wearable context beside a forecast is a display choice. It must not be
+described as the model taking that context into account.
+
+### 14.5 Caveats
+
+* The wearable values are invented. They are not from CGMacros, not from any device,
+  and not physiologically linked to the glucose trace beside them — a simulated
+  workout has no effect on the real glucose curve. Do not point at correlations.
+* The simulated day does not know about meals that were never logged in this account
+  (in NEW USER mode, the days before the first presented meal).
+* Brand names are used to label what is being simulated. Nothing here is an Apple,
+  Google/Fitbit or WHOOP integration, and none has been verified.

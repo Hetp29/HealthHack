@@ -21,8 +21,9 @@ The returning-user scenario is optional — if its bundle is not installed, it r
 
 One fictional account replays a historical research recording through the normal
 API. "Now" for that account is a simulated replay position; every other account is
-unaffected. It adds **one table** (`demo_replay_state`, migration `0002`), **three
-gated routes** and **no new service**.
+unaffected. It adds **one table** (`demo_replay_state`, migration `0002`), one extra
+connection status (migration `0003`), a handful of **gated routes** and **no new
+service**.
 
 ## 2 · Two files that are not in git
 
@@ -80,8 +81,8 @@ Level B enabled. `OPENAI_API_KEY` is **not** needed: the demo uses recorded meal
 # 1. Schema.
 alembic upgrade head
 # 2. Prove the demo works here, in a scratch database (touches nothing real).
-#    Verifies every scenario whose bundle is installed: 28 checks for NEW USER,
-#    32 for RETURNING USER. Exit 0 only if all pass.
+#    Verifies every scenario whose bundle is installed: 34 checks for NEW USER,
+#    38 for RETURNING USER. Exit 0 only if all pass.
 python -m scripts.demo_verify
 # 3. Create the demo account(s).
 python -m scripts.demo_seed                              # NEW USER  (or: --to meal_06_outcome)
@@ -172,6 +173,38 @@ or fetch them at start, and point `GLUCOTWIN_DEMO_BUNDLE` (and, if used,
 2. Confirmation that `smoke_demo.py` passes against the deployed server (it has only
    ever passed against `127.0.0.1`).
 3. Where you want the bundle and artifact delivered.
+
+## 10a · Simulated connected-health sources
+
+Both demo accounts can switch on simulated Apple Health, Apple Watch, Fitbit and
+WHOOP data through demo-only routes. Operationally this adds almost nothing:
+
+| | |
+|---|---|
+| New sample bundles | **none** — the values are generated in code from a fixed seed |
+| New environment flags | **none** — it is part of `GLUCOTWIN_DEMO_MODE` |
+| Vendor credentials | **none, and none must be set for it.** No Apple, Fitbit, WHOOP or Dexcom client id, secret or token is used; nothing calls out |
+| Network | works fully offline: only the application database and the frozen artifact |
+| Database change | migration **`0003`**: `device_connections.status` may now be `demo_simulated`. Backward compatible; `alembic upgrade head` applies it. Downgrading removes any simulated connection rows first |
+| Storage | up to ~1,400 small rows per demo account in the existing `wearable_observations` table |
+| Packaging | nothing new: the code is under `backend/app/v2/demo/`, already in the image |
+| Initialization | none. `demo_seed` leaves every simulated source inactive; the presenter (or the frontend) switches them on |
+| Reset | `demo_reset` / the reset route returns them to inactive |
+
+`demo_simulated` can only be set by the demo routes, which do not exist unless demo
+mode is on. A production deployment cannot produce it. Real-provider connections are
+unaffected: `fitbit`, `whoop` and `dexcom_api` still report `provider_not_configured`
+until real credentials exist, and the simulated ids (`demo_fitbit`, …) are unknown to
+the OAuth and sync code.
+
+Verification is already inside the existing commands — `demo_verify` runs a third
+pass per scenario with all four sources on and requires the forecasts to be
+identical, and `smoke_demo.py` activates them over HTTP:
+
+```bash
+python -m scripts.demo_verify                       # 34 checks NEW USER, 38 RETURNING USER
+python scripts/smoke_demo.py https://<demo-url>     # includes the device steps
+```
 
 ## 11 · Known limitations
 

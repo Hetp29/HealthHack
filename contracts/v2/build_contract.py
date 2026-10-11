@@ -286,6 +286,21 @@ def run_scenario(client, ctx, clock, v2_app) -> dict[str, object]:
         f"{api}/demo/replay/advance", headers=demo, json={"expected_event_index": 0}))
     save("error_demo_unknown_checkpoint", client.post(
         f"{api}/demo/replay/advance", headers=demo, json={"to": "meal_99_forecast"}))
+    # Simulated connected-health sources (still on the fixture account).
+    save("demo_devices_initial", client.get(f"{api}/demo/devices", headers=demo))
+    save("demo_device_activated", client.post(f"{api}/demo/devices/apple_watch/activate", headers=demo))
+    client.post(f"{api}/demo/devices/apple_health/activate", headers=demo)
+    client.post(f"{api}/demo/devices/whoop/activate", headers=demo)
+    save("demo_device_activate_repeat_is_no_op",
+         client.post(f"{api}/demo/devices/whoop/activate", headers=demo))
+    save("error_demo_unknown_device", client.post(f"{api}/demo/devices/garmin/activate", headers=demo))
+    save("demo_wearable_observations_daily", client.get(f"{api}/wearables/observations", headers=demo, params={
+        "provider": "demo_whoop", "start": "2026-09-15T00:00:00Z", "end": "2026-09-19T00:00:00Z"}))
+    save("demo_wearable_observations_heart_rate", client.get(f"{api}/wearables/observations", headers=demo, params={
+        "provider": "demo_apple_watch", "metric": "heart_rate", "limit": 6,
+        "start": "2026-09-18T12:00:00Z", "end": "2026-09-18T19:00:00Z"}))
+    save("demo_devices_connections", client.get(f"{api}/devices", headers=demo))
+    save("demo_health_timeline", client.get(f"{api}/demo/health-timeline", headers=demo, params={"hours": 30}))
     save("demo_replay_reset", client.post(f"{api}/demo/replay/reset", headers=demo))
 
     # The optional RETURNING USER mode: a second, separate demo account.

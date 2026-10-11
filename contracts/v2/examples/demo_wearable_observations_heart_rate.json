@@ -1,0 +1,129 @@
+{
+  "request": "GET /api/v2/wearables/observations",
+  "status": 200,
+  "body": {
+    "start": "2026-09-18T12:00:00Z",
+    "end": "2026-09-18T19:00:00Z",
+    "observations": [
+      {
+        "observation_id": "wob_00000000000000000000000000000cc9",
+        "provider": "demo_apple_watch",
+        "metric": "heart_rate",
+        "value": 77.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T12:00:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "apple_watch",
+          "source_label": "Apple Watch",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cca",
+        "provider": "demo_apple_watch",
+        "metric": "heart_rate",
+        "value": 78.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T12:15:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "apple_watch",
+          "source_label": "Apple Watch",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000ccb",
+        "provider": "demo_apple_watch",
+        "metric": "heart_rate",
+        "value": 75.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T12:30:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "apple_watch",
+          "source_label": "Apple Watch",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000ccc",
+        "provider": "demo_apple_watch",
+        "metric": "heart_rate",
+        "value": 76.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T12:45:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "apple_watch",
+          "source_label": "Apple Watch",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000ccd",
+        "provider": "demo_apple_watch",
+        "metric": "heart_rate",
+        "value": 78.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T13:00:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "apple_watch",
+          "source_label": "Apple Watch",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cce",
+        "provider": "demo_apple_watch",
+        "metric": "heart_rate",
+        "value": 75.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T13:15:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "apple_watch",
+          "source_label": "Apple Watch",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      }
+    ],
+    "units": {
+      "heart_rate": "bpm",
+      "resting_heart_rate": "bpm",
+      "steps_daily": "count",
+      "sleep_duration": "min",
+      "hrv_rmssd": "ms",
+      "hrv_sdnn": "ms",
+      "recovery_score": "percent",
+      "workout": "min"
+    },
+    "note": "Wearable data is stored for display. It is not an input to the forecast model."
+  }
+}

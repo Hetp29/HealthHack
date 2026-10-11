@@ -233,6 +233,188 @@ Rendering rules specific to this scenario:
 * Paginate history lists (`GET /meals?limit=200`); there are 40 meals by the end.
 * Its dose history is longer (17 scripted actions across the week). Same labels.
 
+## 6b · Simulated connected-health sources
+
+**Status:** implemented and verified locally; PROPOSED like the rest of v2.
+
+Both demo accounts can switch on four **simulated** wearable sources. Their data is
+generated, labelled as generated, and flows through the real wearable ingestion and
+storage. Nothing is connected to Apple, Fitbit or WHOOP. The glucose is different: it
+is the real research recording, never simulated.
+
+### Endpoints (demo account only; 404 when demo mode is off)
+
+| method | route | purpose | example |
+|---|---|---|---|
+| GET | `/api/v2/demo/devices` | the four profiles + the glucose source, with status and counts | `demo_devices_initial.json` |
+| POST | `/api/v2/demo/devices/{profile}/activate` | switch one on. No body. **Idempotent** | `demo_device_activated.json`, `demo_device_activate_repeat_is_no_op.json` |
+| GET | `/api/v2/demo/health-timeline?hours=24&limit=200` | meals, alerts, doses and wearable summaries, ordered | `demo_health_timeline.json` |
+| GET | `/api/v2/wearables/observations?provider=&metric=&start=&end=&limit=` | the observations themselves (existing endpoint; `provider` filter is new) | `demo_wearable_observations_daily.json`, `demo_wearable_observations_heart_rate.json` |
+| GET | `/api/v2/devices` | existing connections list; simulated ones have status `demo_simulated` | `demo_devices_connections.json` |
+
+`{profile}` is one of `apple_health`, `apple_watch`, `fitbit`, `whoop`. Anything else
+→ `404 unknown_demo_device` with `details.allowed` (`error_demo_unknown_device.json`).
+
+### `GET /demo/devices`
+
+```jsonc
+{
+  "position": "2020-05-08T12:56:00Z",          // replay time
+  "simulation_version": "sim-1",
+  "disclaimer": "Simulated sample data for demonstration. No Apple, Fitbit or WHOOP account is connected …",
+  "profiles": [{
+    "profile": "apple_watch",
+    "provider": "demo_apple_watch",            // use as ?provider= on /wearables/observations
+    "label": "Apple Watch",
+    "display_label": "Apple Watch (simulated sample)",   // show THIS
+    "kind": "wearable_device",                 // apple_health is "health_data_platform"
+    "description": "Simulated Apple Watch.",
+    "status": "inactive",                      // or "demo_simulated"
+    "simulated": true,
+    "data_class": "demo",
+    "authorization": "none - no account was linked and no provider was contacted",
+    "metrics": [{"metric": "heart_rate", "unit": "bpm",
+                 "observations_visible": 0, "latest_observed_at": null}],
+    "notes": {"heart_rate": "One simulated sample every 15 minutes."}
+  }],
+  "glucose_source": {
+    "provider": "research_cgmacros",
+    "label": "CGMacros research recording (Dexcom G6 Pro)",
+    "kind": "historical_replay", "simulated": false, "data_class": "research_dataset",
+    "status": "replaying", "description": "Genuine historical glucose readings … Not a live sensor and not a connected Dexcom account.",
+    "readings_visible": 2030, "latest_observed_at": "2020-05-08T12:54:00Z"
+  },
+  "used_by_forecast_model": {"glucose_source": true, "simulated_profiles": false, "explanation": "…"}
+}
+```
+
+`POST …/activate` returns the same object plus `profile`, `already_active` and
+`observations_released`.
+
+### Profiles and measurements
+
+| profile | what it is | metrics (unit) | cadence |
+|---|---|---|---|
+| `apple_health` | **a data-aggregation platform, not a sensor** — say so | `steps_daily` (count), `resting_heart_rate` (bpm), `sleep_duration` (min), `workout` (min) | daily; per session |
+| `apple_watch` | wearable | `heart_rate` (bpm), `steps_daily` (count), `workout` (min) | HR every 15 min |
+| `fitbit` | wearable | `heart_rate` (bpm), `steps_daily` (count), `sleep_duration` (min), `resting_heart_rate` (bpm) | HR every 30 min |
+| `whoop` | wearable | `recovery_score` (percent), `sleep_duration` (min), `resting_heart_rate` (bpm), `hrv_rmssd` (ms) | daily. **No heart-rate stream** — do not draw one |
+
+One unit per metric, always. A `workout` observation's `value` is its duration in
+minutes; `detail.sport` is `walking`, `running` or `cycling`. Interval observations
+(sleep, workout, daily steps) have `observed_at` (start) and `observed_end_at` (end).
+
+The four sources describe one simulated person, so they roughly agree and differ
+slightly, as real trackers do. Apple Health's steps and workouts equal the Apple
+Watch's (it aggregates the watch). Showing the same day's steps from three sources
+side by side is fine; do not sum them.
+
+### Each observation
+
+```jsonc
+{
+  "observation_id": "wob_…", "provider": "demo_whoop",
+  "metric": "sleep_duration", "value": 428.0, "unit": "min",
+  "observed_at": "2020-05-02T00:15:00Z", "observed_end_at": "2020-05-02T07:45:00Z",
+  "received_at": "2020-05-08T12:56:00Z",      // the REPLAY time it became visible
+  "data_class": "demo",
+  "detail": {"simulated": true, "device_profile": "whoop", "source_label": "WHOOP",
+             "simulation_version": "sim-1"},
+  "used_by_forecast_model": false
+}
+```
+
+Provenance to key the UI on: **`data_class`**. `demo` = simulated → badge it.
+`research_dataset` = the real glucose recording. `user_device` = a real person's real
+device; it does not occur in the demo. `detail.simulated === true` is the
+per-observation confirmation, and `provider` always starts `demo_` for these.
+
+### Activation flow
+
+1. `GET /demo/devices` → four cards, all `inactive`, plus the glucose-source card.
+2. The presenter taps **"Simulate Apple Health connection"**.
+3. `POST /demo/devices/apple_health/activate` → `status: "demo_simulated"`,
+   `observations_released: N`.
+4. `GET /wearables/observations?provider=demo_apple_health&start=…&end=…` → that
+   source's simulated history up to the replay position appears.
+5. Repeat for other sources; each adds its own observations.
+6. `POST /demo/replay/advance` — glucose **and** active simulated sources move forward
+   together; newly "recorded" observations appear.
+7. Forecast, outcome, alerts: exactly as before. Show the wearable context beside the
+   glucose chart.
+
+A double tap or a retry is harmless: the second call returns `already_active: true`
+and releases nothing.
+
+**The button must say "Simulate".** Do not build a screen that imitates Apple's,
+Google's or WHOOP's sign-in or consent page, do not show their login forms, and do not
+show a "Connected" state. There is no account, no permission prompt and no token
+behind this. A plain confirmation — "This adds simulated sample data. No real account
+is involved." — is the right interstitial.
+
+### Timeline behaviour
+
+* Observations become visible only once the replay position has reached them: a
+  heart-rate sample at its own time, a daily step total when that day ends, a sleep
+  session when it ends. Today's steps are therefore not shown until the replay
+  crosses midnight. That is deliberate.
+* Activating a source reveals its history up to the current position at once (as
+  importing a device's history would). Those rows share one `received_at`.
+* `GET /demo/health-timeline` gives an ordered event list ending at the replay
+  position. Item `type`: `wearable`, `meal`, `alert`, `medication_dose`. Every item
+  has `at`, `data_class`, `simulated`, `source`; wearable items add `metric`,
+  `value`, `unit`, `observed_at`, `observed_end_at`, `provider`,
+  `used_by_forecast_model: false`. Heart-rate samples and glucose readings are
+  **series**, not events — chart them from `/wearables/observations?metric=heart_rate`
+  and `/cgm/readings`.
+* `/wearables/observations` defaults to the last 7 days before the replay position;
+  pass `start`/`end` for other ranges; `limit` ≤ 5000.
+
+### Expected dashboard states
+
+| state | what you get |
+|---|---|
+| Fresh / after reset | four profiles `inactive`; no wearable observations; `GET /devices` lists only the research glucose source (`pending`) |
+| After activating one | that profile `demo_simulated` with non-zero `observations_visible`; others `inactive` |
+| After advancing | higher counts on active profiles; inactive ones unchanged |
+| All four on, replay complete (NEW USER) | about 1,400 simulated observations |
+| RETURNING USER | identical behaviour; devices also start `inactive` (the 31-meal setup runs with none on) |
+
+### Required disclaimer text
+
+Show `disclaimer` from `GET /demo/devices` verbatim wherever simulated data appears:
+
+> Simulated sample data for demonstration. No Apple, Fitbit or WHOOP account is
+> connected and no real device produced these values. They are not inputs to the
+> glucose forecast.
+
+And, per source, `display_label` — "Fitbit (simulated sample)" — not the bare brand
+name. Near the forecast, state what the model actually uses
+(`used_by_forecast_model.explanation`): glucose history, the confirmed meal's
+macronutrients, meal timing and the account's own completed meal responses. **Not**
+heart rate, steps, sleep, recovery, workouts or medication. Putting wearable data next
+to a forecast must not suggest the forecast used it.
+
+For the glucose card use `glucose_source.label` and `description`: a research
+recording being replayed — not "Dexcom connected".
+
+### Errors
+
+| response | show |
+|---|---|
+| 404 on `/demo/devices…` | demo mode is off: hide the simulation controls |
+| `403 not_demo_account` | "Sign in with a demo account" |
+| `404 unknown_demo_device` | developer error; `details.allowed` lists the profiles |
+| `already_active: true` | not an error — refresh the card |
+| `503 demo_data_unavailable` | "Demo data is not installed on this server" |
+
+### Reset
+
+`POST /demo/replay/reset` (or `demo_reset`) returns every simulated source to
+`inactive` and removes its observations, along with everything else in that demo
+account. The same taps in the same order then produce the same data. Simulation is
+per account: switching sources on for NEW USER does nothing to RETURNING USER.
+
 ## 7 · Required labels
 
 Non-negotiable; `provenance.labels` gives you the strings.
@@ -249,6 +431,8 @@ Non-negotiable; `provenance.labels` gives you the strings.
 * The devices screen must show **no connected device**. The research source appears
   with status `pending` and `authentic_data_received: false`; render it as
   "Sample data source", not as a pairing.
+* Simulated wearable sources have status `demo_simulated` — render as "Simulated
+  sample", never as "Connected" or "Authorized". See §6b.
 * Every forecast here is `prediction_kind: "prospective"` **within the replay**.
   Label it "Forecast made at replay time 13:26" — not "live forecast".
 * Medications: the names contain "(fictional)" and `prescriber_note` says
