@@ -11,6 +11,7 @@ None of it is a model input.
 from __future__ import annotations
 
 DISPLAY_NAME = "Demo User (fictional)"
+DISPLAY_NAMES = {"new_user": DISPLAY_NAME, "returning_user": "Returning Demo User (fictional)"}
 
 FICTIONAL_NOTICE = "FICTIONAL DEMO RECORD - not a real person, prescription or clinical value."
 

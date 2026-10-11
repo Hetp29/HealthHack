@@ -1,7 +1,7 @@
 """End-to-end demonstration smoke test against a RUNNING server.
 
     export GLUCOTWIN_DEMO_PASSWORD=...
-    python scripts/smoke_demo.py http://127.0.0.1:8000 [--leave-at CHECKPOINT]
+    python scripts/smoke_demo.py http://127.0.0.1:8000 [--scenario new_user|returning_user] [--leave-at CHECKPOINT]
 
 Signs in as the demo account, resets it, and walks the whole replay over real HTTP,
 checking at every checkpoint -- through the ordinary v2 endpoints only -- that no
@@ -31,13 +31,17 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("base_url")
     parser.add_argument("--leave-at", default=None)
+    parser.add_argument("--scenario", choices=["new_user", "returning_user"], default="new_user")
     args = parser.parse_args(argv)
-    email = os.environ.get("GLUCOTWIN_DEMO_EMAIL", "demo@glucotwin.example")
+    returning = args.scenario == "returning_user"
+    email = (os.environ.get("GLUCOTWIN_DEMO_RETURNING_EMAIL", "demo-returning@glucotwin.example") if returning
+             else os.environ.get("GLUCOTWIN_DEMO_EMAIL", "demo@glucotwin.example"))
     password = os.environ.get("GLUCOTWIN_DEMO_PASSWORD")
     if not password:
         print("ERROR: GLUCOTWIN_DEMO_PASSWORD is not set", file=sys.stderr)
         return 1
-    manifest = json.loads(MANIFEST.read_text())
+    manifest = json.loads((MANIFEST.with_name("manifest_returning_user.json") if returning else MANIFEST).read_text())
+    first_display = manifest.get("plan", {}).get("display_from_meal", 1)
     client = httpx.Client(base_url=args.base_url.rstrip("/") + "/api/v2", timeout=180)
     failures = 0
 
@@ -63,15 +67,19 @@ def main(argv: list[str] | None = None) -> int:
 
     headers = login()
     reset = client.post("/demo/replay/reset", headers=headers)
-    step("reset", reset.status_code == 200 and reset.json().get("event_index") == 0, reset.text[:120] if reset.status_code != 200 else "")
+    step("reset", reset.status_code == 200 and reset.json().get("mode") == args.scenario
+         and (reset.json().get("event_index") == 0) == (not returning),
+         reset.text[:120] if reset.status_code != 200 else "")
     step("the pre-reset session no longer works", client.get("/me", headers=headers).status_code == 401)
     headers = login()
 
     state = client.get("/demo/replay", headers=headers).json()
     step("replays the recording the manifest selected", state["bundle_sha256"] == manifest["bundle_sha256"])
-    step("starts with no meals and no forecasts",
-         client.get("/meals", headers=headers).json()["meals"] == []
-         and client.get("/predictions", headers=headers).json()["predictions"] == [])
+    meals_at_start = client.get("/meals", headers=headers, params={"limit": 200}).json()["meals"]
+    step("starts with exactly the meals that precede the presented journey",
+         len(meals_at_start) == first_display - 1
+         and state["next_checkpoint"]["id"] == f"meal_{first_display:02d}_forecast",
+         f"{len(meals_at_start)} meals of history")
     me = client.get("/me", headers=headers).json()
     step("demo identity is fictional with a generated participant id",
          "fictional" in (me["display_name"] or "").lower() and me["participant_id"].startswith("gtp_")
@@ -100,6 +108,10 @@ def main(argv: list[str] | None = None) -> int:
         if checkpoint["kind"] != "meal_forecast":
             continue
         result = next(c["result"] for c in current["checkpoints"] if c["id"] == checkpoint["id"])
+        if checkpoint["done"]:
+            # Executed during setup (returning-user backfill): its outcome is already in.
+            admissible.append(result["admissible_prior_meals"])
+            continue
         if result.get("forecast") != "created":
             step(f"{checkpoint['id']} produced a forecast", False, str(result))
             continue
@@ -125,6 +137,9 @@ def main(argv: list[str] | None = None) -> int:
     planned = [m["expected_admissible_prior_meals"] for m in manifest["meals"]]
     step("personalization states match the manifest", admissible == planned, str(admissible))
     step("retrieval switched on at exactly five admissible meals", 4 in admissible and 5 in admissible)
+    if returning:
+        step("personal history was already active at the first presented meal",
+             admissible[first_display - 1] >= 5, f"{admissible[first_display - 1]} admissible prior meals")
 
     outcomes = [c["result"] for c in final["checkpoints"] if c["kind"] == "outcome_reveal"]
     step("every outcome was scored once revealed", all(o["outcome"] == "scored" for o in outcomes))
@@ -149,7 +164,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.leave_at:
         client.post("/demo/replay/advance", headers=headers, json={"to": args.leave_at})
     left = client.get("/demo/replay", headers=headers).json()
-    step("left reset for the presentation", left["status"] == "ready", f"at event {left['event_index']}, replay time {left['position']}")
+    step("left reset for the presentation", left["status"] == "ready" and left["mode"] == args.scenario,
+         f"{left['mode_label']} at event {left['event_index']}, replay time {left['position']}")
 
     print(f"\n{'ALL STEPS PASSED' if failures == 0 else f'{failures} STEP(S) FAILED'}")
     return 0 if failures == 0 else 1

@@ -183,5 +183,7 @@
     "the bundle file (research data)",
     "the warehouse",
     "the model artifact"
-  ]
+  ],
+  "mode": "new_user",
+  "state_fingerprint_at_end": "5a17f51a9d066a09d4ebb275b4a4b7a8db270b2d09f33bdd57012eb2715adad5"
 }

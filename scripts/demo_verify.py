@@ -1,6 +1,6 @@
 """Verify the demonstration end to end, in a scratch database.
 
-    python -m scripts.demo_verify
+    python -m scripts.demo_verify [--scenario new_user|returning_user|all]
 
 Runs the complete replay twice with the frozen model and checks, on real output:
 
@@ -28,7 +28,27 @@ import zlib
 from scripts._demo_common import FROZEN_SHA256, build_app, run_guarded
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+
+    from backend.app.v2.demo import source as _source
+
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--scenario", choices=["new_user", "returning_user", "all"], default="all")
+    args = parser.parse_args(argv or [])
+    modes = ["new_user", "returning_user"] if args.scenario == "all" else [args.scenario]
+    failed = 0
+    for mode in modes:
+        if args.scenario == "all" and mode == "returning_user" and not _source.manifest_path(mode).exists():
+            continue
+        print(f"=== {_source.MODES[mode]['label']} ===")
+        failed += verify(mode)
+        print()
+    print("ALL CHECKS PASSED" if not failed else f"{failed} CHECK(S) FAILED")
+    return 0 if not failed else 1
+
+
+def verify(mode: str) -> int:
     from sqlalchemy import func, select
     from starlette.testclient import TestClient
 
@@ -42,17 +62,18 @@ def main() -> int:
         if not ok:
             failures.append(name)
 
-    manifest = source.load_manifest()
+    manifest = source.load_manifest(source.manifest_path(mode))
+    first_display = manifest.get("plan", {}).get("display_from_meal", 1)
     digests = []
     with tempfile.TemporaryDirectory() as tmp:
         for run in (1, 2):
             app, ctx = build_app(app_db_url=f"sqlite:///{tmp}/verify{run}.db",
                                  image_dir=pathlib.Path(tmp) / f"img{run}",
                                  demo_password="verification-run-only", create_schema=True)
-            bundle = run_guarded(lambda: replay.get_bundle(ctx))
+            bundle = run_guarded(lambda: replay.get_bundle(ctx, mode))
             timeline = replay.build_timeline(bundle)
-            run_guarded(lambda: replay.initialize(app, ctx))
-            user_id = replay._demo_user_id(ctx)
+            run_guarded(lambda: replay.initialize(app, ctx, mode))
+            user_id = replay._demo_user_id(ctx, mode)
 
             if run == 1:
                 check("bundle matches the committed manifest", bundle.sha256 == manifest["bundle_sha256"])
@@ -62,20 +83,40 @@ def main() -> int:
                 with ctx.engine.connect() as conn:
                     initial = conn.execute(select(func.max(t.glucose_observations.c.observed_at))).scalar()
                     meals0 = conn.execute(select(func.count()).select_from(t.meals)).scalar()
-                check("at start, nothing later than the replay start is stored",
-                      initial <= bundle.start and meals0 == 0, f"latest reading {initial}")
+                    position0 = conn.execute(select(t.demo_replay_state.c.position)).scalar()
+                    late_meals = conn.execute(select(func.count()).select_from(t.meals).where(
+                        t.meals.c.occurred_at > position0)).scalar()
+                check("after setup, nothing later than the replay position is stored",
+                      initial <= position0 and late_meals == 0, f"latest reading {initial}")
+                check("setup logged exactly the meals that precede the presented journey",
+                      meals0 == first_display - 1, f"{meals0} meals")
+                if first_display > 1:
+                    start_state = replay.state(ctx, user_id)
+                    check("the presented journey starts at its first presented meal",
+                          start_state["next_checkpoint"]["id"] == f"meal_{first_display:02d}_forecast")
+                    with ctx.engine.connect() as conn:
+                        inserted = conn.execute(select(func.count()).select_from(t.response_episodes).where(
+                            t.response_episodes.c.prediction_id.is_(None))).scalar()
+                        forecasts0 = conn.execute(select(func.count()).select_from(t.predictions)).scalar()
+                    check("every backfilled meal went through a real forecast (none inserted directly)",
+                          inserted == 0 and forecasts0 == first_display - 1, f"{forecasts0} forecasts")
 
             leak_free = monotonic = True
-            previous = bundle.start
+            with ctx.engine.connect() as conn:
+                previous = conn.execute(select(t.demo_replay_state.c.position)).scalar()
             for event in [e for e in timeline if e["checkpoint"]]:
                 state = run_guarded(lambda: replay.advance(app, ctx, user_id, to=event["id"]))
+                # Checkpoints the setup already executed are no-ops, so compare with
+                # where the replay actually is, not with the checkpoint asked for.
                 with ctx.engine.connect() as conn:
+                    position = conn.execute(select(t.demo_replay_state.c.position)).scalar()
                     latest = conn.execute(select(func.max(t.glucose_observations.c.observed_at))).scalar()
                     future_meals = conn.execute(select(func.count()).select_from(t.meals).where(
-                        t.meals.c.occurred_at > event["at"])).scalar()
-                leak_free &= latest <= event["at"] and future_meals == 0
-                monotonic &= event["at"] >= previous
-                previous = event["at"]
+                        t.meals.c.occurred_at > position)).scalar()
+                leak_free &= latest <= position and future_meals == 0
+                leak_free &= position == max(event["at"], previous)
+                monotonic &= position >= previous
+                previous = position
             digests.append(replay.digest(ctx, user_id)["digest"])
             if run == 2:
                 continue
@@ -117,6 +158,15 @@ def main() -> int:
                   all(r["retrieval_active"] == (r["admissible_prior_meals"] >= 5) for r in results))
             check("the progression covers below, at and above the gate",
                   min(actual) == 0 and 4 in actual and 5 in actual and max(actual) > 5)
+            if first_display > 1:
+                shown = results[first_display - 1]
+                check("personal history is already active at the first presented meal",
+                      shown["retrieval_active"] and shown["admissible_prior_meals"] >= 5,
+                      f"{shown['admissible_prior_meals']} admissible prior meals")
+                check("retrieval first activated only once five eligible meals had completed",
+                      next(i for i, r in enumerate(results) if r["retrieval_active"]) + 1
+                      == manifest["plan"]["activation_meal"]
+                      and actual[manifest["plan"]["activation_meal"] - 1] == 5)
             check("every forecast was made prospectively at its historical instant",
                   all(p["prediction_kind"] == "prospective" and p["created_at"] == snapshots[p["snapshot_id"]]["as_of"]
                       for p in predictions))
@@ -133,7 +183,7 @@ def main() -> int:
             check("no forecast's input history contains anything after its own instant", no_future)
 
             client = TestClient(app)
-            login = client.post("/auth/login", json={"email": ctx.settings.demo_email,
+            login = client.post("/auth/login", json={"email": replay.demo_email(ctx, mode),
                                                      "password": ctx.settings.demo_password}).json()
             headers = {"Authorization": f"Bearer {login['session']['token']}"}
             reproduced = [client.post(f"/predictions/{p['prediction_id']}/reproduce", headers=headers).json()
@@ -145,8 +195,8 @@ def main() -> int:
                   all(e["scored_at"] is None or e["scored_at"] >= e["window_end_at"] for e in episodes))
             by_end = {e["window_end_at"]: e for e in episodes}
             reasons_ok = True
+            import datetime as dt
             for meal in manifest["meals"]:
-                import datetime as dt
                 episode = by_end[dt.datetime.fromisoformat(meal["occurred_at"]) + source.WINDOW]
                 reasons_ok &= episode["eligible_for_personalization"] == meal["expected_eligible"]
                 reasons_ok &= episode["ineligibility_reasons"] == meal["expected_ineligibility_reasons"]
@@ -155,7 +205,7 @@ def main() -> int:
             check("at least one server-generated informational alert exists",
                   any(a["status"] == "active" and a["payload"]["uncertainty_status"] == "not_calibrated" for a in alerts),
                   f"{len(alerts)} alerts")
-            doses = client.get("/medication-doses", headers=headers).json()["doses"]
+            doses = client.get("/medication-doses", headers=headers, params={"limit": 1000}).json()["doses"]
             actions = sorted(d["action"] for d in doses)
             check("fictional medication history has deliberate taken and skipped actions",
                   "taken" in actions and "skipped" in actions
@@ -169,8 +219,8 @@ def main() -> int:
                   and {r["status"] for r in regimens} == {"current", "discontinued"})
 
             first = digests[0]
-            run_guarded(lambda: replay.reset(app, ctx))
-            new_user = replay._demo_user_id(ctx)
+            run_guarded(lambda: replay.reset(app, ctx, mode))
+            new_user = replay._demo_user_id(ctx, mode)
             run_guarded(lambda: replay.advance(app, ctx, new_user, to="end"))
             check("reset followed by the same replay gives an identical state",
                   replay.digest(ctx, new_user)["digest"] == first)
@@ -179,9 +229,14 @@ def main() -> int:
             check("reset left exactly one account", users == 1)
 
     check("two independent runs give an identical state", digests[0] == digests[1], digests[0][:16])
-    print(f"\n{'ALL CHECKS PASSED' if not failures else f'{len(failures)} CHECK(S) FAILED'}")
-    return 0 if not failures else 1
+    recorded = manifest.get("state_fingerprint_at_end")
+    if recorded:
+        # Informational: floating-point results can differ across platforms, so a
+        # difference here on another machine is a note, not a failure.
+        print(f"NOTE  end-state fingerprint {'matches' if recorded == digests[0] else 'DIFFERS FROM'} "
+              f"the one recorded when the scenario was built ({recorded[:16]})")
+    return len(failures)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))

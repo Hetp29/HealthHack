@@ -33,8 +33,10 @@ def _value(moment: dt.datetime, meals: list[dt.datetime]) -> float:
 
 
 def fixture_payload(*, alert_threshold_mg_dl: float = 130.0, shift_after: dt.datetime | None = None,
-                    shift_mg_dl: float = 0.0) -> dict:
-    """`shift_after`/`shift_mg_dl` produce a variant whose readings differ only AFTER
+                    shift_mg_dl: float = 0.0, display_from_meal: int = 1) -> dict:
+    """`display_from_meal > 1` marks the earlier meals as backfill (returning-user mode).
+
+    `shift_after`/`shift_mg_dl` produce a variant whose readings differ only AFTER
     an instant -- used to prove that later data cannot change an earlier forecast."""
     meals = [FIRST_MEAL + dt.timedelta(hours=h) for h in MEAL_OFFSETS_HOURS]
     start, end = FIRST_MEAL - dt.timedelta(days=2), meals[-1] + dt.timedelta(minutes=180)
@@ -52,12 +54,17 @@ def fixture_payload(*, alert_threshold_mg_dl: float = 130.0, shift_after: dt.dat
     assessed = source.assess_meals(times, meal_rows, meals)
     plan = source.plan_window(assessed)
     return source.make_payload(
-        scenario_id="test-fixture-replay-v1", data_class="test_fixture", timezone="UTC",
+        scenario_id=("test-fixture-replay-v1" if display_from_meal == 1
+                     else "test-fixture-returning-user-replay-v1"),
+        data_class="test_fixture", timezone="UTC",
         device_id="fixture-sensor",
         source={"dataset": "generated test fixture", "participant": "none",
                 "plan": {"activation_meal": plan["activation_index"] + 1,
                          "final_meal": len(meal_rows),
-                         "alert_threshold_mg_dl": alert_threshold_mg_dl}},
+                         "alert_threshold_mg_dl": alert_threshold_mg_dl,
+                         **({} if display_from_meal == 1 else {
+                             "display_from_meal": display_from_meal,
+                             "backfill_fit_note": "Generated fixture; no model-fit relationship."})}},
         cgm=cgm, meals=meal_rows)
 
 

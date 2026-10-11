@@ -69,5 +69,6 @@ def reset_replay(
     """Deletes the demo account's data and re-initializes it. The account is
     re-created, so **the current session token stops working**: sign in again with
     the demo credentials. Affects the demo account only."""
-    state = replay.reset(request.app, ctx)
+    # Resets the caller's own demo mode only; the other mode's account is untouched.
+    state = replay.reset(request.app, ctx, replay.mode_of(ctx, user["user_id"]))
     return {**state, "reset": True, "sign_in_again": True}

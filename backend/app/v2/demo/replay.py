@@ -48,7 +48,8 @@ from backend.app.v2.services.glucose import IncomingReading
 
 logger = logging.getLogger("glucotwin.v2.demo")
 
-_LOCK = threading.Lock()
+#: Re-entrant: initializing the returning-user mode advances through its backfill.
+_LOCK = threading.RLock()
 _BUNDLE_CACHE: dict[tuple, Bundle] = {}
 
 KIND_ORDER = {"outcome_reveal": 0, "dose_action": 1, "meal_forecast": 2}
@@ -58,21 +59,54 @@ def demo_error(status: int, code: str, message: str, details: dict | None = None
     return core.V2Error(status, code, message, details)
 
 
-def get_bundle(ctx: V2Context) -> Bundle:
-    """The bundle this deployment replays, verified against the committed manifest."""
+DEFAULT_MODE = "new_user"
+
+
+def _check_mode(mode: str) -> str:
+    if mode not in source.MODES:
+        raise demo_error(422, "unknown_demo_scenario", "No such demo scenario.",
+                         {"allowed": sorted(source.MODES)})
+    return mode
+
+
+def demo_email(ctx: V2Context, mode: str) -> str:
+    return getattr(ctx.settings, source.MODES[mode]["email_setting"])
+
+
+def get_bundle(ctx: V2Context, mode: str = DEFAULT_MODE) -> Bundle:
+    """The bundle one demo mode replays, verified against its committed manifest."""
+    _check_mode(mode)
     override = getattr(ctx, "demo_bundle", None)
-    if override is not None:
+    if isinstance(override, dict):
+        if mode in override:
+            return override[mode]
+    elif override is not None and mode == DEFAULT_MODE:
         return override
-    path = ctx.settings.demo_bundle_path
+    path = getattr(ctx.settings, source.MODES[mode]["bundle_setting"])
     try:
-        manifest = source.load_manifest()
-        key = (str(path), path.stat().st_mtime_ns if path.exists() else None)
+        manifest = source.load_manifest(source.manifest_path(mode))
+        key = (mode, str(path), path.stat().st_mtime_ns if path.exists() else None)
         if key not in _BUNDLE_CACHE:
-            _BUNDLE_CACHE.clear()
+            for stale in [k for k in _BUNDLE_CACHE if k[0] == mode]:
+                del _BUNDLE_CACHE[stale]
             _BUNDLE_CACHE[key] = source.load_bundle(path, expected_sha256=manifest["bundle_sha256"])
         return _BUNDLE_CACHE[key]
     except source.BundleError as error:
-        raise demo_error(503, "demo_data_unavailable", str(error)) from error
+        raise demo_error(503, "demo_data_unavailable",
+                         f"[{mode}] {error} (for this scenario: `{source.MODES[mode]['select_hint']}`)"
+                         if mode != DEFAULT_MODE else str(error)) from error
+
+
+def mode_of(ctx: V2Context, user_id: str) -> str:
+    """Which demo mode an account belongs to, from its email. Defaults to new_user."""
+    with ctx.engine.connect() as conn:
+        email = conn.execute(select(t.users.c.email).where(t.users.c.user_id == user_id)).scalar()
+    return next((m for m in source.MODES if m != DEFAULT_MODE and demo_email(ctx, m) == email), DEFAULT_MODE)
+
+
+def display_from(bundle: Bundle) -> int:
+    """The first meal that is part of the presented journey (1 = no backfill)."""
+    return int((bundle.source.get("plan") or {}).get("display_from_meal", 1))
 
 
 # --------------------------------------------------------------------------- #
@@ -125,6 +159,14 @@ def _aliases(bundle: Bundle, timeline: list[dict]) -> dict[str, str]:
     activation = (bundle.source.get("plan") or {}).get("activation_meal")
     if activation:
         out["retrieval_activation"] = f"meal_{activation:02d}_forecast"
+    first = display_from(bundle)
+    if first > 1:
+        first_id = f"meal_{first:02d}_forecast"
+        first_index = next(e["index"] for e in timeline if e["id"] == first_id)
+        out["first_display_meal"] = first_id
+        # The last checkpoint of the backfill: everything before the presented journey.
+        out["backfill_complete"] = next(
+            e["id"] for e in reversed(timeline[:first_index]) if e["checkpoint"])
     return out
 
 
@@ -204,12 +246,12 @@ def _release(ctx: V2Context, user_id: str, bundle: Bundle, after: dt.datetime | 
     return counts["inserted"]
 
 
-def _demo_user_id(ctx: V2Context) -> str | None:
+def _demo_user_id(ctx: V2Context, mode: str = DEFAULT_MODE) -> str | None:
     with ctx.engine.connect() as conn:
         return conn.execute(
             select(t.users.c.user_id)
             .select_from(t.users.join(t.demo_replay_state))
-            .where(t.users.c.email == ctx.settings.demo_email)).scalar()
+            .where(t.users.c.email == demo_email(ctx, mode))).scalar()
 
 
 def _require_enabled(ctx: V2Context) -> None:
@@ -250,23 +292,30 @@ def _require_genuine_model(ctx: V2Context, bundle: Bundle) -> None:
 # --------------------------------------------------------------------------- #
 
 
-def initialize(app, ctx: V2Context) -> dict:
-    """Create the demo account at the start of the replay. Fails if one exists."""
+def initialize(app, ctx: V2Context, mode: str = DEFAULT_MODE) -> dict:
+    """Create one demo mode's account at the start of its presented journey.
+
+    `new_user` starts with no meals. `returning_user` first replays the recording's
+    earlier meals -- each through the ordinary forecast, outcome and eligibility
+    workflow, in order -- and stops just before its first presented meal. Fails if
+    that mode's account already exists.
+    """
     _require_enabled(ctx)
-    bundle = get_bundle(ctx)
+    bundle = get_bundle(ctx, mode)
     _require_genuine_model(ctx, bundle)
     with _LOCK:
-        return _initialize(app, ctx, bundle)
+        return _initialize(app, ctx, bundle, mode)
 
 
-def _initialize(app, ctx: V2Context, bundle: Bundle) -> dict:
+def _initialize(app, ctx: V2Context, bundle: Bundle, mode: str) -> dict:
+    email = demo_email(ctx, mode)
     client = TestClient(app, raise_server_exceptions=True)
     registered = client.post("/auth/register", json={
-        "email": ctx.settings.demo_email, "password": ctx.settings.demo_password,
-        "timezone": bundle.timezone, "display_name": profile.DISPLAY_NAME})
+        "email": email, "password": ctx.settings.demo_password,
+        "timezone": bundle.timezone, "display_name": profile.DISPLAY_NAMES[mode]})
     if registered.status_code == 409:
         raise demo_error(409, "demo_already_initialized",
-                         "The demo account already exists. Reset it instead.")
+                         "The demo account already exists. Reset it instead.", {"scenario": mode})
     if registered.status_code != 201:
         raise demo_error(500, "demo_step_failed", "Could not create the demo account.",
                          {"status": registered.status_code, "code": registered.json().get("code")})
@@ -295,23 +344,27 @@ def _initialize(app, ctx: V2Context, bundle: Bundle) -> dict:
         api.close()
 
     released = _release(ctx, user_id, bundle, None, bundle.start)
-    logger.info("demo_initialized scenario=%s readings_released=%d", bundle.scenario_id, released)
+    logger.info("demo_initialized mode=%s scenario=%s readings_released=%d",
+                mode, bundle.scenario_id, released)
+    if display_from(bundle) > 1:
+        # The backfill is not inserted: it is replayed, meal by meal, in order.
+        return advance(app, ctx, user_id, to="backfill_complete")
     return state(ctx, user_id)
 
 
-def reset(app, ctx: V2Context) -> dict:
-    """Return the demo to its initial state.
+def reset(app, ctx: V2Context, mode: str = DEFAULT_MODE) -> dict:
+    """Return one demo mode to its initial state.
 
-    Deletes the demo account through the public account-deletion endpoint -- which
-    removes that one user's rows and nothing else -- and initializes it again. Only
-    ever touches the account whose email is the configured demo email AND that has a
-    replay-state row.
+    Deletes that mode's demo account through the public account-deletion endpoint --
+    which removes that one user's rows and nothing else -- and initializes it again.
+    Only ever touches the account whose email is that mode's demo email AND that has a
+    replay-state row: never an ordinary account, never the other demo mode.
     """
     _require_enabled(ctx)
-    bundle = get_bundle(ctx)
+    bundle = get_bundle(ctx, mode)
     _require_genuine_model(ctx, bundle)
     with _LOCK:
-        user_id = _demo_user_id(ctx)
+        user_id = _demo_user_id(ctx, mode)
         if user_id is not None:
             api = _Api(app, ctx, user_id)
             response = api.call("DELETE", "/account", json={"password": ctx.settings.demo_password})
@@ -322,12 +375,12 @@ def reset(app, ctx: V2Context) -> dict:
         else:
             with ctx.engine.connect() as conn:
                 clash = conn.execute(select(t.users.c.user_id).where(
-                    t.users.c.email == ctx.settings.demo_email)).scalar()
+                    t.users.c.email == demo_email(ctx, mode))).scalar()
             if clash is not None:
                 # An ordinary account holds the demo email. Never delete it.
                 raise demo_error(409, "demo_email_in_use",
                                  "A non-demo account uses the demo email; refusing to touch it.")
-        return _initialize(app, ctx, bundle)
+        return _initialize(app, ctx, bundle, mode)
 
 
 # --------------------------------------------------------------------------- #
@@ -393,7 +446,7 @@ def advance(app, ctx: V2Context, user_id: str, *, to: str | None = "next",
     a retried request a no-op.
     """
     _require_enabled(ctx)
-    bundle = get_bundle(ctx)
+    bundle = get_bundle(ctx, mode_of(ctx, user_id))
     _require_genuine_model(ctx, bundle)
     timeline = build_timeline(bundle)
     with _LOCK:
@@ -465,7 +518,7 @@ def state(ctx: V2Context, user_id: str) -> dict:
     row = _state_row(ctx, user_id)
     if row is None:
         raise demo_error(403, "not_demo_account", "This account is not a demo replay account.")
-    bundle = get_bundle(ctx)
+    bundle = get_bundle(ctx, mode_of(ctx, user_id))
     return _state(ctx, row, bundle, build_timeline(bundle))
 
 
@@ -486,8 +539,14 @@ def _state(ctx: V2Context, row: dict, bundle: Bundle, timeline: list[dict]) -> d
     forecasts = [e for e in row["log"] if e["kind"] == "meal_forecast" and e.get("forecast") == "created"]
     latest = forecasts[-1] if forecasts else None
     released = bundle.readings_between(None, row["position"])
+    first = display_from(bundle)
+    mode = mode_of(ctx, row["user_id"])
     return {
         "scenario_id": row["scenario_id"],
+        "mode": mode,
+        "mode_label": source.MODES[mode]["label"],
+        # Meals before this number are history replayed at setup, not presented steps.
+        "display_from_meal": first,
         "status": row["status"],
         "position": core.rfc3339(row["position"]),
         "event_index": index,
@@ -499,6 +558,7 @@ def _state(ctx: V2Context, row: dict, bundle: Bundle, timeline: list[dict]) -> d
         "aliases": _aliases(bundle, timeline),
         "checkpoints": [
             {"id": e["id"], "kind": e["kind"], "at": core.rfc3339(e["at"]), "meal": e.get("meal"),
+             "phase": "backfill" if e.get("meal", first) < first else "display",
              "done": e["index"] < index, "result": by_id.get(e["id"])}
             for e in timeline if e["checkpoint"]],
         "personalization_progress": {
@@ -529,6 +589,12 @@ def _state(ctx: V2Context, row: dict, bundle: Bundle, timeline: list[dict]) -> d
                 "description": "Produced by the frozen fs-1.3 model at each replay instant "
                                "from only the data released by then."},
             "labels": ["DEMO", "HISTORICAL REPLAY", "NOT LIVE"],
+            **({} if first == 1 else {"backfilled_history": {
+                "meals": first - 1,
+                "description": "Earlier meals from the same recording, replayed in order "
+                               "through the ordinary forecast and outcome workflow before "
+                               "the presented journey. " + str(
+                                   (bundle.source.get("plan") or {}).get("backfill_fit_note", ""))}}),
         },
         "bundle_sha256": row["bundle_sha256"],
     }

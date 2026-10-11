@@ -2,8 +2,9 @@
 
     python -m scripts.demo_reset [--to CHECKPOINT]
 
-Deletes the demo account -- that one account's rows and nothing else -- and creates
-it again at the start of the replay. Safe to run repeatedly. It refuses to act if
+Deletes one demonstration's account (`--scenario new_user` by default, or
+`returning_user`) -- that one account's rows and nothing else -- and creates it again
+at the start of its presented journey. The other demonstration is not touched. Safe to run repeatedly. It refuses to act if
 the demo email belongs to an ordinary (non-demo) account.
 
 Existing demo session tokens stop working; sign in again.
@@ -21,13 +22,15 @@ def main(argv: list[str] | None = None) -> int:
     from backend.app.v2.demo import replay
 
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--scenario", choices=["new_user", "returning_user"], default="new_user",
+                        help="which demonstration (default: new_user)")
     parser.add_argument("--to", default=None, help="advance to this checkpoint after resetting")
     args = parser.parse_args(argv)
 
     app, ctx = build_app()
-    state = run_guarded(lambda: replay.reset(app, ctx))
+    state = run_guarded(lambda: replay.reset(app, ctx, args.scenario))
     if args.to:
-        user_id = replay._demo_user_id(ctx)
+        user_id = replay._demo_user_id(ctx, args.scenario)
         state = run_guarded(lambda: replay.advance(app, ctx, user_id, to=args.to))
     print("demo reset")
     describe(state)

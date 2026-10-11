@@ -106,6 +106,10 @@ class V2Settings:
     demo_password: str | None = None
     #: The research-data bundle to replay. Never committed; see DEMO_HANDOFF_HET.md.
     demo_bundle_path: pathlib.Path = pathlib.Path("data/local/demo/cgmacros_demo_bundle.json")
+    #: The optional returning-user demonstration: a second, separate demo account.
+    demo_returning_email: str = "demo-returning@glucotwin.example"
+    demo_returning_bundle_path: pathlib.Path = pathlib.Path(
+        "data/local/demo/cgmacros_returning_user_bundle.json")
 
     @property
     def vision_configured(self) -> bool:
@@ -147,6 +151,9 @@ def load_v2_settings() -> V2Settings:
         demo_password=_env("GLUCOTWIN_DEMO_PASSWORD"),
         demo_bundle_path=pathlib.Path(
             _env("GLUCOTWIN_DEMO_BUNDLE", "data/local/demo/cgmacros_demo_bundle.json")),
+        demo_returning_email=_env("GLUCOTWIN_DEMO_RETURNING_EMAIL", "demo-returning@glucotwin.example"),
+        demo_returning_bundle_path=pathlib.Path(_env(
+            "GLUCOTWIN_DEMO_RETURNING_BUNDLE", "data/local/demo/cgmacros_returning_user_bundle.json")),
         dexcom=OAuthClient(_env("DEXCOM_CLIENT_ID"), _env("DEXCOM_CLIENT_SECRET")),
         dexcom_environment=_env("DEXCOM_ENVIRONMENT", "sandbox"),
         fitbit=OAuthClient(_env("FITBIT_CLIENT_ID"), _env("FITBIT_CLIENT_SECRET")),

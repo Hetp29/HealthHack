@@ -130,6 +130,26 @@ def bundle_from_payload(payload: dict) -> Bundle:
     )
 
 
+#: The two demonstrations. Each has its own account, bundle and manifest, so neither
+#: can read, advance or reset the other.
+MODES = {
+    "new_user": {
+        "label": "NEW USER", "manifest": MANIFEST_PATH,
+        "email_setting": "demo_email", "bundle_setting": "demo_bundle_path",
+        "select_hint": "python -m scripts.demo_select",
+    },
+    "returning_user": {
+        "label": "RETURNING USER", "manifest": MANIFEST_PATH.with_name("manifest_returning_user.json"),
+        "email_setting": "demo_returning_email", "bundle_setting": "demo_returning_bundle_path",
+        "select_hint": "python -m scripts.demo_select --scenario returning_user",
+    },
+}
+
+
+def manifest_path(mode: str) -> pathlib.Path:
+    return MODES[mode]["manifest"]
+
+
 def load_manifest(path: pathlib.Path = MANIFEST_PATH) -> dict:
     if not path.exists():
         raise BundleError(f"demo manifest not found at {path}; run `python -m scripts.demo_select`")
@@ -205,11 +225,16 @@ def assess_meals(cgm_times: list[dt.datetime], meals: list[tuple[str, dt.datetim
     return out
 
 
-def expected_admissible(assessed: list[dict], index: int) -> int:
-    """Eligible earlier meals whose window ended STRICTLY before meal `index`."""
+def expected_admissible(assessed: list[dict], index: int, *, lookback: dt.timedelta | None = None) -> int:
+    """Eligible earlier meals whose window ended STRICTLY before meal `index`.
+
+    With `lookback`, also only meals no older than that -- the engine is shown at most
+    eight days of history, so a long recording's earliest meals age out.
+    """
     at = assessed[index]["occurred_at"]
     return sum(1 for a in assessed[:index]
-               if a["expected_eligible"] and a["occurred_at"] + WINDOW < at)
+               if a["expected_eligible"] and a["occurred_at"] + WINDOW < at
+               and (lookback is None or a["occurred_at"] >= at - lookback))
 
 
 def plan_window(assessed: list[dict]) -> dict | None:

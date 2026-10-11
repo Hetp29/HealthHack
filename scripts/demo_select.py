@@ -63,13 +63,169 @@ def fit_cutoffs(repository) -> dict[str, dt.datetime]:
     return cutoffs
 
 
+def build_returning_user(args) -> int:
+    """Build the optional returning-user bundle for the ALREADY selected participant.
+
+    Nothing is re-selected. It takes the new-user scenario's participant and its nine
+    presented meals, and adds every meal the recording holds before them -- all of
+    them, in order, none chosen or dropped by hand. Those earlier meals are replayed
+    through the ordinary forecast and outcome workflow at setup, so the presented
+    journey begins with a real personal history.
+    """
+    from backend.app.v2.demo import replay, source
+    from data.storage.repository import SqliteDataRepository
+
+    base = source.load_manifest(source.manifest_path("new_user"))
+    participant = base["source"]["participant"]
+    path = pathlib.Path(args.warehouse.replace("sqlite:///", ""))
+    if not path.exists():
+        fail(f"the CGMacros research warehouse is not at {path}. No dataset is downloaded and none is substituted.")
+    history = SqliteDataRepository(args.warehouse).get_history(participant)
+    display_ids = [m["source_meal_id"] for m in base["meals"]]
+    final_at = dt.datetime.fromisoformat(base["window"]["final_meal"])
+    meals = [m for m in history.meals if m.timestamp <= final_at]
+    if [m.meal_id for m in meals[-len(display_ids):]] != display_ids:
+        fail("the warehouse meals do not end with the new-user scenario's presented meals")
+    rows = [(m.meal_id, m.timestamp, None if not m.has_complete_macros else
+             {k: getattr(m, k) for k in source.MACROS}) for m in meals]
+    times = [p.timestamp for p in history.cgm]
+    assessed = source.assess_meals(times, rows, [m.timestamp for m in history.meals])
+    display_from = len(meals) - len(display_ids) + 1
+    backfill = assessed[:display_from - 1]
+    unloggable = [a["source_meal_id"] for a in backfill if not a["loggable"]]
+    if unloggable:
+        fail(f"earlier meals cannot be logged (invalid macros): {unloggable}; nothing is invented to replace them")
+
+    def admissible(index: int) -> int:
+        return source.expected_admissible(assessed, index, lookback=source.LOOKBACK)
+
+    eligible_prior = admissible(display_from - 1)
+    print(f"{participant}: {len(backfill)} meals precede the presented journey; "
+          f"{sum(a['expected_eligible'] for a in backfill)} eligible; "
+          f"{eligible_prior} admissible at the first presented meal")
+    if eligible_prior < source.RETRIEVAL_MIN_HISTORY:
+        fail(f"only {eligible_prior} authentic prior meals are admissible; a returning-user "
+             "demonstration is not supported by this data and none will be manufactured")
+
+    activation = next(i for i in range(len(assessed))
+                      if assessed[i]["forecastable"] and admissible(i) >= source.RETRIEVAL_MIN_HISTORY)
+    fit_note = ("These earlier meals precede the participant's Day-8 fit cutoff, so they WERE in "
+                "the frozen artifact's fit: forecasts shown for them are in-sample and are not "
+                "evidence of accuracy. The presented meals are after the cutoff and were not.")
+    payload = source.make_payload(
+        scenario_id="cgmacros-returning-user-replay-v1", data_class="research_dataset",
+        timezone="UTC", device_id="dexcom-g6-pro",
+        source={
+            "dataset": "CGMacros v1.0.0", "participant": participant,
+            "sensor": "Dexcom G6 Pro (primary series)",
+            "time_basis": "Date-shifted participant-local wall-clock time carried under a UTC label; "
+                          "the demo account's timezone is UTC, so the clock is unchanged.",
+            "fit_cutoff": base["fit_relationship"]["fit_cutoff"],
+            "plan": {"display_from_meal": display_from, "final_meal": len(meals),
+                     "activation_meal": activation + 1,
+                     "alert_threshold_mg_dl": base["alert"]["threshold_mg_dl"],
+                     "backfill_fit_note": fit_note},
+        },
+        cgm=[(p.timestamp, p.glucose_mg_dl) for p in history.cgm if p.timestamp <= final_at + TAIL],
+        meals=[(a["source_meal_id"], a["occurred_at"], rows[i][2]) for i, a in enumerate(assessed)],
+    )
+    bundle = source.bundle_from_payload(payload)
+
+    print("running a verification replay (about 40 forecasts)...", flush=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        app, ctx = build_app(app_db_url=f"sqlite:///{tmp}/select.db", image_dir=pathlib.Path(tmp) / "img",
+                             demo_password="selection-run-only", bundle={"returning_user": bundle},
+                             create_schema=True)
+        initial = run_guarded(lambda: replay.initialize(app, ctx, "returning_user"))
+        user_id = replay._demo_user_id(ctx, "returning_user")
+        final = run_guarded(lambda: replay.advance(app, ctx, user_id, to="end"))
+    forecasts = [c for c in final["checkpoints"] if c["kind"] == "meal_forecast"]
+    refused = [c["id"] for c in forecasts if c["result"].get("forecast") != "created"]
+    if refused:
+        fail(f"forecasts were refused for {refused}; the plan does not hold")
+    observed = [c["result"]["admissible_prior_meals"] for c in forecasts]
+    planned = [admissible(i) for i in range(len(assessed))]
+    if observed != planned:
+        fail(f"the application's admissible counts {observed} differ from the plan {planned}")
+    first = forecasts[display_from - 1]["result"]
+    if not first["retrieval_active"] or initial["next_checkpoint"]["id"] != f"meal_{display_from:02d}_forecast":
+        fail("retrieval is not active at the first presented meal")
+
+    out = pathlib.Path(args.out or "data/local/demo/cgmacros_returning_user_bundle.json")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(payload, sort_keys=True) + "\n")
+    reasons: dict[str, int] = {}
+    for a in backfill:
+        for reason in a["expected_ineligibility_reasons"]:
+            reasons[reason] = reasons.get(reason, 0) + 1
+    manifest = {
+        "scenario_id": bundle.scenario_id, "mode": "returning_user",
+        "bundle_sha256": bundle.sha256, "bundle_schema": source.SCHEMA,
+        "bundle_default_path": str(out), "data_class": "research_dataset",
+        "source": {"dataset": "CGMacros v1.0.0", "participant": participant,
+                   "sensor": "Dexcom G6 Pro (primary series)",
+                   "warehouse": "data/local/cgmacros_v2.db (local, not committed)"},
+        "selection": {
+            "rule": "Same participant and same presented meals as the new-user scenario. The "
+                    "backfill is EVERY meal the recording holds before them, in order; none is "
+                    "chosen, dropped or altered.",
+            "inputs_consulted": "timestamps and macro completeness only",
+            "inputs_not_consulted": ["glucose values", "forecasts", "forecast errors"],
+        },
+        "fit_relationship": {
+            "fit_cutoff": base["fit_relationship"]["fit_cutoff"],
+            "statement": fit_note + " Neither set is independent validation.",
+        },
+        "backfill": {
+            "meals_found": len(backfill),
+            "eligible": sum(a["expected_eligible"] for a in backfill),
+            "ineligible": sum(not a["expected_eligible"] for a in backfill),
+            "ineligibility_reasons": reasons,
+            "unloggable": 0,
+            "admissible_at_first_presented_meal": eligible_prior,
+            "lookback_days": source.LOOKBACK.days,
+        },
+        "window": {
+            "replay_start": bundle.start.isoformat(), "first_meal": meals[0].timestamp.isoformat(),
+            "first_presented_meal": assessed[display_from - 1]["occurred_at"].isoformat(),
+            "final_meal": final_at.isoformat(), "last_reading": bundle.end.isoformat(),
+            "readings": len(bundle.cgm), "meals": len(bundle.meals),
+        },
+        "meals": [{
+            "number": i + 1, "phase": "backfill" if i + 1 < display_from else "display",
+            "source_meal_id": a["source_meal_id"], "occurred_at": a["occurred_at"].isoformat(),
+            "readings_in_window": a["readings_in_window"], "expected_eligible": a["expected_eligible"],
+            "expected_ineligibility_reasons": a["expected_ineligibility_reasons"],
+            "expected_admissible_prior_meals": planned[i],
+        } for i, a in enumerate(assessed)],
+        "plan": {"display_from_meal": display_from, "final_meal": len(meals),
+                 "activation_meal": activation + 1,
+                 "retrieval_active_at_first_presented_meal": True,
+                 "verified_by_replay": True},
+        "alert": {"threshold_mg_dl": base["alert"]["threshold_mg_dl"],
+                  "label": "user-selected sample setting, same as the new-user scenario"},
+        "excluded_from_git": ["the bundle file (research data)", "the warehouse", "the model artifact"],
+    }
+    source.manifest_path("returning_user").write_text(json.dumps(manifest, indent=2) + "\n")
+    print(f"meals              {len(bundle.meals)} ({len(backfill)} backfill + {len(display_ids)} presented)")
+    print(f"first presented    meal {display_from}: {planned[display_from - 1]} admissible prior meals, retrieval active")
+    print(f"readings           {len(bundle.cgm)}")
+    print(f"bundle             {out}  sha256 {bundle.sha256}")
+    print(f"manifest           {source.manifest_path('returning_user').name}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     from backend.app.v2.demo import replay, source
 
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--warehouse", default=DEFAULT_WAREHOUSE)
-    parser.add_argument("--out", default="data/local/demo/cgmacros_demo_bundle.json")
+    parser.add_argument("--scenario", choices=sorted(source.MODES), default="new_user")
+    parser.add_argument("--out", default=None)
     args = parser.parse_args(argv)
+    if args.scenario == "returning_user":
+        return build_returning_user(args)
+    args.out = args.out or "data/local/demo/cgmacros_demo_bundle.json"
 
     path = pathlib.Path(args.warehouse.replace("sqlite:///", ""))
     if not path.exists():
