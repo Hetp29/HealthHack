@@ -148,6 +148,6 @@ belongs to what the participant actually ate; the outcome endpoint is not even c
 * Push and email notifications do not exist; only in-app alerts are offered.
 * Recognising a demonstration account costs one `GET /demo/replay` that returns 403 for
   ordinary accounts on a demo-mode server (visible in the browser console).
-* A hand-entered meal in a replay is still scored by the backend against the recording
-  and may count towards personal history there; the frontend only declines to show it.
+* (Resolved in the release, D-019) A hand-entered meal in a replay is now isolated on the
+  server: forecast, never scored, never personal history.
 * Insights requests one outcome per forecast meal (32 requests for the returning demo).

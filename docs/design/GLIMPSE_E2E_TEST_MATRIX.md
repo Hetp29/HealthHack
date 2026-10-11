@@ -1,5 +1,25 @@
 # GLIMPSE end-to-end test matrix
 
+## Release run (branch `release-integration`)
+
+The browser journeys now live in the repository under `e2e/` (`npm run test:e2e`, see
+`e2e/README.md`). They were run in headless Google Chrome against the integrated
+backend in demo mode with the frozen fs-1.3 artifact (integrity verified by the server).
+
+| Journey | Result |
+|---|---|
+| `new-account` — register, separate consents, onboarding, dashboard, refused-forecast explanation, consent change in Settings, sign out/in, account deletion | 16/16 |
+| `demo-new-user` — four simulated sources, genuine replay to active personal history (exactly five meals), hypothetical-meal isolation, photo upload without analysis, Taken and Skip with persistence, alerts (4 raised by the server, acknowledged), redirects, phone layout on 11 screens, session expiry | 18/18 |
+| `demo-returning` — history in use, forecast uses it, earlier outcomes with provenance, reset | 5/5 |
+| `photo-analysis` — one real OpenAI analysis (6.4 s), edit, confirm, forecast; exactly one request | 5/5 |
+| `demo-new-user` again with the backend started **without** an OpenAI key | 18/18 (Analyze not offered; manual path works) |
+
+Not covered by a browser journey: CSV import, manual glucose entry, snooze, "+30
+minutes", timezone edit, real provider OAuth (unavailable anywhere), Safari/Firefox,
+assistive technology. PostgreSQL and Docker were not available on the release machine.
+
+The sections below are the earlier redesign-branch run, kept for the record.
+
 Run on 2026-10-11 in headless Google Chrome (Playwright driving the installed browser)
 against `uvicorn backend.app.v2.asgi:app` in demo mode with a scratch SQLite database,
 the frozen fs-1.3 artifact (integrity verified by the server) and both demonstration

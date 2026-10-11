@@ -67,3 +67,16 @@ was exercised in Chrome against the running v2 backend (see the E2E matrix).
 
 Rows marked "—" are implemented against real endpoints and type-checked but were not
 exercised in the recorded browser runs.
+
+## Release update
+
+Now exercised by the repository's browser journeys (`e2e/`): all four **Simulate
+connection** buttons, **Save photo, enter values myself**, a due dose's **Taken** and
+**Skip** (with a reload to confirm persistence), alert **Acknowledge**, the optional
+consent switch in Settings, **Delete my account**, and the refused-forecast recovery
+on Log a meal. The outcome of a meal added to a demonstration is now decided by the
+server (`not_applicable`), not by the frontend.
+
+Still implemented but not browser-exercised: CSV import, Add reading, Snooze, +30
+minutes, Save profile, withdrawing the required consent, medication reminders switch,
+Move to previous, Start over, real-provider Connect/Disconnect (unreachable locally).
