@@ -1,0 +1,77 @@
+{
+  "request": "GET /api/v2/medication-education",
+  "status": 200,
+  "body": {
+    "content_version": "2026-10-10.draft1",
+    "review_status": "not_clinically_reviewed",
+    "limitation": "We do not have a validated individualized medication-effect forecast. This is general information about a medication class, not advice about your treatment. Do not start, stop or change any medication or dose based on it. Talk to the clinician who prescribes your medication.",
+    "individualized_effect_forecast_available": false,
+    "entries": [
+      {
+        "medication_class": "metformin",
+        "title": "Metformin",
+        "summary": "Lowers blood glucose mainly by reducing the amount of glucose the liver releases and by improving the body's response to insulin. Used on its own it does not usually cause low blood glucose.",
+        "hypoglycemia_note": "Low blood glucose is uncommon with metformin alone; the risk depends on what else is taken with it.",
+        "sources": [
+          {
+            "publisher": "MedlinePlus, U.S. National Library of Medicine",
+            "title": "Metformin",
+            "url": "https://medlineplus.gov/druginfo/meds/a696005.html"
+          }
+        ]
+      },
+      {
+        "medication_class": "insulin",
+        "title": "Insulin",
+        "summary": "Replaces or supplements the body's own insulin and lowers blood glucose. Types differ in how quickly they start and how long they act.",
+        "hypoglycemia_note": "Insulin can cause low blood glucose. Timing and amount relative to food and activity are set by the prescriber.",
+        "sources": [
+          {
+            "publisher": "MedlinePlus, U.S. National Library of Medicine",
+            "title": "Insulin Human Injection",
+            "url": "https://medlineplus.gov/druginfo/meds/a682611.html"
+          }
+        ]
+      },
+      {
+        "medication_class": "glp1_receptor_agonist",
+        "title": "GLP-1 receptor agonists",
+        "summary": "Help the pancreas release insulin when blood glucose is high, reduce glucagon, and slow how quickly the stomach empties, which can change how fast glucose rises after a meal.",
+        "hypoglycemia_note": "Low blood glucose is more likely when combined with insulin or a sulfonylurea.",
+        "sources": [
+          {
+            "publisher": "MedlinePlus, U.S. National Library of Medicine",
+            "title": "Semaglutide Injection",
+            "url": "https://medlineplus.gov/druginfo/meds/a618008.html"
+          }
+        ]
+      },
+      {
+        "medication_class": "sulfonylurea",
+        "title": "Sulfonylureas",
+        "summary": "Lower blood glucose by causing the pancreas to release more insulin.",
+        "hypoglycemia_note": "Can cause low blood glucose, particularly when meals are delayed or skipped.",
+        "sources": [
+          {
+            "publisher": "MedlinePlus, U.S. National Library of Medicine",
+            "title": "Glipizide",
+            "url": "https://medlineplus.gov/druginfo/meds/a684060.html"
+          }
+        ]
+      },
+      {
+        "medication_class": "sglt2_inhibitor",
+        "title": "SGLT2 inhibitors",
+        "summary": "Lower blood glucose by causing the kidneys to remove more glucose in the urine.",
+        "hypoglycemia_note": "Low blood glucose is uncommon alone; the risk depends on what else is taken with it.",
+        "sources": [
+          {
+            "publisher": "MedlinePlus, U.S. National Library of Medicine",
+            "title": "Empagliflozin",
+            "url": "https://medlineplus.gov/druginfo/meds/a614043.html"
+          }
+        ]
+      }
+    ]
+  }
+}

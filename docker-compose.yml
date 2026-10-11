@@ -17,8 +17,13 @@ services:
     environment:
       GLUCOTWIN_CONTRACT_VERSION: "1.0.0"
       GLUCOTWIN_DATA_BACKEND: "synthetic_dev"
-      GLUCOTWIN_MODEL_ARTIFACT: "ml/artifacts/model.joblib"
-      GLUCOTWIN_METRICS_PATH: "ml/artifacts/metrics.json"
+      # The frozen fs-1.3 artifact baked into the image. Never a trained-in-image or
+      # synthetic model: the image build and the container start both verify this.
+      GLUCOTWIN_MODEL_ARTIFACT: "ml/artifacts_cgmacros_fs13/model.joblib"
+      GLUCOTWIN_METRICS_PATH: "ml/artifacts_cgmacros_fs13/metrics.json"
+      GLUCOTWIN_EXPECTED_MODEL_SHA256: "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe"
+      # Local single-node only. Run `alembic upgrade head` against this before first use.
+      GLUCOTWIN_APP_DB_URL: "sqlite:////app/var/glucotwin_app.db"
       # Explicit origins, never a wildcard. The service logs a warning on "*".
       GLUCOTWIN_CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
       GLUCOTWIN_LOG_LEVEL: "INFO"

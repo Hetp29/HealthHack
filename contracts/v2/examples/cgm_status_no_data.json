@@ -1,0 +1,24 @@
+{
+  "request": "GET /api/v2/cgm/status",
+  "status": 200,
+  "body": {
+    "as_of": "2026-09-20T16:00:00Z",
+    "freshness": "no_data",
+    "latest": null,
+    "latest_age_minutes": null,
+    "forecast_ready": false,
+    "forecast_requirement": "A forecast needs a CGM reading no more than 15 minutes before the meal time.",
+    "model_series": {
+      "device": null,
+      "other_devices": [],
+      "multi_device_overlap": false
+    },
+    "last_24h": {
+      "readings": 0,
+      "median_interval_minutes": null,
+      "coverage": null,
+      "gaps": []
+    },
+    "data_class": null
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "request": "GET /api/v2/notifications",
+  "status": 200,
+  "body": {
+    "notifications": []
+  }
+}

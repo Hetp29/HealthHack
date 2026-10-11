@@ -1,0 +1,97 @@
+{
+  "request": "GET /api/v2/cgm/readings",
+  "status": 200,
+  "body": {
+    "start": "2026-09-20T15:45:00Z",
+    "end": "2026-09-20T16:00:00Z",
+    "unit": "mg/dL",
+    "truncated": false,
+    "readings": [
+      {
+        "observation_id": "glu_0000000000000000000000000000004f",
+        "observed_at": "2026-09-20T15:45:00Z",
+        "received_at": "2026-09-20T16:00:00Z",
+        "glucose_mg_dl": 94.5,
+        "glucose": 94.5,
+        "unit": "mg/dL",
+        "source": {
+          "value": 94.5,
+          "unit": "mg/dL",
+          "conversion": "none",
+          "timestamp": "2026-09-20T15:45:00+00:00",
+          "timezone": null
+        },
+        "provider": "demo",
+        "device_id": "demo-sensor",
+        "record_kind": "cgm",
+        "quality_flags": [],
+        "data_class": "demo",
+        "corrected": false
+      },
+      {
+        "observation_id": "glu_00000000000000000000000000000050",
+        "observed_at": "2026-09-20T15:50:00Z",
+        "received_at": "2026-09-20T16:00:00Z",
+        "glucose_mg_dl": 94.4,
+        "glucose": 94.4,
+        "unit": "mg/dL",
+        "source": {
+          "value": 94.4,
+          "unit": "mg/dL",
+          "conversion": "none",
+          "timestamp": "2026-09-20T15:50:00+00:00",
+          "timezone": null
+        },
+        "provider": "demo",
+        "device_id": "demo-sensor",
+        "record_kind": "cgm",
+        "quality_flags": [],
+        "data_class": "demo",
+        "corrected": false
+      },
+      {
+        "observation_id": "glu_00000000000000000000000000000051",
+        "observed_at": "2026-09-20T15:55:00Z",
+        "received_at": "2026-09-20T16:00:00Z",
+        "glucose_mg_dl": 94.3,
+        "glucose": 94.3,
+        "unit": "mg/dL",
+        "source": {
+          "value": 94.3,
+          "unit": "mg/dL",
+          "conversion": "none",
+          "timestamp": "2026-09-20T15:55:00+00:00",
+          "timezone": null
+        },
+        "provider": "demo",
+        "device_id": "demo-sensor",
+        "record_kind": "cgm",
+        "quality_flags": [],
+        "data_class": "demo",
+        "corrected": false
+      },
+      {
+        "observation_id": "glu_00000000000000000000000000000052",
+        "observed_at": "2026-09-20T16:00:00Z",
+        "received_at": "2026-09-20T16:00:00Z",
+        "glucose_mg_dl": 94.2,
+        "glucose": 94.2,
+        "unit": "mg/dL",
+        "source": {
+          "value": 94.2,
+          "unit": "mg/dL",
+          "conversion": "none",
+          "timestamp": "2026-09-20T16:00:00+00:00",
+          "timezone": null
+        },
+        "provider": "demo",
+        "device_id": "demo-sensor",
+        "record_kind": "cgm",
+        "quality_flags": [],
+        "data_class": "demo",
+        "corrected": false
+      }
+    ],
+    "gaps": []
+  }
+}

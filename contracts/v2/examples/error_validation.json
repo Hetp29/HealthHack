@@ -1,0 +1,33 @@
+{
+  "request": "PATCH /api/v2/meals/meal_00000000000000000000000000000053/confirm",
+  "status": 422,
+  "body": {
+    "code": "invalid_request",
+    "message": "The request did not satisfy the v2 contract.",
+    "request_id": "req_00000000000000000000",
+    "details": {
+      "errors": [
+        {
+          "field": "carbs_g",
+          "message": "Input should be greater than or equal to 0",
+          "type": "greater_than_equal"
+        },
+        {
+          "field": "fat_g",
+          "message": "Field required",
+          "type": "missing"
+        },
+        {
+          "field": "fiber_g",
+          "message": "Field required",
+          "type": "missing"
+        },
+        {
+          "field": "calories_kcal",
+          "message": "Field required",
+          "type": "missing"
+        }
+      ]
+    }
+  }
+}

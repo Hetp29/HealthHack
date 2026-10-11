@@ -1,0 +1,190 @@
+{
+  "request": "GET /api/v2/meals/meal_00000000000000000000000000000053/outcome",
+  "status": 200,
+  "body": {
+    "episode_id": "epi_00000000000000000000000000000059",
+    "prediction_id": "prd_00000000000000000000000000000058",
+    "meal_id": "meal_00000000000000000000000000000053",
+    "status": "scored",
+    "window_end_at": "2026-09-20T18:00:00Z",
+    "scoring_not_before": "2026-09-20T18:30:00Z",
+    "scored_at": "2026-09-20T19:30:00Z",
+    "score_revision": 1,
+    "eligible_for_personalization": true,
+    "ineligibility_reasons": [],
+    "coverage": {
+      "readings_in_window": 24,
+      "required_readings": 20,
+      "horizons_observed": [
+        30,
+        60,
+        90,
+        120
+      ],
+      "horizons_missing": [],
+      "max_gap_minutes": 5.0,
+      "device": {
+        "provider": "demo",
+        "device_id": "demo-sensor",
+        "data_class": "demo"
+      },
+      "intervening_meal_ids": []
+    },
+    "observed": {
+      "baseline_mg_dl": 94.2,
+      "curve": [
+        {
+          "minute": 0,
+          "glucose_mg_dl": 94.2
+        },
+        {
+          "minute": 5,
+          "glucose_mg_dl": 99.6
+        },
+        {
+          "minute": 10,
+          "glucose_mg_dl": 102.3
+        },
+        {
+          "minute": 15,
+          "glucose_mg_dl": 106.0
+        },
+        {
+          "minute": 20,
+          "glucose_mg_dl": 110.5
+        },
+        {
+          "minute": 25,
+          "glucose_mg_dl": 115.8
+        },
+        {
+          "minute": 30,
+          "glucose_mg_dl": 121.6
+        },
+        {
+          "minute": 35,
+          "glucose_mg_dl": 127.6
+        },
+        {
+          "minute": 40,
+          "glucose_mg_dl": 133.1
+        },
+        {
+          "minute": 45,
+          "glucose_mg_dl": 137.5
+        },
+        {
+          "minute": 50,
+          "glucose_mg_dl": 140.4
+        },
+        {
+          "minute": 55,
+          "glucose_mg_dl": 141.4
+        },
+        {
+          "minute": 60,
+          "glucose_mg_dl": 140.3
+        },
+        {
+          "minute": 65,
+          "glucose_mg_dl": 137.3
+        },
+        {
+          "minute": 70,
+          "glucose_mg_dl": 132.7
+        },
+        {
+          "minute": 75,
+          "glucose_mg_dl": 127.1
+        },
+        {
+          "minute": 80,
+          "glucose_mg_dl": 121.1
+        },
+        {
+          "minute": 85,
+          "glucose_mg_dl": 115.1
+        },
+        {
+          "minute": 90,
+          "glucose_mg_dl": 109.7
+        },
+        {
+          "minute": 95,
+          "glucose_mg_dl": 105.1
+        },
+        {
+          "minute": 100,
+          "glucose_mg_dl": 101.4
+        },
+        {
+          "minute": 105,
+          "glucose_mg_dl": 98.5
+        },
+        {
+          "minute": 110,
+          "glucose_mg_dl": 96.5
+        },
+        {
+          "minute": 115,
+          "glucose_mg_dl": 95.1
+        },
+        {
+          "minute": 120,
+          "glucose_mg_dl": 94.2
+        }
+      ],
+      "peak_mg_dl": 141.4,
+      "peak_delta_mg_dl": 47.2,
+      "time_to_peak_minutes": 55
+    },
+    "errors": {
+      "by_horizon": {
+        "30": {
+          "predicted_mg_dl": 101.0,
+          "observed_mg_dl": 121.6,
+          "error_mg_dl": -20.6
+        },
+        "60": {
+          "predicted_mg_dl": 128.1,
+          "observed_mg_dl": 140.3,
+          "error_mg_dl": -12.2
+        },
+        "90": {
+          "predicted_mg_dl": 124.9,
+          "observed_mg_dl": 109.7,
+          "error_mg_dl": 15.2
+        },
+        "120": {
+          "predicted_mg_dl": 118.8,
+          "observed_mg_dl": 94.2,
+          "error_mg_dl": 24.6
+        }
+      },
+      "sign_convention": "error = predicted - observed",
+      "mae_mg_dl": 18.15,
+      "rmse_mg_dl": 18.77,
+      "bias_mg_dl": 1.75,
+      "peak_error_mg_dl": -13.3,
+      "time_to_peak_error_minutes": 5
+    },
+    "predicted": {
+      "glucose_at_minutes": {
+        "30": 101.0,
+        "60": 128.1,
+        "90": 124.9,
+        "120": 118.8
+      },
+      "metrics": {
+        "peak_mg_dl": 128.1,
+        "peak_delta_mg_dl": 33.9,
+        "time_to_peak_minutes": 60,
+        "incremental_auc_mg_dl_min": 2510.7
+      }
+    },
+    "units": {
+      "glucose": "mg/dL",
+      "time": "minutes"
+    }
+  }
+}

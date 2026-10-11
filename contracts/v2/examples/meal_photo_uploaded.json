@@ -1,0 +1,25 @@
+{
+  "request": "POST /api/v2/meals/images",
+  "status": 201,
+  "body": {
+    "meal_id": "meal_00000000000000000000000000000053",
+    "occurred_at": "2026-09-20T16:00:00Z",
+    "entry_method": "photo",
+    "status": "draft",
+    "note": null,
+    "consumption_status": "as_logged",
+    "photo": {
+      "photo_id": "pho_00000000000000000000000000000054",
+      "content_type": "image/jpeg",
+      "width": 800,
+      "height": 600,
+      "byte_size": 3137,
+      "url": "/api/v2/meals/meal_00000000000000000000000000000053/image"
+    },
+    "estimate": null,
+    "confirmation": null,
+    "prediction_id": null,
+    "created_at": "2026-09-20T16:00:00Z",
+    "updated_at": "2026-09-20T16:00:00Z"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "request": "PUT /api/v2/consents/necessary_processing",
+  "status": 200,
+  "body": {
+    "consents": [
+      {
+        "consent_type": "necessary_processing",
+        "state": "granted",
+        "recorded_at": "2026-09-20T16:00:00Z",
+        "policy_version": "2026-10-10"
+      },
+      {
+        "consent_type": "personalization_history",
+        "state": "not_recorded",
+        "recorded_at": null,
+        "policy_version": null
+      }
+    ],
+    "processing_allowed": true
+  }
+}
