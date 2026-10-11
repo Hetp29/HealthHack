@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { DataMode, Participant } from "@/types/contracts";
-import { getOnboarding, getStatus, hasV2Session } from "@/services/v2Client";
+import { getOnboarding, getStatus, hasV2Session, logout } from "@/services/v2Client";
 import { ApiError } from "@/services/apiClient";
 
 export type Connectivity = "checking" | "connected" | "model_unavailable" | "unavailable" | "fixture";
@@ -21,6 +21,7 @@ interface AppState {
   isOnboarded: boolean;
   authenticate: () => void;
   completeOnboarding: () => void;
+  signOut: () => Promise<void>;
 }
 
 const Ctx = createContext<AppState | null>(null);
@@ -45,6 +46,13 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
 
   const completeOnboarding = useCallback(() => {
     setIsOnboarded(true);
+  }, []);
+
+  const signOut = useCallback(async () => {
+    await logout();
+    setIsAuthenticated(false);
+    setIsOnboarded(false);
+    setDataSource(null);
   }, []);
 
   useEffect(() => {
@@ -109,8 +117,9 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
       isOnboarded,
       authenticate,
       completeOnboarding,
+      signOut,
     }),
-    [mode, setMode, connectivity, dataSource, participants, selectedId, selected, isAuthenticated, isOnboarded, authenticate, completeOnboarding],
+    [mode, setMode, connectivity, dataSource, participants, selectedId, selected, isAuthenticated, isOnboarded, authenticate, completeOnboarding, signOut],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

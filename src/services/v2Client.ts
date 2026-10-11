@@ -114,6 +114,20 @@ export async function login(email: string, password: string) {
   return result;
 }
 
+/**
+ * Sign out: revoke the session on the server, then always forget it locally — even if the
+ * server is unreachable or the session had already expired, the browser must end signed out.
+ */
+export async function logout() {
+  try {
+    if (token()) await request<void>("/auth/logout", { method: "POST" });
+  } catch {
+    /* Best effort: the local session is cleared below regardless. */
+  } finally {
+    clearV2Session();
+  }
+}
+
 export async function register(email: string, password: string, displayName: string) {
   const result = await request<AuthResponse>("/auth/register", { method: "POST", body: JSON.stringify({ email, password, display_name: displayName, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }) });
   sessionStorage.setItem(TOKEN_KEY, result.session.token);

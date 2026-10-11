@@ -1,6 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import { FlaskConical, Info } from "lucide-react";
-import type { ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { FlaskConical, Info, LogOut } from "lucide-react";
+import { useState, type ReactNode } from "react";
 import { useAppState, type Connectivity } from "@/state/AppState";
 import { fmtSource } from "@/lib/formatting";
 import { cn } from "@/lib/utils";
@@ -40,6 +40,32 @@ const tabs = [
 /** User-facing names for the two data modes (internal values stay "live" / "fixture"). */
 const MODE_LABEL = { live: "Real data", fixture: "Demo data" } as const;
 
+function SignOutButton() {
+  const { isAuthenticated, signOut } = useAppState();
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  if (!isAuthenticated) return null;
+  return (
+    <button
+      type="button"
+      disabled={busy}
+      onClick={async () => {
+        setBusy(true);
+        try {
+          await signOut();
+        } finally {
+          setBusy(false);
+        }
+        void navigate({ to: "/auth" });
+      }}
+      className="inline-flex items-center gap-1.5 rounded-full border bg-card px-2.5 py-1 font-medium text-subtle transition-colors duration-150 hover:border-primary hover:text-foreground disabled:opacity-60"
+    >
+      <LogOut className="h-3.5 w-3.5" aria-hidden />
+      {busy ? "Signing out…" : "Sign out"}
+    </button>
+  );
+}
+
 function StatusCluster() {
   const { mode, setMode, connectivity, dataSource, recheck } = useAppState();
   const c = CONN[connectivity];
@@ -72,6 +98,7 @@ function StatusCluster() {
           </button>
         ))}
       </div>
+      <SignOutButton />
     </div>
   );
 }

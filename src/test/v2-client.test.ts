@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { advanceReplay, login, recordDose, uploadMealPhoto } from "@/services/v2Client";
+import { advanceReplay, hasV2Session, login, logout, recordDose, uploadMealPhoto } from "@/services/v2Client";
 
 describe("v2 API client", () => {
   beforeEach(() => {
@@ -48,5 +48,22 @@ describe("v2 API client", () => {
     expect(new Headers(request.headers).get("Authorization")).toBe("Bearer session-token");
     expect(new Headers(request.headers).get("Content-Type")).toBe("image/jpeg");
     expect(request.body).toBeInstanceOf(File);
+  });
+
+  it("signs out: revokes the session on the server and clears it locally", async () => {
+    sessionStorage.setItem("glimpse.v2.token", "session-token");
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await logout();
+    expect(fetchMock.mock.calls[0]?.[0]).toContain("/api/v2/auth/logout");
+    expect(new Headers((fetchMock.mock.calls[0]?.[1] as RequestInit).headers).get("Authorization")).toBe("Bearer session-token");
+    expect(hasV2Session()).toBe(false);
+  });
+
+  it("still clears the local session when the server is unreachable", async () => {
+    sessionStorage.setItem("glimpse.v2.token", "session-token");
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("network down")));
+    await logout();
+    expect(hasV2Session()).toBe(false);
   });
 });
