@@ -43,8 +43,14 @@ PROSPECTIVE_WINDOW = dt.timedelta(minutes=15)
 #: statement of what was actually done.
 _DATASET_CLOCK_CAVEAT = describe_time_basis(history.ENGINE_TIME_BASIS, None)
 LIVE_CLOCK_NOTE = (
-    "Timestamps were expressed on this account's local clock, using its UTC offset at "
-    "the meal time, so that time-of-day inputs match how the model was trained."
+    "Timestamps were expressed on this account's local clock, each using the UTC offset "
+    "in force in its timezone at that moment, so that time-of-day inputs match how the "
+    "model was trained."
+)
+OFFSET_CHANGE_NOTE = (
+    "This account's timezone changed its UTC offset (for example a daylight-saving "
+    "change) within the last 8 days. Only observations since that change were used, so "
+    "this forecast draws on a shorter history than usual."
 )
 UNCONFIRMED_NOTE = (
     "This forecast used an AI nutrition estimate that was not reviewed or confirmed. "
@@ -190,8 +196,9 @@ def predict_meal(conn: Connection, ctx: V2Context, user: dict, meal_id: str, *,
         for h in HORIZONS
     }
     cohort = {str(h): float(result.horizon_deltas[h]) - offsets[str(h)] for h in HORIZONS}
+    notes = [OFFSET_CHANGE_NOTE] if inputs.context["lookback_truncated_at_offset_change"] else []
     forecast = _contract_forecast(
-        result, meal["occurred_at"], [] if inputs_confirmed else [UNCONFIRMED_NOTE])
+        result, meal["occurred_at"], notes + ([] if inputs_confirmed else [UNCONFIRMED_NOTE]))
 
     snapshot_id, prediction_id = core.new_id("snp"), core.new_id("prd")
     kind = "prospective" if now <= meal["occurred_at"] + PROSPECTIVE_WINDOW else "retrospective"
@@ -292,6 +299,10 @@ def prediction_payload(conn: Connection, row: dict, *, replayed: bool = False,
             "cgm_device": cgm.get("device"),
             "multi_device_overlap": cgm.get("multi_device_overlap"),
             "missing_features": snapshot["missing_features"],
+            # True for up to 8 days after a UTC-offset change in the account's zone.
+            "history_truncated_at_offset_change": bool(
+                snapshot["context"].get("lookback_truncated_at_offset_change")),
+            "offset_change_at": snapshot["context"].get("offset_change_at"),
         },
         "snapshot": {"snapshot_id": row["snapshot_id"], "history_sha256": snapshot["history_sha256"]},
         "outcome_status": None if episode is None else episode["status"],

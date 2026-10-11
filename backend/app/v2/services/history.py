@@ -16,8 +16,10 @@ open is passed regardless: the engine's own strict rule (window end `<` query ti
 already makes it impossible to retrieve, and it is needed for the "time since
 previous meal" context.
 
-**The clock is presented the way the model was trained on it.** See
-`project_local_clock`.
+**The clock is presented the way the model was trained on it.** Each observation is
+converted to local wall-clock time with its IANA zone's offset at that observation's
+own instant, and the history never spans an offset change. See `project_local_clock`
+and `engine_lookback_start`. True UTC stays in storage.
 """
 
 from __future__ import annotations
@@ -51,11 +53,14 @@ WINDOW = dt.timedelta(minutes=HORIZON_WINDOW_MINUTES)
 ENGINE_TIME_BASIS = SOURCE_LOCAL_UNKNOWN_TZ
 
 
-def clock_offset(timezone_name: str, as_of: dt.datetime) -> dt.timedelta:
-    return ZoneInfo(timezone_name).utcoffset(as_of.astimezone(core.UTC)) or dt.timedelta(0)
+def clock_offset(timezone_name: str, instant: dt.datetime) -> dt.timedelta:
+    """The UTC offset in force in an IANA zone at one instant."""
+    # `astimezone` first: `ZoneInfo.utcoffset(x)` would read x as LOCAL wall time,
+    # which is wrong (and ambiguous) around a daylight-saving change.
+    return instant.astimezone(ZoneInfo(timezone_name)).utcoffset() or dt.timedelta(0)
 
 
-def project_local_clock(instant: dt.datetime, offset: dt.timedelta) -> dt.datetime:
+def project_local_clock(instant: dt.datetime, timezone_name: str) -> dt.datetime:
     """Re-express a UTC instant as local wall-clock time carried under a `+00:00` label.
 
     This is the representation fs-1.3 was trained on: CGMacros stores participant-local
@@ -63,13 +68,58 @@ def project_local_clock(instant: dt.datetime, offset: dt.timedelta) -> dt.dateti
     directly (`g_dev_from_night`, and the time-of-day part of each retrieval vector).
     Given genuine UTC they would read the UTC hour instead.
 
-    One fixed offset -- the account's UTC offset at the meal instant -- is applied to
-    the whole history. A uniform shift preserves every elapsed time and the ordering
-    exactly, so no slope, gap or window boundary changes. The only approximation is
-    the clock reading of observations on the far side of a DST change inside the
-    8-day lookback, which are off by one hour.
+    The conversion is **per observation**: each instant gets the offset its IANA zone
+    had at that instant, so an observation from before a daylight-saving change is
+    converted with the pre-change offset. Nothing is stored in this form -- the
+    database keeps true UTC; this exists only in the input handed to the engine.
     """
-    return instant.astimezone(core.UTC) + offset
+    return instant.astimezone(core.UTC) + clock_offset(timezone_name, instant)
+
+
+def last_offset_transition(timezone_name: str, start: dt.datetime, end: dt.datetime) -> dt.datetime | None:
+    """The most recent instant in `(start, end]` at which the zone's UTC offset
+    changed, to the second; `None` when the offset is constant over the interval.
+
+    The returned instant is the first one that has the NEW offset.
+    """
+    target = clock_offset(timezone_name, end)
+    step = dt.timedelta(hours=1)
+    probe = end
+    while probe > start:
+        earlier = max(probe - step, start)
+        if clock_offset(timezone_name, earlier) != target:
+            low, high = earlier, probe          # offset(low) != target == offset(high)
+            while high - low > dt.timedelta(seconds=1):
+                middle = low + (high - low) / 2
+                if clock_offset(timezone_name, middle) == target:
+                    high = middle
+                else:
+                    low = middle
+            return high.replace(microsecond=0) if clock_offset(
+                timezone_name, high.replace(microsecond=0)) == target else high
+        probe = earlier
+    return None
+
+
+def engine_lookback_start(timezone_name: str, as_of: dt.datetime) -> tuple[dt.datetime, dt.datetime | None]:
+    """Where the history shown to the engine begins: `(start, transition)`.
+
+    Normally `as_of - 8 days`. When the zone's offset changed inside that window, the
+    history starts AT the change instead.
+
+    Why: local wall-clock time is not a timeline across a daylight-saving change. An
+    hour repeats (fall back) or is skipped (spring forward), so per-observation local
+    times would be out of order or would mis-state every elapsed time that spans the
+    change -- and the frozen feature code assumes an ascending series and computes
+    slopes, gaps and response windows from timestamp differences. Showing the engine
+    only observations since the change keeps both properties exact: every timestamp it
+    sees has its own correct local clock reading, and every difference between two of
+    them is the true elapsed time. The cost is a shorter history for up to 8 days
+    after a change, which the engine handles as it handles any short history.
+    """
+    start = as_of - LOOKBACK
+    transition = last_offset_transition(timezone_name, start, as_of)
+    return (transition, transition) if transition is not None else (start, None)
 
 
 @dataclass
@@ -132,10 +182,12 @@ def build_engine_inputs(
 ) -> EngineInputs:
     as_of: dt.datetime = meal["occurred_at"]
     user_id = user["user_id"]
-    offset = clock_offset(user["timezone"], as_of)
+    zone = user["timezone"]
+    offset = clock_offset(zone, as_of)
+    lookback_start, transition = engine_lookback_start(zone, as_of)
 
     series, device_choice = glucose.select_model_series(
-        conn, user_id, as_of, LOOKBACK, baseline_tolerance_minutes
+        conn, user_id, as_of, as_of - lookback_start, baseline_tolerance_minutes
     )
 
     m, c = t.meals, t.meal_confirmations
@@ -156,7 +208,11 @@ def build_engine_inputs(
     included, excluded = [], []
     for row in prior_rows:
         window_open = row["occurred_at"] + WINDOW >= as_of
-        if window_open or (row["meal_id"] in eligible and row["consumption_status"] == "as_logged"):
+        if row["occurred_at"] < lookback_start:
+            # From before an offset change: not shown to the engine (see
+            # `engine_lookback_start`). Its timing still reaches it, below.
+            excluded.append(row["meal_id"])
+        elif window_open or (row["meal_id"] in eligible and row["consumption_status"] == "as_logged"):
             included.append(row)
         else:
             excluded.append(row["meal_id"])
@@ -171,14 +227,14 @@ def build_engine_inputs(
         override = ContextOverride(minutes_since_prior_meal=min(gap, 1440.0))
 
     cgm = [
-        CgmPoint(timestamp=project_local_clock(r["observed_at"], offset),
+        CgmPoint(timestamp=project_local_clock(r["observed_at"], zone),
                  glucose_mg_dl=float(r["glucose_mg_dl"]))
         for r in series
     ]
     meals = [
         MealRecord(
             meal_id=r["meal_id"], participant_id=participant_id,
-            timestamp=project_local_clock(r["occurred_at"], offset),
+            timestamp=project_local_clock(r["occurred_at"], zone),
             carbs_g=r["carbs_g"], protein_g=r["protein_g"], fat_g=r["fat_g"],
             fiber_g=r["fiber_g"], calories_kcal=r["calories_kcal"],
         )
@@ -189,12 +245,20 @@ def build_engine_inputs(
         fat_g=float(confirmation["fat_g"]), fiber_g=float(confirmation["fiber_g"]),
         calories_kcal=float(confirmation["calories_kcal"]),
     )
-    projected_meal_time = project_local_clock(as_of, offset)
+    projected_meal_time = project_local_clock(as_of, zone)
+
+    # Invariant the frozen feature code relies on: one offset across everything it is
+    # shown, hence an ascending series whose differences are true elapsed times.
+    offsets = {clock_offset(zone, r["observed_at"]) for r in series}
+    offsets |= {clock_offset(zone, r["occurred_at"]) for r in included}
+    if offsets - {offset}:
+        raise RuntimeError("engine history spans a UTC-offset change; refusing to forecast")
 
     canonical = {
         "participant_id": participant_id,
         "meal_timestamp": _iso(projected_meal_time),
         "time_basis": ENGINE_TIME_BASIS,
+        "timezone": zone,
         "clock_offset_minutes": offset.total_seconds() / 60.0,
         "composition": dataclasses.asdict(composition),
         "override": None if override is None else {
@@ -215,7 +279,11 @@ def build_engine_inputs(
         "as_of": core.rfc3339(as_of),
         "timezone": user["timezone"],
         "clock_offset_minutes": offset.total_seconds() / 60.0,
+        "clock_policy": "iana_per_observation",
         "lookback_days": LOOKBACK.days,
+        "lookback_start": core.rfc3339(lookback_start),
+        "lookback_truncated_at_offset_change": transition is not None,
+        "offset_change_at": core.rfc3339(transition),
         "cgm": {
             **device_choice,
             "readings_in_lookback": len(series),
