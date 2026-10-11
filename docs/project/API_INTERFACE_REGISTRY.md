@@ -399,6 +399,18 @@ demo mode on so the schemas are available.) `GET /status` → `demo_mode` says w
 * The `demo_replay_*` example files replay a generated test fixture
   (`data_class: demo`), not the research recording.
 
+* **Two modes, two accounts.** `new_user` (default) and the optional
+  `returning_user`. Which one a request acts on is decided solely by which demo
+  account is signed in; there is no mode parameter. Reset affects the caller's mode
+  only.
+* **Added for the returning-user mode — FOR SHARED REVIEW:** state fields `mode`,
+  `mode_label`, `display_from_meal`; checkpoint field `phase` (`backfill` /
+  `display`); `provenance.backfilled_history`; aliases `backfill_complete`,
+  `first_display_meal`. Additive only; examples
+  `demo_replay_state_returning_user_initial`,
+  `demo_replay_returning_user_first_presented_meal`. The OpenAPI document is
+  unchanged (the state body is an open object).
+
 Full consumer guide: `DEMO_HANDOFF_NEIL.md`. Scenario: `DEMO_SCENARIO_SPEC.md`.
 
 ---

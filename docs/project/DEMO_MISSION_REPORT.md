@@ -200,3 +200,55 @@ independent accuracy result.
 6. Advancing is serialized by an in-process lock: one worker only.
 7. A hand-logged meal during the demo becomes part of that run; reset restores the
    scripted journey.
+
+---
+
+## Addendum — optional RETURNING USER scenario (2026-10-10)
+
+**Starting commit:** `7797121291191b4d06f4813754c98bb578645ce7`
+
+**Question:** can the eight days of pre-demo sensor history be accompanied by
+authentic meal records? **Yes.**
+
+| | |
+|---|---|
+| Historical meals found before the first presented meal | **31** (`2020-05-01 14:23` → `2020-05-08 09:58`) |
+| Valid macros / baseline reading / ≥ 20 readings / all horizons / window complete | 31 of 31 on every check |
+| Eligible under the v2 policy | **27** |
+| Excluded | 4 — another meal inside the 120-minute window (meals 11, 12, 21, 25) |
+| Admissible at the first presented meal | 27 (gate: 5) |
+
+Checked from timestamps and macro completeness only; no forecast or error consulted;
+no meal chosen or dropped — the backfill is every earlier meal in the recording.
+
+**Implemented** as a second demo mode on the existing replay engine: a mode
+parameter, a per-mode bundle and manifest, a separate account, and a re-entrant
+lock. History is **replayed** through forecast → outcome → eligibility, never
+inserted. The engine's architecture did not change.
+
+**NEW USER preserved.** Its end-state fingerprint
+(`5a17f51a9d066a09d4ebb275b4a4b7a8db270b2d09f33bdd57012eb2715adad5`) is identical
+before and after; its bundle checksum and manifest plan are unchanged; all its
+earlier tests pass unmodified.
+
+**RETURNING USER verified.** The application's own admissible counts match the plan
+for all 40 meals; retrieval first activates at meal 6, after five eligible meals; at
+the first presented meal 27 are admissible and retrieval is on; all 40 forecasts
+reproduce exactly; nothing later than the replay position was ever stored.
+
+**Caveat carried everywhere:** the 31 history meals precede the Day-8 cutoff and
+were in the artifact's fit. Their forecasts are in-sample. The nine presented meals
+were not in the fit. Neither is independent validation.
+
+| check | result |
+|---|---|
+| `python -m pytest -q -rsxX` | **1006 passed, 1 skipped, 0 failed (703 original + 303 v2; the skip is the opt-in real-OpenAI call)** |
+| `python -m research.freeze.verify_artifacts` | **PASS; artifact and Contract v1.0 checksums unchanged** |
+| `python -m contracts.v2.build_contract --check` | **pass** |
+| `python -m scripts.demo_verify` (both scenarios) | **60 of 60 checks (28 NEW USER + 32 RETURNING USER); both fingerprints match** |
+| `smoke_demo.py` NEW USER, live server | **25 of 25 steps** |
+| `smoke_demo.py --scenario returning_user`, live server | **26 of 26 steps** |
+| `smoke_v2.py`, same server | **21 of 21 steps; both demo accounts left intact** |
+
+**Contract:** no OpenAPI schema changed. Additive fields on the replay state are
+flagged for the shared interface review (DECISIONS D-016). Two example payloads added.

@@ -8,6 +8,26 @@ ordinary account that happens to be replaying history.
 **Status:** the backend side is implemented and verified over real HTTP. The replay
 routes are PROPOSED like the rest of v2. Glimpse has not been wired to any of it.
 
+## 0 · Two scenarios, two demo accounts
+
+| | NEW USER (default) | RETURNING USER (optional) |
+|---|---|---|
+| Sign in as | `demo@glucotwin.example` | `demo-returning@glucotwin.example` |
+| Display name | Demo User (fictional) | Returning Demo User (fictional) |
+| Starts with | no meals, no personal history | 31 earlier meals with forecasts and outcomes |
+| First presented forecast | 0 admissible meals, retrieval **off** | 27 admissible meals, retrieval **on** |
+| Shows | history building; the gate opening at five | a forecast that already uses personal history |
+| Presented meals | 9 (`meal_01` … `meal_09`) | the same 9 (`meal_32` … `meal_40`) |
+| `GET /demo/replay` → `mode` | `new_user` | `returning_user` |
+
+Same password, same routes, same payloads. **Which scenario a request acts on is
+decided only by which account is signed in** — there is no mode parameter to send.
+To switch scenario, sign in as the other account. A scenario picker in the UI is
+just two login buttons.
+
+The returning-user scenario may not be installed on a given server (it needs its own
+data file). If login fails for it, hide that option.
+
 ## 1 · The idea in three sentences
 
 The demo account holds a real research recording that is released into it over
@@ -64,16 +84,18 @@ Example: `demo_replay_state_initial.json`.
 
 | field | meaning |
 |---|---|
+| `mode`, `mode_label` | `new_user` / `returning_user`; `NEW USER` / `RETURNING USER` — show the label *(new, for review)* |
+| `display_from_meal` | the first presented meal number: `1`, or `32` for the returning user *(new, for review)* |
 | `position` | **the simulated "now"**, on the recording's timeline |
 | `wall_clock` | the real time. Shown only so nobody confuses the two |
 | `status` | `ready` or `complete` |
 | `event_index` / `event_count` | progress; pass `event_index` back as `expected_event_index` |
 | `next_checkpoint` | `{id, kind, at, meal}`; for a meal, also `meal_record` — the recorded meal about to be logged, with `source` = `research_dataset_meal_record` (or `test_fixture_meal_record` in the published examples) |
-| `checkpoints[]` | every checkpoint with `done` and, once done, its `result` |
-| `aliases` | `retrieval_activation`, `final_meal`, `end` → checkpoint ids |
+| `checkpoints[]` | every checkpoint with `done`, `phase` (`backfill` or `display`) and, once done, its `result` |
+| `aliases` | `retrieval_activation`, `final_meal`, `end` → checkpoint ids; the returning user also has `first_display_meal` and `backfill_complete` |
 | `personalization_progress` | `admissible_prior_meals`, `retrieval_active`, `retrieval_min_history: 5`, and a sentence you can show verbatim |
 | `data` | readings and meals released so far, out of the totals |
-| `provenance` | what is research data, what is fictional, and `labels` to display |
+| `provenance` | what is research data, what is fictional, and `labels` to display; the returning user adds `backfilled_history` `{meals, description}` |
 
 ### `POST /api/v2/demo/replay/advance` — move time forward
 
@@ -177,12 +199,48 @@ five eligible meals complete, retrieval not yet active.
 To show the alert that rises from below the threshold, start earlier
 (`--to meal_04_outcome`) and advance to `meal_05_forecast`.
 
+## 6a · The RETURNING USER scenario
+
+Start: `python -m scripts.demo_reset --scenario returning_user`. The account opens
+with 31 logged meals, each with a forecast and a scored outcome, and the replay
+positioned just before the first presented meal.
+
+1. **Overview.** A week of meals and sensor history. `personalization_progress`
+   already shows history active. Four history meals are marked ineligible
+   (intervening meal) — the same rule, applied the same way.
+2. **Advance → `meal_32_forecast`.** The first presented forecast:
+   `admissible_prior_meals: 27`, `retrieval_active: true`. Compare with the NEW USER
+   forecast for the same meal (0 admissible, retrieval off) to show what personal
+   history changes.
+3. Continue exactly as the NEW USER sequence: outcomes, the alert, the medication
+   reminder, the final meal.
+
+Rendering rules specific to this scenario:
+
+* **Show only `phase: "display"` checkpoints as steps.** `backfill` checkpoints are
+  history that setup already ran; all are `done`. List their meals under a "History"
+  heading, not as demo steps.
+* Number presented meals yourself (`meal − display_from_meal + 1`): show "Meal 1 of
+  9", not "Meal 32".
+* **Label the history as in-sample.** `provenance.backfilled_history.description`
+  says it: these earlier meals were in the model's fit. Do **not** present their
+  forecast-versus-actual charts or errors as accuracy. A caption such as "History
+  meals — shown for context, not as a measure of accuracy" is required wherever
+  their outcomes appear.
+* The admissible count goes 27 → 31 and then **down to 29** at the last meal: the
+  model sees at most eight days of history, so the oldest meals age out. Show the
+  backend's number; do not treat a decrease as an error.
+* Paginate history lists (`GET /meals?limit=200`); there are 40 meals by the end.
+* Its dose history is longer (17 scripted actions across the week). Same labels.
+
 ## 7 · Required labels
 
 Non-negotiable; `provenance.labels` gives you the strings.
 
 * A persistent **DEMO · HISTORICAL REPLAY · NOT LIVE** banner whenever the demo
   account is signed in.
+* The scenario name from `mode_label` — **NEW USER** or **RETURNING USER** — next to
+  that banner, so nobody mistakes one account's state for the other's.
 * Show `position` as **"Replay time"** (or "Recording time"), never as "now" and
   never as today's date. The dates are date-shifted research timestamps — prefer
   "Day 1, 13:26" style labels computed from `window.start` over a calendar date.
@@ -247,6 +305,19 @@ Do not present these errors as the model's accuracy. One participant, nine meals
 | `advanced: false` | not an error — refresh from the returned state |
 | checkpoint `result.forecast: "refused"` | "No forecast: `code`" for that meal; continue |
 | `status: "complete"` | disable advance; offer reset |
+
+## 10a · Known limitations
+
+* The returning user's 31 history meals were in the model's fit (in-sample). The nine
+  presented meals were not. Neither is independent validation.
+* One participant. Both scenarios replay the same person's recording.
+* Resetting the returning user takes several seconds (it replays 31 meals; about 5 s locally). Use a
+  60 s timeout and a progress state.
+* The new state fields (`mode`, `mode_label`, `display_from_meal`, `phase`,
+  `provenance.backfilled_history`) are additive and PROPOSED — tell me in the
+  interface review if a name should change.
+* The published `demo_replay_*returning_user*` examples replay a generated test
+  fixture (7 history meals, not 31). Same shapes, smaller numbers.
 
 ## 11 · What I need from you
 

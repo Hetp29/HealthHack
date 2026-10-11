@@ -346,6 +346,33 @@ labelled a user-selected sample setting. No forecast was altered.
 A research bundle is replayed only through the frozen artifact with its checksum
 enforced, and only with Level B off; otherwise the replay refuses to run.
 
+## D-016 · An optional returning-user demo, built by replay, isolated by account
+
+**Status:** PROPOSED · **Owner:** Ruhaan
+
+A second demo mode, `returning_user`, presents the same nine meals with a real
+personal history already in place. It exists because the data supports it: 31
+authentic meals precede the presented ones, 27 of them eligible under the v2 rules
+(gate: five).
+
+* **History is replayed, never inserted.** Setup runs every earlier meal through the
+  ordinary forecast → outcome → eligibility workflow in chronological order. No
+  completed-response record is written directly.
+* **Nothing is selected.** The backfill is every meal the recording holds before the
+  presented ones, for the participant the new-user rule already chose.
+* **Isolation is by account.** Each mode has its own email, account, participant id,
+  bundle and manifest. A reset acts on one mode's account only. The engine change was
+  small — a mode parameter, a per-mode bundle lookup and a re-entrant lock — and the
+  new-user mode's end state is fingerprint-identical to before.
+* **Disclosure.** The history meals are before the Day-8 cutoff and were in the
+  artifact's fit; their forecasts are in-sample. This is stated in the manifest, in
+  the replay state (`provenance.backfilled_history`) and in the handoffs.
+
+New additive fields on the replay state (`mode`, `mode_label`, `display_from_meal`,
+checkpoint `phase`, `provenance.backfilled_history`, two aliases) are **flagged for
+the shared interface review**. No existing field changed and no OpenAPI schema
+changed.
+
 ---
 
 ## Open decisions (nobody has decided these)

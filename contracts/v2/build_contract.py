@@ -130,7 +130,8 @@ def build_platform(tmp: pathlib.Path):
     from backend.app.v2.demo.fixture import fixture_bundle
 
     # The published demo examples replay the labelled TEST FIXTURE, never research data.
-    ctx.demo_bundle = fixture_bundle()
+    ctx.demo_bundle = {"new_user": fixture_bundle(),
+                       "returning_user": fixture_bundle(display_from_meal=8)}
     v2_app = create_v2_app(ctx)
     return TestClient(PlatformApp(v1_app, v2_app)), ctx, clock, v2_app
 
@@ -286,6 +287,15 @@ def run_scenario(client, ctx, clock, v2_app) -> dict[str, object]:
     save("error_demo_unknown_checkpoint", client.post(
         f"{api}/demo/replay/advance", headers=demo, json={"to": "meal_99_forecast"}))
     save("demo_replay_reset", client.post(f"{api}/demo/replay/reset", headers=demo))
+
+    # The optional RETURNING USER mode: a second, separate demo account.
+    replay.initialize(v2_app, ctx, "returning_user")
+    returning = {"Authorization": "Bearer " + client.post(f"{api}/auth/login", json={
+        "email": ctx.settings.demo_returning_email,
+        "password": ctx.settings.demo_password}).json()["session"]["token"]}
+    save("demo_replay_state_returning_user_initial", client.get(f"{api}/demo/replay", headers=returning))
+    save("demo_replay_returning_user_first_presented_meal",
+         client.post(f"{api}/demo/replay/advance", headers=returning))
 
     integrity = ctx.model_integrity
     out["_meta"] = {

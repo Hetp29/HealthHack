@@ -1,5 +1,9 @@
 # Demonstration scenario specification
 
+> Two scenarios exist. This document describes the default, **NEW USER**, in §1–§12.
+> The optional **RETURNING USER** scenario is §13. They use separate accounts and
+> never share state.
+
 **Scenario id:** `cgmacros-out-of-fit-replay-v1` · **Owner:** Ruhaan · **Status:** implemented and verified locally
 **Machine-readable source of truth:** `backend/app/v2/demo/manifest.json` (committed metadata)
 
@@ -226,3 +230,94 @@ and across independent runs (verified by `scripts.demo_verify` and the test suit
 7. Alerts are informational; the 140 mg/dL level is a sample setting.
 8. The medications and the profile are **fictional**.
 9. No model parameter changes during the demo. Personalization is history, not training.
+
+## 13 · Optional scenario: RETURNING USER
+
+**Scenario id:** `cgmacros-returning-user-replay-v1` · **Mode:** `returning_user`
+**Manifest:** `backend/app/v2/demo/manifest_returning_user.json`
+**Status:** implemented and verified locally. The NEW USER scenario above is
+unchanged: its end-state fingerprint is identical to the one recorded before this
+scenario was added.
+
+Same participant, same nine presented meals — but the account arrives with the
+personal history a returning user would have.
+
+### 13.1 Is there authentic history? (the gate)
+
+The recording holds **31 meals before the first presented meal** (`2020-05-01 14:23`
+to `2020-05-08 09:58`), with continuous sensor data from `2020-05-01 11:39`. Every
+one was checked against the v2 rules, from timestamps and macro completeness only:
+
+| check | result |
+|---|---|
+| Meals found | 31 |
+| Valid macros within contract bounds | 31 of 31 |
+| Baseline reading within 15 min before | 31 of 31 |
+| ≥ 20 native readings in the 120-min window (all have 24) | 31 of 31 |
+| All four horizon readings present | 31 of 31 |
+| Full window complete before the first presented meal | 31 of 31 |
+| **Eligible** | **27** |
+| Excluded — another meal inside the window | 4 (meals 11, 12, 21, 25) |
+
+27 admissible at the first presented meal, against a gate of 5: the scenario is
+supported by authentic data. Had fewer than five qualified, it would not have been
+built. Nothing was invented, and no meal was chosen or dropped — the backfill is
+*every* meal the recording holds before the presented ones. No forecast or error was
+consulted.
+
+### 13.2 How the history gets there
+
+**It is replayed, not inserted.** `demo_seed --scenario returning_user` starts the
+replay at the recording's first meal and runs all 31 earlier meals in order through
+the ordinary workflow — release readings to the meal instant → log the meal →
+real frozen-model forecast → wait for the window and grace → real outcome scoring →
+eligibility decision — and stops just before the first presented meal. No completed
+response record is written directly; every history meal has its own forecast and
+snapshot. Setup takes about 5 seconds locally.
+
+During that setup the application's own counts run `0, 1, 2, 3, 4, 5, …`: retrieval
+first turns on at **meal 6**, after five eligible meals have completed, exactly as
+in the NEW USER scenario. It is not switched on by the scenario.
+
+### 13.3 The presented journey
+
+| presented meal | recording time | admissible prior meals | retrieval |
+|---|---|---|---|
+| 1 (meal 32) | 05-08 13:26 | **27** | **on** |
+| 2 | 05-08 20:16 | 28 | on |
+| 3 | 05-08 20:22 | 28 | on |
+| 4 | 05-08 22:29 | 29 | on |
+| 5 | 05-09 09:35 | 30 | on |
+| 6 | 05-09 13:46 | 31 | on |
+| 7 | 05-09 18:26 | 31 | on |
+| 8 | 05-09 18:41 | 31 | on |
+| 9 | 05-10 09:27 | 29 | on |
+
+The count *falls* at the last meal: the model is shown at most eight days of
+history, so the recording's first-day meals have aged out. That is the frozen
+lookback, shown as it is.
+
+The same two presented meals (2 and 7) are excluded for an intervening meal.
+Forecasts differ from the NEW USER scenario's for the same meals, because the model
+is reading a real personal history — that difference is the point of the scenario.
+
+### 13.4 Caveat specific to this scenario — important
+
+**The 31 history meals precede the participant's Day-8 cutoff, so they were in the
+frozen artifact's fit.** Forecasts and errors shown for *those* meals are in-sample
+and say nothing about accuracy; do not present their forecast-versus-actual as
+performance. The nine presented meals are after the cutoff and were not in the fit,
+exactly as in the NEW USER scenario. Neither set is independent validation.
+
+What the history legitimately contributes is the person's own *measured* responses,
+which is what the frozen `r_hist_*` and `q_retr_*` inputs summarize. No model
+parameter is fitted, at setup or afterwards. Level B stays off.
+
+### 13.5 Everything else
+
+Identity: `demo-returning@glucotwin.example`, display name "Returning Demo User
+(fictional)", same password variable, its own `gtp_…` participant id. Same fictional
+questionnaire and medications (dose history is longer: the scripted taken/skipped
+pattern runs across the whole recording). Same 140 mg/dL sample alert setting.
+Same failure behaviour, same reset strategy — per mode: resetting one never touches
+the other or any ordinary account.

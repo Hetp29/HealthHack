@@ -149,12 +149,15 @@ Not started; out of scope during team integration.
 Every v2 endpoint is PROPOSED (DECISIONS R-001). Het and Neil have not yet reviewed
 the registry. Until they have, field names can still change.
 
-## B-016 · The demo's two data files have no delivery path — HET, RUHAAN
+## B-016 · The demo's data files have no delivery path — HET, RUHAAN
 
-The demonstration needs the frozen artifact (B-004) and the 87 KB research-data
-bundle `cgmacros_demo_bundle.json`. Neither is in git; Ruhaan holds the only copies.
-Until they are delivered, Het cannot run the demo on a server and Neil cannot run it
-locally (Neil can still build against the fixture-based example payloads).
+The demonstration needs the frozen artifact (B-004) and its research-data bundles:
+`cgmacros_demo_bundle.json` (NEW USER, 87 KB) and, for the optional RETURNING USER
+scenario, `cgmacros_returning_user_bundle.json` (94 KB). None is in git; Ruhaan
+holds the only copies. Until they are delivered, Het cannot run the demo on a server
+and Neil cannot run it locally (Neil can still build against the fixture-based
+example payloads). The returning-user bundle is optional: without it that scenario
+reports `demo_data_unavailable` and the default one is unaffected.
 
 ## B-017 · The demonstration has only run on one machine — HET
 
