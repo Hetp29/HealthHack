@@ -1,4 +1,4 @@
-# GlucoTwin — blocker register
+# GLIMPSE — blocker register
 
 One register for all three workstreams (master §6). Blocking issues first.
 
@@ -7,7 +7,7 @@ team decision · HET / NEIL / RUHAAN = waiting on that person's work.
 
 Last updated 2026-10-10, after Ruhaan's review of R0–R8.
 
-**Nothing in this register is verified against a real external system.** OpenAI, Dexcom, LibreView, Fitbit, WHOOP, Apple Health, PostgreSQL, S3, Docker and the Glimpse frontend have each been exercised only by mocks, fixtures, offline rendering or not at all. None may be described as verified until a real integration test against it has passed.
+**Nothing in this register is verified against a real external system.** OpenAI, Dexcom, LibreView, Fitbit, WHOOP, Apple Health, PostgreSQL, S3, Docker and the GLIMPSE frontend have each been exercised only by mocks, fixtures, offline rendering or not at all. None may be described as verified until a real integration test against it has passed.
 
 ---
 
@@ -16,7 +16,7 @@ Last updated 2026-10-10, after Ruhaan's review of R0–R8.
 The frozen model refuses to forecast unless a CGM reading exists within **15 minutes**
 before the meal. That is a frozen rule (`baseline_tolerance_minutes`) and is not
 negotiable in the wrapper. For a meal being eaten *now*, the reading must therefore
-have reached GlucoTwin within about 15 minutes of being taken.
+have reached GLIMPSE within about 15 minutes of being taken.
 
 None of the paths available today delivers that:
 
@@ -49,7 +49,7 @@ client id and secret through the secret store.
 
 ## B-003 · No native iOS app, so no HealthKit or Apple Watch — TEAM
 
-The Glimpse frontend (on `origin/neil`) is a TanStack Start web app with no native
+The GLIMPSE frontend (on `origin/neil`) is a TanStack Start web app with no native
 wrapper. A browser cannot read HealthKit. The server half of the bridge exists and is
 tested (`POST /cgm/readings` and `POST /wearables/observations` with source
 `healthkit_bridge`); the specification for the native half is
@@ -104,7 +104,7 @@ no bucket to run it against and `boto3` is not pinned. Verify against the real b
 
 ## B-009 · The frontend does not consume v2 yet — NEIL
 
-Glimpse calls the seven v1 endpoints only; it has no login, no upload and no bearer
+The GLIMPSE frontend calls the seven v1 endpoints only; it has no login, no upload and no bearer
 header (`apiClient.ts` supports GET/POST only). Until it is wired to v2, "the frontend
 can consume the result" is demonstrated by the generated example payloads and the
 HTTP-level tests, not by the real UI. Everything Neil needs is in `HANDOFF_NEIL.md`.
@@ -167,7 +167,7 @@ any deployed server. It must run as a single worker (the advance lock is in-proc
 
 ## B-018 · The demo UI does not exist — NEIL
 
-No replay controls, provenance banner or outcome overlay exists in Glimpse. The
+No replay controls, provenance banner or outcome overlay exists in the GLIMPSE frontend. The
 contracts and labels are in `DEMO_HANDOFF_NEIL.md`.
 
 ---

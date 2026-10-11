@@ -1,4 +1,4 @@
-# GLUCOTWIN | MASTER DELIVERY PLAN
+# GLIMPSE | MASTER DELIVERY PLAN
 
 **Status:** Planning specification | **Date:** 2026-10-10 | **Source of truth:** Master + this role brief
 
@@ -38,7 +38,7 @@ IN SCOPE: onboarding, live/imported CGM, meal image nutrient estimates with user
 
 ## 9. Component architecture
 
-Web UI (Glimpse) -> authenticated API gateway / FastAPI service -> domain services: identity/onboarding, meal photo analysis, meal confirmation and prediction orchestrator, CGM ingestion/reconciliation, histories/outcome scoring, personalization record update, medication ledger, alerts and notifications, wearable connectors. Persistence: relational database with organization/user ownership, object storage for private images, secrets store, background job mechanism for sync/reminders. Frozen prediction module isolated as a read-only dependency. HealthKit requires native iOS bridge or a suitable approved connector, not direct browser database access. Other device providers require OAuth/scopes and their real permissions; mock mode must display DEMO distinctly.
+Web UI (GLIMPSE) -> authenticated API gateway / FastAPI service -> domain services: identity/onboarding, meal photo analysis, meal confirmation and prediction orchestrator, CGM ingestion/reconciliation, histories/outcome scoring, personalization record update, medication ledger, alerts and notifications, wearable connectors. Persistence: relational database with organization/user ownership, object storage for private images, secrets store, background job mechanism for sync/reminders. Frozen prediction module isolated as a read-only dependency. HealthKit requires native iOS bridge or a suitable approved connector, not direct browser database access. Other device providers require OAuth/scopes and their real permissions; mock mode must display DEMO distinctly.
 
 ## 10. Data lifecycle and schema contracts
 

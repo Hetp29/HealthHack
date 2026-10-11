@@ -12,7 +12,7 @@ Conventions that hold for every table:
   * Timestamps are offset-aware UTC (`UTCDateTime`). A naive datetime is rejected on
     write rather than assumed to be UTC.
   * `observed_at` is when a measurement physically happened; `received_at` is when
-    GlucoTwin stored it. They are separate columns and are never substituted.
+    GLIMPSE stored it. They are separate columns and are never substituted.
   * Glucose is stored in mg/dL, with the source value and unit kept alongside.
 
 Schema changes go through Alembic (`migrations/`). `metadata.create_all` is used only

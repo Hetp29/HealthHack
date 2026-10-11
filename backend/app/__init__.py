@@ -1,1 +1,1 @@
-"""GlucoTwin FastAPI application."""
+"""GLIMPSE FastAPI application."""

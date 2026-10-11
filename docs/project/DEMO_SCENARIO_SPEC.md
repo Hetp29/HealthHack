@@ -329,7 +329,7 @@ or glucose changed: both end-state fingerprints are identical with every simulat
 source switched on.
 
 Either demo account can switch on four **simulated** sources — Apple Health, Apple
-Watch, Fitbit, WHOOP — to show how wearable data enters GlucoTwin. They start
+Watch, Fitbit, WHOOP — to show how wearable data enters GLIMPSE. They start
 inactive and are activated one at a time from the demo-only routes.
 
 ### 14.1 What is what

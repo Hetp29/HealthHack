@@ -1,4 +1,4 @@
-# GlucoTwin backend container: frozen v1 API + /api/v2, and the three workers.
+# GLIMPSE backend container: frozen v1 API + /api/v2, and the three workers.
 #
 # STATUS: WRITTEN BUT NOT YET BUILT OR RUN. The development machine has no Docker
 # daemon, so this file is unverified. Do not describe containerized deployment as

@@ -2,7 +2,7 @@
 
 **Owner:** Ruhaan Shah · **Contract:** v1.0 · **Model:** `v0.1.0` · **Feature set:** `fs-1.0`
 
-How GlucoTwin turns a participant's history and a meal's composition into a 25-point
+How GLIMPSE turns a participant's history and a meal's composition into a 25-point
 glucose trajectory, and why each decision was made that way. Measured results live in
 [`validation.md`](validation.md).
 

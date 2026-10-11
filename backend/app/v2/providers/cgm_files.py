@@ -1,4 +1,4 @@
-"""Parsers for CGM exports a user downloads themselves and uploads to GlucoTwin.
+"""Parsers for CGM exports a user downloads themselves and uploads to GLIMPSE.
 
 This is the import path that needs no provider approval: the user is authorized to
 export their own data and chooses to give it to us.

@@ -100,7 +100,7 @@ def test_v2_validation_errors_do_not_echo_submitted_values(harness):
 
 def test_v2_publishes_its_own_openapi_document(harness):
     spec = harness.client.get("/api/v2/openapi.json").json()
-    assert spec["info"]["title"] == "GlucoTwin Application API"
+    assert spec["info"]["title"] == "GLIMPSE Application API"
     assert "/meals/{meal_id}/predict" in spec["paths"]
     # The frozen routes are not re-declared inside v2.
     assert "/api/predict" not in spec["paths"] and "/predict" not in spec["paths"]

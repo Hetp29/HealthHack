@@ -51,9 +51,9 @@ Checklist:
 
 ---
 
-## 0:25 – 0:45 · What GlucoTwin is
+## 0:25 – 0:45 · What GLIMPSE is
 
-> "GlucoTwin takes a person's continuous glucose history and a meal's macros, and
+> "GLIMPSE takes a person's continuous glucose history and a meal's macros, and
 > forecasts the next two hours: the value at 30, 60, 90 and 120 minutes, the full
 > five-minute curve, the peak and when it arrives, the two-hour excursion — and which
 > inputs drove that prediction.
@@ -213,7 +213,7 @@ the real URL and services. Never otherwise.)*
 
 ## 3:50 – 4:00 · Close
 
-> "GlucoTwin. Personalized glucose response forecasting that shows its work, reports its
+> "GLIMPSE. Personalized glucose response forecasting that shows its work, reports its
 > failures, and tells you when it doesn't know. Code, contracts and the full validation
 > report are in the repo."
 

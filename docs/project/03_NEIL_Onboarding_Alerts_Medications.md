@@ -1,4 +1,4 @@
-# GLUCOTWIN | NEIL IMPLEMENTATION BRIEF
+# GLIMPSE | NEIL IMPLEMENTATION BRIEF
 
 **Status:** Planning specification | **Date:** 2026-10-10 | **Source of truth:** Master + this role brief
 
@@ -54,7 +54,7 @@ Education explains broadly documented medication classes’ potential relationsh
 
 ## 13. Forecast-spike alert UX
 
-Alert rule includes enabled, threshold with unit, channels, quiet hours, cooldown and optional meal-forecast scope. Server evaluates frozen forecast, not Neil's frontend math (except purely explanatory display). Example label: “Forecast may rise above your selected level within the next 2 hours”; show generated_at, target level, predicted crossing estimate, latest CGM age, uncertainty status “not calibrated,” and view prediction action. Suppress/downgrade if required CGM stale, no forecast, or user disabled. Deduplicate repeat notifications. Explicitly distinguish informational GlucoTwin alerts from validated CGM-device alarms. If notifications unavailable, show in-app status honestly.
+Alert rule includes enabled, threshold with unit, channels, quiet hours, cooldown and optional meal-forecast scope. Server evaluates frozen forecast, not Neil's frontend math (except purely explanatory display). Example label: “Forecast may rise above your selected level within the next 2 hours”; show generated_at, target level, predicted crossing estimate, latest CGM age, uncertainty status “not calibrated,” and view prediction action. Suppress/downgrade if required CGM stale, no forecast, or user disabled. Deduplicate repeat notifications. Explicitly distinguish informational GLIMPSE alerts from validated CGM-device alarms. If notifications unavailable, show in-app status honestly.
 
 ## 14. Reminder experience and notification system
 

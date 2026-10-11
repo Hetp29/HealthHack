@@ -9,14 +9,14 @@ is not a claim that Apple Health or Apple Watch integration works.
 
 HealthKit is an on-device database. It can be read only by a native iOS application
 that holds the HealthKit entitlement and that the user has granted permission to,
-type by type. A web browser — which is what Glimpse is — has no access to it at all,
+type by type. A web browser — which is what the GLIMPSE frontend is — has no access to it at all,
 and neither does a server. Apple Watch data reaches us only by way of the paired
 iPhone's Health store.
 
 So the integration has two halves:
 
 ```
-┌──────────────── iPhone ────────────────┐         ┌──────── GlucoTwin API ────────┐
+┌──────────────── iPhone ────────────────┐         ┌──────── GLIMPSE API ────────┐
 │ Native app (NOT BUILT)                 │  HTTPS  │ IMPLEMENTED AND TESTED        │
 │  • requests HealthKit read permission  │ ──────▶ │ POST /api/v2/cgm/readings     │
 │  • runs anchored queries per type      │         │ POST /api/v2/wearables/…      │

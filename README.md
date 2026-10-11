@@ -1,10 +1,13 @@
-# GlucoTwin
+# GLIMPSE
+
+> **GLIMPSE** — Glucose Learning through Integrated Multimodal Prediction and Sensor Evidence. Formerly named GlucoTwin; some technical
+> identifiers keep the old name (see `docs/project/DECISIONS.md`, D-018).
 
 **Personalized postprandial glucose response forecasting.**
 Rutgers HealthHack 2026 — Challenge 3: *Predict My Glucose Response*.
 
 Given a participant's continuous-glucose history and a meal's macronutrients,
-GlucoTwin forecasts the next two hours of glucose: the 30/60/90/120-minute values, the
+GLIMPSE forecasts the next two hours of glucose: the 30/60/90/120-minute values, the
 full five-minute trajectory, the peak and when it arrives, the two-hour excursion, and
 a model-grounded explanation of **why** this person is predicted to respond this way.
 
@@ -20,7 +23,7 @@ Two people can eat the identical meal and see entirely different glucose respons
 Population-average nutrition guidance cannot tell them apart, so advice that is right
 on average is wrong for individuals — and the individual is who has to live with it.
 
-GlucoTwin models the response **per person**, from that person's own recent history,
+GLIMPSE models the response **per person**, from that person's own recent history,
 and is explicit about when it cannot.
 
 ## The approach

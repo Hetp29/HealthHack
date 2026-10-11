@@ -1,4 +1,4 @@
-# Handoff to Neil — building Glimpse against the v2 API
+# Handoff to Neil — building the GLIMPSE frontend against the v2 API
 
 From Ruhaan. What you can build against today, where the payloads are, and the rules
 the UI has to respect. The backend is accepted as the integration baseline, and every

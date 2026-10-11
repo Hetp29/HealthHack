@@ -1,4 +1,4 @@
-# GlucoTwin — shared decision log
+# GLIMPSE — shared decision log
 
 One log for all three workstreams (master §6). Newest entries at the bottom.
 
@@ -401,6 +401,35 @@ Additive contract changes, **for shared review**: three demo routes (`GET
 /demo/devices`, `POST /demo/devices/{profile}/activate`, `GET /demo/health-timeline`);
 an optional `provider` filter on `GET /wearables/observations`; the status value
 `demo_simulated`. No existing schema changed.
+
+## D-018 · The project is named GLIMPSE; some identifiers keep the old name
+
+**Status:** name change directed by Ruhaan, 2026-10-11 · scope of the rename PROPOSED
+
+The project is **GLIMPSE** — *Glucose Learning through Integrated Multimodal Prediction and Sensor Evidence*. It was previously called GlucoTwin. The name
+was changed everywhere it is used as a name: documentation, the v2 API title and
+descriptions, user-facing strings, comments, scripts and tests.
+
+These still contain the old name, deliberately. Each is an identifier, not a name,
+and changing it would break something that is frozen or already in use:
+
+| what | example | why it stays |
+|---|---|---|
+| The model id | `glucotwin-fs13-blend-personalized` | frozen model identity; recorded in the freeze, the artifact manifest and every stored prediction |
+| Frozen source files and Contract v1.0 | `backend/app/main.py`, `ml/*`, `contracts/openapi.yaml`, `contracts/schemas/` | checksummed by the freeze; any edit fails integrity verification. The v1 API title is therefore still "GlucoTwin API" |
+| Environment variables | `GLUCOTWIN_MODEL_ARTIFACT`, `GLUCOTWIN_APP_DB_URL`, `GLUCOTWIN_DEMO_MODE`, … | the frozen v1 config reads this prefix, and existing `.env` files and deployment configuration use it. A second prefix for v2 only would be worse than one consistent prefix |
+| Logger names | `glucotwin`, `glucotwin.v2.*` | v2 loggers inherit the handler the frozen v1 app installs on `glucotwin` |
+| Demo data identifiers | bundle schema `glucotwin-demo-bundle/1`, simulation seed | they feed the bundle checksums and the simulated values; changing them would invalidate the verified demo fingerprints |
+| Demo account emails | `demo@glucotwin.example` | already handed to Neil and Het; `.example` is a reserved, non-routable domain |
+| File and image names | `00_MASTER_GlucoTwin_Project_Plan.md`, `glucotwin_app.db`, `glucotwin-backend` | paths teammates were given; local database files |
+| Governance and research records | `docs/governance/`, `research/`, `docs/research/` | historical records of what was verified, under the name it had |
+| Het's data layer, pre-existing tests | `data/`, `tests/test_*.py` | not Ruhaan's to edit / assert frozen strings |
+
+The frontend was already called "Glimpse"; documents now say "the GLIMPSE frontend".
+
+Renaming any of the identifiers above is possible but is a coordinated breaking
+change (environment variables and demo emails across all three workstreams) or a new
+model version (the model id and frozen files). None was done.
 
 ---
 

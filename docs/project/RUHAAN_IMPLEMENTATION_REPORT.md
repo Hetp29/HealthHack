@@ -60,7 +60,7 @@ fixed-offset design, which no longer exists.
 | PostgreSQL | DDL renders offline; never run on a server |
 | S3 | never exercised |
 | Docker image | never built (no daemon here) |
-| Glimpse frontend | does not call v2 |
+| GLIMPSE frontend | does not call v2 |
 | A real user's device data | none has ever been received |
 
 ---
@@ -83,7 +83,7 @@ forecasts, plus medications, reminders, alerts and device connections.
    needs a reading within 15 minutes before a meal; Dexcom's API is delayed, Libre has
    no API, and HealthKit needs an iOS app that does not exist. Retrospective use works
    today; live forecasting for real users needs a team decision.
-4. **The frontend does not use v2.** Glimpse (on `origin/neil`) still calls v1 only.
+4. **The frontend does not use v2.** The GLIMPSE frontend (on `origin/neil`) still calls v1 only.
    "The frontend can consume it" is shown by generated example payloads and
    HTTP-level tests, not by the real UI.
 5. **Nothing is deployed**, and the schema has never run on PostgreSQL.
@@ -344,7 +344,7 @@ MODEL INTEGRITY:    PASS — no wearable value reaches the model
 NEXT PHASE:         R8
 ```
 
-Glimpse has no native wrapper, so HealthKit is isolated behind a specified bridge
+The GLIMPSE frontend has no native wrapper, so HealthKit is isolated behind a specified bridge
 (`HEALTHKIT_BRIDGE_SPEC.md`) rather than claimed.
 
 ### R8 — integration
@@ -420,7 +420,7 @@ Tracked in `BLOCKERS.md`; in the order I would address them.
 | 1 | Sign off or reject D-006 and D-007 | you |
 | 2 | Choose a real-time CGM source (B-001) | team |
 | 3 | Frozen artifact delivery to deployments (B-004) | Het |
-| 4 | Wire Glimpse to v2 (B-009) | Neil |
+| 4 | Wire the GLIMPSE frontend to v2 (B-009) | Neil |
 | 5 | Run the schema on PostgreSQL (B-007) | Het, then me |
 | 6 | Register provider apps, obtain an OpenAI key, run the gated live tests (B-002) | you / team |
 | 7 | Verify the two file parsers on genuine exports (B-010) | me, given one real file each |

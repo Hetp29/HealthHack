@@ -29,7 +29,7 @@ logger = logging.getLogger("glucotwin.v2")
 V2_VERSION = "2.0.0-draft"
 
 DESCRIPTION = """
-GlucoTwin application API. Authenticated per-user storage and orchestration around the
+GLIMPSE application API. Authenticated per-user storage and orchestration around the
 frozen fs-1.3 forecasting model.
 
 Research prototype. Forecasts, alerts, nutrition estimates and medication content are
@@ -90,7 +90,7 @@ def model_integrity(prediction_service, expected_sha256: str | None) -> dict:
 
 def create_v2_app(ctx: V2Context) -> FastAPI:
     app = FastAPI(
-        title="GlucoTwin Application API",
+        title="GLIMPSE Application API",
         description=DESCRIPTION,
         version=V2_VERSION,
         openapi_url="/openapi.json",

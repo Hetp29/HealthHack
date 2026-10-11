@@ -1,12 +1,12 @@
 # Demo handoff to Neil — the demonstration from the frontend's side
 
-From Ruhaan. How Glimpse drives and displays the sample-data demonstration. Scenario
+From Ruhaan. How the GLIMPSE frontend drives and displays the sample-data demonstration. Scenario
 and numbers: `DEMO_SCENARIO_SPEC.md`. General API rules: `HANDOFF_NEIL.md` and
 `API_INTERFACE_REGISTRY.md` — everything there still applies; the demo account is an
 ordinary account that happens to be replaying history.
 
 **Status:** the backend side is implemented and verified over real HTTP. The replay
-routes are PROPOSED like the rest of v2. Glimpse has not been wired to any of it.
+routes are PROPOSED like the rest of v2. The GLIMPSE frontend has not been wired to any of it.
 
 ## 0 · Two scenarios, two demo accounts
 

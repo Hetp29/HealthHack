@@ -1012,8 +1012,8 @@
     }
   },
   "info": {
-    "description": "GlucoTwin application API. Authenticated per-user storage and orchestration around the\nfrozen fs-1.3 forecasting model.\n\nResearch prototype. Forecasts, alerts, nutrition estimates and medication content are\ninformational. They are not a diagnosis and not medication or insulin dosing advice.\nPrediction uncertainty is not calibrated.",
-    "title": "GlucoTwin Application API",
+    "description": "GLIMPSE application API. Authenticated per-user storage and orchestration around the\nfrozen fs-1.3 forecasting model.\n\nResearch prototype. Forecasts, alerts, nutrition estimates and medication content are\ninformational. They are not a diagnosis and not medication or insulin dosing advice.\nPrediction uncertainty is not calibrated.",
+    "title": "GLIMPSE Application API",
     "version": "2.0.0-draft"
   },
   "openapi": "3.1.0",

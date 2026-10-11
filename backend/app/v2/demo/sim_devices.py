@@ -1,7 +1,7 @@
 """Simulated connected-health sources for the demonstration accounts.
 
 Everything this module produces is INVENTED and says so. It demonstrates how
-wearable data flows into GlucoTwin -- ingestion, storage, provenance, the timeline --
+wearable data flows into GLIMPSE -- ingestion, storage, provenance, the timeline --
 without contacting Apple, Fitbit, WHOOP or anyone else, and without a token, an OAuth
 exchange or a callback of any kind.
 
@@ -375,7 +375,7 @@ def timeline(ctx: V2Context, user_id: str, start: dt.datetime, end: dt.datetime,
                 a.c.user_id == user_id, a.c.created_at >= start, a.c.created_at <= end))).mappings():
             items.append({"at": row["created_at"], "type": "alert", "alert_id": row["alert_id"],
                           "status": row["status"], "data_class": "model_output", "simulated": False,
-                          "source": "GlucoTwin forecast alert (informational)"})
+                          "source": "GLIMPSE forecast alert (informational)"})
         for row in conn.execute(select(d).where(and_(
                 d.c.user_id == user_id, d.c.action != "scheduled",
                 d.c.recorded_at >= start, d.c.recorded_at <= end))).mappings():

@@ -1,4 +1,4 @@
-# GLUCOTWIN | HET IMPLEMENTATION BRIEF
+# GLIMPSE | HET IMPLEMENTATION BRIEF
 
 **Status:** Planning specification | **Date:** 2026-10-10 | **Source of truth:** Master + this role brief
 

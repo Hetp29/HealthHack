@@ -304,7 +304,7 @@
         "status": "active",
         "data_class": "model_output",
         "simulated": false,
-        "source": "GlucoTwin forecast alert (informational)"
+        "source": "GLIMPSE forecast alert (informational)"
       },
       {
         "at": "2026-09-17T17:00:00Z",
@@ -322,7 +322,7 @@
         "status": "suppressed_cooldown",
         "data_class": "model_output",
         "simulated": false,
-        "source": "GlucoTwin forecast alert (informational)"
+        "source": "GLIMPSE forecast alert (informational)"
       },
       {
         "at": "2026-09-17T17:20:00Z",
@@ -350,7 +350,7 @@
         "status": "active",
         "data_class": "model_output",
         "simulated": false,
-        "source": "GlucoTwin forecast alert (informational)"
+        "source": "GLIMPSE forecast alert (informational)"
       },
       {
         "at": "2026-09-17T22:00:00Z",
@@ -506,7 +506,7 @@
         "status": "active",
         "data_class": "model_output",
         "simulated": false,
-        "source": "GlucoTwin forecast alert (informational)"
+        "source": "GLIMPSE forecast alert (informational)"
       },
       {
         "at": "2026-09-18T09:00:00Z",
@@ -524,7 +524,7 @@
         "status": "active",
         "data_class": "model_output",
         "simulated": false,
-        "source": "GlucoTwin forecast alert (informational)"
+        "source": "GLIMPSE forecast alert (informational)"
       },
       {
         "at": "2026-09-18T14:00:00Z",
@@ -576,7 +576,7 @@
         "status": "active",
         "data_class": "model_output",
         "simulated": false,
-        "source": "GlucoTwin forecast alert (informational)"
+        "source": "GLIMPSE forecast alert (informational)"
       },
       {
         "at": "2026-09-18T19:00:00Z",

@@ -1,4 +1,4 @@
-# GLUCOTWIN | RUHAAN IMPLEMENTATION BRIEF
+# GLIMPSE | RUHAAN IMPLEMENTATION BRIEF
 
 **Status:** Planning specification | **Date:** 2026-10-10 | **Source of truth:** Master + this role brief
 

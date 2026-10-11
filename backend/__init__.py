@@ -1,1 +1,1 @@
-"""GlucoTwin backend package (owner: Ruhaan)."""
+"""GLIMPSE backend package (owner: Ruhaan)."""

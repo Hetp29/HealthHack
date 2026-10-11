@@ -1,4 +1,4 @@
-"""End-to-end smoke test against a RUNNING GlucoTwin deployment.
+"""End-to-end smoke test against a RUNNING GLIMPSE deployment.
 
     python scripts/smoke_v2.py http://127.0.0.1:8000
 

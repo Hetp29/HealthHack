@@ -1,4 +1,4 @@
-# GlucoTwin — API interface registry
+# GLIMPSE — API interface registry
 
 The single registry of every HTTP interface (master §6). Maintained by Ruhaan.
 
@@ -36,7 +36,7 @@ names are intended to be stable; a change before approval will be announced in
 
 ## 1 · Frozen contract v1.0 — DO NOT CHANGE
 
-Owner: Ruhaan · Consumer: Neil (Glimpse today) · Auth: none · Status: **FROZEN, VERIFIED**
+Owner: Ruhaan · Consumer: Neil (the GLIMPSE frontend today) · Auth: none · Status: **FROZEN, VERIFIED**
 
 | method | route |
 |---|---|
@@ -92,7 +92,7 @@ health value. Every response carries `X-Request-ID`.
 frontend converts to local time for display using the account `timezone`.
 
 * `observed_at` — when a measurement physically happened.
-* `received_at` — when GlucoTwin stored it. Never interchangeable.
+* `received_at` — when GLIMPSE stored it. Never interchangeable.
 
 **Units.** Glucose is stored and returned in **mg/dL**; a request must state
 `"unit": "mg/dL"` or `"mmol/L"`, and the original value and unit are preserved
@@ -374,7 +374,7 @@ not CGM alarms and must not look like one.
 and returned with `available: false`; attempts are recorded as
 `channel_unavailable`. Do not show them as working.
 
-Glimpse's client-side `spikeAlert.ts` should become display-only once this is wired.
+The GLIMPSE frontend's client-side `spikeAlert.ts` should become display-only once this is wired.
 
 ## 12a · Demonstration replay — exists only when `GLUCOTWIN_DEMO_MODE` is enabled
 

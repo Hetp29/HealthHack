@@ -50,7 +50,7 @@ Discrepancies found and **not** silently resolved:
 
 Remote branches:
 
-* `origin/neil` — the Glimpse frontend lives **only here**, at the repository root
+* `origin/neil` — the GLIMPSE frontend lives **only here**, at the repository root
   (`src/`, `package.json`): TanStack Start + React 19 + zod, Lovable-connected. It
   consumes the seven v1 endpoints only. No native wrapper (no Capacitor, no `ios/`).
 * `origin/het` — one commit ahead of an old base: a self-contained `experiments/het/`

@@ -1,4 +1,4 @@
-# Handoff to Het — deploying the GlucoTwin backend
+# Handoff to Het — deploying the GLIMPSE backend
 
 From Ruhaan. Everything the backend needs from its environment. Nothing here
 provisions anything: AWS resources, networking, secrets infrastructure and CI/CD are
