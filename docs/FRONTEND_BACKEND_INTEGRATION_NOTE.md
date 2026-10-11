@@ -18,6 +18,7 @@ The The `/auth` screen calls `POST /api/v2/auth/login` for the new-user and retu
 - `GET /api/v2/cgm/readings`
 - `GET /api/v2/wearables/observations`
 - `GET /api/v2/meals`, `POST /api/v2/meals`, `POST /api/v2/meals/{meal_id}/predict`
+- `POST /api/v2/meals/images?occurred_at=...`, `POST /api/v2/meals/{meal_id}/analyze`, `PATCH /api/v2/meals/{meal_id}/confirm`
 - `GET /api/v2/predictions/{prediction_id}`, `GET /api/v2/meals/{meal_id}/outcome`
 - `GET /api/v2/medications`, `GET /api/v2/medication-reminders/due`, `GET /api/v2/medication-doses`, `POST /api/v2/medication-doses`
 - `GET /api/v2/alerts`
@@ -37,6 +38,16 @@ The medication page currently demonstrates explicit, user-triggered dose logging
 ## Predictions and safety
 
 Keep prediction requests compatible with the existing typed contracts and preserve the model feature ordering and weights. Responses should identify their data source and model availability. Forecasts, alerts, medication logs, and nutritional estimates are informational only and must retain the displayed clinical disclaimer; no endpoint should return insulin dose instructions or a diagnosis.
+
+### Meal-photo analysis
+
+The Predict page sends image bytes to `POST /api/v2/meals/images` with the image MIME
+type as `Content-Type` and `occurred_at` as an RFC 3339 query parameter. It then
+calls `POST /api/v2/meals/{meal_id}/analyze`. The returned OpenAI estimate is
+displayed as an estimate and remains editable. Only after the user explicitly
+confirms all five values does the frontend call `PATCH /api/v2/meals/{meal_id}/confirm`
+and then the existing predict endpoint. The OpenAI credential remains server-side;
+provider errors and timeouts are surfaced instead of replaced with fixture data.
 
 ## Error and audit behavior
 

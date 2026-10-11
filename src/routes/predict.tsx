@@ -10,9 +10,9 @@ import { loadProfile, type UserProfile } from "@/lib/profile";
 import { assessSpike } from "@/lib/spikeAlert";
 import { cn } from "@/lib/utils";
 import { ApiError } from "@/services/apiClient";
-import { predict } from "@/services/glimpseServices";
 import type { MealMacros, PredictResponse } from "@/types/contracts";
-import { createMeal, getReplay, predictMeal } from "@/services/v2Client";
+import { analyzeMealPhoto, confirmMeal, createMeal, getReplay, predictMeal, uploadMealPhoto } from "@/services/v2Client";
+import type { MealEstimate } from "@/services/v2Types";
 
 export const Route = createFileRoute("/predict")({
   head: () => ({ meta: [{ title: "Glimpse — predict" }] }),
@@ -61,6 +61,10 @@ function PredictPage() {
   const [touched, setTouched] = useState(false);
   const [run, setRun] = useState<Run>({ state: "idle" });
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [photoMealId, setPhotoMealId] = useState<string | null>(null);
+  const [photoEstimate, setPhotoEstimate] = useState<MealEstimate | null>(null);
+  const [photoState, setPhotoState] = useState<"idle" | "uploading" | "analyzing" | "ready" | "confirming" | "error">("idle");
+  const [photoError, setPhotoError] = useState("");
   const ctrl = useRef<AbortController | null>(null);
 
   useEffect(() => setProfile(loadProfile()), []);
@@ -95,6 +99,48 @@ function PredictPage() {
     );
   };
 
+  const setEstimatedMacros = (totals: MealMacros) => {
+    setForm(toForm(totals));
+    setPresetId(null);
+  };
+
+  const analyzePhoto = async (file: File) => {
+    setPhotoError("");
+    setPhotoState("uploading");
+    try {
+      const uploaded = await uploadMealPhoto(file, localInputToIso(mealTime));
+      setPhotoMealId(uploaded.meal_id);
+      setPhotoState("analyzing");
+      const analyzed = await analyzeMealPhoto(uploaded.meal_id);
+      setPhotoEstimate(analyzed.estimate);
+      setEstimatedMacros(analyzed.estimate.totals);
+      setPhotoState("ready");
+    } catch (error) {
+      setPhotoState("error");
+      setPhotoError(error instanceof Error ? error.message : "The meal photo analysis service is unavailable.");
+    }
+  };
+
+  const confirmPhotoMeal = async () => {
+    if (!photoMealId || !photoEstimate) return;
+    const parsed = parse(form);
+    if (!parsed.macros) {
+      setTouched(true);
+      return;
+    }
+    setPhotoState("confirming");
+    setPhotoError("");
+    try {
+      await confirmMeal(photoMealId, parsed.macros);
+      const prediction = await predictMeal(photoMealId);
+      setRun({ state: "success", data: prediction.forecast, key: JSON.stringify({ mealTime, macros: parsed.macros }) });
+      setPhotoState("ready");
+    } catch (error) {
+      setPhotoState("error");
+      setPhotoError(error instanceof Error ? error.message : "The confirmed meal could not be saved.");
+    }
+  };
+
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setTouched(true);
@@ -119,6 +165,53 @@ function PredictPage() {
       <div className="mb-6 rounded-xl border border-amber-400/60 bg-amber-50 p-3 text-xs text-amber-900">
         Glucose forecasts, spike notifications, medication logs, and nutritional estimates are strictly informational and do NOT constitute clinical diagnosis, medical advice, or insulin dose instructions.
       </div>
+
+      <div className="rounded-xl border border-primary/25 bg-accent/40 p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className="text-[15px] font-semibold text-foreground">Analyze a meal photo</div>
+            <p className="mt-1 text-xs text-muted-foreground">OpenAI will estimate the foods and nutrition on the backend. Review and edit every value before confirming.</p>
+          </div>
+          <Sparkles className="h-5 w-5 shrink-0 text-primary" aria-hidden />
+        </div>
+        <label className="mt-3 inline-flex cursor-pointer items-center rounded-lg border bg-card px-3 py-2 text-[13px] font-medium text-foreground hover:border-primary">
+          {photoState === "uploading" ? "Uploading photo…" : photoState === "analyzing" ? "Analyzing photo…" : "Upload or photograph food"}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            capture="environment"
+            className="sr-only"
+            disabled={photoState === "uploading" || photoState === "analyzing" || photoState === "confirming"}
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) void analyzePhoto(file);
+              event.currentTarget.value = "";
+            }}
+          />
+        </label>
+        {(photoState === "uploading" || photoState === "analyzing") && <Loader2 className="ml-2 inline h-4 w-4 animate-spin text-primary" aria-label="Analysis in progress" />}
+        {photoError && <p role="alert" className="mt-2 text-xs text-destructive">Meal photo analysis unavailable: {photoError}</p>}
+      </div>
+
+      {photoEstimate && (
+        <div className="rounded-xl border bg-card p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <div className="text-[15px] font-semibold text-foreground">Review photo estimate</div>
+              <p className="mt-1 text-xs text-muted-foreground">These are estimates, not measured nutrition values. Edit the fields below before confirming.</p>
+            </div>
+            <span className="rounded-full border px-2 py-1 text-xs text-muted-foreground">{photoEstimate.overall_confidence ?? "estimated"} confidence</span>
+          </div>
+          <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
+            {photoEstimate.items.map((item) => <li key={`${item.name}-${item.estimated_weight_g}`}><span className="font-medium text-foreground">{item.name}</span> · {item.portion_description} · {item.confidence} confidence</li>)}
+          </ul>
+          {photoEstimate.assumptions?.length ? <p className="mt-3 text-xs text-muted-foreground"><strong>Assumptions:</strong> {photoEstimate.assumptions.join(" ")}</p> : null}
+          <button type="button" onClick={() => void confirmPhotoMeal()} disabled={photoState === "confirming"} className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-[13px] font-semibold text-primary-foreground disabled:opacity-60">
+            {photoState === "confirming" && <Loader2 className="h-4 w-4 animate-spin" />}
+            {photoState === "confirming" ? "Confirming meal…" : "Confirm meal and forecast"}
+          </button>
+        </div>
+      )}
       <PageHeader
         title="Predict meal trajectory"
         subtitle="Enter a meal to create a real v2 forecast on the replay clock."

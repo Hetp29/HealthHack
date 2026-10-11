@@ -175,6 +175,38 @@ export interface V2Meal {
   prediction_id?: string | null;
 }
 
+export interface MealEstimate {
+  estimate_id: string;
+  status: string;
+  is_estimate: boolean;
+  needs_user_confirmation: boolean;
+  totals: MealMacros;
+  ranges?: Partial<Record<keyof MealMacros, { low: number; high: number }>>;
+  items: Array<{
+    name: string;
+    portion_description: string;
+    estimated_weight_g: number | null;
+    visibility: string;
+    confidence: string;
+    notes: string | null;
+  }>;
+  overall_confidence?: string;
+  assumptions?: string[];
+  ambiguities?: string[];
+  clarification_questions?: string[];
+  warnings?: Array<{ code: string }>;
+  provenance?: { provider: string; method: string; [key: string]: unknown };
+}
+
+export interface MealPhotoUpload {
+  meal_id: string;
+  occurred_at: string;
+  entry_method: "photo";
+  status: "draft" | string;
+  estimate: MealEstimate | null;
+  photo: { photo_id: string; content_type: string; url: string };
+}
+
 export interface V2MealsResponse {
   meals: V2Meal[];
 }

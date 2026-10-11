@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { advanceReplay, login, recordDose } from "@/services/v2Client";
+import { advanceReplay, login, recordDose, uploadMealPhoto } from "@/services/v2Client";
 
 describe("v2 API client", () => {
   beforeEach(() => {
@@ -35,5 +35,18 @@ describe("v2 API client", () => {
 
     expect(fetchMock.mock.calls[0]?.[0]).toContain("/api/v2/demo/replay/advance");
     expect(fetchMock.mock.calls[1]?.[0]).toContain("/api/v2/medication-doses");
+  });
+
+  it("uploads meal photo bytes with bearer auth without forcing JSON content type", async () => {
+    sessionStorage.setItem("glimpse.v2.token", "session-token");
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ meal_id: "meal-1" }), { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await uploadMealPhoto(new File(["image"], "meal.jpg", { type: "image/jpeg" }), "2026-09-20T16:00:00Z");
+
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(fetchMock.mock.calls[0]?.[0]).toContain("/api/v2/meals/images?occurred_at=");
+    expect(new Headers(request.headers).get("Authorization")).toBe("Bearer session-token");
+    expect(new Headers(request.headers).get("Content-Type")).toBe("image/jpeg");
+    expect(request.body).toBeInstanceOf(File);
   });
 });

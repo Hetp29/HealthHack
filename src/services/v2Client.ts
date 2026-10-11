@@ -1,7 +1,7 @@
 import { API_BASE_URL, ApiError } from "./apiClient";
 import type {
   AuthResponse, CgmReadings, DemoDevices, DemoDeviceProfile, ReplayAdvanceResponse, ReplayState,
-  V2Dose, V2Meal, V2MealsResponse, V2Outcome, V2Prediction, V2Regimen, V2User, WearableObservations,
+  MealEstimate, MealPhotoUpload, V2Dose, V2Meal, V2MealsResponse, V2Outcome, V2Prediction, V2Regimen, V2User, WearableObservations,
 } from "./v2Types";
 import type { MealMacros } from "@/types/contracts";
 
@@ -18,6 +18,38 @@ export function clearV2Session() {
 
 export function hasV2Session() {
   return typeof window !== "undefined" && sessionStorage.getItem(TOKEN_KEY) !== null;
+}
+
+async function uploadRaw<T>(path: string, file: File, occurredAt: string): Promise<T> {
+  if (!V2_BASE) throw new ApiError("config", "VITE_API_BASE_URL is not configured.");
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 60000);
+  const headers = new Headers({ Accept: "application/json", "Content-Type": file.type || "application/octet-stream" });
+  const session = token();
+  if (session) headers.set("Authorization", `Bearer ${session}`);
+  let response: Response;
+  try {
+    response = await fetch(`${V2_BASE}${path}?${new URLSearchParams({ occurred_at: occurredAt })}`, {
+      method: "POST",
+      headers,
+      body: file,
+      signal: ctrl.signal,
+    });
+  } catch {
+    if (ctrl.signal.aborted) throw new ApiError("timeout", "Meal photo upload timed out.");
+    throw new ApiError("network", "The v2 backend is unreachable.");
+  } finally {
+    clearTimeout(timer);
+  }
+  if (!response.ok) {
+    let detail = `HTTP ${response.status}`;
+    try {
+      const body = await response.json();
+      detail = typeof body.detail === "string" ? body.detail : body.code ?? detail;
+    } catch { /* Preserve the HTTP status when the server does not return JSON. */ }
+    throw new ApiError(response.status === 503 ? "model_unavailable" : response.status === 422 ? "invalid_input" : "http", detail, response.status);
+  }
+  return (await response.json()) as T;
 }
 
 async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 30000): Promise<T> {
@@ -38,6 +70,32 @@ async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 3000
         detail = typeof body.detail === "string" ? body.detail : body.code ?? detail;
       } catch { /* Preserve the HTTP status when the server does not return JSON. */ }
       throw new ApiError(response.status === 401 ? "http" : response.status === 404 ? "not_found" : response.status === 503 ? "model_unavailable" : response.status === 422 ? "invalid_input" : "http", detail, response.status);
+    }
+
+    async function uploadRaw<T>(path: string, file: File, occurredAt: string): Promise<T> {
+      if (!V2_BASE) throw new ApiError("config", "VITE_API_BASE_URL is not configured.");
+      const headers = new Headers({ Accept: "application/json", "Content-Type": file.type || "application/octet-stream" });
+      const session = token();
+      if (session) headers.set("Authorization", `Bearer ${session}`);
+      let response: Response;
+      try {
+        response = await fetch(`${V2_BASE}${path}?${new URLSearchParams({ occurred_at: occurredAt })}`, {
+          method: "POST",
+          headers,
+          body: file,
+        });
+      } catch {
+        throw new ApiError("network", "The v2 backend is unreachable.");
+      }
+      if (!response.ok) {
+        let detail = `HTTP ${response.status}`;
+        try {
+          const body = await response.json();
+          detail = typeof body.detail === "string" ? body.detail : body.code ?? detail;
+        } catch { /* Preserve the HTTP status when the server does not return JSON. */ }
+        throw new ApiError(response.status === 503 ? "model_unavailable" : response.status === 422 ? "invalid_input" : "http", detail, response.status);
+      }
+      return (await response.json()) as T;
     }
     if (response.status === 204) return undefined as T;
     return (await response.json()) as T;
@@ -79,6 +137,9 @@ export const getMedicationDoses = () => request<{ doses: V2Dose[] }>("/medicatio
 export const recordDose = (event: { regimen_id: string; action: "taken" | "skipped" | "snoozed"; scheduled_at?: string | null; snoozed_until?: string | null }) => request<V2Dose>("/medication-doses", { method: "POST", body: JSON.stringify({ ...event, client_event_id: `glimpse-${crypto.randomUUID()}` }) });
 export const getMeals = () => request<V2MealsResponse>("/meals?limit=200");
 export const createMeal = (occurredAt: string, macros: MealMacros) => request<V2Meal>("/meals", { method: "POST", body: JSON.stringify({ occurred_at: occurredAt, macros }) });
+export const uploadMealPhoto = (file: File, occurredAt: string) => uploadRaw<MealPhotoUpload>("/meals/images", file, occurredAt);
+export const analyzeMealPhoto = (mealId: string) => request<{ meal_id: string; estimate: MealEstimate }>(`/meals/${mealId}/analyze`, { method: "POST" }, 60000);
+export const confirmMeal = (mealId: string, macros: MealMacros) => request<V2Meal>(`/meals/${mealId}/confirm`, { method: "PATCH", body: JSON.stringify(macros) });
 export const predictMeal = (mealId: string) => request<V2Prediction>(`/meals/${mealId}/predict`, { method: "POST" }, 60000);
 export const getPrediction = (id: string) => request<V2Prediction>(`/predictions/${id}`);
 export const getOutcome = (mealId: string) => request<V2Outcome>(`/meals/${mealId}/outcome`);
