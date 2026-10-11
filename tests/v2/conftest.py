@@ -99,6 +99,7 @@ class Harness:
     vision: FakeVision
     v1_app: object
     image_dir: pathlib.Path
+    v2_app: object = None
 
     def register(self, email: str = "a@example.com", *, consent: bool = True,
                  personalization: bool = True, timezone: str = TZ) -> dict:
@@ -201,9 +202,10 @@ def build_harness(tmp_path, v1_settings, **setting_overrides) -> Harness:
     create_all(engine)
     ctx = V2Context(settings=settings, engine=engine, prediction_service=v1_app.state.service,
                     image_store=LocalImageStore(settings.image_dir), vision=vision, clock=clock)
-    client = TestClient(PlatformApp(v1_app, create_v2_app(ctx)))
+    v2_app = create_v2_app(ctx)
+    client = TestClient(PlatformApp(v1_app, v2_app))
     return Harness(client=client, ctx=ctx, clock=clock, vision=vision, v1_app=v1_app,
-                   image_dir=settings.image_dir)
+                   image_dir=settings.image_dir, v2_app=v2_app)
 
 
 def seed_scored_meals(h: Harness, headers: dict, count: int, *, spacing_hours: float = 5.0,
