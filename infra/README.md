@@ -18,6 +18,7 @@ are owned by Ruhaan and Neil and are not changed by anything in this folder. The
 | 2026-10-11 | `fe5d532` | Build with **no** artifact | **Fails as required** at `verify_artifact`: "model artifact not found … never trained here". All Python dependencies install in `python:3.12-slim` (linux/arm64). |
 | 2026-10-11 | `fe5d532` | Build with a **wrong** artifact | **Fails as required**: "checksum mismatch: expected 12ed0602…, found 2ca054eb…". No image is produced. |
 | 2026-10-11 | `fe5d532` | `verify_postgres.sh` (PostgreSQL 16.15) | Migrations up/check/down/up **OK** (head `0002`). v2 suite: **289 passed, 13 skipped**, 2 deselected (see below). |
+| 2026-10-11 | `a68792a` | `verify_postgres.sh` after Ruhaan's `4f3f2f4` (adds migration `0003`) | Migrations up/check/down/up **OK** (head `0003`). v2 suite: **303 passed, 13 skipped**, 2 deselected (same harness limitation). |
 | — | — | `container_smoke.sh` | **Not run yet:** waiting for the frozen artifact from Ruhaan (B-004). |
 
 **The 2 deselected tests** (`test_resetting_one_mode_never_touches_the_other_or_an_ordinary_account`, both
