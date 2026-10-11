@@ -4,20 +4,32 @@ import { describe, expect, it } from "vitest";
 
 import { routeTree } from "@/routeTree.gen";
 
-// Match routes without running loaders or rendering: loaders may need a server or
-// network the test run lacks, and jsdom never loads the stylesheets React waits on.
+// Match routes without running loaders or rendering.
+const router = () => createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+
 describe("App routing", () => {
-  it("matches a page for / instead of falling back to not found", () => {
-    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-
-    const matches = router.matchRoutes("/");
-
-    expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
+  it.each([
+    "/",
+    "/auth",
+    "/onboarding",
+    "/meals",
+    "/meals/log",
+    "/insights",
+    "/health",
+    "/settings",
+  ])("has a screen for %s", (path) => {
+    expect(router().matchRoutes(path).at(-1)?.routeId).not.toBe(rootRouteId);
   });
 
-  it.each(["/predict", "/insights", "/profile"])("matches a page for %s", (path) => {
-    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-
-    expect(router.matchRoutes(path).at(-1)?.routeId).toBe(path);
+  it("routes a meal id to the meal screen, not the log screen", () => {
+    expect(router().matchRoutes("/meals/meal_123").at(-1)?.routeId).toBe("/meals/$mealId");
+    expect(router().matchRoutes("/meals/log").at(-1)?.routeId).toBe("/meals/log");
   });
+
+  it.each(["/predict", "/medications", "/profile", "/connect-devices"])(
+    "keeps the old address %s alive as a redirect",
+    (path) => {
+      expect(router().matchRoutes(path).at(-1)?.routeId).toBe(path);
+    },
+  );
 });

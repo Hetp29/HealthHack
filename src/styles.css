@@ -4,75 +4,84 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Glimpse design system — clinical, restrained, teal-accented. All colors oklch. */
+/*
+ * GLIMPSE design system. Semantic tokens only: components never name a raw colour.
+ * Predicted glucose is always teal, observed glucose always indigo, and amber is kept
+ * for informational warnings.
+ */
 
 @theme inline {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 2px);
-  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-subtle: var(--subtle);
+  --color-subtle: var(--muted-foreground);
   --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-foreground: var(--primary-foreground);
+  --color-destructive-soft: var(--destructive-soft);
   --color-warning: var(--warning);
   --color-warning-border: var(--warning-border);
   --color-warning-foreground: var(--warning-foreground);
-  --color-negative: var(--negative);
-  --color-heart: var(--heart);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-predicted: var(--predicted);
+  --color-predicted-soft: var(--predicted-soft);
+  --color-observed: var(--observed);
+  --color-observed-soft: var(--observed-soft);
   --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--border-strong);
+  --color-ring: var(--primary);
   --color-ring-offset-background: var(--background);
   --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
 }
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.984 0.003 247.86);
-  --foreground: oklch(0.208 0.042 265.76);
-  --subtle: oklch(0.446 0.043 257.28);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.208 0.042 265.76);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.208 0.042 265.76);
-  --primary: oklch(0.6 0.118 184.7);
-  --primary-hover: oklch(0.511 0.096 186.39);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.968 0.007 247.9);
-  --secondary-foreground: oklch(0.208 0.042 265.76);
-  --muted: oklch(0.968 0.007 247.9);
-  --muted-foreground: oklch(0.554 0.046 257.42);
-  --accent: oklch(0.984 0.014 180.72);
-  --accent-foreground: oklch(0.511 0.096 186.39);
-  --destructive: oklch(0.505 0.213 27.52);
-  --destructive-foreground: oklch(1 0 0);
-  --warning: oklch(0.987 0.022 95.28);
-  --warning-border: oklch(0.769 0.188 70.08);
-  --warning-foreground: oklch(0.414 0.112 45.9);
-  --negative: oklch(0.55 0.11 255);
-  --heart: oklch(0.6 0.13 15);
-  --border: oklch(0.929 0.013 255.5);
-  --input: oklch(0.929 0.013 255.5);
-  --ring: oklch(0.6 0.118 184.7);
-  --shadow-card: 0 1px 2px 0 oklch(0.208 0.042 265.76 / 0.04), 0 1px 3px 0 oklch(0.208 0.042 265.76 / 0.04);
+  --background: #f5f7fa;
+  --card: #ffffff;
+  --foreground: #152a35;
+  --muted-foreground: #536471;
+  --muted: #edf1f5;
+  --border: #e1e7ed;
+  --border-strong: #cbd5de;
+  --primary: #176b68;
+  --primary-hover: #125b58;
+  --primary-foreground: #ffffff;
+  --accent: #e7f2f1;
+  --accent-foreground: #125b58;
+  --predicted: #176b68;
+  --predicted-soft: #e7f2f1;
+  --observed: #4f46e5;
+  --observed-soft: #ecebfd;
+  --warning: #fff6e3;
+  --warning-border: #eebc5b;
+  --warning-foreground: #6f4400;
+  --destructive: #b42318;
+  --destructive-soft: #fdeceb;
+  --success: #1b7a4b;
+  --success-soft: #e6f4ec;
+  --shadow-card: 0 1px 2px rgb(21 42 53 / 0.04), 0 2px 8px rgb(21 42 53 / 0.04);
+  --shadow-raised: 0 4px 12px rgb(21 42 53 / 0.08), 0 16px 40px rgb(21 42 53 / 0.08);
 }
 
 @layer base {
@@ -82,15 +91,37 @@
   html {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-size: 14px;
+    font-size: 15px;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.015em;
   }
   :focus-visible {
     outline: 2px solid var(--color-ring);
     outline-offset: 2px;
+    border-radius: 6px;
+  }
+  button,
+  [role="button"],
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -103,4 +134,8 @@
 
 @utility tabular {
   font-variant-numeric: tabular-nums;
+}
+
+@utility safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }

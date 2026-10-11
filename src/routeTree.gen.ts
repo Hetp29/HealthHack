@@ -12,11 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ConnectDevicesRouteImport } from './routes/connect-devices'
+import { Route as HealthRouteImport } from './routes/health'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as MedicationsRouteImport } from './routes/medications'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as PredictRouteImport } from './routes/predict'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as MealsIndexRouteImport } from './routes/meals.index'
+import { Route as MealsMealIdRouteImport } from './routes/meals.$mealId'
+import { Route as MealsLogRouteImport } from './routes/meals.log'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,6 +36,11 @@ const AuthRoute = AuthRouteImport.update({
 const ConnectDevicesRoute = ConnectDevicesRouteImport.update({
   id: '/connect-devices',
   path: '/connect-devices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthRoute = HealthRouteImport.update({
+  id: '/health',
+  path: '/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InsightsRoute = InsightsRouteImport.update({
@@ -58,37 +68,72 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealsIndexRoute = MealsIndexRouteImport.update({
+  id: '/meals/',
+  path: '/meals/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealsMealIdRoute = MealsMealIdRouteImport.update({
+  id: '/meals/$mealId',
+  path: '/meals/$mealId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MealsLogRoute = MealsLogRouteImport.update({
+  id: '/meals/log',
+  path: '/meals/log',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/connect-devices': typeof ConnectDevicesRoute
+  '/health': typeof HealthRoute
   '/insights': typeof InsightsRoute
   '/medications': typeof MedicationsRoute
   '/onboarding': typeof OnboardingRoute
   '/predict': typeof PredictRoute
   '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/meals/$mealId': typeof MealsMealIdRoute
+  '/meals/log': typeof MealsLogRoute
+  '/meals/': typeof MealsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/connect-devices': typeof ConnectDevicesRoute
+  '/health': typeof HealthRoute
   '/insights': typeof InsightsRoute
   '/medications': typeof MedicationsRoute
   '/onboarding': typeof OnboardingRoute
   '/predict': typeof PredictRoute
   '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/meals/$mealId': typeof MealsMealIdRoute
+  '/meals/log': typeof MealsLogRoute
+  '/meals': typeof MealsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/connect-devices': typeof ConnectDevicesRoute
+  '/health': typeof HealthRoute
   '/insights': typeof InsightsRoute
   '/medications': typeof MedicationsRoute
   '/onboarding': typeof OnboardingRoute
   '/predict': typeof PredictRoute
   '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/meals/$mealId': typeof MealsMealIdRoute
+  '/meals/log': typeof MealsLogRoute
+  '/meals/': typeof MealsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,42 +141,62 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/connect-devices'
+    | '/health'
     | '/insights'
     | '/medications'
     | '/onboarding'
     | '/predict'
     | '/profile'
+    | '/settings'
+    | '/meals/$mealId'
+    | '/meals/log'
+    | '/meals/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/connect-devices'
+    | '/health'
     | '/insights'
     | '/medications'
     | '/onboarding'
     | '/predict'
     | '/profile'
+    | '/settings'
+    | '/meals/$mealId'
+    | '/meals/log'
+    | '/meals'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/connect-devices'
+    | '/health'
     | '/insights'
     | '/medications'
     | '/onboarding'
     | '/predict'
     | '/profile'
+    | '/settings'
+    | '/meals/$mealId'
+    | '/meals/log'
+    | '/meals/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ConnectDevicesRoute: typeof ConnectDevicesRoute
+  HealthRoute: typeof HealthRoute
   InsightsRoute: typeof InsightsRoute
   MedicationsRoute: typeof MedicationsRoute
   OnboardingRoute: typeof OnboardingRoute
   PredictRoute: typeof PredictRoute
   ProfileRoute: typeof ProfileRoute
+  SettingsRoute: typeof SettingsRoute
+  MealsMealIdRoute: typeof MealsMealIdRoute
+  MealsLogRoute: typeof MealsLogRoute
+  MealsIndexRoute: typeof MealsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -155,6 +220,13 @@ declare module '@tanstack/react-router' {
       path: '/connect-devices'
       fullPath: '/connect-devices'
       preLoaderRoute: typeof ConnectDevicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health': {
+      id: '/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof HealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/insights': {
@@ -192,6 +264,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meals/': {
+      id: '/meals/'
+      path: '/meals'
+      fullPath: '/meals/'
+      preLoaderRoute: typeof MealsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meals/$mealId': {
+      id: '/meals/$mealId'
+      path: '/meals/$mealId'
+      fullPath: '/meals/$mealId'
+      preLoaderRoute: typeof MealsMealIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meals/log': {
+      id: '/meals/log'
+      path: '/meals/log'
+      fullPath: '/meals/log'
+      preLoaderRoute: typeof MealsLogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -199,11 +299,16 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ConnectDevicesRoute: ConnectDevicesRoute,
+  HealthRoute: HealthRoute,
   InsightsRoute: InsightsRoute,
   MedicationsRoute: MedicationsRoute,
   OnboardingRoute: OnboardingRoute,
   PredictRoute: PredictRoute,
   ProfileRoute: ProfileRoute,
+  SettingsRoute: SettingsRoute,
+  MealsMealIdRoute: MealsMealIdRoute,
+  MealsLogRoute: MealsLogRoute,
+  MealsIndexRoute: MealsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
