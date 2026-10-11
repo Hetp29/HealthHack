@@ -1,6 +1,6 @@
 # GLIMPSE
 
-> **GLIMPSE** — Glucose Learning through Integrated Multimodal Prediction and Sensor Evidence. Formerly named GlucoTwin; some technical
+> **GLIMPSE** — Glucose Learning through Integrated Multimodal Prediction and Sensor Evidence. Formerly named Glucotwin; some technical
 > identifiers keep the old name (see `docs/project/DECISIONS.md`, D-018).
 
 **Personalized postprandial glucose response forecasting.**
