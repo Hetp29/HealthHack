@@ -170,6 +170,14 @@ def create_v2_app(ctx: V2Context) -> FastAPI:
     for module in (system, auth, onboarding, meals, cgm, devices, wearables, medications, alerts):
         app.include_router(module.router)
 
+    if ctx.settings.demo_mode:
+        # Registered only in an explicitly enabled demo environment. Elsewhere these
+        # routes do not exist at all.
+        from backend.app.v2.routers import demo
+
+        app.include_router(demo.router)
+        logger.warning("demo_mode_enabled replay routes are active; not for production")
+
     logger.info(
         "v2_startup db=%s vision=%s model_verified=%s policy=%s",
         ctx.settings.app_db_url.split(":", 1)[0],

@@ -30,6 +30,7 @@ COPY data/ ./data/
 COPY ml/ ./ml/
 COPY backend/ ./backend/
 COPY workers/ ./workers/
+COPY scripts/ ./scripts/
 COPY migrations/ ./migrations/
 COPY alembic.ini ./
 
