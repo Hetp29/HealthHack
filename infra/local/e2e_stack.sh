@@ -6,6 +6,8 @@
 #   infra/local/e2e_stack.sh down
 #
 # Needs: Docker, ml/artifacts_cgmacros_fs13/ (5 frozen files), data/local/demo/ bundles, node_modules.
+# Optional: OPENAI_KEY_FILE=<path to a 0600 file holding the key> and VISION_MODEL=<model> to enable
+# meal-photo analysis on the API container only. The key is read from the file, never echoed.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
@@ -44,9 +46,13 @@ up() {
   docker run --rm --network "$NET" "${ENV[@]}" "$IMG" alembic -q upgrade head
   docker run --rm --network "$NET" "${ENV[@]}" "$IMG" python -m scripts.demo_seed >/dev/null
   docker run --rm --network "$NET" "${ENV[@]}" "$IMG" python -m scripts.demo_seed --scenario returning_user >/dev/null
+  OPENAI=()
+  if [ -n "${OPENAI_KEY_FILE:-}" ] && [ -s "$OPENAI_KEY_FILE" ]; then
+    OPENAI=(-e OPENAI_API_KEY="$(cat "$OPENAI_KEY_FILE")" -e GLUCOTWIN_OPENAI_VISION_MODEL="${VISION_MODEL:?set VISION_MODEL}")
+  fi
   # Single worker: the demo replay lock is in-process.
   docker run -d --name "$API" --network "$NET" -p "127.0.0.1:$API_PORT:8000" "${ENV[@]}" \
-    -e GLUCOTWIN_CORS_ORIGINS="$FE_ORIGIN" --read-only --tmpfs /tmp --tmpfs /app/var:uid=10001 "$IMG" >/dev/null
+    -e GLUCOTWIN_CORS_ORIGINS="$FE_ORIGIN" ${OPENAI[@]+"${OPENAI[@]}"} --read-only --tmpfs /tmp --tmpfs /app/var:uid=10001 "$IMG" >/dev/null
   for _ in $(seq 1 60); do curl -fsS "localhost:$API_PORT/api/v2/ready" >/dev/null 2>&1 && break; sleep 1; done
 
   VITE_API_BASE_URL="http://localhost:$API_PORT" VITE_DATA_MODE=live \
