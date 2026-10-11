@@ -229,6 +229,43 @@ def verify(mode: str) -> int:
             check("reset left exactly one account", users == 1)
 
     check("two independent runs give an identical state", digests[0] == digests[1], digests[0][:16])
+
+    # Third pass: the same replay with every simulated wearable source switched on.
+    from backend.app.v2.demo import sim_devices
+    with tempfile.TemporaryDirectory() as tmp:
+        app, ctx = build_app(app_db_url=f"sqlite:///{tmp}/devices.db", image_dir=pathlib.Path(tmp) / "img",
+                             demo_password="verification-run-only", create_schema=True)
+        run_guarded(lambda: replay.initialize(app, ctx, mode))
+        user_id = replay._demo_user_id(ctx, mode)
+        for name in sim_devices.PROFILES:
+            run_guarded(lambda name=name: replay.activate_device(ctx, user_id, name))
+        again = run_guarded(lambda: replay.activate_device(ctx, user_id, "fitbit"))
+        check("activating a simulated source twice changes nothing", again["already_active"]
+              and again["observations_released"] == 0)
+        run_guarded(lambda: replay.advance(app, ctx, user_id, to="end"))
+        with_devices = replay.digest(ctx, user_id)["digest"]
+        w = t.wearable_observations
+        with ctx.engine.connect() as conn:
+            position = conn.execute(select(t.demo_replay_state.c.position)).scalar()
+            rows = conn.execute(select(w.c.provider, w.c.data_class, w.c.detail, w.c.observed_at,
+                                       w.c.observed_end_at, w.c.received_at)).all()
+            connections = conn.execute(select(t.device_connections)).mappings().all()
+            glucose_classes = set(conn.execute(select(t.glucose_observations.c.data_class)).scalars())
+        check("forecasts, outcomes and glucose are identical with every simulated device on",
+              with_devices == digests[0], with_devices[:16])
+        check("simulated observations exist and every one is labelled simulated demo data",
+              len(rows) > 500 and all(r[0].startswith("demo_") and r[1] == "demo" and r[2].get("simulated") is True
+                                      and r[2].get("simulation_version") == sim_devices.SIMULATION_VERSION for r in rows),
+              f"{len(rows)} observations")
+        check("no simulated observation was visible before it could exist",
+              all((r[4] or r[3]) <= r[5] <= position for r in rows))
+        simulated = [c for c in connections if c["provider"].startswith("demo_")]
+        check("simulated sources are demo_simulated: never authorized, connected or tokened",
+              len(simulated) == 4 and all(c["status"] == "demo_simulated" and c["access_token_enc"] is None
+                                          and c["refresh_token_enc"] is None
+                                          and c["authentic_data_received_at"] is None for c in simulated)
+              and not [c for c in connections if c["status"] in ("authorized", "connected")])
+        check("glucose is still research data, not simulated", glucose_classes == {"research_dataset"})
     recorded = manifest.get("state_fingerprint_at_end")
     if recorded:
         # Informational: floating-point results can differ across platforms, so a

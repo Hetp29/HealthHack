@@ -72,6 +72,7 @@ def push_observations(
 @router.get("/wearables/observations", summary="Stored wearable observations")
 def list_observations(
     metric: Metric | None = None,
+    provider: str | None = Query(default=None, max_length=32, description="Only this source"),
     start: AwareDatetime | None = None,
     end: AwareDatetime | None = None,
     limit: int = Query(default=500, ge=1, le=5000),
@@ -86,6 +87,8 @@ def list_observations(
                                  w.c.observed_at >= start, w.c.observed_at <= end))
     if metric is not None:
         query = query.where(w.c.metric == metric)
+    if provider is not None:
+        query = query.where(w.c.provider == provider)
     rows = conn.execute(query.order_by(w.c.observed_at, w.c.observation_id).limit(limit)).mappings().all()
     return {"start": core.rfc3339(start), "end": core.rfc3339(end),
             "observations": [wearables.payload(dict(r)) for r in rows],

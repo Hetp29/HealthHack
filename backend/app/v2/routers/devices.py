@@ -33,6 +33,8 @@ def list_devices(
         "status_meanings": {
             "authorized": "Account linked; no data received yet.",
             "connected": "Authentic observations from this source are stored.",
+            "demo_simulated": "A labelled sample source in a demo account. No provider was "
+                              "contacted and its observations are generated.",
         },
     }
 

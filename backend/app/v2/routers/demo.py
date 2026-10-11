@@ -8,7 +8,7 @@ route can read or change any other user's data.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from pydantic import Field
 
 from backend.app.v2 import core
@@ -72,3 +72,39 @@ def reset_replay(
     # Resets the caller's own demo mode only; the other mode's account is untouched.
     state = replay.reset(request.app, ctx, replay.mode_of(ctx, user["user_id"]))
     return {**state, "reset": True, "sign_in_again": True}
+
+
+@router.get("/devices", summary="Simulated connected-health sources and the glucose source")
+def list_demo_devices(user: dict = Depends(demo_user), ctx: V2Context = Depends(get_ctx)) -> dict:
+    """Every simulated device profile with its status (`inactive` or `demo_simulated`)
+    and what it has made visible so far, plus the glucose source -- which is NOT
+    simulated: it is a historical research recording being replayed."""
+    return replay.devices(ctx, user["user_id"])
+
+
+@router.post("/devices/{profile}/activate", summary="Switch a simulated source on")
+def activate_demo_device(
+    profile: str,
+    user: dict = Depends(demo_user),
+    ctx: V2Context = Depends(get_ctx),
+) -> dict:
+    """Marks the profile `demo_simulated` and makes its simulated observations up to
+    the current replay position visible through `GET /wearables/observations`. Later
+    ones appear as the replay advances. **Idempotent.**
+
+    No provider is contacted, no account is linked and no token is created. Profiles:
+    `apple_health`, `apple_watch`, `fitbit`, `whoop`."""
+    return replay.activate_device(ctx, user["user_id"], profile)
+
+
+@router.get("/health-timeline", summary="Meals, alerts, doses and wearable summaries in one ordered list")
+def demo_health_timeline(
+    hours: int = Query(default=24, ge=1, le=24 * 10, description="How far back from the replay position"),
+    limit: int = Query(default=200, ge=1, le=1000),
+    user: dict = Depends(demo_user),
+    ctx: V2Context = Depends(get_ctx),
+) -> dict:
+    """Each item says where it came from (`data_class`, `simulated`, `source`) and
+    whether the forecast model uses that kind of data. Glucose readings and heart-rate
+    samples are series: read them from `/cgm/readings` and `/wearables/observations`."""
+    return replay.health_timeline(ctx, user["user_id"], hours, limit)
