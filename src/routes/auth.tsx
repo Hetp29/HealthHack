@@ -15,7 +15,7 @@ function AuthPage() {
   const { authenticate, completeOnboarding } = useAppState();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [consented, setConsented] = useState(false);
-  const [email, setEmail] = useState("demo@glucotwin.example");
+  const [email, setEmail] = useState("demo@glimpse.example");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -61,8 +61,8 @@ function AuthPage() {
           <div className="space-y-2"><Label htmlFor="email">Demo account email</Label><Input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></div>
           <div className="space-y-2"><Label htmlFor="password">Password</Label><Input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /></div>
           {mode === "sign-in" && <div className="grid grid-cols-2 gap-2">
-            <Button type="button" variant={scenario === "new" ? "default" : "outline"} onClick={() => { setScenario("new"); setEmail("demo@glucotwin.example"); }}>New-user demo</Button>
-            <Button type="button" variant={scenario === "returning" ? "default" : "outline"} onClick={() => { setScenario("returning"); setEmail("demo-returning@glucotwin.example"); }}>Returning demo</Button>
+            <Button type="button" variant={scenario === "new" ? "default" : "outline"} onClick={() => { setScenario("new"); setEmail("demo@glimpse.example"); }}>New-user demo</Button>
+            <Button type="button" variant={scenario === "returning" ? "default" : "outline"} onClick={() => { setScenario("returning"); setEmail("demo-returning@glimpse.example"); }}>Returning demo</Button>
           </div>}
           <label className="flex items-start gap-2 text-sm text-muted-foreground">
             <Checkbox checked={consented} onCheckedChange={(value) => setConsented(Boolean(value))} />

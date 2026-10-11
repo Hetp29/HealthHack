@@ -17,7 +17,7 @@ describe("v2 API client", () => {
     ));
     vi.stubGlobal("fetch", fetchMock);
 
-    await login("demo@glucotwin.example", "demo-password");
+    await login("demo@glimpse.example", "demo-password");
 
     expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining("/api/v2/auth/login"), expect.objectContaining({ method: "POST" }));
     expect(sessionStorage.getItem("glimpse.v2.token")).toBe("session-token");

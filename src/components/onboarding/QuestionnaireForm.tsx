@@ -207,7 +207,7 @@ export const QuestionnaireForm: React.FC<QuestionnaireProps> = ({ onComplete }) 
                     <div className="space-y-4">
                         <div className="p-3 bg-red-50 border-l-4 border-red-500 text-xs text-red-700 rounded">
                             <p className="font-bold">Required Processing Consent</p>
-                            <p>GlucoTwin requires access to process meal images and glucose data to function.</p>
+                            <p>Glimpse requires access to process meal images and glucose data to function.</p>
                         </div>
                         <div className="flex items-center space-x-2">
                             <Checkbox id="necessary_consent" checked={Boolean(answers.necessary_processing_consent)} onCheckedChange={(chk) => update('necessary_processing_consent', Boolean(chk))} />

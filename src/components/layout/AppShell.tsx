@@ -132,7 +132,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <FlaskConical className="h-4 w-4 shrink-0" aria-hidden />
             <span>
               <strong className="font-semibold">Demo data.</strong> Everything shown is sample data for demonstration,
-              not real observations or model predictions. Switch to Real data to use the GlucoTwin model.
+              not real observations or model predictions. Switch to Real data to use the Glimpse model.
             </span>
           </div>
         </div>

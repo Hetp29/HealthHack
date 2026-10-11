@@ -1,5 +1,5 @@
 /**
- * GlucoTwin Contract v1.0 — frontend types.
+ * Glimpse Contract v1.0 — frontend types.
  *
  * FROZEN (from directive §5): PredictRequest / PredictResponse.
  * ASSUMED ADAPTERS: Participant, History, ModelInfo, ModelMetrics, Health.
