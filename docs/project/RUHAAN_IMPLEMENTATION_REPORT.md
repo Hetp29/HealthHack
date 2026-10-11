@@ -12,6 +12,9 @@
 
 Pushed to `origin/ruhaan` after the follow-up; the final SHA is in the push record.
 
+> **Later work:** the sample-data demonstration (deterministic replay, seed/reset/verify
+> commands, demo handoffs) is reported separately in `DEMO_MISSION_REPORT.md`.
+
 ## 0 · Addendum — review rulings and follow-up (2026-10-10)
 
 Ruhaan reviewed R0–R8 and accepted the implementation as the **integration

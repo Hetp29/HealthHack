@@ -117,13 +117,20 @@ def build_platform(tmp: pathlib.Path):
         v1_settings = dataclasses.replace(v1_settings, model_artifact=FROZEN_ARTIFACT,
                                           metrics_path=FROZEN_ARTIFACT.parent / "metrics.json")
     v1_app = create_app(v1_settings)
+    # Demo mode ON so the gated /demo routes are part of the published contract. They
+    # exist in a deployment only when GLUCOTWIN_DEMO_MODE is enabled.
     settings = V2Settings(app_db_url=f"sqlite:///{tmp / 'app.db'}", image_dir=tmp / "images",
-                          cors_origins=["http://localhost:5173"])
+                          cors_origins=["http://localhost:5173"], demo_mode=True,
+                          demo_password="example-only-password")
     engine = make_engine(settings.app_db_url)
     create_all(engine)
     clock = _Clock()
     ctx = V2Context(settings=settings, engine=engine, prediction_service=v1_app.state.service,
                     image_store=LocalImageStore(settings.image_dir), vision=_StubVision(), clock=clock)
+    from backend.app.v2.demo.fixture import fixture_bundle
+
+    # The published demo examples replay the labelled TEST FIXTURE, never research data.
+    ctx.demo_bundle = fixture_bundle()
     v2_app = create_v2_app(ctx)
     return TestClient(PlatformApp(v1_app, v2_app)), ctx, clock, v2_app
 
@@ -134,7 +141,7 @@ def openapi_document(v2_app) -> str:
     return json.dumps(spec, indent=2, sort_keys=True) + "\n"
 
 
-def run_scenario(client, ctx, clock) -> dict[str, object]:
+def run_scenario(client, ctx, clock, v2_app) -> dict[str, object]:
     out: dict[str, object] = {}
     api = "/api/v2"
 
@@ -260,6 +267,26 @@ def run_scenario(client, ctx, clock) -> dict[str, object]:
         seed_history(headers, count)
         save(name, client.post(f"{api}/meals/{manual_meal(headers, clock.now)}/predict", headers=headers))
 
+    # -- demonstration replay (gated routes), on the labelled test fixture ---- #
+    from backend.app.v2.demo import replay
+
+    save("error_not_demo_account", client.get(f"{api}/demo/replay", headers=a))
+    replay.initialize(v2_app, ctx)
+    demo = {"Authorization": "Bearer " + client.post(f"{api}/auth/login", json={
+        "email": ctx.settings.demo_email, "password": ctx.settings.demo_password}).json()["session"]["token"]}
+    save("demo_replay_state_initial", client.get(f"{api}/demo/replay", headers=demo))
+    save("demo_replay_advance_meal_forecast", client.post(f"{api}/demo/replay/advance", headers=demo))
+    save("demo_replay_advance_outcome_reveal", client.post(f"{api}/demo/replay/advance", headers=demo))
+    save("demo_replay_advance_minutes", client.post(f"{api}/demo/replay/advance", headers=demo,
+                                                    json={"minutes": 30}))
+    save("demo_replay_state_retrieval_active", client.post(
+        f"{api}/demo/replay/advance", headers=demo, json={"to": "retrieval_activation"}))
+    save("demo_replay_retry_is_no_op", client.post(
+        f"{api}/demo/replay/advance", headers=demo, json={"expected_event_index": 0}))
+    save("error_demo_unknown_checkpoint", client.post(
+        f"{api}/demo/replay/advance", headers=demo, json={"to": "meal_99_forecast"}))
+    save("demo_replay_reset", client.post(f"{api}/demo/replay/reset", headers=demo))
+
     integrity = ctx.model_integrity
     out["_meta"] = {
         "generated_by": "python -m contracts.v2.build_contract",
@@ -271,6 +298,10 @@ def run_scenario(client, ctx, clock) -> dict[str, object]:
         "model_artifact": integrity["artifact_path"],
         "model_artifact_sha256": integrity["artifact_sha256"],
         "model_is_frozen_fs13": FROZEN_ARTIFACT.exists(),
+        "demo_replay_examples": "The demo_replay_* files replay a generated TEST FIXTURE "
+                                "(data_class demo), not the research recording the real "
+                                "demonstration uses. Real demo responses contain research "
+                                "data and are produced locally, never committed.",
     }
     return out
 
@@ -295,7 +326,7 @@ def main(argv: list[str] | None = None) -> int:
         EXAMPLES.mkdir(exist_ok=True)
         for stale in EXAMPLES.glob("*.json"):
             stale.unlink()
-        for name, payload in run_scenario(client, ctx, clock).items():
+        for name, payload in run_scenario(client, ctx, clock, v2_app).items():
             (EXAMPLES / f"{name}.json").write_text(json.dumps(payload, indent=2) + "\n")
     print(f"wrote {OPENAPI} and {len(list(EXAMPLES.glob('*.json')))} example files")
     return 0

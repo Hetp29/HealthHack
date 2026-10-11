@@ -8,7 +8,7 @@ review, and I will announce any change in `DECISIONS.md` before making it.
 
 ## 0 · How to get this work onto your branch
 
-Everything is on the remote branch **`origin/ruhaan`**. Nothing is on `main`.
+Everythig is on the remote branch **`origin/ruhaan`**. Nothing is on `main`.
 
 ```bash
 git fetch origin

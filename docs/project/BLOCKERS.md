@@ -149,6 +149,24 @@ Not started; out of scope during team integration.
 Every v2 endpoint is PROPOSED (DECISIONS R-001). Het and Neil have not yet reviewed
 the registry. Until they have, field names can still change.
 
+## B-016 · The demo's two data files have no delivery path — HET, RUHAAN
+
+The demonstration needs the frozen artifact (B-004) and the 87 KB research-data
+bundle `cgmacros_demo_bundle.json`. Neither is in git; Ruhaan holds the only copies.
+Until they are delivered, Het cannot run the demo on a server and Neil cannot run it
+locally (Neil can still build against the fixture-based example payloads).
+
+## B-017 · The demonstration has only run on one machine — HET
+
+Seed, replay, reset, `demo_verify` (27 checks) and `smoke_demo.py` over HTTP all pass
+against `127.0.0.1` with SQLite. It has not run in a container, on PostgreSQL, or on
+any deployed server. It must run as a single worker (the advance lock is in-process).
+
+## B-018 · The demo UI does not exist — NEIL
+
+No replay controls, provenance banner or outcome overlay exists in Glimpse. The
+contracts and labels are in `DEMO_HANDOFF_NEIL.md`.
+
 ---
 
 ## Resolved

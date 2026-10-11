@@ -375,6 +375,32 @@ and returned with `available: false`; attempts are recorded as
 
 Glimpse's client-side `spikeAlert.ts` should become display-only once this is wired.
 
+## 12a · Demonstration replay — exists only when `GLUCOTWIN_DEMO_MODE` is enabled
+
+Owner: Ruhaan · Consumer: Neil · Auth: bearer, **demo account only** · Status: **PROPOSED**
+
+When demo mode is off these routes are not registered: 404, and absent from the live
+`/api/v2/openapi.json`. (The published `contracts/v2/openapi.json` is generated with
+demo mode on so the schemas are available.) `GET /status` → `demo_mode` says which.
+
+| method | route | notes | failures | example |
+|---|---|---|---|---|
+| GET | `/demo/replay` | Replay position, checkpoints, personalization progress, provenance labels. | 403 `not_demo_account`, 503 `demo_data_unavailable` | `demo_replay_state_initial` |
+| POST | `/demo/replay/advance` | `{to}`, `{minutes}`, optional `expected_event_index`. Forward only; a passed checkpoint or stale index is a no-op with `advanced: false`. **Idempotent** with `expected_event_index`. | 403, 409 `demo_bundle_changed`, 422 `unknown_checkpoint`, 503 `demo_requires_frozen_model` | `demo_replay_advance_meal_forecast`, `demo_replay_advance_outcome_reveal`, `demo_replay_advance_minutes`, `demo_replay_state_retrieval_active`, `demo_replay_retry_is_no_op` |
+| POST | `/demo/replay/reset` | Deletes and re-creates the demo account. The caller's token stops working. Touches no other account. | 403, 409 `demo_email_in_use` | `demo_replay_reset` |
+
+* Timestamps: `position` and every checkpoint `at` are instants on the **recording's
+  historical timeline**; `wall_clock` is the real time. Never display `position` as
+  "now".
+* For the demo account, every other v2 endpoint treats `position` as the current
+  time. Nothing later than `position` is in its store.
+* These routes move time and trigger scripted actions. They return no forecast,
+  outcome or reading themselves — read those through the ordinary endpoints.
+* The `demo_replay_*` example files replay a generated test fixture
+  (`data_class: demo`), not the research recording.
+
+Full consumer guide: `DEMO_HANDOFF_NEIL.md`. Scenario: `DEMO_SCENARIO_SPEC.md`.
+
 ---
 
 ## 13 · What is real — implementation status
@@ -401,6 +427,7 @@ Glimpse's client-side `spikeAlert.ts` should become display-only once this is wi
 | WHOOP | IMPLEMENTED, mock-tested. **BLOCKED BY EXTERNAL SERVICE** — never contacted |
 | Apple Health / Apple Watch | Server ingest IMPLEMENTED AND VERIFIED. Native client **NOT IMPLEMENTED — REQUIRES TEAM DECISION** (B-003) |
 | Real-time CGM for live forecasts | **BLOCKED** (B-001) |
+| Demonstration replay (seed, advance, reset, verify) | **IMPLEMENTED AND VERIFIED** locally with genuine CGMacros data and the frozen artifact, in-process and over HTTP. Not run on any deployed server |
 | Frontend consuming v2 | **NOT IMPLEMENTED** (B-009) |
 | Local-clock policy across DST | **IMPLEMENTED AND VERIFIED** — IANA, per observation (D-006, conditionally approved) |
 | Container image | Dockerfile PRESENT, **NEVER BUILT**; never trains, ships only the checksum-verified frozen artifact |

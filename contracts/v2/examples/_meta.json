@@ -5,5 +5,6 @@
   "scenario_clock": "2026-09-20T16:00:00Z",
   "model_artifact": "ml/artifacts_cgmacros_fs13/model.joblib",
   "model_artifact_sha256": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
-  "model_is_frozen_fs13": true
+  "model_is_frozen_fs13": true,
+  "demo_replay_examples": "The demo_replay_* files replay a generated TEST FIXTURE (data_class demo), not the research recording the real demonstration uses. Real demo responses contain research data and are produced locally, never committed."
 }

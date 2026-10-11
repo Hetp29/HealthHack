@@ -1,6 +1,50 @@
 {
   "components": {
     "schemas": {
+      "AdvanceRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_event_index": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Event Index"
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "maximum": 1440.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes"
+          },
+          "to": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To"
+          }
+        },
+        "title": "AdvanceRequest",
+        "type": "object"
+      },
       "AlertSettings": {
         "additionalProperties": false,
         "properties": {
@@ -1632,6 +1676,101 @@
         "summary": "Grant or withdraw one consent",
         "tags": [
           "onboarding"
+        ]
+      }
+    },
+    "/demo/replay": {
+      "get": {
+        "operationId": "get_replay_demo_replay_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Replay Demo Replay Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Replay position, checkpoints and data provenance",
+        "tags": [
+          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+        ]
+      }
+    },
+    "/demo/replay/advance": {
+      "post": {
+        "description": "Moves forward only. Each checkpoint first releases the historical readings up\nto its instant, then performs its action through the ordinary v2 endpoints:\n`meal_forecast` logs the dataset's meal record and requests a forecast;\n`outcome_reveal` asks for the outcome once the response window and grace period\nhave passed. Read the results with the normal endpoints (`/meals`,\n`/predictions`, `/meals/{id}/outcome`, `/alerts`, `/cgm/readings`).",
+        "operationId": "advance_replay_demo_replay_advance_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/AdvanceRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Advance Replay Demo Replay Advance Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Advance the replay to the next or a named checkpoint",
+        "tags": [
+          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+        ]
+      }
+    },
+    "/demo/replay/reset": {
+      "post": {
+        "description": "Deletes the demo account's data and re-initializes it. The account is\nre-created, so **the current session token stops working**: sign in again with\nthe demo credentials. Affects the demo account only.",
+        "operationId": "reset_replay_demo_replay_reset_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Reset Replay Demo Replay Reset Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Return the demo account to its initial state",
+        "tags": [
+          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
         ]
       }
     },

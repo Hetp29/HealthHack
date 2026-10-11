@@ -10,6 +10,7 @@
       "loaded": true
     },
     "personalization_policy": "history_only",
+    "demo_mode": true,
     "meal_analysis": {
       "provider": "openai",
       "configured": true,

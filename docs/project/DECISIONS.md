@@ -292,6 +292,60 @@ returns `503 vision_not_configured`. No model name is hard-coded: the approved m
 cost ceiling and retention policy are open team decisions. A per-user cap of 40
 analyses per 24 hours is enforced server-side. Requests set `store=False`.
 
+## D-014 · Demonstration replay: release staged data over simulated time
+
+**Status:** PROPOSED · **Owner:** Ruhaan
+
+The hackathon demonstration replays a historical research recording. Two designs
+were considered for keeping the future out of a forecast:
+
+* **(A) Stage and release — chosen.** Future observations are not in the application
+  database at all. They stay in a bundle file and are ingested, through the ordinary
+  ingestion path, only as the replay position passes them.
+* **(B) Load everything, restrict by replay time.** Every query that touches glucose,
+  meals, outcomes or history would need a replay-time filter.
+
+(A) is safer and simpler: no v2 query can see the future, without any of them
+knowing a replay exists, so there is nothing to forget. (B) fails silently the first
+time one query omits the filter.
+
+For the demo account only, "now" is the replay position
+(`core.clock_override`, set per request). So a 2020 meal is forecast at its 2020
+instant, prospectively, with **historical timestamps preserved** — nothing is
+re-dated to today. Ordinary accounts stay on the wall clock; sessions always use the
+wall clock; background workers skip demo accounts. D-006 applies unchanged (the
+recording is carried as UTC, so its offset is zero).
+
+Every replay step calls the public v2 endpoints through an in-process client. The
+only direct writes are the staged-glucose release and the replay-state row.
+
+Routes live under `/api/v2/demo`, are registered only when `GLUCOTWIN_DEMO_MODE` is
+enabled, are authenticated, and act only on the caller's own demo account.
+
+## D-015 · Demonstration data is chosen by a model-free rule, on out-of-fit meals
+
+**Status:** PROPOSED · **Owner:** Ruhaan
+
+The demo participant is selected by a fixed rule that reads timestamps and macro
+completeness only (`backend/app/v2/demo/source.py::SELECTION_RULE`). No glucose
+value, forecast or forecast error is consulted, so the example cannot have been
+picked for looking accurate. The rule, the ranking and the result are recorded in
+the committed manifest.
+
+The replay window is restricted to meals at or after the participant's Day-8 fit
+cutoff, computed with the frozen pipeline's own split. The shipped artifact was
+fitted only on episodes at or before `cutoff − 120 min`, so every demo forecast is
+for a meal outside its fit. Those meals are, however, previously inspected Day-8
+reference episodes: **the demo is not independent validation and must not be
+described as evidence of accuracy.**
+
+The alert threshold (140 mg/dL) *was* chosen after looking at forecasts — it is the
+highest of 180/160/140 that any real forecast in the window reaches — and is
+labelled a user-selected sample setting. No forecast was altered.
+
+A research bundle is replayed only through the frozen artifact with its checksum
+enforced, and only with Level B off; otherwise the replay refuses to run.
+
 ---
 
 ## Open decisions (nobody has decided these)
