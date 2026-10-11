@@ -18,6 +18,7 @@ missing until a pipeline fitted on training data fills it.
 
 from __future__ import annotations
 
+import bisect
 import datetime as dt
 import math
 from dataclasses import dataclass
@@ -25,7 +26,13 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from ml.config import FEATURE_SET_VERSION, FeatureConfig
+from ml.config import (
+    FEATURE_SET_VERSION,
+    FORECAST_MINUTES,
+    HORIZON_WINDOW_MINUTES,
+    HORIZONS,
+    FeatureConfig,
+)
 from ml.schema import MealRecord, ParticipantHistory, require_utc
 
 # --------------------------------------------------------------------------- #
@@ -70,6 +77,51 @@ FEATURE_NAMES: tuple[str, ...] = (
     "hr_mean_30min_bpm",
     # -- medication exposure (presence/recency only, never an efficacy assumption) --
     "medication_exposure_recent",
+    # ------------------------------------------------------------------ fs-1.2 --
+    # Added after physiological-signal research (research/physiology/,
+    # docs/research/physiology_research_report.md). Only the two groups that improved
+    # BOTH within-person and cold-start (unseen-participant) validation are here.
+    # Rejected: participant lab profile (A1c/BMI/HOMA-IR -- helped within-person but
+    # its cold-start CI spanned zero, i.e. largely a participant-identity proxy),
+    # meal-on-board, macronutrient interactions, and activity load (which made
+    # cold-start significantly worse).
+    #
+    # -- glucose dynamic state: richer backward windows than slope_30 alone --
+    "g_slope_10",
+    "g_slope_15",
+    "g_slope_60",
+    "g_accel",
+    "g_rise_fraction",
+    "g_cv_60",
+    "g_range_120",
+    "g_dev_from_night",
+    # -- observed historical response fingerprint (evidence Level C: a summary of
+    #    this participant's OWN earlier measured responses, not a physiological
+    #    measurement). This is what makes cold-start personalization work: a brand-new
+    #    participant gets individualized after a few logged meals, with no retraining
+    #    and no fitted calibration offset.
+    "r_hist_peak_delta",
+    "r_hist_per_carb",
+    "r_hist_ttp",
+    "r_hist_recovery",
+    "r_hist_n",
+    # ------------------------------------------------------------------ fs-1.3 --
+    # Retrieval-augmented personalization (research/advanced/, promoted after the
+    # cold-start CI excluded zero: +0.786 mg/dL [+0.277, +1.285]). Instead of
+    # averaging ALL of the participant's earlier responses the way r_hist_* does,
+    # retrieve their k most SIMILAR earlier meals and kernel-weight those curves.
+    # Exposed as features rather than blended at a fixed weight, so the learner
+    # decides how much to trust them.
+    "q_retr_delta_30",
+    "q_retr_delta_60",
+    "q_retr_delta_90",
+    "q_retr_delta_120",
+    "q_retr_n",
+    "q_retr_weight",
+    "q_retr_mean_distance",
+    "q_retr_peak_delta",
+    "q_retr_ttp",
+    "q_retr_curve_spread",
 )
 
 #: Features that may legitimately be absent. These are median-imputed by the fitted
@@ -82,6 +134,35 @@ OPTIONAL_FEATURES: frozenset[str] = frozenset(
         "minutes_since_prior_meal",
         "prior_meal_carbs_g",
         "hr_mean_30min_bpm",
+        # Time of day is unknowable for a real-UTC dataset with no recorded timezone.
+        # It is left missing in that case rather than guessed -- see ruling D3 and
+        # `ml/provenance.py`.
+        "tod_sin",
+        "tod_cos",
+        # fs-1.2: every added signal can legitimately be unavailable.
+        "g_slope_10",
+        "g_slope_15",
+        "g_slope_60",
+        "g_accel",
+        "g_rise_fraction",
+        "g_cv_60",
+        "g_range_120",
+        "g_dev_from_night",
+        "r_hist_peak_delta",
+        "r_hist_per_carb",
+        "r_hist_ttp",
+        "r_hist_recovery",
+        # fs-1.3: absent when the participant has no retrievable earlier meal.
+        # `q_retr_n` and `q_retr_weight` are NOT optional: zero retrieved is a
+        # genuine measurement, not a missing value.
+        "q_retr_delta_30",
+        "q_retr_delta_60",
+        "q_retr_delta_90",
+        "q_retr_delta_120",
+        "q_retr_mean_distance",
+        "q_retr_peak_delta",
+        "q_retr_ttp",
+        "q_retr_curve_spread",
     }
 )
 
@@ -103,6 +184,29 @@ FEATURE_LABELS: dict[str, str] = {
     "prior_meal_carbs_g": "previous meal carbohydrate",
     "hr_mean_30min_bpm": "mean heart rate (prior 30 min)",
     "medication_exposure_recent": "recent medication exposure",
+    "g_slope_10": "glucose momentum (10 min)",
+    "g_slope_15": "glucose momentum (15 min)",
+    "g_slope_60": "glucose drift (60 min)",
+    "g_accel": "glucose acceleration",
+    "g_rise_fraction": "rise persistence",
+    "g_cv_60": "relative glucose variability (60 min)",
+    "g_range_120": "glucose range (prior 120 min)",
+    "g_dev_from_night": "elevation above own overnight floor",
+    "r_hist_peak_delta": "own typical past excursion",
+    "r_hist_per_carb": "own past response per gram of carbohydrate",
+    "r_hist_ttp": "own typical past time to peak",
+    "r_hist_recovery": "own typical past 2-hour clearance",
+    "r_hist_n": "number of own past meals observed",
+    "q_retr_delta_30": "similar past meals' response at 30 min",
+    "q_retr_delta_60": "similar past meals' response at 60 min",
+    "q_retr_delta_90": "similar past meals' response at 90 min",
+    "q_retr_delta_120": "similar past meals' response at 120 min",
+    "q_retr_n": "number of similar past meals retrieved",
+    "q_retr_weight": "total retrieval similarity weight",
+    "q_retr_mean_distance": "how similar the retrieved meals were",
+    "q_retr_peak_delta": "similar past meals' peak response",
+    "q_retr_ttp": "similar past meals' time to peak",
+    "q_retr_curve_spread": "disagreement among retrieved responses",
 }
 
 
@@ -223,23 +327,50 @@ def _least_squares_slope(times: np.ndarray, values: np.ndarray) -> float:
     return float(np.sum(spread * (values - values.mean())) / denominator)
 
 
-def _minutes_of_day(timestamp: dt.datetime, tz_name: str | None) -> float:
-    """Minutes since local midnight, localized when the participant timezone is known.
+def _minutes_of_day(
+    timestamp: dt.datetime, time_basis: str, tz_name: str | None
+) -> float | None:
+    """Minutes since the participant's LOCAL midnight, or `None` when unknowable.
 
-    Falls back to UTC when no timezone is supplied. That fallback is a real limitation:
-    the circadian features become offset by the participant's true UTC offset. The data
-    layer supplies `timezone` on the participant record precisely so this does not
-    happen, and the API reports the fallback in `limitations`.
+    Delegates to the data layer's `local_minutes_of_day`, which is the single
+    authority on what a canonical timestamp means (ruling D3):
+
+    * `source_local_unknown_tz` -- the stored value encodes the source's local wall
+      clock under a `+00:00` label, so its clock reading IS the local time of day.
+      Read it directly; converting would corrupt it.
+    * `utc` with a known IANA timezone -- convert, then read the clock.
+    * `utc` with no timezone -- the local time of day is genuinely unknown. Return
+      `None` so the caller records the feature as missing. Guessing UTC here would
+      silently shift every circadian feature by the participant's true offset.
+
+    The previous implementation did the last case wrong in a way that mattered: it
+    assumed UTC and described that as a mild limitation. For the organizer datasets
+    the assumption happened to be harmless (their stored clock already IS local), but
+    the reasoning was inverted, so the code was right by accident rather than by
+    construction.
     """
-    local = timestamp
-    if tz_name:
-        try:
-            from zoneinfo import ZoneInfo
+    if timestamp.tzinfo is None:
+        raise FeatureError("meal_timestamp must be offset-aware")
+    try:
+        from data.timeutil import local_minutes_of_day
+    except Exception:  # pragma: no cover - data layer always present in this repo
+        # Degrade to the documented `utc` semantics rather than failing a forecast.
+        if time_basis == "utc" and not tz_name:
+            return None
+        local = timestamp
+        if tz_name:
+            try:
+                from zoneinfo import ZoneInfo
 
-            local = timestamp.astimezone(ZoneInfo(tz_name))
-        except Exception:
-            local = timestamp
-    return local.hour * 60.0 + local.minute + local.second / 60.0
+                local = timestamp.astimezone(ZoneInfo(tz_name))
+            except Exception:
+                return None
+        return local.hour * 60.0 + local.minute + local.second / 60.0
+
+    try:
+        return local_minutes_of_day(timestamp, time_basis, tz_name)
+    except Exception as error:
+        raise FeatureError(f"cannot establish local time of day: {error}") from error
 
 
 # --------------------------------------------------------------------------- #
@@ -255,6 +386,7 @@ def build_features(
     *,
     meal_id: str | None = None,
     timezone_name: str | None = None,
+    time_basis: str = "utc",
     override: ContextOverride | None = None,
 ) -> FeatureRow:
     """Extract the prediction-time feature vector for one meal.
@@ -329,10 +461,15 @@ def build_features(
     values["calories_kcal"] = composition.calories_kcal
 
     # -- timing --------------------------------------------------------------- #
-    minutes_of_day = _minutes_of_day(meal_timestamp, timezone_name)
-    angle = 2.0 * math.pi * minutes_of_day / 1440.0
-    values["tod_sin"] = math.sin(angle)
-    values["tod_cos"] = math.cos(angle)
+    minutes_of_day = _minutes_of_day(meal_timestamp, time_basis, timezone_name)
+    if minutes_of_day is None:
+        # Unknowable local clock: record missing, let the fitted imputer handle it.
+        values["tod_sin"] = math.nan
+        values["tod_cos"] = math.nan
+    else:
+        angle = 2.0 * math.pi * minutes_of_day / 1440.0
+        values["tod_sin"] = math.sin(angle)
+        values["tod_cos"] = math.cos(angle)
 
     # Strictly earlier meals only: `<` excludes the meal being forecast, which appears
     # in `past` when scoring a logged meal.
@@ -371,6 +508,69 @@ def build_features(
     )
     values["medication_exposure_recent"] = 1.0 if recent_medication else 0.0
 
+    # -- fs-1.2: glucose dynamic state ---------------------------------------- #
+    for label, window in (("g_slope_10", 10.0), ("g_slope_15", 15.0), ("g_slope_60", 60.0)):
+        times, levels = _window_values(past.cgm, meal_timestamp, window, "glucose_mg_dl")
+        values[label] = (
+            _least_squares_slope(times, levels)
+            if times.size >= config.min_samples_for_window
+            else math.nan
+        )
+    values["g_accel"] = (
+        (values["g_slope_15"] - values["cgm_slope_30min_mg_dl_per_min"]) / 15.0
+        if not (
+            math.isnan(values["g_slope_15"])
+            or math.isnan(values["cgm_slope_30min_mg_dl_per_min"])
+        )
+        else math.nan
+    )
+
+    recent = [point.glucose_mg_dl for point in past.cgm[-6:]]
+    values["g_rise_fraction"] = (
+        float((np.diff(np.asarray(recent, dtype="float64")) > 0).mean())
+        if len(recent) >= 3
+        else math.nan
+    )
+
+    values["g_cv_60"] = (
+        float(var_values.std(ddof=1) / var_values.mean())
+        if var_values.size >= config.min_samples_for_window and var_values.mean() > 0
+        else math.nan
+    )
+    _, range_values = _window_values(
+        past.cgm, meal_timestamp, 120.0, "glucose_mg_dl"
+    )
+    values["g_range_120"] = (
+        float(range_values.max() - range_values.min())
+        if range_values.size >= config.min_samples_for_window
+        else math.nan
+    )
+    overnight = [
+        point.glucose_mg_dl for point in past.cgm if 2 <= point.timestamp.hour < 6
+    ]
+    values["g_dev_from_night"] = (
+        float(baseline - float(np.median(overnight))) if overnight else math.nan
+    )
+
+    # -- fs-1.2: observed historical response fingerprint --------------------- #
+    priors = _prior_observed_responses(past, meal_timestamp, config)
+    values.update(_historical_response_fingerprint(past, meal_timestamp, config))
+
+    # -- fs-1.3: retrieval over the participant's most similar earlier meals ---- #
+    query = np.asarray(
+        [
+            composition.carbs_g,
+            composition.fat_g,
+            composition.protein_g,
+            composition.fiber_g,
+            baseline,
+            values["tod_sin"] if not math.isnan(values["tod_sin"]) else 0.0,
+            values["tod_cos"] if not math.isnan(values["tod_cos"]) else 1.0,
+        ],
+        dtype="float64",
+    )
+    values.update(_retrieval_features(priors, query, config))
+
     missing = tuple(
         name for name in FEATURE_NAMES if math.isnan(values[name])
     )
@@ -388,6 +588,224 @@ def build_features(
         baseline_glucose_mg_dl=baseline,
         missing_features=missing,
     )
+
+
+@dataclass(frozen=True)
+class _PriorResponse:
+    """One of the participant's own earlier meals whose response fully elapsed.
+
+    `curve` holds the observed DELTA on the 25-point five-minute grid, interpolated
+    between that meal's native CGM readings. That interpolation is of already-observed
+    past data inside a completed response window -- it is never a prediction target and
+    never counted as an independent measurement.
+    """
+
+    peak_delta: float
+    time_to_peak: float
+    delta_120: float
+    curve: np.ndarray
+    vector: np.ndarray
+
+
+#: Similarity space for retrieval. Order is fixed so distances are reproducible.
+RETRIEVAL_SIMILARITY_KEYS = (
+    "carbs_g",
+    "fat_g",
+    "protein_g",
+    "fiber_g",
+    "premeal_glucose_mg_dl",
+    "tod_sin",
+    "tod_cos",
+)
+
+
+def _prior_observed_responses(
+    past: ParticipantHistory, meal_timestamp: dt.datetime, config: FeatureConfig
+) -> list[_PriorResponse]:
+    """The participant's earlier meals whose 120-minute response had fully elapsed.
+
+    THE single causal filter behind both fs-1.2's fingerprint and fs-1.3's retrieval,
+    so the two can never disagree about which history is admissible:
+
+      * strict `meal.timestamp < meal_timestamp`, so a meal never sees itself;
+      * `meal.timestamp + 120 min < meal_timestamp`, so the whole response was
+        observable at prediction time -- a meal 30 minutes ago is excluded, a meal
+        4 hours ago is included;
+      * a baseline reading must exist at or before that earlier meal;
+      * at least `retrieval_min_curve_points` native grid points, else the curve is
+        not characterized well enough to use.
+    """
+    timestamps = [point.timestamp for point in past.cgm]
+    grid = np.asarray(FORECAST_MINUTES, dtype="float64")
+    out: list[_PriorResponse] = []
+
+    for meal in past.meals:
+        if meal.timestamp >= meal_timestamp:
+            continue
+        window_end = meal.timestamp + dt.timedelta(minutes=HORIZON_WINDOW_MINUTES)
+        if window_end >= meal_timestamp:
+            continue
+        lo = bisect.bisect_left(timestamps, meal.timestamp)
+        hi = bisect.bisect_right(timestamps, window_end)
+        if lo == 0 or hi - lo < config.retrieval_min_curve_points:
+            continue
+
+        meal_baseline = float(past.cgm[lo - 1].glucose_mg_dl)
+        window = past.cgm[lo:hi]
+        offsets = np.asarray(
+            [(p.timestamp - meal.timestamp).total_seconds() / 60.0 for p in window],
+            dtype="float64",
+        )
+        deltas = np.asarray(
+            [float(p.glucose_mg_dl) - meal_baseline for p in window], dtype="float64"
+        )
+        curve = np.interp(grid, offsets, deltas)
+        curve[0] = 0.0
+
+        peak_index = int(np.argmax(deltas))
+        minutes_of_day = _minutes_of_day_or_nan(meal.timestamp)
+        angle = 2.0 * math.pi * minutes_of_day / 1440.0 if minutes_of_day is not None else 0.0
+        out.append(
+            _PriorResponse(
+                peak_delta=float(deltas[peak_index]),
+                time_to_peak=float(offsets[peak_index]),
+                delta_120=float(deltas[-1]),
+                curve=curve,
+                vector=np.asarray(
+                    [
+                        float(meal.carbs_g or 0.0),
+                        float(meal.fat_g or 0.0),
+                        float(meal.protein_g or 0.0),
+                        float(meal.fiber_g or 0.0),
+                        meal_baseline,
+                        math.sin(angle),
+                        math.cos(angle),
+                    ],
+                    dtype="float64",
+                ),
+            )
+        )
+    return out
+
+
+def _minutes_of_day_or_nan(timestamp: dt.datetime) -> float:
+    """Clock reading of a stored timestamp. See `_minutes_of_day` for the basis rules.
+
+    Retrieval only needs earlier meals to be comparable WITH EACH OTHER inside one
+    participant, and every one of that participant's timestamps shares the same basis,
+    so the raw clock reading is the right comparable here.
+    """
+    return timestamp.hour * 60.0 + timestamp.minute + timestamp.second / 60.0
+
+
+def _retrieval_features(
+    priors: list[_PriorResponse],
+    query: np.ndarray,
+    config: FeatureConfig,
+) -> dict[str, float]:
+    """Kernel-weighted average of the k most similar earlier responses.
+
+    Distances are standardized by the POOL's own spread, so no training-fold statistic
+    enters, and the bandwidth is the median retrieved distance, so a participant with a
+    narrow dietary range still gets sensible weighting.
+    """
+    names = (
+        *(f"q_retr_delta_{h}" for h in HORIZONS),
+        "q_retr_mean_distance",
+        "q_retr_peak_delta",
+        "q_retr_ttp",
+        "q_retr_curve_spread",
+    )
+    out: dict[str, float] = {name: math.nan for name in names}
+    out["q_retr_n"] = 0.0
+    out["q_retr_weight"] = 0.0
+
+    # Insufficient-history fallback: with too few retrievable meals, the "most similar"
+    # neighbours are mostly noise and measurably worse than the fingerprint mean over
+    # all history. Emit nothing and let the model fall back. `q_retr_n` still reports
+    # the true count, so the fallback is observable rather than silent.
+    if len(priors) < config.retrieval_min_history:
+        out["q_retr_n"] = float(len(priors))
+        return out
+
+    matrix = np.vstack([prior.vector for prior in priors])
+    scale = matrix.std(axis=0, ddof=0)
+    scale[scale <= 1e-9] = 1.0
+    distances = np.sqrt(np.sum(((matrix - query) / scale) ** 2, axis=1))
+
+    order = np.argsort(distances)[: config.retrieval_k]
+    chosen_distances = distances[order]
+    bandwidth = float(np.median(chosen_distances))
+    if bandwidth <= 1e-9:
+        bandwidth = 1.0
+    weights = np.exp(-((chosen_distances / bandwidth) ** 2))
+    total = float(weights.sum())
+    if total <= 0:
+        return out
+
+    curves = np.vstack([priors[i].curve for i in order])
+    blended = (weights[:, None] * curves).sum(axis=0) / total
+    minutes = list(FORECAST_MINUTES)
+    for horizon in HORIZONS:
+        out[f"q_retr_delta_{horizon}"] = float(blended[minutes.index(horizon)])
+    out["q_retr_n"] = float(len(order))
+    out["q_retr_weight"] = total
+    out["q_retr_mean_distance"] = float(chosen_distances.mean())
+    out["q_retr_peak_delta"] = float(blended.max())
+    out["q_retr_ttp"] = float(minutes[int(np.argmax(blended))])
+    out["q_retr_curve_spread"] = float(curves.std(axis=0).mean())
+    return out
+
+
+def _historical_response_fingerprint(
+    past: ParticipantHistory, meal_timestamp: dt.datetime, config: FeatureConfig
+) -> dict[str, float]:
+    """Shrunk summary of this participant's OWN earlier measured meal responses.
+
+    For each meal strictly before `meal_timestamp`, the observed response is
+    reconstructed from CGM that was recorded in that meal's own 0-120 minute window --
+    all of which lies in the past relative to the meal being forecast. The strict `<`
+    comparison means a meal can never contribute to its own fingerprint.
+
+    Shrinkage is `n/(n+k)` with the same k as the participant calibration, so a
+    fingerprint built from two meals is pulled most of the way to zero.
+
+    EVIDENCE LEVEL C. These are summaries of observed glucose curves, not measurements
+    of insulin secretion, glucose disposal or gastric emptying. They are predictive
+    state estimates with no independent physiological ground truth.
+
+    Why this matters: unlike the fitted per-participant calibration offset, this works
+    for a participant who was never in the training set. Cold-start validation showed
+    it is the single most valuable signal group there (+2.1 mg/dL MAE alone).
+    """
+    names = (
+        "r_hist_peak_delta",
+        "r_hist_per_carb",
+        "r_hist_ttp",
+        "r_hist_recovery",
+        "r_hist_n",
+    )
+    priors = _prior_observed_responses(past, meal_timestamp, config)
+    peaks = [prior.peak_delta for prior in priors]
+    time_to_peak = [prior.time_to_peak for prior in priors]
+    recovery = [prior.peak_delta - prior.delta_120 for prior in priors]
+    per_carb = [
+        prior.peak_delta / max(prior.vector[0], 10.0) for prior in priors
+    ]
+
+    n = len(peaks)
+    out: dict[str, float] = {"r_hist_n": float(n)}
+    if n == 0:
+        for name in names[:-1]:
+            out[name] = math.nan
+        return out
+
+    factor = n / (n + config.fingerprint_shrinkage_k)
+    out["r_hist_peak_delta"] = float(np.mean(peaks) * factor)
+    out["r_hist_per_carb"] = float(np.mean(per_carb) * factor)
+    out["r_hist_ttp"] = float(np.mean(time_to_peak) * factor)
+    out["r_hist_recovery"] = float(np.mean(recovery) * factor)
+    return out
 
 
 def rows_to_frame(rows: list[FeatureRow]) -> pd.DataFrame:

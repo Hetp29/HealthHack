@@ -1,0 +1,160 @@
+{
+  "record": {
+    "artifact_dir": "ml/artifacts_cgmacros_fs13",
+    "artifact_files": {
+      "evaluation_detail_day8_holdout.json": {
+        "sha256": "ec8829178554a12058b568e9ec9cd286b3241b8612b20ec1077e8a87f34e47fe",
+        "bytes": 29969
+      },
+      "metrics.json": {
+        "sha256": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+        "bytes": 23244
+      },
+      "metrics_day8_holdout.json": {
+        "sha256": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+        "bytes": 23244
+      },
+      "model.joblib": {
+        "sha256": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
+        "bytes": 439638
+      },
+      "model_manifest.json": {
+        "sha256": "e1b4d4c1c3a8ad5f5c9b6979dca5cc953eca5192c67f97c03ca8b546686599d9",
+        "bytes": 34108
+      }
+    },
+    "model_joblib_sha256": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
+    "manifest_sha256": "e1b4d4c1c3a8ad5f5c9b6979dca5cc953eca5192c67f97c03ca8b546686599d9",
+    "manifest_versions": {
+      "feature_set_version": "fs-1.3",
+      "model_version": "v0.1.0",
+      "trained_at": "2026-10-10T09:32:09.702154Z",
+      "data_source": "official"
+    },
+    "manifest_top_level_keys": [
+      "artifact_bytes",
+      "artifact_file",
+      "artifact_sha256",
+      "booster_params",
+      "chosen_alpha",
+      "config",
+      "contract_version",
+      "data_source",
+      "family",
+      "feature_names",
+      "feature_set_version",
+      "fit_episode_counts",
+      "horizons",
+      "model_version",
+      "personalization",
+      "ridge_weight",
+      "trained_at",
+      "training_summary"
+    ],
+    "code_feature_names": [
+      "premeal_glucose_mg_dl",
+      "cgm_slope_30min_mg_dl_per_min",
+      "cgm_mean_60min_mg_dl",
+      "cgm_std_60min_mg_dl",
+      "minutes_since_last_cgm",
+      "carbs_g",
+      "protein_g",
+      "fat_g",
+      "fiber_g",
+      "calories_kcal",
+      "tod_sin",
+      "tod_cos",
+      "minutes_since_prior_meal",
+      "prior_meal_carbs_g",
+      "hr_mean_30min_bpm",
+      "medication_exposure_recent",
+      "g_slope_10",
+      "g_slope_15",
+      "g_slope_60",
+      "g_accel",
+      "g_rise_fraction",
+      "g_cv_60",
+      "g_range_120",
+      "g_dev_from_night",
+      "r_hist_peak_delta",
+      "r_hist_per_carb",
+      "r_hist_ttp",
+      "r_hist_recovery",
+      "r_hist_n",
+      "q_retr_delta_30",
+      "q_retr_delta_60",
+      "q_retr_delta_90",
+      "q_retr_delta_120",
+      "q_retr_n",
+      "q_retr_weight",
+      "q_retr_mean_distance",
+      "q_retr_peak_delta",
+      "q_retr_ttp",
+      "q_retr_curve_spread"
+    ],
+    "code_feature_count": 39,
+    "manifest_feature_count": 39,
+    "artifact_type": "TrainedArtifact",
+    "artifact_attributes": [
+      "booster",
+      "cohort_mean",
+      "config",
+      "contract_version",
+      "data_source",
+      "family",
+      "feature_names",
+      "feature_set_version",
+      "generalized",
+      "manifest",
+      "model_version",
+      "persistence",
+      "personalization",
+      "response_model",
+      "ridge_weight",
+      "trained_at",
+      "training_summary"
+    ],
+    "artifact_feature_set_version": "fs-1.3",
+    "artifact_model_version": "v0.1.0",
+    "estimators": {
+      "booster": "BoosterModel",
+      "generalized": "GeneralizedModel"
+    },
+    "config": {
+      "retrieval_k": 5,
+      "retrieval_min_history": 5,
+      "retrieval_min_curve_points": 20,
+      "fingerprint_shrinkage_k": 3.0,
+      "personalization_shrinkage_k": 3.0,
+      "horizons": null
+    },
+    "blend_literal_present": true,
+    "source_sha256": {
+      "ml/config.py": "fd93db3166861bbf41bbae991636250f8e7c4c92f62364c4142101b89c1dbe25",
+      "ml/features.py": "254f14200e899ad9cdd2c10e68c9feeac938d150e5b5e5289660ae48dd6ebc3b",
+      "ml/train.py": "5ba79101afa5e6cc708b71449a0c8aa5b0c01b58f872de8d6e6379fd96e9abe1",
+      "ml/candidates.py": "95e84b78cda5d7ac1d0ed978a0ec7a492df8cdd92ef138b7e9533bcf9fef8d6e",
+      "ml/inference.py": "ea5dca271a214ed5361e2c5ced0434f9b48d1659839bde4340508d389645f091",
+      "ml/metrics.py": "9f30b312f77765cb91e540ffc207c8ab15e4efd738377f832fc61ad74af32dd9",
+      "ml/targets.py": "cd760b9f5fece1e75d2a362d003c6af0d7e732e75dbee1c882fb820f1a3c7680",
+      "ml/personalization.py": "5acc9051375a71e35dc30813bdbf2b4f44dde715671716a9dc0c4a2c348aac10",
+      "ml/provenance.py": "5b1c1e224f072120963c1d5dde7599c5e2664f3b7304505af4b9aa3218498e0e",
+      "ml/explain.py": "844542410f7f53521ad7ae15435ea6270137280b8d4fd9b9466bf7e04494a93e",
+      "ml/schema.py": "db44e74b66186eaa7c8ddbb30d32aeecefdd0047c584c625b7dc6baf78fee48d",
+      "ml/evaluate.py": "a2275d5aa9f07d4e7eed83d77d0da757ffcd85b85c68d1ea9eb89b4a9a38c652",
+      "backend/app/main.py": "0ae3da506640be81fb17032f6f06bb242d5a30f104303b502c326542fab3d982",
+      "backend/app/schemas.py": "710fd56d3410d240923a876ce0c12bbc8d49b9712d6a8354bd7399284a963d9e",
+      "backend/app/config.py": "de8c6ec8ccb18a9c25b4216b959fc8eeb0396ba9e11d5951f19a46c67ad08cc6",
+      "backend/app/errors.py": "a40c8355d15c998ed3a0f04785faf9a6b4cdb1f1f57b2761fcaac5e8adcc0740",
+      "backend/app/dependencies.py": "e16d466fb9a38ba4604bb307b05e8d8db6784951a71ccb21a8aa76b2d669d43b",
+      "backend/app/routes/predict.py": "bb17c2557ffdd658db9ad04dae0ec81e976a51a85740f3b0d020f3512dca7591",
+      "backend/app/routes/model.py": "102eb6b93ef453e233d6683ae4503eb696353da1e22a5ff2ab19dc4b0f803610",
+      "backend/app/routes/participants.py": "d2ba8f6afdbcf6da55ac3ee91cbecc1b6d95b3368f56152764c3bdc49568f4cd",
+      "backend/app/services/prediction.py": "1861a764fd1ff036a9cfd0a72fe5e3ccbbe98327d76b4bdca721f76da1c15bf3",
+      "backend/app/services/data_access.py": "02b423bb64b9dda95d397a57c589d10f25237e62357bebbafd28c0fb38934ce4",
+      "contracts/openapi.yaml": "be836dddaac5ed4cd78af7adac02bf9b7a1b77133143b84df34621f1be9200f4"
+    }
+  },
+  "blockers": [],
+  "notes": []
+}

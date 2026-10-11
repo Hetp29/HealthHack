@@ -8,6 +8,10 @@ pandas==2.2.2
 scikit-learn==1.4.2
 joblib==1.4.2
 python-dateutil==2.9.0.post0
-# Canonical data layer (data/**): SQLite access + MetaboNet Parquet streaming.
+
+# Canonical data layer (data/**), owner: Het, requested via data/requirements.txt.
+# SQLAlchemy 2.0 Core only -- no ORM session machinery.
+# pyarrow streams the MetaboNet Parquet file by row group rather than loading
+# 132,811,004 rows into memory.
 SQLAlchemy==2.0.43
 pyarrow==17.0.0

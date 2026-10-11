@@ -456,7 +456,13 @@ class SyntheticDevRepository:
     seed and `days` return identical records.
     """
 
-    def __init__(self, days: int = 7, seed: int = 20261011) -> None:
+    #: 16 days, not 7. The primary evaluation protocol (`day8_holdout`) requires 7
+    #: days of PRIOR history per test meal, so a 7-day fixture cannot contain a single
+    #: eligible episode and the primary path would silently go untested. 16 days leaves
+    #: roughly a week of training history plus a week of scorable Day-8 meals.
+    DEFAULT_DAYS = 16
+
+    def __init__(self, days: int = 16, seed: int = 20261011) -> None:
         self.days = days
         self.seed = seed
         self.data_source = DATA_SOURCE

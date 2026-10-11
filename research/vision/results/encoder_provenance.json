@@ -1,0 +1,58 @@
+[
+  {
+    "backbone": "resnet18",
+    "architecture": "ResNet-18",
+    "weights": "torchvision IMAGENET1K_V1",
+    "licence": "BSD-3-Clause (torchvision); weights trained on ImageNet-1k",
+    "source": "https://download.pytorch.org/models/resnet18-f37072fd.pth",
+    "dim": 512,
+    "n_requested": 1126,
+    "n_unique_by_content_hash": 1126,
+    "n_newly_embedded": 0,
+    "cpu_seconds_new": 0.0,
+    "cpu_ms_per_image": null,
+    "cache": "data/local/vision/embeddings/resnet18.npz"
+  },
+  {
+    "backbone": "efficientnet_b0",
+    "architecture": "EfficientNet-B0",
+    "weights": "torchvision IMAGENET1K_V1",
+    "licence": "BSD-3-Clause (torchvision); weights trained on ImageNet-1k",
+    "source": "https://download.pytorch.org/models/efficientnet_b0_rwightman-7f5810bc.pth",
+    "dim": 1280,
+    "n_requested": 1126,
+    "n_unique_by_content_hash": 1126,
+    "n_newly_embedded": 0,
+    "cpu_seconds_new": 0.0,
+    "cpu_ms_per_image": null,
+    "cache": "data/local/vision/embeddings/efficientnet_b0.npz"
+  },
+  {
+    "backbone": "clip_vit_b32",
+    "architecture": "CLIP ViT-B/32",
+    "weights": "open_clip laion2b_s34b_b79k",
+    "licence": "MIT (open_clip); weights trained on LAION-2B",
+    "source": "https://huggingface.co/laion/CLIP-ViT-B-32-laion2B-s34B-b79K",
+    "dim": 512,
+    "n_requested": 1126,
+    "n_unique_by_content_hash": 1126,
+    "n_newly_embedded": 0,
+    "cpu_seconds_new": 0.0,
+    "cpu_ms_per_image": null,
+    "cache": "data/local/vision/embeddings/clip_vit_b32.npz"
+  },
+  {
+    "backbone": "random_resnet18",
+    "architecture": "ResNet-18",
+    "weights": "NONE -- randomly initialised. CONTROL A2 ONLY.",
+    "licence": "n/a",
+    "source": "n/a",
+    "dim": 512,
+    "n_requested": 1126,
+    "n_unique_by_content_hash": 1126,
+    "n_newly_embedded": 0,
+    "cpu_seconds_new": 0.0,
+    "cpu_ms_per_image": null,
+    "cache": "data/local/vision/embeddings/random_resnet18.npz"
+  }
+]

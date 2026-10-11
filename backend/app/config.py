@@ -45,7 +45,9 @@ class Settings:
     cors_origins: list[str] = field(default_factory=list)
     log_level: str = "INFO"
     #: Dev-fixture parameters; ignored once the canonical data layer is bound.
-    fixture_days: int = 7
+    #: 16 days so the fixture can exercise the Day-8 primary protocol (see
+    #: ml/devfixture.py). Override with GLUCOTWIN_FIXTURE_DAYS.
+    fixture_days: int = 16
     fixture_seed: int = 20261011
 
     @property
@@ -77,6 +79,6 @@ def load_settings() -> Settings:
             )
         ),
         log_level=_env("GLUCOTWIN_LOG_LEVEL", "INFO").upper(),
-        fixture_days=_env_int("GLUCOTWIN_FIXTURE_DAYS", 7),
+        fixture_days=_env_int("GLUCOTWIN_FIXTURE_DAYS", 16),
         fixture_seed=_env_int("GLUCOTWIN_FIXTURE_SEED", 20261011),
     )

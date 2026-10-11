@@ -1,0 +1,78 @@
+{
+  "fold": 0,
+  "fs13_fold_mae": 21.88442751342183,
+  "rows": [
+    {
+      "config": "F1 CDE-8 linear",
+      "params": 3052,
+      "epochs": 40,
+      "inner_mae": 20.520343780517578,
+      "fold_mae": 21.583781115238082,
+      "delta_vs_fs13": 0.3006463981837477,
+      "seconds": 12.602145375218242,
+      "finite": true,
+      "nonfinite_batches": 0,
+      "status": "ok"
+    },
+    {
+      "config": "F1 CDE-16 linear",
+      "params": 4660,
+      "epochs": 38,
+      "inner_mae": 20.629161834716797,
+      "fold_mae": 22.23131436156249,
+      "delta_vs_fs13": -0.3468868481406595,
+      "seconds": 13.907389416825026,
+      "finite": true,
+      "nonfinite_batches": 0,
+      "status": "ok"
+    },
+    {
+      "config": "F2 CDE-8 rectilinear",
+      "params": 3052,
+      "epochs": 40,
+      "inner_mae": 20.300086975097656,
+      "fold_mae": 21.55837925175882,
+      "delta_vs_fs13": 0.3260482616630114,
+      "seconds": 23.232833582907915,
+      "finite": true,
+      "nonfinite_batches": 0,
+      "status": "ok"
+    },
+    {
+      "config": "F6 ODE-8 (control)",
+      "params": 2292,
+      "epochs": 39,
+      "inner_mae": 20.447229385375977,
+      "fold_mae": 21.67176010291576,
+      "delta_vs_fs13": 0.21266741050607152,
+      "seconds": 1.030741082970053,
+      "finite": true,
+      "nonfinite_batches": 0,
+      "status": "ok"
+    },
+    {
+      "config": "F5 CDE-8 keep 50%",
+      "params": 3052,
+      "epochs": 38,
+      "inner_mae": 20.224102020263672,
+      "fold_mae": 21.606957637293785,
+      "delta_vs_fs13": 0.27746987612804475,
+      "seconds": 12.283674167003483,
+      "finite": true,
+      "nonfinite_batches": 0,
+      "status": "ok"
+    },
+    {
+      "config": "F5 CDE-8 keep 25%",
+      "params": 3052,
+      "epochs": 38,
+      "inner_mae": 20.183124542236328,
+      "fold_mae": 21.37838254665939,
+      "delta_vs_fs13": 0.5060449667624383,
+      "seconds": 11.603478416800499,
+      "finite": true,
+      "nonfinite_batches": 0,
+      "status": "ok"
+    }
+  ]
+}

@@ -92,12 +92,30 @@ class TestMeasuredResults:
                 assert row["n"] > 0
                 assert row["mae_mg_dl"] is not None
 
-    def test_by_horizon_mirrors_the_personalized_block(self, within_person):
+    def test_by_horizon_mirrors_the_selected_production_family(self, within_person):
+        """The flat convenience view must mirror the family actually served.
+
+        That is `blend_personalized` (Ridge averaged with a regularized booster, then
+        participant-calibrated), selected on rolling development validation. If the
+        served family changes, this assertion must change with it -- the API's
+        `by_horizon` must never advertise a different model's errors.
+        """
         report = within_person[0]
-        personalized = next(
-            block for block in report["by_model"] if block["model_name"] == "personalized"
+        selected = next(
+            block
+            for block in report["by_model"]
+            if block["model_name"] == "blend_personalized"
         )
-        assert report["by_horizon"] == personalized["by_horizon"]
+        assert report["by_horizon"] == selected["by_horizon"]
+
+    def test_all_families_are_scored_on_identical_cases(self, within_person):
+        """Comparisons are only meaningful if every family saw the same episodes."""
+        report = within_person[0]
+        counts = {
+            block["model_name"]: [row["n"] for row in block["by_horizon"]]
+            for block in report["by_model"]
+        }
+        assert len(set(map(tuple, counts.values()))) == 1, counts
 
     def test_rmse_is_never_below_mae(self, within_person):
         for block in within_person[0]["by_model"]:

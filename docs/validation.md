@@ -1,7 +1,186 @@
 # Validation Report
 
-**Owner:** Ruhaan Shah · **Contract:** v1.0 · **Model:** `v0.1.0` · **Feature set:** `fs-1.0`
-**Dataset:** `synthetic_dev` (temporary development fixtures)
+**Owner:** Ruhaan Shah · **Contract:** v1.0 · **Model:** `v0.1.0` · **Feature set:** `fs-1.1`
+
+---
+
+> **SUPERSEDED HEADLINE (twice).** The current production model is the fs-1.2
+> `blend_personalized` family, which scores **21.90 mg/dL MAE** on the same 394
+> reference episodes, with peak MAE 24.29 and time-to-peak MAE 26.93 min. It adds
+> glucose-dynamics and historical-response-fingerprint signals selected on BOTH
+> within-person and cold-start validation. Four other physiological signal groups were
+> tested and rejected. See **[`research/physiology_research_report.md`](research/physiology_research_report.md)**.
+>
+> **SUPERSEDED HEADLINE (first round).** The model was improved after this was written. The
+> selected production family is now `blend_personalized` (Ridge averaged 50/50 with a
+> regularized gradient booster, then participant-calibrated), which scores **23.22
+> mg/dL MAE** on the same 394 reference episodes versus 23.97 for the model documented
+> below. Selection was made on rolling development validation, never on these
+> episodes. Full experiments, confidence intervals and the time-to-peak tradeoff:
+> **[`experiments/README.md`](experiments/README.md)**.
+>
+> Part 1 below remains accurate as the description of the *protocol*, the dataset and
+> the per-participant personalization finding.
+
+# PART 1 — PRIMARY RESULT: real organizer data (CGMacros)
+
+**Dataset:** CGMacros v1.0.0 (Das et al., *Sci Data* 12, 1557 (2025)) · provenance label
+`official` · 45 participants · 1,698 logged meals · ~9–10 days per participant.
+
+**Protocol:** `day8_holdout`. The full specification — fixed and written down *before*
+any of these numbers were seen — is in
+[`evaluation_protocol.md`](evaluation_protocol.md).
+
+| Fold | Episodes |
+|---|---|
+| train | 938 |
+| validation (selects the Ridge penalty) | 233 |
+| **test (scored, genuinely held out)** | **394** |
+| purged by the 120-min embargo / ineligible | 86 |
+| total usable episodes | 1,651 |
+
+Test episodes are restricted to Day-8-eligible meals: ≥7 days of prior CGM with ≥70%
+coverage, a measured baseline within 15 min, observed readings at all four horizons, and
+**no other meal inside the 120-minute response window**. Train/validation/test are
+disjoint by construction and a 120-minute embargo guarantees no training response window
+reaches a held-out one. The test fold was never used for fitting, tuning, calibration or
+preprocessing — asserted at run time by `_assert_day8_separation`.
+
+## Horizon errors (mg/dL), 394 held-out Day-8 meals across 44 participants
+
+| Model | MAE | RMSE | @30 | @60 | @90 | @120 |
+|---|---|---|---|---|---|---|
+| Model 0 · persistence | 32.58 | 45.70 | 23.83 | 36.68 | 36.34 | 33.45 |
+| Benchmark · cohort mean | 28.08 | 38.15 | 20.22 | 29.72 | 31.65 | 30.74 |
+| Model 1 · generalized | 26.47 | 35.93 | 18.23 | 27.77 | 30.66 | 29.24 |
+| **Model 2 · personalized** | 23.93 | 32.31 | 17.00 | 24.69 | 27.49 | 26.56 |
+
+Relative to persistence, the personalized model reduces MAE by
+26.6%.
+Relative to the cohort-mean benchmark — which ignores the meal entirely — by
+14.8%.
+Personalization improves on the generalized model by
+9.6%.
+
+## Curve-derived errors
+
+| Model | Peak MAE (mg/dL) | Time-to-peak MAE (min) | iAUC MAE (mg/dL·min) | n |
+|---|---|---|---|---|
+| persistence | 51.80 | 65.18 | 3030.9 | 394 |
+| cohort mean | 32.22 | 28.40 | 2136.5 | 394 |
+| generalized | 29.95 | 32.94 | 1990.2 | 394 |
+| **personalized** | 26.69 | 30.08 | 1700.7 | 394 |
+
+## Personalization works on real data — and this is the headline finding
+
+**35 of 44 participants improved, 9 got worse.**
+
+| | Participant | Generalized | Personalized | Δ MAE | n |
+|---|---|---|---|---|---|
+| best | `cgmacros_030` | 51.38 | 39.23 | **+12.15** | 32 |
+| best | `cgmacros_001` | 30.20 | 18.30 | **+11.90** | 32 |
+| best | `cgmacros_049` | 47.70 | 37.60 | **+10.11** | 28 |
+| worst | `cgmacros_042` | 26.46 | 33.96 | **-7.50** | 20 |
+| worst | `cgmacros_047` | 18.19 | 22.03 | **-3.84** | 24 |
+| worst | `cgmacros_003` | 17.00 | 19.94 | **-2.94** | 36 |
+
+Per-participant personalized MAE spans **13.3 to 52.1 mg/dL** (median 22.5), so the
+aggregate hides very large between-person differences in predictability.
+
+This is a **stronger** personalization result than the synthetic fixtures produced
+(where it was 3 improved / 2 worsened and the aggregate gain was 3.5%). That direction
+is worth stating plainly: the synthetic generator's smooth response kernel was *easier*
+for the cohort model, so it understated what per-person calibration is worth. On real
+physiology the per-person signal is much larger.
+
+## Cold start — `cohort_holdout`, 535 episodes from 15 entirely unseen participants
+
+| Model | MAE | RMSE |
+|---|---|---|
+| persistence | 43.52 | 59.88 |
+| cohort mean | 36.34 | 50.80 |
+| generalized | **35.34** | 49.88 |
+| personalized | 35.34 | 49.88 |
+
+Cold-start error is **much** worse (35.34 vs
+26.47 MAE). Predicting a person we have never seen
+is a substantially harder problem, and the personalized row is identical by
+construction because a held-out participant has no calibration. Secondary protocol
+`within_person_chronological` (Day-8 context rule relaxed, 413
+test episodes) gives personalized MAE 23.59.
+
+## What these numbers are, and are not
+
+**Are:** a genuinely held-out evaluation on real human CGM observations, with a protocol
+fixed before results were inspected, a purged chronological split, and a falsifiable
+per-participant personalization comparison.
+
+**Are not:**
+
+1. **Accurate enough for any clinical use.** A ~24 mg/dL mean absolute error at a
+   ~25 mg/dL 60-minute horizon is
+   large relative to the clinical decisions people make about food. This is a research
+   prototype.
+2. **Independent samples.** 394 test episodes come from
+   44 participants — roughly 9 meals each. Meals from one person share physiology and
+   consecutive meals share CGM context, so the effective sample size is well below 394.
+   No significance is claimed.
+3. **Generalizable beyond this cohort.** 45 participants, ~10 days, one study.
+4. **Time-to-peak capable.** 30
+   minutes of error, and the cohort-mean benchmark beats both trained models on this
+   metric (28.4 min). The
+   model learns four knots and a piecewise-linear curve can only peak *at* a knot. More
+   knots would likely help; we have not measured that, so we do not claim it.
+5. **Calibrated in uncertainty.** All interval bounds are `null`.
+6. **Free of a medication/activity confound.** CGMacros records **no** medications, so
+   `medication_exposure_recent` is a zero-variance feature here (verified: coefficient
+   exactly 0.0).
+
+## Known data limitations carried from the source
+
+- **Interpolated CGM was discarded, not used.** The source's 1-minute columns are
+  forward-interpolated between true readings (Dexcom 5-min, Libre 15-min), so an
+  interpolated minute encodes the *next* real reading. The data layer keeps only the
+  126,259 native Dexcom readings. Had this been missed, every result above would be
+  invalid.
+- **Two sensors.** Dexcom G6 Pro is primary; Libre Pro is retained separately.
+- **Timestamps are offset-naive, date-shifted local wall clock with no timezone.** Stored
+  under a `+00:00` label as an *ordering key*, with `time_basis =
+  "source_local_unknown_tz"`. Time-of-day and within-participant elapsed time are exact
+  (verified byte-identical against the raw CSVs); absolute instants are not comparable
+  across participants. Recording years span 2019–2023, which is why a globally sorted
+  "chronological" CV would be meaningless and the Ridge penalty is selected on an
+  explicit per-participant validation fold instead.
+- **8 meals quarantined** for implausible fiber (1,020–2,830 g, probably milligrams) in
+  participants 016 and 019. Not unit-guessed.
+- **586 meals report `fiber_g = 0`**, which may mean "not estimated" rather than zero
+  (ruling D4 — preserved as recorded; a sensitivity analysis is not yet done).
+- **`LICENSE.txt` in the CGMacros package is 0 bytes**, so terms are unstated in the
+  files received. Used under organizer permission for this challenge; the paper is cited.
+
+## Reproducing
+
+```bash
+python -m data.storage.init_db --db-url sqlite:///data/local/cgmacros_v2.db
+python -m data.adapters.cgmacros --path <CGMacros dir> --db-url sqlite:///data/local/cgmacros_v2.db
+python -m ml.protocol_report --source sqlite --db-url sqlite:///data/local/cgmacros_v2.db
+python -m ml.train    --source sqlite --db-url sqlite:///data/local/cgmacros_v2.db --holdout day8 --out ml/artifacts_cgmacros
+python -m ml.evaluate --source sqlite --db-url sqlite:///data/local/cgmacros_v2.db --protocol all --out ml/artifacts_cgmacros
+```
+
+The artifact is fitted on the Day-8 training pool only (`--holdout day8`), so the
+**served** model has never seen a held-out Day-8 response either — not just the
+evaluation run.
+
+---
+
+# PART 2 — Synthetic development fixtures (SUPERSEDED)
+
+> The section below was the primary result before the organizer data arrived. It is kept
+> because it documents the leakage, reproducibility and protocol machinery, all of which
+> still apply. **Its numbers are no longer the headline and must not be quoted as
+> results.** Note also that the fixture default changed from 7 to 16 days so it can
+> exercise the Day-8 protocol, so re-running it will not reproduce the figures below.
 
 > ## Read this first
 >

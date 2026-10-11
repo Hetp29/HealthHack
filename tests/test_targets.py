@@ -181,7 +181,10 @@ class TestEpisodeAssembly:
             "excluded",
             "reasons",
             "overlapping_tagged",
+            "day8_eligible",
         }
+        # Day-8 eligibility is a subset of acceptance, never larger.
+        assert payload["day8_eligible"] <= payload["accepted"]
 
     def test_excluding_overlap_reduces_the_episode_count(self):
         with_overlap, report = build_episodes(SyntheticDevRepository(), DEFAULT_CONFIG)

@@ -49,6 +49,7 @@ from ml.features import (
     MealComposition,
 )
 from ml.inference import ForecastResult, forecast
+from ml.provenance import resolve_time_basis
 
 logger = logging.getLogger("glucotwin.prediction")
 
@@ -178,7 +179,7 @@ class PredictionService:
         """
         summary = self.require_participant(participant_id)
         artifact = self.artifact()
-        history = self.repository().get_history(participant_id)
+        history = self._prediction_history(participant_id, meal_timestamp, artifact)
 
         composition = MealComposition(
             carbs_g=float(meal["carbs_g"]),
@@ -196,6 +197,13 @@ class PredictionService:
                 as_of=override.get("as_of"),
             )
 
+        # What this participant's timestamps mean (ruling D3). Resolved from the
+        # repository so the clock caveat in `limitations` is accurate for the dataset
+        # actually loaded, rather than inferred from a missing timezone string.
+        time_basis, _ = resolve_time_basis(
+            self.repository(), participant_id, summary.timezone
+        )
+
         try:
             result = forecast(
                 artifact,
@@ -204,6 +212,7 @@ class PredictionService:
                 composition,
                 participant=summary,
                 override=context,
+                time_basis=time_basis,
             )
         except InsufficientPremealContext as error:
             raise errors.ApiError(
@@ -239,6 +248,54 @@ class PredictionService:
             result.summary.time_to_peak_minutes,
         )
         return result
+
+    def _prediction_history(self, participant_id: str, meal_timestamp, artifact):
+        """Fetch only the history a forecast can actually use.
+
+        Two reasons this is not `get_history(participant_id)`:
+
+        **Speed.** A full CGMacros participant is ~2,900 CGM + ~14,600 heart-rate +
+        ~29,500 activity rows, and materializing all of it dominated request latency
+        (663 ms of a ~700 ms request, measured). The longest backward window any
+        prediction-time feature uses is 12 hours (medication exposure, and the
+        720-minute cap on time-since-prior-meal), so a 24-hour lookback is ample.
+
+        **Safety.** `get_history_as_of` filters `timestamp <= as_of` in SQL, so a
+        post-meal observation is never even read -- a second, independent layer under
+        the `truncated_at` guard in `ml/features.py` rather than a replacement for it.
+
+        Falls back to the full history for any repository without the extension (the
+        in-memory development fixture), where the cost is negligible anyway.
+        """
+        import datetime as dt
+
+        repository = self.repository()
+        as_of_fetch = getattr(repository, "get_history_as_of", None)
+        if not callable(as_of_fetch):
+            return repository.get_history(participant_id)
+
+        features = artifact.config.features
+        needed_minutes = max(
+            features.baseline_tolerance_minutes,
+            features.slope_window_minutes,
+            features.variability_window_minutes,
+            features.hr_window_minutes,
+            features.medication_lookback_hours * 60.0,
+            features.max_minutes_since_prior_meal,
+        )
+        # Double it, floored at 24 h, so a sensor gap at the window edge cannot
+        # silently cost us the baseline reading.
+        lookback = dt.timedelta(minutes=max(needed_minutes * 2.0, 24 * 60.0))
+
+        # fs-1.2: the historical-response fingerprint summarizes this participant's
+        # OWN earlier meals, so it needs a window long enough to contain several of
+        # them. 8 days matches the Day-8 prior-context rule the model is evaluated
+        # under. Measured cost of widening 24 h -> 8 days on CGMacros: 34 ms -> 259 ms
+        # for the fetch, which is still far cheaper than the 663 ms full-history read
+        # this replaced.
+        if any(name.startswith("r_hist_") for name in artifact.feature_names):
+            lookback = max(lookback, dt.timedelta(days=8))
+        return as_of_fetch(participant_id, meal_timestamp, lookback)
 
     def compare(
         self,

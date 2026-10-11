@@ -31,6 +31,7 @@ from ml.features import (
     MealComposition,
     build_features,
 )
+from ml.provenance import resolve_time_basis
 from ml.schema import MealRecord, ParticipantHistory
 
 
@@ -61,11 +62,36 @@ class TargetRow:
 
 
 @dataclass(frozen=True)
+class EpisodeContext:
+    """How much usable prior history this meal has, and whether it is Day-8 eligible.
+
+    Computed from observations at or before the meal only, so it is itself a
+    prediction-time property and may be used to decide inclusion without leaking.
+    """
+
+    #: Days between the participant's first CGM reading and this meal.
+    prior_history_days: float
+    #: Fraction of the nominal 5-min readings present in the required history window.
+    prior_history_coverage: float
+    #: Meets the full Day-8 rule: enough history, enough coverage, baseline present and
+    #: all four horizon targets observed.
+    day8_eligible: bool
+
+    def as_dict(self) -> dict:
+        return {
+            "prior_history_days": round(self.prior_history_days, 3),
+            "prior_history_coverage": round(self.prior_history_coverage, 4),
+            "day8_eligible": self.day8_eligible,
+        }
+
+
+@dataclass(frozen=True)
 class Episode:
     """One meal episode: pre-meal features paired with post-meal targets."""
 
     features: FeatureRow
     target: TargetRow
+    context: EpisodeContext | None = None
 
     @property
     def participant_id(self) -> str:
@@ -93,6 +119,8 @@ class ExclusionReport:
     accepted: int = 0
     reasons: Counter = field(default_factory=Counter)
     overlapping_tagged: int = 0
+    #: Accepted episodes that additionally satisfy the Day-8 prior-context rule.
+    day8_eligible: int = 0
 
     def record(self, reason: str) -> None:
         self.reasons[reason] += 1
@@ -104,6 +132,7 @@ class ExclusionReport:
             "excluded": self.candidate_meals - self.accepted,
             "reasons": dict(sorted(self.reasons.items())),
             "overlapping_tagged": self.overlapping_tagged,
+            "day8_eligible": self.day8_eligible,
         }
 
 
@@ -191,12 +220,50 @@ def build_targets(
     )
 
 
+def _episode_context(
+    history: ParticipantHistory,
+    meal_timestamp: dt.datetime,
+    available_horizons: int,
+    config: Config,
+) -> EpisodeContext:
+    """Measure prior CGM history for one meal and apply the Day-8 rule.
+
+    Reads only observations at or before the meal. `searchsorted` over the already
+    sorted timestamps keeps this O(log n) rather than scanning the series.
+    """
+    day8 = config.day8
+    window = dt.timedelta(days=day8.history_days)
+    start = meal_timestamp - window
+
+    timestamps = [point.timestamp for point in history.cgm]
+    if not timestamps:
+        return EpisodeContext(0.0, 0.0, False)
+
+    import bisect
+
+    lo = bisect.bisect_left(timestamps, start)
+    hi = bisect.bisect_right(timestamps, meal_timestamp)
+    in_window = max(0, hi - lo)
+
+    expected = window.total_seconds() / 60.0 / day8.nominal_cadence_minutes
+    coverage = in_window / expected if expected > 0 else 0.0
+    prior_days = (meal_timestamp - timestamps[0]).total_seconds() / 86400.0
+
+    eligible = (
+        prior_days >= day8.history_days
+        and coverage >= day8.min_history_coverage
+        and available_horizons >= config.targets.min_horizons_required
+    )
+    return EpisodeContext(prior_days, coverage, eligible)
+
+
 def build_episode(
     history: ParticipantHistory,
     meal: MealRecord,
     config: Config,
     *,
     timezone_name: str | None = None,
+    time_basis: str = "utc",
 ) -> Episode:
     """Assemble one episode. Raises `FeatureError` when the meal is not usable."""
     features = build_features(
@@ -206,6 +273,7 @@ def build_episode(
         config=config.features,
         meal_id=meal.meal_id,
         timezone_name=timezone_name,
+        time_basis=time_basis,
     )
     target = build_targets(
         history=history,
@@ -214,7 +282,10 @@ def build_episode(
         config=config,
         meal_id=meal.meal_id,
     )
-    return Episode(features=features, target=target)
+    context = _episode_context(
+        history, meal.timestamp, len(target.available_horizons), config
+    )
+    return Episode(features=features, target=target, context=context)
 
 
 def build_episodes(
@@ -238,6 +309,11 @@ def build_episodes(
         summaries = [s for s in summaries if s.participant_id in wanted]
 
     for summary in summaries:
+        # What the participant's timestamps mean (ruling D3). Resolved once per
+        # participant from the repository, not assumed.
+        time_basis, timezone_name = resolve_time_basis(
+            repository, summary.participant_id, summary.timezone
+        )
         history = repository.get_history(summary.participant_id)
         for meal in history.meals:
             report.candidate_meals += 1
@@ -248,7 +324,11 @@ def build_episodes(
 
             try:
                 episode = build_episode(
-                    history, meal, config, timezone_name=summary.timezone
+                    history,
+                    meal,
+                    config,
+                    timezone_name=timezone_name,
+                    time_basis=time_basis,
                 )
             except FeatureError as error:
                 reason = type(error).__name__
@@ -271,6 +351,8 @@ def build_episodes(
 
             episodes.append(episode)
             report.accepted += 1
+            if episode.context is not None and episode.context.day8_eligible:
+                report.day8_eligible += 1
 
     episodes.sort(key=lambda e: (e.meal_timestamp, e.meal_id or ""))
     return episodes, report

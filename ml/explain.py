@@ -83,6 +83,7 @@ def explain_horizon(
     *,
     calibration_offset_mg_dl: float = 0.0,
     max_drivers: int = MAX_DRIVERS,
+    weight: float = 1.0,
 ) -> tuple[list[DriverContribution], float, float]:
     """Decompose one prediction at one horizon.
 
@@ -92,6 +93,11 @@ def explain_horizon(
         horizon: which horizon to explain.
         calibration_offset_mg_dl: the personalization offset actually applied, surfaced
             as its own driver so the personal correction is visible rather than hidden.
+        weight: the share of the served prediction this linear model accounts for.
+            1.0 for the pure-Ridge family. For the blend it is the Ridge weight, and
+            contributions are scaled by it so each number is the mg/dL that feature
+            moves the SERVED prediction -- not the Ridge sub-model's own output. The
+            remaining share belongs to the booster and is reported as unexplained.
 
     Returns:
         (drivers ranked by |contribution|, intercept, summed contributions).
@@ -101,7 +107,8 @@ def explain_horizon(
 
     names, coefficients, intercept = generalized.coefficients(horizon)
     scaled = generalized.transform_to_scaled(horizon, features)[0]
-    contributions = coefficients * scaled
+    contributions = coefficients * scaled * weight
+    intercept = intercept * weight
 
     drivers: list[DriverContribution] = []
     for column, contribution in zip(names, contributions):
