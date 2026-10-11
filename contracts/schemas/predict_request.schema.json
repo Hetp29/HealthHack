@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://glucotwin.local/contracts/v1/predict_request.schema.json",
+  "title": "PredictRequest",
+  "description": "GlucoTwin contract v1.0.0 \u2014 generated from contracts/openapi.yaml by contracts/build_schemas.py. Do not edit by hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "participant_id",
+    "meal_timestamp",
+    "meal"
+  ],
+  "properties": {
+    "participant_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "meal_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC3339 with explicit offset. Offset-naive input is rejected 422."
+    },
+    "meal": {
+      "$ref": "#/$defs/MealInput"
+    },
+    "context_override": {
+      "$ref": "#/$defs/ContextOverride"
+    }
+  },
+  "$defs": {
+    "ContextOverride": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "description": "Optional pre-meal context supplied by the caller instead of being read from\nstored history. Every field is optional and defaults to `null`, in which case the\nserver derives that value from history truncated at `meal_timestamp`.\n\nIMPLEMENTATION CHOICE: the master specification fixes this field as present and\nnullable but does not enumerate its members. This object is the v1.0 definition.\nIt is additive-only; new members require a contract bump.\n\nServer-side guard: any supplied `as_of` strictly later than `meal_timestamp` is\nrejected 422 `future_context_override`. The override can never be used to inject a\npost-meal observation.\n",
+      "properties": {
+        "premeal_glucose_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 20,
+          "maximum": 600,
+          "description": "Overrides the measured baseline glucose at minute 0."
+        },
+        "recent_heart_rate_bpm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 20,
+          "maximum": 250,
+          "description": "Overrides the mean pre-meal heart rate feature."
+        },
+        "minutes_since_prior_meal": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1440,
+          "description": "Overrides time elapsed since the previous meal."
+        },
+        "as_of": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "Timestamp the supplied context was observed. Must be <= `meal_timestamp`.\nDefaults to `meal_timestamp` when omitted.\n"
+        }
+      }
+    },
+    "MealInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "carbs_g",
+        "protein_g",
+        "fat_g",
+        "fiber_g",
+        "calories_kcal"
+      ],
+      "description": "Meal composition for the meal being forecast. All five fields are required by the\nprediction contract (unlike an ingested `MealRecord`, where macros are optional),\nbecause the model consumes them directly.\n",
+      "properties": {
+        "carbs_g": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "protein_g": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "fat_g": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "fiber_g": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "calories_kcal": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      }
+    }
+  }
+}

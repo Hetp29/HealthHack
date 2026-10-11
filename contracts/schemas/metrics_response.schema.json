@@ -1,0 +1,384 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://glucotwin.local/contracts/v1/metrics_response.schema.json",
+  "title": "MetricsResponse",
+  "description": "GlucoTwin contract v1.0.0 \u2014 generated from contracts/openapi.yaml by contracts/build_schemas.py. Do not edit by hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dataset_source",
+    "evaluation_protocol",
+    "by_model",
+    "by_horizon",
+    "sample_counts",
+    "limitations"
+  ],
+  "properties": {
+    "dataset_source": {
+      "$ref": "#/$defs/DataSource"
+    },
+    "evaluation_protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "description",
+        "split_unit",
+        "test_fraction",
+        "evaluated_at"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "within_person_chronological",
+            "cohort_holdout"
+          ],
+          "description": "- `within_person_chronological`: per participant, earliest meals train and\n  latest meals test. Supports personalization claims.\n- `cohort_holdout`: entire participants are held out. Tests generalization\n  to unseen people; personalization is unavailable by construction.\n"
+        },
+        "description": {
+          "type": "string"
+        },
+        "split_unit": {
+          "type": "string",
+          "enum": [
+            "meal_episode"
+          ],
+          "description": "Splits are always by whole meal episode. Five-minute CGM rows are never randomly split."
+        },
+        "test_fraction": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evaluated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "excluded_overlapping_meals": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether episodes with a subsequent meal inside the 120-minute window were excluded."
+        }
+      }
+    },
+    "by_model": {
+      "type": "array",
+      "description": "Empty when no evaluation has been run.",
+      "items": {
+        "$ref": "#/$defs/ModelMetricBlock"
+      }
+    },
+    "by_horizon": {
+      "type": "array",
+      "description": "Per-horizon metrics for the primary (personalized) model, duplicated here as a\nflat convenience view of `by_model`. Empty when no evaluation has been run.\n",
+      "items": {
+        "$ref": "#/$defs/HorizonMetric"
+      }
+    },
+    "sample_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participants",
+        "train_episodes",
+        "test_episodes",
+        "by_participant"
+      ],
+      "properties": {
+        "participants": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "train_episodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "test_episodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excluded_episodes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Episodes dropped for insufficient target coverage or overlap, when recorded."
+        },
+        "by_participant": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ParticipantSampleCount"
+          }
+        }
+      }
+    },
+    "personalization": {
+      "$ref": "#/$defs/PersonalizationComparison"
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "CurveMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "n",
+        "peak_mae_mg_dl",
+        "peak_delta_mae_mg_dl",
+        "time_to_peak_mae_minutes",
+        "iauc_mae_mg_dl_min"
+      ],
+      "description": "Errors on curve-derived summary statistics, computed on held-out episodes.",
+      "properties": {
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "peak_mae_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0
+        },
+        "peak_delta_mae_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0
+        },
+        "time_to_peak_mae_minutes": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0
+        },
+        "iauc_mae_mg_dl_min": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0
+        }
+      }
+    },
+    "DataSource": {
+      "type": "string",
+      "description": "Provenance label attached to every record and every forecast. `synthetic_dev` is\nthe team's development fixture data and must be displayed as such. `official` is\nthe organizer-supplied dataset.\n",
+      "enum": [
+        "synthetic_dev",
+        "official",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "HorizonMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "horizon_minutes",
+        "n",
+        "mae_mg_dl",
+        "rmse_mg_dl"
+      ],
+      "properties": {
+        "horizon_minutes": {
+          "type": "integer",
+          "enum": [
+            30,
+            60,
+            90,
+            120
+          ]
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of held-out meal episodes with an available target at this horizon."
+        },
+        "mae_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0
+        },
+        "rmse_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0
+        },
+        "interval_coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Empirical fraction of held-out targets falling inside the predicted interval.\n`null` unless intervals were produced and coverage was actually measured.\n"
+        }
+      }
+    },
+    "ModelMetricBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_name",
+        "overall_mae_mg_dl",
+        "overall_rmse_mg_dl",
+        "by_horizon",
+        "curve"
+      ],
+      "properties": {
+        "model_name": {
+          "type": "string",
+          "description": "One of: persistence, generalized, personalized."
+        },
+        "overall_mae_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0
+        },
+        "overall_rmse_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "minimum": 0
+        },
+        "by_horizon": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HorizonMetric"
+          }
+        },
+        "curve": {
+          "$ref": "#/$defs/CurveMetric"
+        }
+      }
+    },
+    "ParticipantSampleCount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "train_episodes",
+        "test_episodes",
+        "personalized"
+      ],
+      "properties": {
+        "participant_id": {
+          "type": "string"
+        },
+        "train_episodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "test_episodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "personalized": {
+          "type": "boolean",
+          "description": "Whether this participant met the minimum-episode threshold for calibration."
+        }
+      }
+    },
+    "PersonalizationComparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participants_improved",
+        "participants_worsened",
+        "participants_unchanged",
+        "by_participant"
+      ],
+      "description": "Falsifiable personalized-vs-generalized comparison on strictly later held-out\nmeal episodes. A negative or null result is reported as-is.\n",
+      "properties": {
+        "participants_improved": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "participants_worsened": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "participants_unchanged": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_participant": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "participant_id",
+              "n",
+              "generalized_mae_mg_dl",
+              "personalized_mae_mg_dl",
+              "delta_mae_mg_dl"
+            ],
+            "properties": {
+              "participant_id": {
+                "type": "string"
+              },
+              "n": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "generalized_mae_mg_dl": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "format": "double"
+              },
+              "personalized_mae_mg_dl": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "format": "double"
+              },
+              "delta_mae_mg_dl": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "format": "double",
+                "description": "generalized MAE minus personalized MAE. Positive means personalization helped."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

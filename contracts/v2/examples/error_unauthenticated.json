@@ -1,0 +1,10 @@
+{
+  "request": "GET /api/v2/me",
+  "status": 401,
+  "body": {
+    "code": "unauthenticated",
+    "message": "A bearer session token is required.",
+    "request_id": "req_00000000000000000000",
+    "details": {}
+  }
+}

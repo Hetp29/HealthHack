@@ -1,0 +1,189 @@
+{
+  "scenario_id": "cgmacros-out-of-fit-replay-v1",
+  "bundle_sha256": "4ef9dbd8193cafee700ff8599059346928262ef8baa05c19ee8287196e1efe22",
+  "bundle_schema": "glucotwin-demo-bundle/1",
+  "bundle_default_path": "data/local/demo/cgmacros_demo_bundle.json",
+  "data_class": "research_dataset",
+  "source": {
+    "dataset": "CGMacros v1.0.0",
+    "participant": "cgmacros_001",
+    "sensor": "Dexcom G6 Pro (primary series)",
+    "warehouse": "data/local/cgmacros_v2.db (local, not committed)"
+  },
+  "selection": {
+    "rule": "Among participants whose meals after their Day-8 fit cutoff can show the whole progression (plan_window is not None): require at least one ineligible meal before retrieval activates, so exclusion is demonstrated; then prefer the fewest meals needed; then the lowest participant id. No forecast, error or glucose value is consulted.",
+    "inputs_consulted": "timestamps and macro completeness only",
+    "inputs_not_consulted": [
+      "glucose values",
+      "forecasts",
+      "forecast errors"
+    ],
+    "feasible_participants": 35,
+    "participants_considered": 44,
+    "ranking": [
+      {
+        "participant": "cgmacros_001",
+        "ineligible_before_activation": 1,
+        "meal_count": 9
+      },
+      {
+        "participant": "cgmacros_006",
+        "ineligible_before_activation": 1,
+        "meal_count": 9
+      },
+      {
+        "participant": "cgmacros_011",
+        "ineligible_before_activation": 1,
+        "meal_count": 9
+      },
+      {
+        "participant": "cgmacros_013",
+        "ineligible_before_activation": 1,
+        "meal_count": 9
+      },
+      {
+        "participant": "cgmacros_014",
+        "ineligible_before_activation": 1,
+        "meal_count": 9
+      },
+      {
+        "participant": "cgmacros_015",
+        "ineligible_before_activation": 1,
+        "meal_count": 9
+      },
+      {
+        "participant": "cgmacros_020",
+        "ineligible_before_activation": 1,
+        "meal_count": 9
+      },
+      {
+        "participant": "cgmacros_027",
+        "ineligible_before_activation": 1,
+        "meal_count": 9
+      }
+    ]
+  },
+  "fit_relationship": {
+    "fit_cutoff": "2020-05-08T13:26:00+00:00",
+    "statement": "Every replayed meal is at or after this participant's Day-8 cutoff. The frozen artifact was fitted only on episodes at or before cutoff - 120 min, so none of these meals was in its fit. They ARE among the previously inspected Day-8 reference episodes: this is not independent validation."
+  },
+  "window": {
+    "replay_start": "2020-05-08T12:56:00+00:00",
+    "first_meal": "2020-05-08T13:26:00+00:00",
+    "final_meal": "2020-05-10T09:27:00+00:00",
+    "last_reading": "2020-05-10T12:24:00+00:00",
+    "readings": 2600,
+    "meals": 9,
+    "pre_history_days": 8
+  },
+  "meals": [
+    {
+      "number": 1,
+      "source_meal_id": "cgmacros_001_meal_20200508T1326",
+      "occurred_at": "2020-05-08T13:26:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 0
+    },
+    {
+      "number": 2,
+      "source_meal_id": "cgmacros_001_meal_20200508T2016",
+      "occurred_at": "2020-05-08T20:16:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": false,
+      "expected_ineligibility_reasons": [
+        "intervening_meal"
+      ],
+      "expected_admissible_prior_meals": 1
+    },
+    {
+      "number": 3,
+      "source_meal_id": "cgmacros_001_meal_20200508T2022",
+      "occurred_at": "2020-05-08T20:22:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 1
+    },
+    {
+      "number": 4,
+      "source_meal_id": "cgmacros_001_meal_20200508T2229",
+      "occurred_at": "2020-05-08T22:29:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 2
+    },
+    {
+      "number": 5,
+      "source_meal_id": "cgmacros_001_meal_20200509T0935",
+      "occurred_at": "2020-05-09T09:35:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 3
+    },
+    {
+      "number": 6,
+      "source_meal_id": "cgmacros_001_meal_20200509T1346",
+      "occurred_at": "2020-05-09T13:46:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 4
+    },
+    {
+      "number": 7,
+      "source_meal_id": "cgmacros_001_meal_20200509T1826",
+      "occurred_at": "2020-05-09T18:26:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": false,
+      "expected_ineligibility_reasons": [
+        "intervening_meal"
+      ],
+      "expected_admissible_prior_meals": 5
+    },
+    {
+      "number": 8,
+      "source_meal_id": "cgmacros_001_meal_20200509T1841",
+      "occurred_at": "2020-05-09T18:41:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 5
+    },
+    {
+      "number": 9,
+      "source_meal_id": "cgmacros_001_meal_20200510T0927",
+      "occurred_at": "2020-05-10T09:27:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 6
+    }
+  ],
+  "plan": {
+    "activation_meal": 7,
+    "final_meal": 9,
+    "activation_verified_by_replay": true
+  },
+  "alert": {
+    "threshold_mg_dl": 140.0,
+    "reason": "Highest of [180, 160, 140] mg/dL that at least one real forecast in the window reaches.",
+    "forecasts_reaching": {
+      "180": 0,
+      "160": 0,
+      "140": 3
+    },
+    "forecasts": 9,
+    "label": "user-selected sample setting; informational, not a CGM alarm"
+  },
+  "excluded_from_git": [
+    "the bundle file (research data)",
+    "the warehouse",
+    "the model artifact"
+  ],
+  "mode": "new_user",
+  "state_fingerprint_at_end": "5a17f51a9d066a09d4ebb275b4a4b7a8db270b2d09f33bdd57012eb2715adad5"
+}

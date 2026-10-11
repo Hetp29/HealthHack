@@ -1,3 +1,4 @@
+# ============================== frontend (GLIMPSE web app) ==============================
 # Logs
 logs
 *.log
@@ -30,3 +31,68 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# ========================= backend, ML and data (GLIMPSE API) =========================
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets / environment
+.env
+.env.local
+*.pem
+*credentials*
+*.aws/
+
+# Generated ML artifacts (reproduce with `python -m ml.train`)
+ml/artifacts/*
+!ml/artifacts/.gitkeep
+# Per-dataset artifact directories (real-data models are rebuilt from the local DBs)
+ml/artifacts_*/
+
+# Generated dev scratch data (NOT the canonical data layer)
+ml/_devdata/
+*.db
+*.sqlite3
+
+# Source datasets -- NEVER committed. 3.7 GB combined, and licensing/redistribution
+# terms are the data owner's to honour, not ours to assume. Het's adapter reads these
+# from local disk and commits only canonical records, provenance and checksums.
+data/Type1Diabetes.parquet
+data/cgmacros-a-scientific-dataset-for-personalized-nutrition-and-diet-monitoring-1.0.0/
+
+# Frontend
+node_modules/
+frontend/dist/
+
+# Data layer (Het): local databases, generated run/profile reports, and official
+# source files (kept outside git unless the license allows committing them).
+data/local/
+data/reports/runs/
+data/reports/profiles/
+data/official_raw/
+*.db-wal
+*.db-shm
+
+# Defense in depth on raw source data. The two dataset drops above are ignored by
+# path, but a future drop under a different folder name must not become committable
+# by accident. These file types are never legitimate tracked content in this repo.
+# NOTE: deliberately no `data/**/*.csv` rule -- data/fixtures/synthetic_dev/*.csv are
+# small committed synthetic fixtures and must stay tracked.
+*.parquet
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+data/**/*.jpg
+data/**/*.jpeg
+data/**/*.png
+data/**/photos/

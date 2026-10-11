@@ -1,0 +1,21 @@
+{
+  "covered": 1126,
+  "missing": 45,
+  "participants_affected": 19,
+  "worst": [
+    [
+      "cgmacros_011",
+      6
+    ],
+    [
+      "cgmacros_010",
+      4
+    ],
+    [
+      "cgmacros_031",
+      4
+    ]
+  ],
+  "covered_carbs_median": 65.0,
+  "missing_carbs_median": 31.0
+}

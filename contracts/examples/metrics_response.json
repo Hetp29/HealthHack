@@ -1,0 +1,24 @@
+{
+  "dataset_source": "synthetic_dev",
+  "evaluation_protocol": {
+    "name": "within_person_chronological",
+    "description": "Per participant, meal episodes are ordered by timestamp; the earliest 75% train and the latest 25% are held out. Splits are by whole meal episode. Five-minute CGM rows are never randomly split. Imputers, scalers and participant calibration are fitted on the training fold only.",
+    "split_unit": "meal_episode",
+    "test_fraction": 0.25,
+    "evaluated_at": "2026-10-10T00:00:00Z",
+    "excluded_overlapping_meals": false
+  },
+  "by_model": [],
+  "by_horizon": [],
+  "sample_counts": {
+    "participants": 0,
+    "train_episodes": 0,
+    "test_episodes": 0,
+    "excluded_episodes": null,
+    "by_participant": []
+  },
+  "limitations": [
+    "No evaluation has been run against this artifact, so no validated metrics exist.",
+    "Run `python -m ml.evaluate --protocol within_person_chronological` to populate this report."
+  ]
+}

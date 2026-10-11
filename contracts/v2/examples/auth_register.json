@@ -1,0 +1,33 @@
+{
+  "request": "POST /api/v2/auth/register",
+  "status": 201,
+  "body": {
+    "user": {
+      "user_id": "usr_00000000000000000000000000000001",
+      "email": "user.a@example.com",
+      "display_name": "Demo User",
+      "timezone": "America/New_York",
+      "participant_id": "gtp_00000000000000000000000000000001",
+      "consents": [
+        {
+          "consent_type": "necessary_processing",
+          "state": "not_recorded",
+          "recorded_at": null,
+          "policy_version": null
+        },
+        {
+          "consent_type": "personalization_history",
+          "state": "not_recorded",
+          "recorded_at": null,
+          "policy_version": null
+        }
+      ],
+      "created_at": "2026-09-20T16:00:00Z"
+    },
+    "session": {
+      "token": "example-token-0001-not-a-real-credential",
+      "token_type": "Bearer",
+      "expires_at": "2026-10-04T16:00:00Z"
+    }
+  }
+}

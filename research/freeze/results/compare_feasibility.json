@@ -1,0 +1,26 @@
+{
+  "pairs": 990,
+  "overlapping_pairs": 7,
+  "examples": [
+    [
+      "cgmacros_011",
+      "cgmacros_019"
+    ],
+    [
+      "cgmacros_013",
+      "cgmacros_015"
+    ],
+    [
+      "cgmacros_013",
+      "cgmacros_018"
+    ],
+    [
+      "cgmacros_013",
+      "cgmacros_029"
+    ],
+    [
+      "cgmacros_015",
+      "cgmacros_018"
+    ]
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "IMAGE_COUNT": 3454,
+  "IMAGE_BYTES": 652986741,
+  "LOGGED_MEALS": 1706,
+  "MEALS_WITH_IMAGES": 1644,
+  "MEALS_WITHOUT_IMAGES": 62,
+  "PARTICIPANTS_WITH_IMAGES": 45,
+  "UNIQUE_IMAGE_MEAL_LINKS": 1644,
+  "ORPHAN_IMAGES_NO_MEAL_ROW": 1553,
+  "IMAGES_REFERENCED_BY_CSV": 3197,
+  "IMAGES_ON_DISK_NOT_REFERENCED": 260,
+  "REFERENCED_BUT_MISSING_ON_DISK": 3,
+  "VERIFIED_PREDICTION_TIME_IMAGES": 1633,
+  "UNCERTAIN_IMAGES": 16,
+  "POST_PREDICTION_FOLLOWUP_IMAGES": 1548,
+  "MULTI_IMAGE_MEALS": 0,
+  "CORRUPT_FILES": 0,
+  "EXACT_DUPLICATE_GROUPS": 3,
+  "EXACT_DUPLICATE_FILES": 8,
+  "TOP_RESOLUTIONS": [
+    [
+      [
+        900,
+        1600
+      ],
+      1743
+    ],
+    [
+      [
+        1152,
+        2048
+      ],
+      831
+    ],
+    [
+      [
+        1153,
+        2048
+      ],
+      170
+    ],
+    [
+      [
+        899,
+        1599
+      ],
+      166
+    ],
+    [
+      [
+        1080,
+        1920
+      ],
+      124
+    ],
+    [
+      [
+        901,
+        1600
+      ],
+      84
+    ]
+  ],
+  "COLOR_MODES": {
+    "RGB": 3454
+  },
+  "FOLLOWUP_OFFSET_MINUTES": {
+    "n": 1548,
+    "median": 16.0
+  },
+  "MEAL_TYPE_RAW_VALUES": {
+    "Lunch": 163,
+    "Dinner": 74,
+    "Snacks": 38,
+    "Breakfast": 170,
+    "dinner": 418,
+    "snack": 300,
+    "lunch": 272,
+    "breakfast": 266,
+    "snack 1": 1,
+    "Snack": 4
+  },
+  "MEAL_TYPE_NORMALIZED": {
+    "lunch": 435,
+    "dinner": 492,
+    "snack": 343,
+    "breakfast": 436
+  },
+  "FOOD_TEXT_FIELDS": [],
+  "COMPOSITION_FIELDS": [
+    "Calories",
+    "Carbs",
+    "Protein",
+    "Fat",
+    "Fiber",
+    "Amount Consumed"
+  ]
+}

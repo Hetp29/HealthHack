@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://glucotwin.local/contracts/v1/predict_response.schema.json",
+  "title": "ForecastResponse",
+  "description": "GlucoTwin contract v1.0.0 \u2014 generated from contracts/openapi.yaml by contracts/build_schemas.py. Do not edit by hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "participant_id",
+    "meal_timestamp",
+    "model_version",
+    "data_source",
+    "prediction_status",
+    "points",
+    "glucose_at_minutes",
+    "metrics",
+    "drivers",
+    "uncertainty_status",
+    "limitations"
+  ],
+  "properties": {
+    "participant_id": {
+      "type": "string"
+    },
+    "meal_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Echoed back normalized to UTC."
+    },
+    "model_version": {
+      "type": "string",
+      "description": "Version of the artifact that produced this forecast."
+    },
+    "data_source": {
+      "$ref": "#/$defs/DataSource"
+    },
+    "prediction_status": {
+      "$ref": "#/$defs/PredictionStatus"
+    },
+    "points": {
+      "type": "array",
+      "minItems": 25,
+      "maxItems": 25,
+      "description": "EXACTLY 25 points at minutes 0, 5, 10, ..., 120 inclusive, in strictly\nascending minute order. Minute 0 is the measured pre-meal baseline glucose,\nnot a model output.\n",
+      "items": {
+        "$ref": "#/$defs/ForecastPoint"
+      }
+    },
+    "glucose_at_minutes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "30",
+        "60",
+        "90",
+        "120"
+      ],
+      "description": "Convenience read-out of the four required horizons. DERIVED from `points` by\nexact minute lookup, never independently generated. Keys are strings.\n",
+      "properties": {
+        "30": {
+          "type": "number",
+          "format": "double"
+        },
+        "60": {
+          "type": "number",
+          "format": "double"
+        },
+        "90": {
+          "type": "number",
+          "format": "double"
+        },
+        "120": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "metrics": {
+      "$ref": "#/$defs/ForecastMetrics"
+    },
+    "drivers": {
+      "type": "array",
+      "description": "Ranked by absolute contribution, descending. MAY be empty `[]` when the loaded\nmodel family does not support attribution; in that case `limitations` says so.\nAn empty list is honest; a fabricated list is a P1 defect.\n",
+      "items": {
+        "$ref": "#/$defs/Driver"
+      }
+    },
+    "uncertainty_status": {
+      "$ref": "#/$defs/UncertaintyStatus"
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Human-readable caveats that the client MUST surface. Always contains at least\nthe research-use disclaimer. When `prediction_status` is\n`generalized_fallback`, the first entry states the fallback reason.\n",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "DataSource": {
+      "type": "string",
+      "description": "Provenance label attached to every record and every forecast. `synthetic_dev` is\nthe team's development fixture data and must be displayed as such. `official` is\nthe organizer-supplied dataset.\n",
+      "enum": [
+        "synthetic_dev",
+        "official",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "Driver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature",
+        "contribution_mg_dl",
+        "explanation"
+      ],
+      "description": "A model-attribution term, not a causal physiological claim. For the linear model\nfamily, contributions form an exact additive decomposition of the predicted\nexcursion at the reported horizon.\n",
+      "properties": {
+        "feature": {
+          "type": "string",
+          "description": "Feature name, or `participant_calibration` for the personalization offset."
+        },
+        "contribution_mg_dl": {
+          "type": "number",
+          "format": "double",
+          "description": "Signed contribution to the predicted excursion, in mg/dL."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "Plain-language statement of what the number means and does not mean."
+        }
+      }
+    },
+    "ForecastMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "peak_mg_dl",
+        "peak_delta_mg_dl",
+        "time_to_peak_minutes",
+        "incremental_auc_mg_dl_min"
+      ],
+      "description": "Summary statistics derived from the 25 sampled `points`. These are computed from\nthe returned curve, never predicted independently, so they are always mutually\nconsistent with `points`.\n",
+      "properties": {
+        "peak_mg_dl": {
+          "type": "number",
+          "format": "double",
+          "description": "Maximum `glucose_mg_dl` over the 25 sampled points."
+        },
+        "peak_delta_mg_dl": {
+          "type": "number",
+          "format": "double",
+          "description": "`peak_mg_dl` minus baseline glucose at minute 0. May be <= 0."
+        },
+        "time_to_peak_minutes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "multipleOf": 5,
+          "description": "Minute of the peak. On ties, the EARLIEST minute wins."
+        },
+        "incremental_auc_mg_dl_min": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "description": "Positive incremental AUC in mg/dL*min: five-minute trapezoidal integration of\nmax(predicted glucose - baseline glucose, 0) over minutes 0..120.\nThis is strictly non-negative and is NOT signed net excursion.\n"
+        }
+      }
+    },
+    "ForecastPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minute",
+        "glucose_mg_dl",
+        "lower_mg_dl",
+        "upper_mg_dl"
+      ],
+      "properties": {
+        "minute": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "multipleOf": 5,
+          "description": "Minutes after `meal_timestamp`."
+        },
+        "glucose_mg_dl": {
+          "type": "number",
+          "format": "double",
+          "description": "Predicted glucose in mg/dL."
+        },
+        "lower_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "description": "Lower interval bound. `null` unless `uncertainty_status` is `empirical_holdout`."
+        },
+        "upper_mg_dl": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "description": "Upper interval bound. `null` unless `uncertainty_status` is `empirical_holdout`."
+        }
+      }
+    },
+    "PredictionStatus": {
+      "type": "string",
+      "description": "Whether the returned forecast used participant-specific calibration.\n- `personalized`: the participant had at least the configured minimum number of\n  training meal episodes, and a shrunk per-participant correction was applied.\n- `generalized_fallback`: the cohort-level model was used alone. The reason is\n  stated as the first entry in `limitations`.\n",
+      "enum": [
+        "personalized",
+        "generalized_fallback"
+      ]
+    },
+    "UncertaintyStatus": {
+      "type": "string",
+      "description": "- `not_calibrated`: no empirically validated interval exists. `lower_mg_dl` and\n  `upper_mg_dl` MUST be `null` and clients MUST NOT draw a band.\n- `empirical_holdout`: bounds derive from measured held-out residual quantiles whose\n  coverage was computed and is reported in `GET /api/model/metrics`.\n",
+      "enum": [
+        "not_calibrated",
+        "empirical_holdout"
+      ]
+    }
+  }
+}

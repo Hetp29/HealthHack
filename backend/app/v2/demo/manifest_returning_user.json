@@ -1,0 +1,478 @@
+{
+  "scenario_id": "cgmacros-returning-user-replay-v1",
+  "mode": "returning_user",
+  "bundle_sha256": "6a1376eb7c348e7e28f4fbe48faebd05716b917c2dda87937736e675a3c6e2d5",
+  "bundle_schema": "glucotwin-demo-bundle/1",
+  "bundle_default_path": "data/local/demo/cgmacros_returning_user_bundle.json",
+  "data_class": "research_dataset",
+  "source": {
+    "dataset": "CGMacros v1.0.0",
+    "participant": "cgmacros_001",
+    "sensor": "Dexcom G6 Pro (primary series)",
+    "warehouse": "data/local/cgmacros_v2.db (local, not committed)"
+  },
+  "selection": {
+    "rule": "Same participant and same presented meals as the new-user scenario. The backfill is EVERY meal the recording holds before them, in order; none is chosen, dropped or altered.",
+    "inputs_consulted": "timestamps and macro completeness only",
+    "inputs_not_consulted": [
+      "glucose values",
+      "forecasts",
+      "forecast errors"
+    ]
+  },
+  "fit_relationship": {
+    "fit_cutoff": "2020-05-08T13:26:00+00:00",
+    "statement": "These earlier meals precede the participant's Day-8 fit cutoff, so they WERE in the frozen artifact's fit: forecasts shown for them are in-sample and are not evidence of accuracy. The presented meals are after the cutoff and were not. Neither set is independent validation."
+  },
+  "backfill": {
+    "meals_found": 31,
+    "eligible": 27,
+    "ineligible": 4,
+    "ineligibility_reasons": {
+      "intervening_meal": 4
+    },
+    "unloggable": 0,
+    "admissible_at_first_presented_meal": 27,
+    "lookback_days": 8
+  },
+  "window": {
+    "replay_start": "2020-05-01T13:53:00+00:00",
+    "first_meal": "2020-05-01T14:23:00+00:00",
+    "first_presented_meal": "2020-05-08T13:26:00+00:00",
+    "final_meal": "2020-05-10T09:27:00+00:00",
+    "last_reading": "2020-05-10T12:24:00+00:00",
+    "readings": 2600,
+    "meals": 40
+  },
+  "meals": [
+    {
+      "number": 1,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200501T1423",
+      "occurred_at": "2020-05-01T14:23:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 0
+    },
+    {
+      "number": 2,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200501T2048",
+      "occurred_at": "2020-05-01T20:48:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 1
+    },
+    {
+      "number": 3,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200502T0015",
+      "occurred_at": "2020-05-02T00:15:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 2
+    },
+    {
+      "number": 4,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200502T0818",
+      "occurred_at": "2020-05-02T08:18:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 3
+    },
+    {
+      "number": 5,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200502T1200",
+      "occurred_at": "2020-05-02T12:00:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 4
+    },
+    {
+      "number": 6,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200502T1637",
+      "occurred_at": "2020-05-02T16:37:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 5
+    },
+    {
+      "number": 7,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200502T1952",
+      "occurred_at": "2020-05-02T19:52:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 6
+    },
+    {
+      "number": 8,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200503T0003",
+      "occurred_at": "2020-05-03T00:03:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 7
+    },
+    {
+      "number": 9,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200503T0907",
+      "occurred_at": "2020-05-03T09:07:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 8
+    },
+    {
+      "number": 10,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200503T1451",
+      "occurred_at": "2020-05-03T14:51:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 9
+    },
+    {
+      "number": 11,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200503T2002",
+      "occurred_at": "2020-05-03T20:02:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": false,
+      "expected_ineligibility_reasons": [
+        "intervening_meal"
+      ],
+      "expected_admissible_prior_meals": 10
+    },
+    {
+      "number": 12,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200503T2048",
+      "occurred_at": "2020-05-03T20:48:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": false,
+      "expected_ineligibility_reasons": [
+        "intervening_meal"
+      ],
+      "expected_admissible_prior_meals": 10
+    },
+    {
+      "number": 13,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200503T2226",
+      "occurred_at": "2020-05-03T22:26:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 10
+    },
+    {
+      "number": 14,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200504T0917",
+      "occurred_at": "2020-05-04T09:17:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 11
+    },
+    {
+      "number": 15,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200504T1259",
+      "occurred_at": "2020-05-04T12:59:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 12
+    },
+    {
+      "number": 16,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200504T1726",
+      "occurred_at": "2020-05-04T17:26:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 13
+    },
+    {
+      "number": 17,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200504T1942",
+      "occurred_at": "2020-05-04T19:42:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 14
+    },
+    {
+      "number": 18,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200504T2147",
+      "occurred_at": "2020-05-04T21:47:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 15
+    },
+    {
+      "number": 19,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200505T0922",
+      "occurred_at": "2020-05-05T09:22:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 16
+    },
+    {
+      "number": 20,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200505T1316",
+      "occurred_at": "2020-05-05T13:16:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 17
+    },
+    {
+      "number": 21,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200505T2105",
+      "occurred_at": "2020-05-05T21:05:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": false,
+      "expected_ineligibility_reasons": [
+        "intervening_meal"
+      ],
+      "expected_admissible_prior_meals": 18
+    },
+    {
+      "number": 22,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200505T2118",
+      "occurred_at": "2020-05-05T21:18:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 18
+    },
+    {
+      "number": 23,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200506T0854",
+      "occurred_at": "2020-05-06T08:54:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 19
+    },
+    {
+      "number": 24,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200506T1225",
+      "occurred_at": "2020-05-06T12:25:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 20
+    },
+    {
+      "number": 25,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200506T1956",
+      "occurred_at": "2020-05-06T19:56:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": false,
+      "expected_ineligibility_reasons": [
+        "intervening_meal"
+      ],
+      "expected_admissible_prior_meals": 21
+    },
+    {
+      "number": 26,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200506T2058",
+      "occurred_at": "2020-05-06T20:58:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 21
+    },
+    {
+      "number": 27,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200507T1007",
+      "occurred_at": "2020-05-07T10:07:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 22
+    },
+    {
+      "number": 28,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200507T1412",
+      "occurred_at": "2020-05-07T14:12:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 23
+    },
+    {
+      "number": 29,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200507T1936",
+      "occurred_at": "2020-05-07T19:36:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 24
+    },
+    {
+      "number": 30,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200507T2150",
+      "occurred_at": "2020-05-07T21:50:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 25
+    },
+    {
+      "number": 31,
+      "phase": "backfill",
+      "source_meal_id": "cgmacros_001_meal_20200508T0958",
+      "occurred_at": "2020-05-08T09:58:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 26
+    },
+    {
+      "number": 32,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200508T1326",
+      "occurred_at": "2020-05-08T13:26:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 27
+    },
+    {
+      "number": 33,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200508T2016",
+      "occurred_at": "2020-05-08T20:16:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": false,
+      "expected_ineligibility_reasons": [
+        "intervening_meal"
+      ],
+      "expected_admissible_prior_meals": 28
+    },
+    {
+      "number": 34,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200508T2022",
+      "occurred_at": "2020-05-08T20:22:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 28
+    },
+    {
+      "number": 35,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200508T2229",
+      "occurred_at": "2020-05-08T22:29:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 29
+    },
+    {
+      "number": 36,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200509T0935",
+      "occurred_at": "2020-05-09T09:35:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 30
+    },
+    {
+      "number": 37,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200509T1346",
+      "occurred_at": "2020-05-09T13:46:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 31
+    },
+    {
+      "number": 38,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200509T1826",
+      "occurred_at": "2020-05-09T18:26:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": false,
+      "expected_ineligibility_reasons": [
+        "intervening_meal"
+      ],
+      "expected_admissible_prior_meals": 31
+    },
+    {
+      "number": 39,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200509T1841",
+      "occurred_at": "2020-05-09T18:41:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 31
+    },
+    {
+      "number": 40,
+      "phase": "display",
+      "source_meal_id": "cgmacros_001_meal_20200510T0927",
+      "occurred_at": "2020-05-10T09:27:00+00:00",
+      "readings_in_window": 24,
+      "expected_eligible": true,
+      "expected_ineligibility_reasons": [],
+      "expected_admissible_prior_meals": 29
+    }
+  ],
+  "plan": {
+    "display_from_meal": 32,
+    "final_meal": 40,
+    "activation_meal": 6,
+    "retrieval_active_at_first_presented_meal": true,
+    "verified_by_replay": true
+  },
+  "alert": {
+    "threshold_mg_dl": 140.0,
+    "label": "user-selected sample setting, same as the new-user scenario"
+  },
+  "excluded_from_git": [
+    "the bundle file (research data)",
+    "the warehouse",
+    "the model artifact"
+  ],
+  "state_fingerprint_at_end": "cd96f4d8f63832a5eb033b9c44c56a43dcb4ae43ecef43f84636edb1531c9a0f"
+}

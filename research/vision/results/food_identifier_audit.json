@@ -1,0 +1,42 @@
+{
+  "extracted_files_scanned": 45,
+  "extracted_identifier_candidates": [],
+  "archive_member_types": {
+    "<dir>": 91,
+    ".csv": 48,
+    ".jpg": 3454
+  },
+  "archive_csv_headers_sampled": 48,
+  "non_meal_tables": [
+    "CGMacros/bio.csv",
+    "CGMacros/gut_health_test.csv",
+    "CGMacros/microbes.csv",
+    "DataDictionary_Bio.csv",
+    "DataDictionary_CGMacros-00X.csv",
+    "DataDictionary_Gut_Health_Test.csv",
+    "DataDictionary_Microbes.csv"
+  ],
+  "meal_level_schema": [
+    [
+      "Timestamp",
+      "Libre GL",
+      "Dexcom GL",
+      "HR",
+      "Steps",
+      "METs",
+      "Meal Type",
+      "RecordIndex",
+      "Calories",
+      "Carbs",
+      "Protein",
+      "Fat",
+      "Fiber",
+      "Amount Consumed",
+      "Image path"
+    ]
+  ],
+  "archive_identifier_candidates": [],
+  "USDA_MATCHING_POSSIBLE": false,
+  "GI_ASSIGNMENT_POSSIBLE": false,
+  "determination": "CGMacros contains NO food name, ingredient description, product identifier, brand, restaurant, UPC or free-text annotation in any extracted file or any archive member. The only meal-level fields are the occasion label (Meal Type), five estimated macronutrient quantities, Amount Consumed, and the photograph path. There is therefore nothing to match against USDA FoodData Central, and no identified food to attach a glycaemic index to. Both branches are UNSUPPORTED BY THE DATA. Deriving a food name from the photograph and then calling the resulting USDA row 'source composition' would manufacture the ground truth the enrichment is meant to provide, so it is not done."
+}

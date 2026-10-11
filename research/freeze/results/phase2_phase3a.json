@@ -1,0 +1,128 @@
+{
+  "artifact_sha256_before": {
+    "evaluation_detail_day8_holdout.json": "ec8829178554a12058b568e9ec9cd286b3241b8612b20ec1077e8a87f34e47fe",
+    "metrics.json": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+    "metrics_day8_holdout.json": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+    "model.joblib": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
+    "model_manifest.json": "e1b4d4c1c3a8ad5f5c9b6979dca5cc953eca5192c67f97c03ca8b546686599d9"
+  },
+  "tolerances": {
+    "T3_counts": 0,
+    "T4_mgdl": 0.015,
+    "T5_minutes": 0.015,
+    "T6_iauc": 0.15,
+    "T8_dev_mgdl": 0.001
+  },
+  "phase2": {
+    "within_person": {
+      "n_folds": 2,
+      "validation_episodes": 768,
+      "participants": 45,
+      "mae": 23.547776531430276,
+      "rmse": 32.045131933960334,
+      "bias": -1.1858048910212504,
+      "mae@30": 16.720495651742084,
+      "mae@60": 23.871757155317578,
+      "mae@90": 27.073111697090905,
+      "mae@120": 26.525741621570536,
+      "peak_mae": 25.448779201274345,
+      "ttp_mae": 29.1015625,
+      "iauc_mae": 1680.2291176476917,
+      "participant_mae_min": 12.331,
+      "participant_mae_median": 21.844,
+      "participant_mae_max": 53.487,
+      "participant_mae_p90": 37.0608,
+      "fold_mae": {
+        "1": 25.551,
+        "2": 21.481
+      },
+      "seconds": 5.3,
+      "previously_reported_mae": 23.548,
+      "abs_difference": 0.000223,
+      "within_T8": true
+    },
+    "cold_start": {
+      "n_folds": 4,
+      "validation_episodes": 1171,
+      "participants": 45,
+      "mae": 23.084964264709583,
+      "rmse": 31.435289259455768,
+      "bias": -0.16545460290080097,
+      "mae@30": 16.542224092415847,
+      "mae@60": 23.55499669168828,
+      "mae@90": 26.219313899894647,
+      "mae@120": 26.023322374839555,
+      "peak_mae": 25.31847945380898,
+      "ttp_mae": 29.081196581196583,
+      "iauc_mae": 1647.750102272607,
+      "participant_mae_min": 12.814,
+      "participant_mae_median": 21.17,
+      "participant_mae_max": 45.712,
+      "participant_mae_p90": 36.1784,
+      "fold_mae": {
+        "0": 21.884,
+        "1": 21.352,
+        "2": 22.169,
+        "3": 26.897
+      },
+      "seconds": 11.5,
+      "previously_reported_mae": 23.085,
+      "abs_difference": 3.6e-05,
+      "within_T8": true
+    }
+  },
+  "phase3a_counts": {
+    "test_episodes": [
+      394,
+      394
+    ],
+    "train+validation": [
+      1171,
+      1171
+    ],
+    "participants": [
+      45,
+      45
+    ],
+    "fold_train": [
+      938,
+      938
+    ],
+    "fold_validation": [
+      233,
+      233
+    ],
+    "excluded": [
+      47,
+      47
+    ]
+  },
+  "phase3a_shipped_artifact": {
+    "episodes": 394,
+    "participants": 44,
+    "mae": 20.47267541923537,
+    "rmse": 27.800512941409078,
+    "bias": 0.8881079277804651,
+    "mae@30": 15.435536276814714,
+    "mae@60": 21.427314024915244,
+    "mae@90": 22.664418449676997,
+    "mae@120": 22.36343292553453,
+    "ridge_weight": 0.5,
+    "chosen_alpha": {
+      "30": 0.1,
+      "60": 10.0,
+      "90": 100.0,
+      "120": 100.0
+    },
+    "fitted_episodes": 1171
+  },
+  "artifact_sha256_after_phase3a": {
+    "evaluation_detail_day8_holdout.json": "ec8829178554a12058b568e9ec9cd286b3241b8612b20ec1077e8a87f34e47fe",
+    "metrics.json": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+    "metrics_day8_holdout.json": "d519359621baee9891faef761a2f15dfe7b8f5813a16da0cc37c98fb7b3444a3",
+    "model.joblib": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
+    "model_manifest.json": "e1b4d4c1c3a8ad5f5c9b6979dca5cc953eca5192c67f97c03ca8b546686599d9"
+  },
+  "blockers": [],
+  "findings": []
+}

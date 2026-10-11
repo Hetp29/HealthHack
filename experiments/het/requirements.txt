@@ -1,0 +1,6 @@
+# Extra packages for experiments/het only (not needed by the app or the test suite).
+lightgbm==4.7.0
+torch==2.14.1
+torchvision==0.29.1
+open_clip_torch==3.3.0
+pillow==12.3.0

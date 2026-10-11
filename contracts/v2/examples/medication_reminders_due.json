@@ -1,0 +1,28 @@
+{
+  "request": "GET /api/v2/medication-reminders/due",
+  "status": 200,
+  "body": {
+    "as_of": "2026-09-20T19:30:00Z",
+    "due": [
+      {
+        "dose_id": "dos_0000000000000000000000000000008a",
+        "regimen_id": "rgm_0000000000000000000000000000005a",
+        "scheduled_at": "2026-09-20T16:30:00Z",
+        "action": "scheduled",
+        "actual_at": null,
+        "snoozed_until": null,
+        "actor": "system",
+        "provenance": "reminder_schedule",
+        "client_event_id": null,
+        "recorded_at": "2026-09-20T19:30:00Z",
+        "regimen": {
+          "name": "Metformin",
+          "dose": {
+            "amount": 500.0,
+            "unit": "mg"
+          }
+        }
+      }
+    ]
+  }
+}

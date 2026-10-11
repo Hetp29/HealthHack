@@ -1,0 +1,57 @@
+{
+  "I1 linear soft gate": {
+    "weight_mean": 0.48287025058245076,
+    "weight_std": 0.04136119631164697,
+    "pct_extreme": 0.0,
+    "pct_ridge_favoured": 0.35494880546075086
+  },
+  "I3 retrieval-aware gate": {
+    "weight_mean": 0.4823007230079397,
+    "weight_std": 0.03563243490573276,
+    "pct_extreme": 0.0,
+    "pct_ridge_favoured": 0.310580204778157
+  },
+  "I6a tree gate": {
+    "weight_mean": 0.4956354295534468,
+    "weight_std": 0.09367686402102053,
+    "pct_extreme": 0.0,
+    "pct_ridge_favoured": 0.3856655290102389
+  },
+  "I6b hard threshold gate": {
+    "weight_mean": 0.4044368600682594,
+    "weight_std": 0.1965941409408146,
+    "pct_extreme": 0.19112627986348124,
+    "pct_ridge_favoured": 0.0
+  },
+  "I2 calibration gate": {
+    "pct_calibration_applied": 0.8498293515358362
+  },
+  "I5 2-expert regime": {
+    "expert_usage": {
+      "0": {
+        "train": 396,
+        "validate": 137
+      },
+      "1": {
+        "train": 482,
+        "validate": 156
+      }
+    }
+  },
+  "I6 3-expert regime": {
+    "expert_usage": {
+      "0": {
+        "train": 275,
+        "validate": 92
+      },
+      "1": {
+        "train": 281,
+        "validate": 93
+      },
+      "2": {
+        "train": 322,
+        "validate": 108
+      }
+    }
+  }
+}

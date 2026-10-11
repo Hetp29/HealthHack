@@ -1,0 +1,33 @@
+{
+  "request": "PUT /api/v2/alert-settings",
+  "status": 200,
+  "body": {
+    "enabled": true,
+    "threshold": {
+      "value": 140.0,
+      "unit": "mg/dL",
+      "mg_dl": 140.0
+    },
+    "channels": [
+      {
+        "channel": "in_app",
+        "available": true
+      },
+      {
+        "channel": "push",
+        "available": false
+      }
+    ],
+    "available_channels": [
+      "in_app"
+    ],
+    "quiet_hours": {
+      "start": "22:00",
+      "end": "07:00"
+    },
+    "cooldown_minutes": 60,
+    "updated_at": "2026-09-20T16:00:00Z",
+    "informational_only": true,
+    "disclaimer": "Informational forecast from a research model. Its uncertainty is not calibrated. It is not a glucose measurement, not medical advice, and does not replace your CGM's own alerts."
+  }
+}

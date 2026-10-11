@@ -1,0 +1,12 @@
+{
+  "request": "GET /api/v2/ready",
+  "status": 200,
+  "body": {
+    "status": "ready",
+    "checks": {
+      "database": true,
+      "model_loaded": true,
+      "model_integrity": true
+    }
+  }
+}

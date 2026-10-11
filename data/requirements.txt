@@ -1,0 +1,3 @@
+# Data layer runtime dependencies (owner: Het). Also pinned in the root requirements.txt.
+SQLAlchemy==2.0.43
+pyarrow==17.0.0

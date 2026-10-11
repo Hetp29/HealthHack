@@ -1,0 +1,135 @@
+{
+  "request": "PATCH /api/v2/meals/meal_00000000000000000000000000000053/confirm",
+  "status": 200,
+  "body": {
+    "meal_id": "meal_00000000000000000000000000000053",
+    "occurred_at": "2026-09-20T16:00:00Z",
+    "entry_method": "photo",
+    "status": "confirmed",
+    "note": null,
+    "consumption_status": "as_logged",
+    "photo": {
+      "photo_id": "pho_00000000000000000000000000000054",
+      "content_type": "image/jpeg",
+      "width": 800,
+      "height": 600,
+      "byte_size": 3137,
+      "url": "/api/v2/meals/meal_00000000000000000000000000000053/image"
+    },
+    "estimate": {
+      "estimate_id": "est_00000000000000000000000000000055",
+      "status": "ok",
+      "is_estimate": true,
+      "needs_user_confirmation": true,
+      "totals": {
+        "carbs_g": 48.0,
+        "protein_g": 36.0,
+        "fat_g": 18.0,
+        "fiber_g": 6.0,
+        "calories_kcal": 505.0
+      },
+      "ranges": {
+        "carbs_g": {
+          "low": 38.0,
+          "high": 60.0
+        },
+        "protein_g": {
+          "low": 29.0,
+          "high": 45.0
+        },
+        "fat_g": {
+          "low": 14.0,
+          "high": 22.0
+        },
+        "fiber_g": {
+          "low": 5.0,
+          "high": 8.0
+        },
+        "calories_kcal": {
+          "low": 405.0,
+          "high": 630.0
+        }
+      },
+      "items": [
+        {
+          "name": "grilled chicken breast",
+          "portion_description": "one palm-sized piece",
+          "estimated_weight_g": 140.0,
+          "visibility": "visible",
+          "confidence": "medium",
+          "notes": null
+        },
+        {
+          "name": "steamed white rice",
+          "portion_description": "about one cup",
+          "estimated_weight_g": 160.0,
+          "visibility": "partially_visible",
+          "confidence": "medium",
+          "notes": "part of the portion is hidden under the chicken"
+        },
+        {
+          "name": "cooking oil",
+          "portion_description": "about a tablespoon",
+          "estimated_weight_g": 12.0,
+          "visibility": "assumed_hidden",
+          "confidence": "low",
+          "notes": "not visible; typical for pan frying"
+        }
+      ],
+      "overall_confidence": "medium",
+      "scene": {
+        "multiple_plates": false,
+        "contains_beverage": false,
+        "packaged_food": false,
+        "hidden_fats_likely": true,
+        "portion_reference_visible": true
+      },
+      "assumptions": [
+        "The chicken was pan fried in oil."
+      ],
+      "ambiguities": [
+        "Rice portion is partly hidden."
+      ],
+      "clarification_questions": [
+        "Was the rice white or brown?",
+        "Was any sauce added?"
+      ],
+      "not_food_reason": null,
+      "warnings": [
+        {
+          "code": "hidden_fats_likely"
+        }
+      ],
+      "provenance": {
+        "provider": "openai",
+        "ai_model_requested": "<configured vision model>",
+        "ai_model_reported": "<model id reported by the provider>",
+        "prompt_version": "meal-vision-v1",
+        "method": "vision model estimate from one photograph; not a measured or database-verified nutrition value"
+      },
+      "units": {
+        "carbs_g": "g",
+        "protein_g": "g",
+        "fat_g": "g",
+        "fiber_g": "g",
+        "calories_kcal": "kcal"
+      },
+      "created_at": "2026-09-20T16:00:00Z"
+    },
+    "confirmation": {
+      "confirmation_id": "cnf_00000000000000000000000000000056",
+      "revision": 1,
+      "source": "ai_edited",
+      "confirmed_at": "2026-09-20T16:00:00Z",
+      "based_on_estimate_id": "est_00000000000000000000000000000055",
+      "carbs_g": 62.0,
+      "protein_g": 36.0,
+      "fat_g": 18.0,
+      "fiber_g": 6.0,
+      "calories_kcal": 505.0
+    },
+    "prediction_id": null,
+    "created_at": "2026-09-20T16:00:00Z",
+    "updated_at": "2026-09-20T16:00:00Z"
+  }
+}

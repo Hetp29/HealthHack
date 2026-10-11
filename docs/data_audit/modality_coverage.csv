@@ -1,0 +1,17 @@
+dataset,source,participants,with_cgm,with_second_cgm_sensor,with_meals,meal_events,meals_with_complete_macros,meals_with_photo,with_heart_rate,with_activity,with_insulin_or_medication,eligible_participants,eligible_episodes
+cgmacros,CGMacros,45,45,45,45,1706,1705,1644,45,45,0,44,484
+metabonet,AZT1D,21,21,0,21,3742,0,0,0,0,21,21,3003
+metabonet,BrisT1D,18,18,0,18,15042,0,0,18,18,0,14,10294
+metabonet,CTR3,30,27,0,27,11635,0,0,0,0,0,26,8351
+metabonet,DCLP3,101,101,0,0,0,0,0,0,0,101,0,0
+metabonet,DCLP5,90,90,0,0,0,0,0,0,0,90,0,0
+metabonet,Flair,102,102,0,0,0,0,0,0,0,102,0,0
+metabonet,HUPA-UCM,20,20,0,18,1863,0,0,20,20,20,17,1455
+metabonet,IOBP2,299,299,0,0,0,0,0,0,0,299,0,0
+metabonet,Loop,761,761,0,750,1128317,0,0,0,431,761,750,987088
+metabonet,OhioT1DM,12,12,0,12,2160,0,0,6,6,12,12,1482
+metabonet,PEDAP,59,59,0,59,90376,0,0,0,0,59,58,82461
+metabonet,ReplaceBG,188,188,0,185,182681,0,0,0,0,188,183,117496
+metabonet,SIESTA,5,5,0,0,0,0,0,5,0,5,0,0
+metabonet,ShanghaiT1DM,11,11,0,0,0,0,0,0,0,11,0,0
+metabonet,T1D-UOM,13,13,0,12,3197,0,0,0,13,13,6,928

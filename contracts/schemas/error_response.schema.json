@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://glucotwin.local/contracts/v1/error_response.schema.json",
+  "title": "ErrorResponse",
+  "description": "Uniform error envelope for every non-2xx response produced by GlucoTwin,\nincluding FastAPI/Pydantic validation failures, which are translated into this\nshape. `detail` is a JSON object (never a bare string or array) and never\ncontains participant-level physiological values or stack traces.\n",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "message",
+    "detail"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Stable machine-readable error code. Clients may branch on this.",
+      "enum": [
+        "participant_not_found",
+        "invalid_request",
+        "naive_datetime",
+        "future_context_override",
+        "insufficient_premeal_context",
+        "model_not_trained",
+        "data_layer_unavailable",
+        "not_implemented",
+        "internal_error"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "description": "Short human-readable, non-sensitive explanation."
+    },
+    "detail": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Structured context for debugging and UI display. May be empty."
+    }
+  }
+}

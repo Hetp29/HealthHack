@@ -1,0 +1,12 @@
+{
+  "request": "POST /api/v2/meals/meal_00000000000000000000000000000053/predict",
+  "status": 409,
+  "body": {
+    "code": "meal_not_confirmed",
+    "message": "Confirm the meal's nutrition values before requesting a forecast.",
+    "request_id": "req_00000000000000000000",
+    "details": {
+      "meal_status": "analyzed"
+    }
+  }
+}
