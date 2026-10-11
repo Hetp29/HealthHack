@@ -316,9 +316,9 @@ Nothing about AWS is claimed in the presentation unless it is deployed and repro
 
 | Owner | Scope |
 |---|---|
+| **Neil Barot** | Frontend dashboard, prediction journey, model insights |
 | **Ruhaan Shah** | ML, backend, contracts, deployment, integration, submission |
 | **Het Patel** | Canonical data layer, ingestion, provenance, quality reporting |
-| **Neil** | Frontend dashboard, prediction journey, model insights |
 
 Branches: `ruhaan`, `het`, `neil`. `main` must always run.
 
