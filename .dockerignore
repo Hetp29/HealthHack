@@ -1,0 +1,27 @@
+# Keep the build context small and free of data and secrets.
+# NOTE: ml/artifacts_cgmacros_fs13/ is deliberately NOT ignored -- the image needs it.
+.git
+.venv
+venv
+**/__pycache__
+.pytest_cache
+.env
+.env.*
+!.env.example
+*.pem
+tests
+research
+docs
+presentation
+scripts
+data/local
+data/official_raw
+data/reports
+data/*.parquet
+data/cgmacros-a-scientific-dataset-for-personalized-nutrition-and-diet-monitoring-1.0.0
+ml/_devdata
+ml/artifacts
+ml/artifacts_cgmacros
+ml/artifacts_cgmacros_blend
+ml/artifacts_cgmacros_fs12
+node_modules

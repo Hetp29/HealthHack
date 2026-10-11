@@ -87,10 +87,18 @@ Credentials are not allowed, since the API uses no cookies or auth.
 
 ## 3 · Container — written, unverified
 
-`Dockerfile` installs pinned dependencies, copies `contracts/`, `ml/` and `backend/`,
-**trains inside the image** so the container ships with a working artifact, and runs
-unprivileged as uid 10001. The `HEALTHCHECK` probes `/health` only, matching the
-contract's liveness/readiness split.
+`Dockerfile` installs pinned dependencies, copies the application code, and carries
+**exactly the frozen fs-1.3 artifact** from the build context. **Nothing is trained in
+the image and there is no synthetic fallback**: the build runs
+`python -m backend.app.v2.verify_artifact` and fails if
+`ml/artifacts_cgmacros_fs13/model.joblib` is absent or is not the approved checksum,
+and the container runs the same check before it starts serving. It runs unprivileged
+as uid 10001 and serves `backend.app.v2.asgi:app` (the frozen v1 API plus `/api/v2`).
+The `HEALTHCHECK` probes `/health` only; readiness is `GET /api/v2/ready`.
+
+The artifact directory is gitignored, so it must be placed in the build context from
+the team's artifact store first — see `docs/project/HANDOFF_HET.md` §4. The earlier
+version of this Dockerfile trained a synthetic model in the image; that path is gone.
 
 ### Verification steps — run these before claiming container support
 
