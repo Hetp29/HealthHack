@@ -134,16 +134,18 @@ function RootComponent() {
 function AuthenticatedApp() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, isOnboarded } = useAppState();
+  const { isAuthenticated, isOnboarded, onboardingKnown } = useAppState();
   const publicPath = location.pathname === "/auth";
 
   useEffect(() => {
     if (!isAuthenticated && !publicPath) void navigate({ to: "/auth", replace: true });
+    // After a refresh or deep link, wait for the backend before deciding onboarding redirects.
+    else if (isAuthenticated && !onboardingKnown) return;
     else if (isAuthenticated && publicPath) void navigate({ to: isOnboarded ? "/" : "/connect-devices", replace: true });
     else if (isAuthenticated && !isOnboarded && !["/connect-devices", "/onboarding"].includes(location.pathname)) {
       void navigate({ to: "/connect-devices", replace: true });
     }
-  }, [isAuthenticated, isOnboarded, publicPath, location.pathname, navigate]);
+  }, [isAuthenticated, isOnboarded, onboardingKnown, publicPath, location.pathname, navigate]);
 
   return (
     <div suppressHydrationWarning>

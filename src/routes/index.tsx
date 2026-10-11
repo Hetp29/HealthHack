@@ -4,10 +4,23 @@ import { useCallback, useEffect, useState } from "react";
 import { HistoryChart } from "@/components/glucose/HistoryChart";
 import { Card, CardTitle, EmptyState, ErrorState, MetricCard, PageHeader, Skeleton } from "@/components/common/States";
 import { getAlerts, getCgmReadings, getDemoDevices, getMeals, getOutcome, getPrediction, getReplay, getWearableObservations, advanceReplay } from "@/services/v2Client";
-import type { DemoDevices, ReplayAdvanceResponse, ReplayState, V2Outcome, V2Prediction, WearableObservation } from "@/services/v2Types";
+import type { DemoDevices, ReplayState, V2Outcome, V2Prediction, WearableObservation } from "@/services/v2Types";
 import type { HistoryResponse } from "@/types/contracts";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
+
+type Checkpoint = { kind?: string; done?: boolean; meal_id?: string; result?: { prediction_id?: string; meal_id?: string } | null };
+
+/** The most recent completed replay forecast: the backend reports each one in `checkpoints[].result`. */
+function latestForecast(state: ReplayState | null): { predictionId: string; mealId: string | null } | null {
+  const done = ((state?.checkpoints ?? []) as Checkpoint[]).filter(
+    (c) => c.kind === "meal_forecast" && c.done && c.result?.prediction_id,
+  );
+  const last = done.at(-1);
+  return last?.result?.prediction_id
+    ? { predictionId: last.result.prediction_id, mealId: last.meal_id ?? last.result.meal_id ?? null }
+    : null;
+}
 
 function Dashboard() {
   const [replay, setReplay] = useState<ReplayState | null>(null);
@@ -32,6 +45,18 @@ function Dashboard() {
         getAlerts().catch(() => ({ alerts: [] })),
       ]);
       setReplay(nextReplay);
+      const forecast = latestForecast(nextReplay);
+      if (forecast) {
+        const [nextPrediction, nextOutcome] = await Promise.all([
+          getPrediction(forecast.predictionId),
+          forecast.mealId ? getOutcome(forecast.mealId).catch(() => null) : Promise.resolve(null),
+        ]);
+        setPrediction(nextPrediction);
+        setOutcome(nextOutcome);
+      } else {
+        setPrediction(null);
+        setOutcome(null);
+      }
       setDevices(nextDevices);
       setWearables(wearableResult.observations);
       setAlertCount(alerts.alerts.length);
@@ -57,9 +82,8 @@ function Dashboard() {
     if (!replay || replay.status === "complete") return;
     setBusy(true);
     try {
-      const result: ReplayAdvanceResponse = await advanceReplay({ expected_event_index: replay.event_index });
-      if (result.result?.prediction_id) setPrediction(await getPrediction(result.result.prediction_id));
-      if (result.result?.meal_id) setOutcome(await getOutcome(result.result.meal_id));
+      await advanceReplay({ expected_event_index: replay.event_index });
+      // load() re-reads the replay state and shows its latest forecast and outcome.
       await load();
     } catch (reason) {
       setError(reason);

@@ -19,6 +19,8 @@ interface AppState {
   selected: Participant | null;
   isAuthenticated: boolean;
   isOnboarded: boolean;
+  /** False until the backend has answered whether onboarding is complete; route guards wait for it. */
+  onboardingKnown: boolean;
   authenticate: () => void;
   completeOnboarding: () => void;
   signOut: () => Promise<void>;
@@ -39,6 +41,7 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
   const [pTick, setPTick] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(() => hasV2Session());
   const [isOnboarded, setIsOnboarded] = useState(false);
+  const [onboardingKnown, setOnboardingKnown] = useState(false);
 
   const authenticate = useCallback(() => {
     setIsAuthenticated(true);
@@ -46,12 +49,14 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
 
   const completeOnboarding = useCallback(() => {
     setIsOnboarded(true);
+    setOnboardingKnown(true);
   }, []);
 
   const signOut = useCallback(async () => {
     await logout();
     setIsAuthenticated(false);
     setIsOnboarded(false);
+    setOnboardingKnown(false);
     setDataSource(null);
   }, []);
 
@@ -62,7 +67,8 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
       .catch(() => {
         // The route guard remains conservative when the backend cannot confirm completion.
         setIsOnboarded(false);
-      });
+      })
+      .finally(() => setOnboardingKnown(true));
   }, [isAuthenticated]);
 
   const setMode = useCallback((m: DataMode) => {
@@ -78,7 +84,8 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
       return () => ctrl.abort();
     }
     if (mode === "fixture") {
-      setConnectivity("unavailable");
+      // Demo data never contacts the backend, so say so rather than "Backend unavailable".
+      setConnectivity("fixture");
       return () => ctrl.abort();
     }
     getStatus()
@@ -115,11 +122,12 @@ export function AppStateProvider({ children, initialMode = INITIAL_MODE }: { chi
       selected,
       isAuthenticated,
       isOnboarded,
+      onboardingKnown,
       authenticate,
       completeOnboarding,
       signOut,
     }),
-    [mode, setMode, connectivity, dataSource, participants, selectedId, selected, isAuthenticated, isOnboarded, authenticate, completeOnboarding, signOut],
+    [mode, setMode, connectivity, dataSource, participants, selectedId, selected, isAuthenticated, isOnboarded, onboardingKnown, authenticate, completeOnboarding, signOut],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
