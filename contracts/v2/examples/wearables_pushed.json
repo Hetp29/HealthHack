@@ -1,0 +1,26 @@
+{
+  "request": "POST /api/v2/wearables/observations",
+  "status": 200,
+  "body": {
+    "source": "demo",
+    "data_class": "demo",
+    "counts": {
+      "received": 1,
+      "inserted": 1,
+      "updated": 0,
+      "duplicates": 0,
+      "rejected": 0,
+      "rejected_by_reason": {}
+    },
+    "units": {
+      "heart_rate": "bpm",
+      "resting_heart_rate": "bpm",
+      "steps_daily": "count",
+      "sleep_duration": "min",
+      "hrv_rmssd": "ms",
+      "hrv_sdnn": "ms",
+      "recovery_score": "percent",
+      "workout": "min"
+    }
+  }
+}

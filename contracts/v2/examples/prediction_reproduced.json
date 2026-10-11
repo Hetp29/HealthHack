@@ -1,0 +1,14 @@
+{
+  "request": "POST /api/v2/predictions/prd_00000000000000000000000000000058/reproduce",
+  "status": 200,
+  "body": {
+    "prediction_id": "prd_00000000000000000000000000000058",
+    "reproduced": true,
+    "forecast_identical": true,
+    "features_identical": true,
+    "feature_count": 39,
+    "artifact_sha256": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
+    "history_sha256": "2c86aaa1fbc2e202896c6fca8ffb6d9010485debdd9e9a277ec5c915651ab83d",
+    "history_sha256_verified": true
+  }
+}

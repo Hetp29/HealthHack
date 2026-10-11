@@ -1,0 +1,18 @@
+{
+  "request": "POST /api/v2/devices/fitbit/connect",
+  "status": 503,
+  "body": {
+    "code": "provider_not_configured",
+    "message": "This provider has not been set up on the server yet.",
+    "request_id": "req_00000000000000000000",
+    "details": {
+      "provider": "fitbit",
+      "missing_configuration": [
+        "FITBIT_CLIENT_ID",
+        "FITBIT_CLIENT_SECRET",
+        "GLUCOTWIN_TOKEN_ENCRYPTION_KEY",
+        "GLUCOTWIN_PUBLIC_API_BASE_URL"
+      ]
+    }
+  }
+}

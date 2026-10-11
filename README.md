@@ -157,6 +157,32 @@ Full reference and the consumer guide: **[`contracts/README.md`](contracts/READM
 
 ---
 
+## Application API — v2 (proposed)
+
+Authenticated, persistent, per-user orchestration around the frozen model: accounts
+and consent, meal photo → AI nutrition estimate → user confirmation, glucose import,
+stored forecasts, outcome scoring, the personal-history cycle, medications, alerts and
+device connections. It lives beside contract v1.0 without changing it.
+
+```bash
+alembic upgrade head
+uvicorn backend.app.v2.asgi:app --port 8000     # serves v1 unchanged AND /api/v2
+python scripts/smoke_v2.py http://127.0.0.1:8000
+```
+
+| | |
+|---|---|
+| Endpoints, guarantees, real implementation status | [`docs/project/API_INTERFACE_REGISTRY.md`](docs/project/API_INTERFACE_REGISTRY.md) |
+| Schema and example payloads (generated from the code) | [`contracts/v2/`](contracts/v2/) |
+| What is blocked, and on whom | [`docs/project/BLOCKERS.md`](docs/project/BLOCKERS.md) |
+| Decisions awaiting sign-off | [`docs/project/DECISIONS.md`](docs/project/DECISIONS.md) |
+
+No external provider (OpenAI, Dexcom, Fitbit, WHOOP, Apple Health) has been contacted
+from this code; those integrations are tested against mocks only. See the registry's
+status table before describing anything as working.
+
+---
+
 ## What the model guarantees
 
 **No forecast reads the future.** `build_features` begins with
@@ -277,6 +303,8 @@ Nothing about AWS is claimed in the presentation unless it is deployed and repro
 | [`docs/validation.md`](docs/validation.md) | Protocols, measured results, personalization, limitations |
 | [`docs/deployment.md`](docs/deployment.md) | Local run, container, AWS decision process |
 | [`docs/handoff.md`](docs/handoff.md) | What Het and Neil need from this branch |
+| [`docs/project/`](docs/project/) | Project plan, v2 audit, API registry, decisions, blockers, handoffs to Het and Neil, fs-1.3 input mapping |
+| [`docs/governance/`](docs/governance/) | fs-1.3 model freeze and integrity manifest |
 | [`presentation/demo_script.md`](presentation/demo_script.md) | Four-minute demo script |
 
 ---

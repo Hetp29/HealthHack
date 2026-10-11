@@ -1,0 +1,176 @@
+{
+  "request": "GET /api/v2/status",
+  "status": 200,
+  "body": {
+    "model": {
+      "model_id": "glucotwin-fs13-blend-personalized",
+      "artifact_sha256": "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe",
+      "integrity_verified": true,
+      "integrity_enforced": false,
+      "loaded": true
+    },
+    "personalization_policy": "history_only",
+    "meal_analysis": {
+      "provider": "openai",
+      "configured": true,
+      "model": null
+    },
+    "providers": [
+      {
+        "provider": "dexcom_clarity_csv",
+        "label": "Dexcom Clarity export",
+        "kind": "cgm",
+        "integration": "file_import",
+        "configured": true,
+        "metrics": [
+          "glucose"
+        ],
+        "not_available": {},
+        "verification": "fixture_tested_not_verified_with_real_export"
+      },
+      {
+        "provider": "libreview_csv",
+        "label": "LibreView export",
+        "kind": "cgm",
+        "integration": "file_import",
+        "configured": true,
+        "metrics": [
+          "glucose"
+        ],
+        "not_available": {
+          "retrieval_personalization": "LibreView exports the historic series at a 15-minute interval. The frozen model needs 20 readings inside a 120-minute response before it will use a past meal, so Libre history cannot activate it.",
+          "provider_api": "Abbott offers no third-party API for LibreView."
+        },
+        "verification": "fixture_tested_not_verified_with_real_export"
+      },
+      {
+        "provider": "manual_entry",
+        "label": "Manual entry",
+        "kind": "cgm",
+        "integration": "api_push",
+        "configured": true,
+        "metrics": [
+          "glucose"
+        ],
+        "not_available": {},
+        "verification": "tested"
+      },
+      {
+        "provider": "healthkit_bridge",
+        "label": "Apple Health / Apple Watch",
+        "kind": "wearable",
+        "integration": "native_bridge",
+        "configured": false,
+        "metrics": [
+          "glucose",
+          "heart_rate",
+          "steps_daily",
+          "sleep_duration",
+          "hrv_sdnn",
+          "workout"
+        ],
+        "not_available": {
+          "browser_access": "HealthKit cannot be read from a web browser. A native iOS app with the HealthKit entitlement must read it and upload to POST /cgm/readings and POST /wearables/observations."
+        },
+        "verification": "ingest_endpoint_tested_no_native_app_exists"
+      },
+      {
+        "provider": "dexcom_api",
+        "label": "Dexcom",
+        "kind": "cgm",
+        "integration": "oauth_api",
+        "configured": false,
+        "missing_configuration": [
+          "DEXCOM_CLIENT_ID",
+          "DEXCOM_CLIENT_SECRET",
+          "GLUCOTWIN_TOKEN_ENCRYPTION_KEY",
+          "GLUCOTWIN_PUBLIC_API_BASE_URL"
+        ],
+        "metrics": [
+          "glucose"
+        ],
+        "scopes": [
+          "offline_access"
+        ],
+        "not_available": {
+          "real_time_glucose": "The Dexcom API delays data; it cannot anchor a live forecast."
+        },
+        "verification": "mock_tested_never_run_against_provider",
+        "environment": "sandbox"
+      },
+      {
+        "provider": "fitbit",
+        "label": "Fitbit",
+        "kind": "wearable",
+        "integration": "oauth_api",
+        "configured": false,
+        "missing_configuration": [
+          "FITBIT_CLIENT_ID",
+          "FITBIT_CLIENT_SECRET",
+          "GLUCOTWIN_TOKEN_ENCRYPTION_KEY",
+          "GLUCOTWIN_PUBLIC_API_BASE_URL"
+        ],
+        "metrics": [
+          "steps_daily",
+          "resting_heart_rate",
+          "sleep_duration",
+          "hrv_rmssd"
+        ],
+        "scopes": [
+          "activity",
+          "heartrate",
+          "sleep",
+          "profile"
+        ],
+        "not_available": {
+          "heart_rate_intraday": "Requires Fitbit's separate intraday-access approval; not requested."
+        },
+        "verification": "mock_tested_never_run_against_provider"
+      },
+      {
+        "provider": "whoop",
+        "label": "WHOOP",
+        "kind": "wearable",
+        "integration": "oauth_api",
+        "configured": false,
+        "missing_configuration": [
+          "WHOOP_CLIENT_ID",
+          "WHOOP_CLIENT_SECRET",
+          "GLUCOTWIN_TOKEN_ENCRYPTION_KEY",
+          "GLUCOTWIN_PUBLIC_API_BASE_URL"
+        ],
+        "metrics": [
+          "recovery_score",
+          "resting_heart_rate",
+          "hrv_rmssd",
+          "sleep_duration",
+          "workout"
+        ],
+        "scopes": [
+          "read:recovery",
+          "read:sleep",
+          "read:workout",
+          "offline"
+        ],
+        "not_available": {
+          "heart_rate_continuous": "WHOOP's API does not expose a continuous heart-rate stream.",
+          "steps_daily": "Not offered by the WHOOP developer API."
+        },
+        "verification": "mock_tested_never_run_against_provider"
+      }
+    ],
+    "notification_channels": {
+      "in_app": {
+        "available": true
+      },
+      "push": {
+        "available": false,
+        "reason": "no push service is configured"
+      },
+      "email": {
+        "available": false,
+        "reason": "no email service is configured"
+      }
+    }
+  }
+}
