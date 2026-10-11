@@ -110,6 +110,14 @@ if ls data/local/demo/cgmacros_demo_bundle.json >/dev/null 2>&1; then
   docker run --rm --network "$NET" -e GLUCOTWIN_APP_DB_URL="$DB" "${DEMO_ENV[@]}" "$IMG" python -m scripts.demo_seed
   run_api "$API-demo" "${DEMO_ENV[@]}"
   GLUCOTWIN_DEMO_PASSWORD="$DEMO_PW" python3 scripts/smoke_demo.py "$B"
+  if [ -f data/local/demo/cgmacros_returning_user_bundle.json ]; then
+    step "7b. demo mode: RETURNING USER over HTTP"
+    docker run --rm --network "$NET" -e GLUCOTWIN_APP_DB_URL="$DB" "${DEMO_ENV[@]}" "$IMG" \
+      python -m scripts.demo_seed --scenario returning_user
+    GLUCOTWIN_DEMO_PASSWORD="$DEMO_PW" python3 scripts/smoke_demo.py "$B" --scenario returning_user
+  fi
+  step "7c. single-worker constraint: demo API process count"
+  docker exec "$API-demo" sh -c 'ps -eo args 2>/dev/null || cat /proc/[0-9]*/cmdline | tr "\0" " "' | grep -c "uvicorn" || true
 else
   step "7. demo mode skipped (no data/local/demo bundles)"
 fi
