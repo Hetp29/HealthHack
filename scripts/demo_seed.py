@@ -1,6 +1,6 @@
 """Initialize the demonstration from a clean application database.
 
-    export GLUCOTWIN_DEMO_PASSWORD='choose-a-password'
+    export GLIMPSE_DEMO_PASSWORD='choose-a-password'
     alembic upgrade head
     python -m scripts.demo_seed [--to CHECKPOINT]
 
@@ -67,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
         user_id = replay._demo_user_id(ctx, args.scenario)
         state = run_guarded(lambda: replay.advance(app, ctx, user_id, to=args.to))
     describe(state)
-    print(f"sign in as     {replay.demo_email(ctx, args.scenario)}  (password: the value of GLUCOTWIN_DEMO_PASSWORD)")
+    print(f"sign in as     {replay.demo_email(ctx, args.scenario)}  (password: the value of GLIMPSE_DEMO_PASSWORD)")
     return 0
 
 

@@ -1698,7 +1698,7 @@
         },
         "summary": "Simulated connected-health sources and the glucose source",
         "tags": [
-          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+          "demo (only when GLIMPSE_DEMO_MODE is enabled)"
         ]
       }
     },
@@ -1742,7 +1742,7 @@
         },
         "summary": "Switch a simulated source on",
         "tags": [
-          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+          "demo (only when GLIMPSE_DEMO_MODE is enabled)"
         ]
       }
     },
@@ -1803,7 +1803,7 @@
         },
         "summary": "Meals, alerts, doses and wearable summaries in one ordered list",
         "tags": [
-          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+          "demo (only when GLIMPSE_DEMO_MODE is enabled)"
         ]
       }
     },
@@ -1825,7 +1825,7 @@
         },
         "summary": "Replay position, checkpoints and data provenance",
         "tags": [
-          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+          "demo (only when GLIMPSE_DEMO_MODE is enabled)"
         ]
       }
     },
@@ -1875,7 +1875,7 @@
         },
         "summary": "Advance the replay to the next or a named checkpoint",
         "tags": [
-          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+          "demo (only when GLIMPSE_DEMO_MODE is enabled)"
         ]
       }
     },
@@ -1898,7 +1898,7 @@
         },
         "summary": "Return the demo account to its initial state",
         "tags": [
-          "demo (only when GLUCOTWIN_DEMO_MODE is enabled)"
+          "demo (only when GLIMPSE_DEMO_MODE is enabled)"
         ]
       }
     },

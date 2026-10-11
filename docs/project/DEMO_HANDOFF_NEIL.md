@@ -43,11 +43,11 @@ You need two files that are not in git, from Ruhaan: the model artifact director
 
 ```bash
 pip install -r requirements-dev.txt
-export GLUCOTWIN_DEMO_MODE=1
-export GLUCOTWIN_DEMO_PASSWORD='pick-anything-10-chars'
-export GLUCOTWIN_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
-export GLUCOTWIN_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json
-export GLUCOTWIN_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
+export GLIMPSE_DEMO_MODE=1
+export GLIMPSE_DEMO_PASSWORD='pick-anything-10-chars'
+export GLIMPSE_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
+export GLIMPSE_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json
+export GLIMPSE_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
 
 alembic upgrade head
 python -m scripts.demo_seed
@@ -62,7 +62,7 @@ arithmetic numbers.
 ## 3 · Sign in
 
 ```
-POST /api/v2/auth/login   {"email": "demo@glimpse.example", "password": "<GLUCOTWIN_DEMO_PASSWORD>"}
+POST /api/v2/auth/login   {"email": "demo@glimpse.example", "password": "<GLIMPSE_DEMO_PASSWORD>"}
 ```
 
 A normal session token. Do not hard-code the password in the frontend bundle; take

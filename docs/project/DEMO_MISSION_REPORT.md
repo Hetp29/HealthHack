@@ -13,7 +13,7 @@ From a clean application database, with the frozen artifact and the data bundle 
 place:
 
 ```bash
-export GLUCOTWIN_DEMO_PASSWORD='…'
+export GLIMPSE_DEMO_PASSWORD='…'
 alembic upgrade head && python -m scripts.demo_seed
 ```
 

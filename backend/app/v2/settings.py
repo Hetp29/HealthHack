@@ -16,8 +16,22 @@ from dataclasses import dataclass, field
 PERSONALIZATION_POLICIES = ("history_only", "history_plus_frozen_calibration")
 
 
-def _env(name: str, default: str | None = None) -> str | None:
+#: Settings were renamed GLUCOTWIN_* -> GLIMPSE_* (team decision 2026-10-11). The new
+#: name wins; the legacy name is still honoured so existing .env files and deployments
+#: keep working unchanged.
+_PREFIX, _LEGACY_PREFIX = "GLIMPSE_", "GLUCOTWIN_"
+
+
+def env_value(name: str) -> str | None:
+    """Raw value of a GLIMPSE_* setting, falling back to its legacy GLUCOTWIN_* name."""
     value = os.environ.get(name)
+    if (value is None or value.strip() == "") and name.startswith(_PREFIX):
+        value = os.environ.get(_LEGACY_PREFIX + name[len(_PREFIX):])
+    return value
+
+
+def _env(name: str, default: str | None = None) -> str | None:
+    value = env_value(name)
     if value is None or value.strip() == "":
         return default
     return value.strip()
@@ -117,43 +131,43 @@ class V2Settings:
 
 
 def load_v2_settings() -> V2Settings:
-    policy = _env("GLUCOTWIN_PERSONALIZATION_POLICY", "history_only")
+    policy = _env("GLIMPSE_PERSONALIZATION_POLICY", "history_only")
     if policy not in PERSONALIZATION_POLICIES:
         raise ValueError(
-            f"GLUCOTWIN_PERSONALIZATION_POLICY={policy!r}; expected one of "
+            f"GLIMPSE_PERSONALIZATION_POLICY={policy!r}; expected one of "
             f"{PERSONALIZATION_POLICIES}"
         )
     origins = _env(
-        "GLUCOTWIN_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+        "GLIMPSE_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
     )
     return V2Settings(
-        app_db_url=_env("GLUCOTWIN_APP_DB_URL", "sqlite:///data/local/glucotwin_app.db"),
+        app_db_url=_env("GLIMPSE_APP_DB_URL", "sqlite:///data/local/glucotwin_app.db"),
         cors_origins=[o.strip() for o in (origins or "").split(",") if o.strip()],
-        registration_open=_env_bool("GLUCOTWIN_REGISTRATION_OPEN", True),
-        session_ttl_hours=_env_int("GLUCOTWIN_SESSION_TTL_HOURS", 24 * 14),
-        consent_policy_version=_env("GLUCOTWIN_CONSENT_POLICY_VERSION", "2026-10-10"),
-        expected_model_sha256=_env("GLUCOTWIN_EXPECTED_MODEL_SHA256"),
+        registration_open=_env_bool("GLIMPSE_REGISTRATION_OPEN", True),
+        session_ttl_hours=_env_int("GLIMPSE_SESSION_TTL_HOURS", 24 * 14),
+        consent_policy_version=_env("GLIMPSE_CONSENT_POLICY_VERSION", "2026-10-10"),
+        expected_model_sha256=_env("GLIMPSE_EXPECTED_MODEL_SHA256"),
         personalization_policy=policy,
-        outcome_grace_minutes=_env_float("GLUCOTWIN_OUTCOME_GRACE_MINUTES", 30.0),
-        image_dir=pathlib.Path(_env("GLUCOTWIN_IMAGE_DIR", "data/local/meal_images")),
-        image_s3_bucket=_env("GLUCOTWIN_IMAGE_S3_BUCKET"),
-        image_s3_prefix=_env("GLUCOTWIN_IMAGE_S3_PREFIX", "meal-images/"),
-        max_image_bytes=_env_int("GLUCOTWIN_MAX_IMAGE_BYTES", 10 * 1024 * 1024),
+        outcome_grace_minutes=_env_float("GLIMPSE_OUTCOME_GRACE_MINUTES", 30.0),
+        image_dir=pathlib.Path(_env("GLIMPSE_IMAGE_DIR", "data/local/meal_images")),
+        image_s3_bucket=_env("GLIMPSE_IMAGE_S3_BUCKET"),
+        image_s3_prefix=_env("GLIMPSE_IMAGE_S3_PREFIX", "meal-images/"),
+        max_image_bytes=_env_int("GLIMPSE_MAX_IMAGE_BYTES", 10 * 1024 * 1024),
         openai_api_key=_env("OPENAI_API_KEY"),
-        openai_vision_model=_env("GLUCOTWIN_OPENAI_VISION_MODEL"),
-        openai_timeout_seconds=_env_float("GLUCOTWIN_OPENAI_TIMEOUT_SECONDS", 45.0),
-        vision_daily_limit=_env_int("GLUCOTWIN_VISION_DAILY_LIMIT", 40),
-        token_encryption_key=_env("GLUCOTWIN_TOKEN_ENCRYPTION_KEY"),
-        public_api_base_url=_env("GLUCOTWIN_PUBLIC_API_BASE_URL"),
-        frontend_return_url=_env("GLUCOTWIN_FRONTEND_RETURN_URL"),
-        demo_mode=_env_bool("GLUCOTWIN_DEMO_MODE", False),
-        demo_email=_env("GLUCOTWIN_DEMO_EMAIL", "demo@glimpse.example"),
-        demo_password=_env("GLUCOTWIN_DEMO_PASSWORD"),
+        openai_vision_model=_env("GLIMPSE_OPENAI_VISION_MODEL"),
+        openai_timeout_seconds=_env_float("GLIMPSE_OPENAI_TIMEOUT_SECONDS", 45.0),
+        vision_daily_limit=_env_int("GLIMPSE_VISION_DAILY_LIMIT", 40),
+        token_encryption_key=_env("GLIMPSE_TOKEN_ENCRYPTION_KEY"),
+        public_api_base_url=_env("GLIMPSE_PUBLIC_API_BASE_URL"),
+        frontend_return_url=_env("GLIMPSE_FRONTEND_RETURN_URL"),
+        demo_mode=_env_bool("GLIMPSE_DEMO_MODE", False),
+        demo_email=_env("GLIMPSE_DEMO_EMAIL", "demo@glimpse.example"),
+        demo_password=_env("GLIMPSE_DEMO_PASSWORD"),
         demo_bundle_path=pathlib.Path(
-            _env("GLUCOTWIN_DEMO_BUNDLE", "data/local/demo/cgmacros_demo_bundle.json")),
-        demo_returning_email=_env("GLUCOTWIN_DEMO_RETURNING_EMAIL", "demo-returning@glimpse.example"),
+            _env("GLIMPSE_DEMO_BUNDLE", "data/local/demo/cgmacros_demo_bundle.json")),
+        demo_returning_email=_env("GLIMPSE_DEMO_RETURNING_EMAIL", "demo-returning@glimpse.example"),
         demo_returning_bundle_path=pathlib.Path(_env(
-            "GLUCOTWIN_DEMO_RETURNING_BUNDLE", "data/local/demo/cgmacros_returning_user_bundle.json")),
+            "GLIMPSE_DEMO_RETURNING_BUNDLE", "data/local/demo/cgmacros_returning_user_bundle.json")),
         dexcom=OAuthClient(_env("DEXCOM_CLIENT_ID"), _env("DEXCOM_CLIENT_SECRET")),
         dexcom_environment=_env("DEXCOM_ENVIRONMENT", "sandbox"),
         fitbit=OAuthClient(_env("FITBIT_CLIENT_ID"), _env("FITBIT_CLIENT_SECRET")),

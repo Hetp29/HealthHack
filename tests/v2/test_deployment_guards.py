@@ -26,8 +26,8 @@ def test_dockerfile_never_trains_and_never_points_at_a_synthetic_model():
     text = _instructions("Dockerfile")
     for forbidden in ("ml.train", "ml.evaluate", "--source synthetic_dev", "ml/artifacts/model.joblib"):
         assert forbidden not in text, f"Dockerfile must not contain {forbidden!r}"
-    assert "GLUCOTWIN_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib" in text
-    assert f"GLUCOTWIN_EXPECTED_MODEL_SHA256={FROZEN_SHA256}" in text
+    assert "GLIMPSE_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib" in text
+    assert f"GLIMPSE_EXPECTED_MODEL_SHA256={FROZEN_SHA256}" in text
     # Verified at build time and again before serving.
     assert len(re.findall(r"python -m backend\.app\.v2\.verify_artifact", text)) == 2
     assert "backend.app.v2.asgi:app" in text
@@ -69,9 +69,9 @@ def test_the_synthetic_development_artifact_is_rejected_by_the_gate():
 @pytest.mark.skipif(not FROZEN_ARTIFACT.exists(), reason="frozen fs-1.3 artifact not on this machine")
 def test_the_gate_command_passes_for_the_frozen_artifact_and_blocks_otherwise():
     def run(artifact: str, expected: str | None) -> int:
-        env = {"PATH": "", "GLUCOTWIN_MODEL_ARTIFACT": artifact}
+        env = {"PATH": "", "GLIMPSE_MODEL_ARTIFACT": artifact}
         if expected is not None:
-            env["GLUCOTWIN_EXPECTED_MODEL_SHA256"] = expected
+            env["GLIMPSE_EXPECTED_MODEL_SHA256"] = expected
         return subprocess.run([sys.executable, "-m", "backend.app.v2.verify_artifact"],
                               env=env, capture_output=True).returncode
 

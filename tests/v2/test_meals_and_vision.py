@@ -384,12 +384,12 @@ def test_deleting_a_meal_removes_its_photo(harness):
 
 
 @pytest.mark.skipif(
-    not (os.environ.get("GLUCOTWIN_OPENAI_TEST_KEY") and os.environ.get("GLUCOTWIN_OPENAI_TEST_MODEL")
-         and int(os.environ.get("GLUCOTWIN_OPENAI_TEST_MAX_CALLS", "0")) >= 1),
-    reason="real OpenAI test needs GLUCOTWIN_OPENAI_TEST_KEY, _TEST_MODEL and _TEST_MAX_CALLS>=1",
+    not (os.environ.get("GLIMPSE_OPENAI_TEST_KEY") and os.environ.get("GLIMPSE_OPENAI_TEST_MODEL")
+         and int(os.environ.get("GLIMPSE_OPENAI_TEST_MAX_CALLS", "0")) >= 1),
+    reason="real OpenAI test needs GLIMPSE_OPENAI_TEST_KEY, _TEST_MODEL and _TEST_MAX_CALLS>=1",
 )
 def test_real_openai_round_trip():  # pragma: no cover - spends money; opt-in only
-    client = openai.OpenAI(api_key=os.environ["GLUCOTWIN_OPENAI_TEST_KEY"], max_retries=0)
-    analyzer = OpenAIVisionAnalyzer(client, os.environ["GLUCOTWIN_OPENAI_TEST_MODEL"], 60.0)
+    client = openai.OpenAI(api_key=os.environ["GLIMPSE_OPENAI_TEST_KEY"], max_retries=0)
+    analyzer = OpenAIVisionAnalyzer(client, os.environ["GLIMPSE_OPENAI_TEST_MODEL"], 60.0)
     result = analyzer.analyze(jpeg_bytes())  # exactly one call: a plain colour field
     vision.validate_estimate(result.estimate)

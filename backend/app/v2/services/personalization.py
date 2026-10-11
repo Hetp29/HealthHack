@@ -16,7 +16,7 @@ participants only. Running the same policy for a new user uses the frozen estima
 class and the frozen configuration unchanged, and never touches the artifact file --
 but it yields an offset the artifact does not contain, applied under the frozen
 version string. Whether that is "applying the frozen policy" or "a new calibration" is
-a governance call, so it ships behind `GLUCOTWIN_PERSONALIZATION_POLICY` and every
+a governance call, so it ships behind `GLIMPSE_PERSONALIZATION_POLICY` and every
 stored prediction records which policy produced it. See DECISIONS D-007.
 """
 

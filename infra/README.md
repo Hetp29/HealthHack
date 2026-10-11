@@ -24,7 +24,7 @@ are owned by Ruhaan and Neil and are not changed by anything in this folder. The
 | 2026-10-11 | `c878962` | `container_smoke.sh` rerun (now includes step 7b RETURNING USER over HTTP and 7c worker count) | **ALL CHECKS PASSED** (1 min 49 s), image `glucotwin-backend:c878962cde7d`. `demo_verify` both scenarios incl. the all-four-simulated-devices pass. `smoke_demo.py` NEW USER **and** RETURNING USER: ALL STEPS PASSED. Demo container runs **1** uvicorn process (single-worker replay constraint). |
 
 **The 2 deselected tests** (`test_resetting_one_mode_never_touches_the_other_or_an_ordinary_account`, both
-parameters): the test builds a second harness partway through. When `GLUCOTWIN_TEST_APP_DB_URL` points at one shared
+parameters): the test builds a second harness partway through. When `GLIMPSE_TEST_APP_DB_URL` points at one shared
 database, that second harness drops and recreates the schema, wiping the first harness's data. On SQLite each
 harness has its own file, so the test passes there. This is a test-harness limitation, not an app defect, and is
 reported to Ruhaan.

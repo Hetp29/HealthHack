@@ -66,13 +66,13 @@ All settings come from the environment; copy `.env.example` to `.env`.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `GLUCOTWIN_CONTRACT_VERSION` | `1.0.0` | Version reported by `/health`. Changing it needs a contract bump. |
-| `GLUCOTWIN_MODEL_ARTIFACT` | `ml/artifacts/model.joblib` | Trained artifact. Absent → `503`. |
-| `GLUCOTWIN_METRICS_PATH` | `ml/artifacts/metrics.json` | Evaluation report. Absent → explicitly empty metrics. |
-| `GLUCOTWIN_DATA_BACKEND` | `synthetic_dev` | `synthetic_dev` \| `sqlite` (Het's layer). |
-| `GLUCOTWIN_DB_URL` | `sqlite:///data/glucotwin.db` | Used when backend is `sqlite`. |
-| `GLUCOTWIN_CORS_ORIGINS` | `http://localhost:5173,…` | Comma-separated **exact** origins. |
-| `GLUCOTWIN_LOG_LEVEL` | `INFO` | `DEBUG`…`ERROR`. |
+| `GLIMPSE_CONTRACT_VERSION` | `1.0.0` | Version reported by `/health`. Changing it needs a contract bump. |
+| `GLIMPSE_MODEL_ARTIFACT` | `ml/artifacts/model.joblib` | Trained artifact. Absent → `503`. |
+| `GLIMPSE_METRICS_PATH` | `ml/artifacts/metrics.json` | Evaluation report. Absent → explicitly empty metrics. |
+| `GLIMPSE_DATA_BACKEND` | `synthetic_dev` | `synthetic_dev` \| `sqlite` (Het's layer). |
+| `GLIMPSE_DB_URL` | `sqlite:///data/glucotwin.db` | Used when backend is `sqlite`. |
+| `GLIMPSE_CORS_ORIGINS` | `http://localhost:5173,…` | Comma-separated **exact** origins. |
+| `GLIMPSE_LOG_LEVEL` | `INFO` | `DEBUG`…`ERROR`. |
 | `VITE_API_BASE_URL` | `http://localhost:8000` | Frontend's API base. |
 
 **Secrets:** there are none. The API has no authentication, no database credentials
@@ -105,7 +105,7 @@ version of this Dockerfile trained a synthetic model in the image; that path is 
 ```bash
 docker build -t glucotwin-backend:v0.1.0 .
 docker run --rm -p 8000:8000 \
-  -e GLUCOTWIN_CORS_ORIGINS=http://localhost:5173 \
+  -e GLIMPSE_CORS_ORIGINS=http://localhost:5173 \
   glucotwin-backend:v0.1.0
 
 # then, from another shell, the full smoke checklist in section 1
@@ -177,8 +177,8 @@ No backend change is needed. When `data/storage/repository.py` exposes
 python -m data.storage.init_db --db-url sqlite:///data/glucotwin.db
 python -m data.adapters.ingest --source synthetic_dev
 
-export GLUCOTWIN_DATA_BACKEND=sqlite
-export GLUCOTWIN_DB_URL=sqlite:///data/glucotwin.db
+export GLIMPSE_DATA_BACKEND=sqlite
+export GLIMPSE_DB_URL=sqlite:///data/glucotwin.db
 uvicorn backend.app.main:app
 ```
 

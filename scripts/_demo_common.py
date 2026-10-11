@@ -56,7 +56,7 @@ def build_app(*, app_db_url: str | None = None, image_dir: pathlib.Path | None =
         changes["demo_password"] = demo_password
     settings = dataclasses.replace(settings, **changes)
     if not settings.demo_password:
-        fail("GLUCOTWIN_DEMO_PASSWORD is not set. Choose a password (10+ characters) for the "
+        fail("GLIMPSE_DEMO_PASSWORD is not set. Choose a password (10+ characters) for the "
              "demo account and export it.")
 
     engine = make_engine(settings.app_db_url)

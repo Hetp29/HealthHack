@@ -118,9 +118,9 @@ is needed from you:
    artifact path to anything else:
 
    ```
-   GLUCOTWIN_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
-   GLUCOTWIN_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json
-   GLUCOTWIN_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
+   GLIMPSE_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
+   GLIMPSE_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json
+   GLIMPSE_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
    ```
 
 4. Never run `python -m ml.train` or `python -m ml.evaluate` in a build or a
@@ -129,7 +129,7 @@ is needed from you:
 
 Independently of the container gates, v2 also refuses to forecast
 (`503 model_integrity_failure`) and `/api/v2/ready` returns 503 when the loaded
-artifact does not match `GLUCOTWIN_EXPECTED_MODEL_SHA256`.
+artifact does not match `GLIMPSE_EXPECTED_MODEL_SHA256`.
 
 **Unverified:** the image has never been built or run — there is no Docker daemon on
 the development machine. Please build it, run `python scripts/smoke_v2.py <url>`
@@ -144,39 +144,39 @@ Names only. Full annotated list: `.env.example`.
 
 | name | secret? | notes |
 |---|---|---|
-| `GLUCOTWIN_APP_DB_URL` | **yes** | `postgresql+psycopg://USER:PASSWORD@HOST:5432/DB` |
-| `GLUCOTWIN_MODEL_ARTIFACT` | no | see §4 |
-| `GLUCOTWIN_METRICS_PATH` | no | see §4 |
-| `GLUCOTWIN_EXPECTED_MODEL_SHA256` | no | see §4 |
-| `GLUCOTWIN_CORS_ORIGINS` | no | comma-separated exact origins of the frontend. Used by both v1 and v2. No wildcard. |
-| `GLUCOTWIN_DATA_BACKEND` | no | `synthetic_dev` unless you deploy the research warehouse; v2 does not use it |
+| `GLIMPSE_APP_DB_URL` | **yes** | `postgresql+psycopg://USER:PASSWORD@HOST:5432/DB` |
+| `GLIMPSE_MODEL_ARTIFACT` | no | see §4 |
+| `GLIMPSE_METRICS_PATH` | no | see §4 |
+| `GLIMPSE_EXPECTED_MODEL_SHA256` | no | see §4 |
+| `GLIMPSE_CORS_ORIGINS` | no | comma-separated exact origins of the frontend. Used by both v1 and v2. No wildcard. |
+| `GLIMPSE_DATA_BACKEND` | no | `synthetic_dev` unless you deploy the research warehouse; v2 does not use it |
 
 **Required for a feature to work — unset means that feature reports "not configured"**
 
 | name | secret? | feature |
 |---|---|---|
 | `OPENAI_API_KEY` | **yes** | meal photo analysis |
-| `GLUCOTWIN_OPENAI_VISION_MODEL` | no | meal photo analysis (no default; team decision) |
-| `GLUCOTWIN_TOKEN_ENCRYPTION_KEY` | **yes** | any OAuth provider. A Fernet key. **Losing it makes every stored provider token unreadable; rotating it disconnects every user.** |
-| `GLUCOTWIN_PUBLIC_API_BASE_URL` | no | OAuth redirect URIs |
-| `GLUCOTWIN_FRONTEND_RETURN_URL` | no | where the browser lands after OAuth |
+| `GLIMPSE_OPENAI_VISION_MODEL` | no | meal photo analysis (no default; team decision) |
+| `GLIMPSE_TOKEN_ENCRYPTION_KEY` | **yes** | any OAuth provider. A Fernet key. **Losing it makes every stored provider token unreadable; rotating it disconnects every user.** |
+| `GLIMPSE_PUBLIC_API_BASE_URL` | no | OAuth redirect URIs |
+| `GLIMPSE_FRONTEND_RETURN_URL` | no | where the browser lands after OAuth |
 | `DEXCOM_CLIENT_ID` / `DEXCOM_CLIENT_SECRET` | secret: **yes** | Dexcom |
 | `DEXCOM_ENVIRONMENT` | no | `sandbox` (default) or `production` |
 | `FITBIT_CLIENT_ID` / `FITBIT_CLIENT_SECRET` | secret: **yes** | Fitbit |
 | `WHOOP_CLIENT_ID` / `WHOOP_CLIENT_SECRET` | secret: **yes** | WHOOP |
-| `GLUCOTWIN_IMAGE_S3_BUCKET` | no | S3 photo storage (else local disk) |
-| `GLUCOTWIN_IMAGE_S3_PREFIX` | no | default `meal-images/` |
+| `GLIMPSE_IMAGE_S3_BUCKET` | no | S3 photo storage (else local disk) |
+| `GLIMPSE_IMAGE_S3_PREFIX` | no | default `meal-images/` |
 
-**Do not set** `GLUCOTWIN_PERSONALIZATION_POLICY`. It must stay at its default,
+**Do not set** `GLIMPSE_PERSONALIZATION_POLICY`. It must stay at its default,
 `history_only`: the other value is ruled NOT APPROVED FOR ENABLEMENT (DECISIONS D-007).
 
-**Tunables with safe defaults:** `GLUCOTWIN_OUTCOME_GRACE_MINUTES`, `GLUCOTWIN_SESSION_TTL_HOURS`,
-`GLUCOTWIN_REGISTRATION_OPEN`, `GLUCOTWIN_MAX_IMAGE_BYTES`,
-`GLUCOTWIN_VISION_DAILY_LIMIT`, `GLUCOTWIN_OPENAI_TIMEOUT_SECONDS`,
-`GLUCOTWIN_CONSENT_POLICY_VERSION`, `GLUCOTWIN_LOG_LEVEL`.
+**Tunables with safe defaults:** `GLIMPSE_OUTCOME_GRACE_MINUTES`, `GLIMPSE_SESSION_TTL_HOURS`,
+`GLIMPSE_REGISTRATION_OPEN`, `GLIMPSE_MAX_IMAGE_BYTES`,
+`GLIMPSE_VISION_DAILY_LIMIT`, `GLIMPSE_OPENAI_TIMEOUT_SECONDS`,
+`GLIMPSE_CONSENT_POLICY_VERSION`, `GLIMPSE_LOG_LEVEL`.
 
 **Secret scope.** All six secrets are needed by the API container. The workers need
-`GLUCOTWIN_APP_DB_URL`; `device_sync` additionally needs the token key and the
+`GLIMPSE_APP_DB_URL`; `device_sync` additionally needs the token key and the
 provider client secrets. Nothing needs the OpenAI key except the API. **No secret is
 ever a frontend variable** — the frontend gets `VITE_API_BASE_URL` and nothing else.
 
@@ -187,7 +187,7 @@ ever a frontend variable** — the frontend gets `VITE_API_BASE_URL` and nothing
 | Engine | PostgreSQL in the cloud; SQLite for local development |
 | Driver | `psycopg` 3 (pinned). URL scheme **`postgresql+psycopg://`** |
 | Schema | 24 tables, defined in `backend/app/v2/db/tables.py` |
-| Migrations | Alembic, in `migrations/`. URL is read from `GLUCOTWIN_APP_DB_URL`; none is in `alembic.ini` |
+| Migrations | Alembic, in `migrations/`. URL is read from `GLIMPSE_APP_DB_URL`; none is in `alembic.ini` |
 
 ```bash
 alembic upgrade head      # apply
@@ -204,12 +204,12 @@ generate valid PostgreSQL DDL offline and passes fully on SQLite. It has never b
 run on a PostgreSQL server. To close this, against a **scratch** instance:
 
 ```bash
-export GLUCOTWIN_APP_DB_URL=postgresql+psycopg://USER:PASSWORD@HOST:5432/scratch
+export GLIMPSE_APP_DB_URL=postgresql+psycopg://USER:PASSWORD@HOST:5432/scratch
 alembic upgrade head && alembic check && alembic downgrade base
 
 # Then the whole v2 suite against that database. The schema is DROPPED and recreated
 # for every test -- never point this at a database that holds anything.
-GLUCOTWIN_TEST_APP_DB_URL=$GLUCOTWIN_APP_DB_URL python -m pytest tests/v2 -q -p no:cacheprovider
+GLIMPSE_TEST_APP_DB_URL=$GLIMPSE_APP_DB_URL python -m pytest tests/v2 -q -p no:cacheprovider
 ```
 
 **Role.** The application role needs `SELECT/INSERT/UPDATE/DELETE` on its tables. The
@@ -221,7 +221,7 @@ regenerated. Expectations: automated daily backups with point-in-time recovery,
 encryption at rest, at least 7 days retention, and a tested restore. `audit_events`
 intentionally survives account deletion (it holds no health values).
 
-**The research warehouse** (`GLUCOTWIN_DB_URL`, `data/**`) is a separate database and
+**The research warehouse** (`GLIMPSE_DB_URL`, `data/**`) is a separate database and
 is not needed by v2. It contains no user data and is regenerable.
 
 ## 7 · Object storage
@@ -236,7 +236,7 @@ Versioning, if enabled, must expire noncurrent versions or deletions will not be
 
 **`S3ImageStore` is not exercised (BLOCKERS B-008)** and `boto3` is not pinned. Add
 `boto3` to the image and verify against the real bucket. Until then, local disk works
-on a single node with a persistent volume at `GLUCOTWIN_IMAGE_DIR`; it does not work
+on a single node with a persistent volume at `GLIMPSE_IMAGE_DIR`; it does not work
 across multiple containers.
 
 ## 8 · Background jobs
@@ -261,9 +261,9 @@ command.
 OAuth redirect URIs to register with each provider:
 
 ```
-{GLUCOTWIN_PUBLIC_API_BASE_URL}/api/v2/devices/dexcom_api/callback
-{GLUCOTWIN_PUBLIC_API_BASE_URL}/api/v2/devices/fitbit/callback
-{GLUCOTWIN_PUBLIC_API_BASE_URL}/api/v2/devices/whoop/callback
+{GLIMPSE_PUBLIC_API_BASE_URL}/api/v2/devices/dexcom_api/callback
+{GLIMPSE_PUBLIC_API_BASE_URL}/api/v2/devices/fitbit/callback
+{GLIMPSE_PUBLIC_API_BASE_URL}/api/v2/devices/whoop/callback
 ```
 
 HTTPS, publicly reachable, exact-match. These three routes are the **only**
@@ -276,7 +276,7 @@ polling.
 * v2 authenticates with `Authorization: Bearer <token>`. **No cookies**, so
   `allow_credentials` is off and there is no CSRF surface.
 * v2 allows `GET, POST, PUT, PATCH, DELETE, OPTIONS` and the request headers
-  `Content-Type, Authorization, If-Match` from `GLUCOTWIN_CORS_ORIGINS`, and exposes
+  `Content-Type, Authorization, If-Match` from `GLIMPSE_CORS_ORIGINS`, and exposes
   `X-Request-ID`.
 * v1 keeps its own frozen policy (`GET, POST, OPTIONS`; `Content-Type` only).
 * Do not add CORS headers at the gateway or CDN — the app sets them and duplicates

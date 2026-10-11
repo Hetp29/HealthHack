@@ -25,7 +25,6 @@ const CONN: Record<Connectivity, { label: string; dot: string }> = {
   checking: { label: "Checking backend…", dot: "bg-muted-foreground animate-pulse" },
   connected: { label: "Backend connected", dot: "bg-primary" },
   model_unavailable: { label: "Model unavailable", dot: "bg-warning-border" },
-  unavailable: { label: "Backend unavailable", dot: "bg-destructive" },
   fixture: { label: "Demo data", dot: "bg-warning-border" },
 };
 

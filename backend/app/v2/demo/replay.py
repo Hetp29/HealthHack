@@ -261,7 +261,7 @@ def _require_enabled(ctx: V2Context) -> None:
     if not ctx.settings.demo_mode:
         raise demo_error(403, "demo_mode_disabled", "Demo mode is not enabled in this environment.")
     if not ctx.settings.demo_password:
-        raise demo_error(503, "demo_not_configured", "GLUCOTWIN_DEMO_PASSWORD is not set.")
+        raise demo_error(503, "demo_not_configured", "GLIMPSE_DEMO_PASSWORD is not set.")
 
 
 #: The only artifact a research-data demonstration may run on.
@@ -279,12 +279,12 @@ def _require_genuine_model(ctx: V2Context, bundle: Bundle) -> None:
         raise demo_error(
             503, "demo_requires_frozen_model",
             "The demonstration replays research data and requires the frozen fs-1.3 artifact. "
-            "Set GLUCOTWIN_MODEL_ARTIFACT to ml/artifacts_cgmacros_fs13/model.joblib.",
+            "Set GLIMPSE_MODEL_ARTIFACT to ml/artifacts_cgmacros_fs13/model.joblib.",
             {"loaded_artifact_sha256": integrity.get("artifact_sha256")})
     if not (integrity.get("enforced") and integrity.get("verified")):
         raise demo_error(
             503, "demo_requires_frozen_model",
-            "Set GLUCOTWIN_EXPECTED_MODEL_SHA256 so the artifact checksum is enforced.")
+            "Set GLIMPSE_EXPECTED_MODEL_SHA256 so the artifact checksum is enforced.")
     if ctx.settings.personalization_policy != "history_only":
         raise demo_error(503, "demo_requires_level_a_only",
                          "Level B calibration is not approved; the demo runs with history_only.")

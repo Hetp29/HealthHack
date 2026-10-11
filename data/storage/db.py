@@ -13,7 +13,7 @@ from data.storage import tables
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DB_URL = "sqlite:///data/glucotwin.db"
-DB_URL_ENV = "GLUCOTWIN_DB_URL"
+DB_URL_ENV = "GLIMPSE_DB_URL"
 # Internal storage layout version (independent of the API contract version). Bump when
 # tables/columns change; an older local DB must then be rebuilt (`python -m data.seed --reset --yes`).
 STORAGE_VERSION = "3"
@@ -24,7 +24,7 @@ class SchemaVersionMismatch(RuntimeError):
 
 
 def resolve_db_url(db_url: str | None = None) -> str:
-    """Explicit argument > ``$GLUCOTWIN_DB_URL`` > ``sqlite:///data/glucotwin.db``.
+    """Explicit argument > ``$GLIMPSE_DB_URL`` > ``sqlite:///data/glucotwin.db``.
 
     A relative SQLite path is resolved against the repository root, so commands behave
     the same from any working directory.

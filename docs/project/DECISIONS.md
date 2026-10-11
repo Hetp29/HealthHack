@@ -45,9 +45,9 @@ schemas, error envelope and CORS policy. v2 has its own OpenAPI document at
 
 **Status:** PROPOSED · **Owner:** Ruhaan · **Needs:** Het's acknowledgement
 
-`data/**` (CGMacros / MetaboNet warehouse, `GLUCOTWIN_DB_URL`) is Het's code per its
+`data/**` (CGMacros / MetaboNet warehouse, `GLIMPSE_DB_URL`) is Het's code per its
 own headers and is not modified. Real users are stored in a new database,
-`GLUCOTWIN_APP_DB_URL`, defined in `backend/app/v2/db/tables.py` and migrated with
+`GLIMPSE_APP_DB_URL`, defined in `backend/app/v2/db/tables.py` and migrated with
 Alembic. The two never share a table.
 
 *Why:* different owners, different sensitivity, different lifecycle. Research rows
@@ -188,7 +188,7 @@ forecasting for real users remains blocked for other reasons (BLOCKERS B-001, B-
 * **Level B (off, not approved).** The frozen `PersonalizationModel.fit` run on a
   user's own eligible residuals, supplied through a shallow copy of the loaded
   artifact. The code and its tests remain so the evaluation below can be run; the
-  default is `GLUCOTWIN_PERSONALIZATION_POLICY=history_only`.
+  default is `GLIMPSE_PERSONALIZATION_POLICY=history_only`.
   **Do not set `history_plus_frozen_calibration` in any deployed environment.**
   `GET /api/v2/status` reports the active policy, and every stored prediction records
   the policy that produced it, so an accidental enablement is visible.
@@ -230,7 +230,7 @@ Evidence: `test_medications_and_wearables_do_not_reach_the_model`. Full table:
 **Status:** PROPOSED · **Owner:** Ruhaan
 
 An episode is scored after its 120-minute window **plus a 30-minute grace period**
-for late sensor uploads (`GLUCOTWIN_OUTCOME_GRACE_MINUTES`). It is eligible only if:
+for late sensor uploads (`GLIMPSE_OUTCOME_GRACE_MINUTES`). It is eligible only if:
 all four horizons were observed (±10 min, the frozen target tolerance); at least 20
 native readings fall in the window (the frozen retrieval minimum); no other meal was
 logged inside the window; no reading in the window was corrected or quality-flagged;
@@ -287,7 +287,7 @@ proxy upload without changing the meal lifecycle.
 
 **Status:** PROPOSED · **Owner:** team decision (master §17)
 
-`GLUCOTWIN_OPENAI_VISION_MODEL` and `OPENAI_API_KEY` must both be set or analysis
+`GLIMPSE_OPENAI_VISION_MODEL` and `OPENAI_API_KEY` must both be set or analysis
 returns `503 vision_not_configured`. No model name is hard-coded: the approved model,
 cost ceiling and retention policy are open team decisions. A per-user cap of 40
 analyses per 24 hours is enforced server-side. Requests set `store=False`.
@@ -319,7 +319,7 @@ recording is carried as UTC, so its offset is zero).
 Every replay step calls the public v2 endpoints through an in-process client. The
 only direct writes are the staged-glucose release and the replay-state row.
 
-Routes live under `/api/v2/demo`, are registered only when `GLUCOTWIN_DEMO_MODE` is
+Routes live under `/api/v2/demo`, are registered only when `GLIMPSE_DEMO_MODE` is
 enabled, are authenticated, and act only on the caller's own demo account.
 
 ## D-015 · Demonstration data is chosen by a model-free rule, on out-of-fit meals
@@ -383,7 +383,7 @@ honest in the data model, not just in the UI:
 * **A new connection status, `demo_simulated`** (migration `0003`), rather than
   reusing `authorized` or `connected`. Backward compatible: no existing value changes
   meaning. It can be set only by the demo routes, which do not exist unless
-  `GLUCOTWIN_DEMO_MODE` is on.
+  `GLIMPSE_DEMO_MODE` is on.
 * **Separate provider ids** (`demo_apple_health`, `demo_apple_watch`, `demo_fitbit`,
   `demo_whoop`). The real provider ids are never used for simulated data, and the
   OAuth and sync code does not know the simulated ones.
@@ -417,7 +417,7 @@ and changing it would break something that is frozen or already in use:
 |---|---|---|
 | The model id | `glucotwin-fs13-blend-personalized` | frozen model identity; recorded in the freeze, the artifact manifest and every stored prediction |
 | Frozen source files and Contract v1.0 | `backend/app/main.py`, `ml/*`, `contracts/openapi.yaml`, `contracts/schemas/` | checksummed by the freeze; any edit fails integrity verification. The v1 API title is therefore still "GlucoTwin API" |
-| Environment variables | `GLUCOTWIN_MODEL_ARTIFACT`, `GLUCOTWIN_APP_DB_URL`, `GLUCOTWIN_DEMO_MODE`, … | the frozen v1 config reads this prefix, and existing `.env` files and deployment configuration use it. A second prefix for v2 only would be worse than one consistent prefix |
+| Environment variables | `GLIMPSE_MODEL_ARTIFACT`, `GLIMPSE_APP_DB_URL`, `GLIMPSE_DEMO_MODE`, … | the frozen v1 config reads this prefix, and existing `.env` files and deployment configuration use it. A second prefix for v2 only would be worse than one consistent prefix |
 | Logger names | `glucotwin`, `glucotwin.v2.*` | v2 loggers inherit the handler the frozen v1 app installs on `glucotwin` |
 | Demo data identifiers | bundle schema `glucotwin-demo-bundle/1`, simulation seed | they feed the bundle checksums and the simulated values; changing them would invalidate the verified demo fingerprints |
 | File and image names | `00_MASTER_GlucoTwin_Project_Plan.md`, `glucotwin_app.db`, `glucotwin-backend` | paths teammates were given; local database files |

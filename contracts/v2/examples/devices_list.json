@@ -85,8 +85,8 @@
         "missing_configuration": [
           "DEXCOM_CLIENT_ID",
           "DEXCOM_CLIENT_SECRET",
-          "GLUCOTWIN_TOKEN_ENCRYPTION_KEY",
-          "GLUCOTWIN_PUBLIC_API_BASE_URL"
+          "GLIMPSE_TOKEN_ENCRYPTION_KEY",
+          "GLIMPSE_PUBLIC_API_BASE_URL"
         ],
         "metrics": [
           "glucose"
@@ -109,8 +109,8 @@
         "missing_configuration": [
           "FITBIT_CLIENT_ID",
           "FITBIT_CLIENT_SECRET",
-          "GLUCOTWIN_TOKEN_ENCRYPTION_KEY",
-          "GLUCOTWIN_PUBLIC_API_BASE_URL"
+          "GLIMPSE_TOKEN_ENCRYPTION_KEY",
+          "GLIMPSE_PUBLIC_API_BASE_URL"
         ],
         "metrics": [
           "steps_daily",
@@ -138,8 +138,8 @@
         "missing_configuration": [
           "WHOOP_CLIENT_ID",
           "WHOOP_CLIENT_SECRET",
-          "GLUCOTWIN_TOKEN_ENCRYPTION_KEY",
-          "GLUCOTWIN_PUBLIC_API_BASE_URL"
+          "GLIMPSE_TOKEN_ENCRYPTION_KEY",
+          "GLIMPSE_PUBLIC_API_BASE_URL"
         ],
         "metrics": [
           "recovery_score",

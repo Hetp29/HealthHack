@@ -66,12 +66,12 @@ Building CGMacros only needs about 2.5 GB.
 ## 4. Point the backend / training at it
 
 ```bash
-export GLUCOTWIN_DATA_BACKEND=sqlite
-export GLUCOTWIN_DB_URL=sqlite:///data/glucotwin.db      # or sqlite:///data/metabonet.db
+export GLIMPSE_DATA_BACKEND=sqlite
+export GLIMPSE_DB_URL=sqlite:///data/glucotwin.db      # or sqlite:///data/metabonet.db
 ```
 
 `ml/train.py` still needs a `sqlite` source branch. That change is owned by Ruhaan. It should return
-`data.storage.repository.SqliteDataRepository(os.environ["GLUCOTWIN_DB_URL"])`.
+`data.storage.repository.SqliteDataRepository(os.environ["GLIMPSE_DB_URL"])`.
 
 ## 5. Time semantics (read before building time-of-day features)
 

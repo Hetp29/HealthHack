@@ -34,8 +34,8 @@ No clinical value is invented: the questionnaire's HbA1c and fasting glucose are
 
 | | |
 |---|---|
-| Email | `demo@glimpse.example` (`GLUCOTWIN_DEMO_EMAIL`) |
-| Password | the value of `GLUCOTWIN_DEMO_PASSWORD` — chosen by whoever seeds; no default exists |
+| Email | `demo@glimpse.example` (`GLIMPSE_DEMO_EMAIL`) |
+| Password | the value of `GLIMPSE_DEMO_PASSWORD` — chosen by whoever seeds; no default exists |
 | Display name | `Demo User (fictional)` |
 | Timezone | `UTC` (see §4) |
 | Participant id | a normal generated `gtp_…` id. **Never** the research participant's id |

@@ -168,7 +168,7 @@ def load_bundle(path: pathlib.Path, *, expected_sha256: str | None) -> Bundle:
             f"demo data bundle not found at {path}. It is research data and is not in "
             "git. Build it with `python -m scripts.demo_select` (needs the local CGMacros "
             "warehouse), or copy it from the team's artifact store, then set "
-            "GLUCOTWIN_DEMO_BUNDLE. No substitute data will be generated."
+            "GLIMPSE_DEMO_BUNDLE. No substitute data will be generated."
         )
     bundle = bundle_from_payload(json.loads(path.read_text()))
     if expected_sha256 is not None and bundle.sha256 != expected_sha256:
