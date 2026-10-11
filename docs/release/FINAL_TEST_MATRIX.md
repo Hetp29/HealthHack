@@ -5,6 +5,12 @@ Run on branch `final-audit` (see `FINAL_COMPREHENSIVE_AUDIT.md` for the commit) 
 real backend in demo mode, frozen fs-1.3 artifact, integrity verified by the server,
 isolated SQLite database. "NOT RUN" means not run; it does not mean passed.
 
+> The figures below are from the audit run that preceded the freeze restoration
+> (decision D-020). Every suite was run again on the corrected commit, with the
+> frontend and backend both started from a clean checkout of that commit; those results
+> are in the release report and in `var/VERIFICATION.txt` of the release working tree,
+> because a commit cannot contain the results of testing itself.
+
 ## Automated suites
 
 | Suite | Command | Result |
