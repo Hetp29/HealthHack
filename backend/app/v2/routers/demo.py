@@ -1,6 +1,6 @@
 """Demonstration replay controls.
 
-These routes exist ONLY when `GLUCOTWIN_DEMO_MODE` is enabled; otherwise this router
+These routes exist ONLY when `GLIMPSE_DEMO_MODE` is enabled; otherwise this router
 is never registered and every path here is a 404. They are authenticated, and act
 only on the caller's own account, which must be the demo replay account. No replay
 route can read or change any other user's data.
@@ -16,7 +16,7 @@ from backend.app.v2.demo import replay
 from backend.app.v2.deps import V2Context, current_user, get_ctx
 from backend.app.v2.schemas import Strict
 
-router = APIRouter(prefix="/demo", tags=["demo (only when GLUCOTWIN_DEMO_MODE is enabled)"])
+router = APIRouter(prefix="/demo", tags=["demo (only when GLIMPSE_DEMO_MODE is enabled)"])
 
 
 class AdvanceRequest(Strict):

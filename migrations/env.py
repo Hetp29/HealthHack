@@ -1,6 +1,6 @@
 """Alembic environment for the application database.
 
-The URL comes from `GLUCOTWIN_APP_DB_URL` (or `-x db_url=...` on the command line).
+The URL comes from `GLIMPSE_APP_DB_URL` (or `-x db_url=...` on the command line).
 This manages only the v2 application schema. The research warehouse under
 `data/storage` has its own lifecycle and is not touched.
 """
@@ -19,7 +19,9 @@ target_metadata = tables.metadata
 
 def _url() -> str:
     override = context.get_x_argument(as_dictionary=True).get("db_url")
-    return override or os.environ.get("GLUCOTWIN_APP_DB_URL") or "sqlite:///data/local/glucotwin_app.db"
+    # GLIMPSE_APP_DB_URL, or its legacy name GLUCOTWIN_APP_DB_URL (renamed 2026-10-11).
+    return (override or os.environ.get("GLIMPSE_APP_DB_URL") or os.environ.get("GLUCOTWIN_APP_DB_URL")
+            or "sqlite:///data/local/glucotwin_app.db")
 
 
 def run_migrations_offline() -> None:

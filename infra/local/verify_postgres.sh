@@ -26,17 +26,17 @@ source .venv/bin/activate
 URL="postgresql+psycopg://glucotwin:$PW@127.0.0.1:$PORT/scratch"
 
 echo "== migrations: upgrade -> check -> downgrade -> upgrade"
-GLUCOTWIN_APP_DB_URL=$URL alembic -q upgrade head
-GLUCOTWIN_APP_DB_URL=$URL alembic check
-GLUCOTWIN_APP_DB_URL=$URL alembic -q downgrade base
-GLUCOTWIN_APP_DB_URL=$URL alembic -q upgrade head
-echo "migrations OK (head: $(GLUCOTWIN_APP_DB_URL=$URL alembic current 2>/dev/null | tail -1))"
+GLIMPSE_APP_DB_URL=$URL alembic -q upgrade head
+GLIMPSE_APP_DB_URL=$URL alembic check
+GLIMPSE_APP_DB_URL=$URL alembic -q downgrade base
+GLIMPSE_APP_DB_URL=$URL alembic -q upgrade head
+echo "migrations OK (head: $(GLIMPSE_APP_DB_URL=$URL alembic current 2>/dev/null | tail -1))"
 
 echo "== v2 suite on PostgreSQL (schema is dropped/recreated per test)"
 # Known harness limitation: test_resetting_one_mode_never_touches_the_other_or_an_ordinary_account
 # builds a SECOND harness mid-test; with one shared external database that second harness
 # drops the first one's schema. It is deselected here and reported, not hidden.
 KNOWN="tests/v2/test_demo_scenarios.py::test_resetting_one_mode_never_touches_the_other_or_an_ordinary_account"
-GLUCOTWIN_TEST_APP_DB_URL=$URL python -m pytest tests/v2 -q -p no:cacheprovider -W ignore \
+GLIMPSE_TEST_APP_DB_URL=$URL python -m pytest tests/v2 -q -p no:cacheprovider -W ignore \
   --deselect "$KNOWN" 2>&1 | sed "s/$PW/***/g" | tail -3
 echo "(deselected, shared-DB harness limitation: $KNOWN)"

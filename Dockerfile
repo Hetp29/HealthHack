@@ -34,12 +34,12 @@ COPY scripts/ ./scripts/
 COPY migrations/ ./migrations/
 COPY alembic.ini ./
 
-ENV GLUCOTWIN_CONTRACT_VERSION=1.0.0 \
-    GLUCOTWIN_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib \
-    GLUCOTWIN_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json \
-    GLUCOTWIN_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe \
-    GLUCOTWIN_DATA_BACKEND=synthetic_dev \
-    GLUCOTWIN_LOG_LEVEL=INFO \
+ENV GLIMPSE_CONTRACT_VERSION=1.0.0 \
+    GLIMPSE_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib \
+    GLIMPSE_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json \
+    GLIMPSE_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe \
+    GLIMPSE_DATA_BACKEND=synthetic_dev \
+    GLIMPSE_LOG_LEVEL=INFO \
     PORT=8000
 
 # Build-time gate: no artifact, or the wrong artifact, and there is no image.
@@ -49,12 +49,12 @@ RUN python -m backend.app.v2.verify_artifact \
  && rm -rf ml/_devdata data/local
 
 # Run unprivileged, with the artifact read-only even to the service user.
-RUN useradd --create-home --uid 10001 glucotwin \
+RUN useradd --create-home --uid 10001 glimpse \
  && mkdir -p /app/var/meal_images \
- && chown -R glucotwin:glucotwin /app/var \
+ && chown -R glimpse:glimpse /app/var \
  && chmod -R a-w ml/artifacts_cgmacros_fs13
-USER glucotwin
-ENV GLUCOTWIN_IMAGE_DIR=/app/var/meal_images
+USER glimpse
+ENV GLIMPSE_IMAGE_DIR=/app/var/meal_images
 
 EXPOSE 8000
 

@@ -14,14 +14,14 @@
 #   4. PostgreSQL + `alembic upgrade head` as a one-off container (never at app boot)
 #   5. API container: /health, /api/v2/ready, fs-1.3 model info, integrity flag, 401 on /me
 #   6. scripts/smoke_v2.py full journey over HTTP
-#   7. (if bundles present) demo verify + seed + smoke_demo.py in a GLUCOTWIN_DEMO_MODE container
+#   7. (if bundles present) demo verify + seed + smoke_demo.py in a GLIMPSE_DEMO_MODE container
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
 
 ART=ml/artifacts_cgmacros_fs13
 SHA=$(git rev-parse --short=12 HEAD)
-IMG=glucotwin-backend:$SHA
+IMG=glimpse-backend:$SHA
 NET=gt-smoke-$$
 PG=gt-smoke-pg-$$
 API=gt-smoke-api-$$
@@ -64,7 +64,7 @@ docker build -q -t "$IMG" "$CTX" >/dev/null
 docker image inspect "$IMG" --format '  size={{.Size}} arch={{.Architecture}} user={{.Config.User}}'
 
 step "3. start-time gate rejects a different expected checksum"
-if docker run --rm -e GLUCOTWIN_EXPECTED_MODEL_SHA256=0000000000000000000000000000000000000000000000000000000000000000 "$IMG" >/dev/null 2>&1; then
+if docker run --rm -e GLIMPSE_EXPECTED_MODEL_SHA256=0000000000000000000000000000000000000000000000000000000000000000 "$IMG" >/dev/null 2>&1; then
   echo "  FAIL: container served with a mismatched checksum"; exit 1
 fi
 echo "  ok: container refused to start"
@@ -75,13 +75,13 @@ docker run -d --name "$PG" --network "$NET" -e POSTGRES_USER=glucotwin -e POSTGR
   -e POSTGRES_DB=glucotwin postgres:16-alpine >/dev/null
 for _ in $(seq 1 30); do docker exec "$PG" pg_isready -U glucotwin >/dev/null 2>&1 && break; sleep 1; done
 DB="postgresql+psycopg://glucotwin:$PW@$PG:5432/glucotwin"
-docker run --rm --network "$NET" -e GLUCOTWIN_APP_DB_URL="$DB" "$IMG" alembic -q upgrade head
+docker run --rm --network "$NET" -e GLIMPSE_APP_DB_URL="$DB" "$IMG" alembic -q upgrade head
 echo "  ok: migrated"
 
 run_api() {  # name, extra docker args...
   local name=$1; shift
   docker run -d --name "$name" --network "$NET" -p "127.0.0.1:$PORT:8000" \
-    -e GLUCOTWIN_APP_DB_URL="$DB" -e GLUCOTWIN_CORS_ORIGINS="http://localhost:5173" \
+    -e GLIMPSE_APP_DB_URL="$DB" -e GLIMPSE_CORS_ORIGINS="http://localhost:5173" \
     --read-only --tmpfs /tmp --tmpfs /app/var:uid=10001 "$@" "$IMG" >/dev/null
   for _ in $(seq 1 60); do curl -fsS "localhost:$PORT/health" >/dev/null 2>&1 && return 0; sleep 1; done
   docker logs "$name" | tail -20; return 1
@@ -104,17 +104,17 @@ if ls data/local/demo/cgmacros_demo_bundle.json >/dev/null 2>&1; then
   step "7. demo mode (single container)"
   docker rm -f "$API" >/dev/null
   DEMO_PW=$(python3 -c "import secrets; print(secrets.token_urlsafe(14))")
-  DEMO_ENV=(-e GLUCOTWIN_DEMO_MODE=1 -e GLUCOTWIN_DEMO_PASSWORD="$DEMO_PW"
+  DEMO_ENV=(-e GLIMPSE_DEMO_MODE=1 -e GLIMPSE_DEMO_PASSWORD="$DEMO_PW"
             -v "$PWD/data/local/demo:/app/data/local/demo:ro")
-  docker run --rm --network "$NET" -e GLUCOTWIN_APP_DB_URL="$DB" "${DEMO_ENV[@]}" "$IMG" python -m scripts.demo_verify
-  docker run --rm --network "$NET" -e GLUCOTWIN_APP_DB_URL="$DB" "${DEMO_ENV[@]}" "$IMG" python -m scripts.demo_seed
+  docker run --rm --network "$NET" -e GLIMPSE_APP_DB_URL="$DB" "${DEMO_ENV[@]}" "$IMG" python -m scripts.demo_verify
+  docker run --rm --network "$NET" -e GLIMPSE_APP_DB_URL="$DB" "${DEMO_ENV[@]}" "$IMG" python -m scripts.demo_seed
   run_api "$API-demo" "${DEMO_ENV[@]}"
-  GLUCOTWIN_DEMO_PASSWORD="$DEMO_PW" python3 scripts/smoke_demo.py "$B"
+  GLIMPSE_DEMO_PASSWORD="$DEMO_PW" python3 scripts/smoke_demo.py "$B"
   if [ -f data/local/demo/cgmacros_returning_user_bundle.json ]; then
     step "7b. demo mode: RETURNING USER over HTTP"
-    docker run --rm --network "$NET" -e GLUCOTWIN_APP_DB_URL="$DB" "${DEMO_ENV[@]}" "$IMG" \
+    docker run --rm --network "$NET" -e GLIMPSE_APP_DB_URL="$DB" "${DEMO_ENV[@]}" "$IMG" \
       python -m scripts.demo_seed --scenario returning_user
-    GLUCOTWIN_DEMO_PASSWORD="$DEMO_PW" python3 scripts/smoke_demo.py "$B" --scenario returning_user
+    GLIMPSE_DEMO_PASSWORD="$DEMO_PW" python3 scripts/smoke_demo.py "$B" --scenario returning_user
   fi
   step "7c. single-worker constraint: demo API process count"
   docker exec "$API-demo" sh -c 'ps -eo args 2>/dev/null || cat /proc/[0-9]*/cmdline | tr "\0" " "' | grep -c "uvicorn" || true

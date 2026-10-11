@@ -11,22 +11,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: glucotwin-backend:v0.1.0
+    image: glimpse-backend:v0.1.0
     ports:
       - "8000:8000"
     environment:
-      GLUCOTWIN_CONTRACT_VERSION: "1.0.0"
-      GLUCOTWIN_DATA_BACKEND: "synthetic_dev"
+      GLIMPSE_CONTRACT_VERSION: "1.0.0"
+      GLIMPSE_DATA_BACKEND: "synthetic_dev"
       # The frozen fs-1.3 artifact baked into the image. Never a trained-in-image or
       # synthetic model: the image build and the container start both verify this.
-      GLUCOTWIN_MODEL_ARTIFACT: "ml/artifacts_cgmacros_fs13/model.joblib"
-      GLUCOTWIN_METRICS_PATH: "ml/artifacts_cgmacros_fs13/metrics.json"
-      GLUCOTWIN_EXPECTED_MODEL_SHA256: "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe"
+      GLIMPSE_MODEL_ARTIFACT: "ml/artifacts_cgmacros_fs13/model.joblib"
+      GLIMPSE_METRICS_PATH: "ml/artifacts_cgmacros_fs13/metrics.json"
+      GLIMPSE_EXPECTED_MODEL_SHA256: "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe"
       # Local single-node only. Run `alembic upgrade head` against this before first use.
-      GLUCOTWIN_APP_DB_URL: "sqlite:////app/var/glucotwin_app.db"
+      GLIMPSE_APP_DB_URL: "sqlite:////app/var/glimpse_app.db"
       # Explicit origins, never a wildcard. The service logs a warning on "*".
-      GLUCOTWIN_CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
-      GLUCOTWIN_LOG_LEVEL: "INFO"
+      GLIMPSE_CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
+      GLIMPSE_LOG_LEVEL: "INFO"
     healthcheck:
       test:
         - CMD
@@ -48,7 +48,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: glucotwin-frontend:v0.1.0
+    image: glimpse-frontend:v0.1.0
     ports:
       - "5173:5173"
     environment:

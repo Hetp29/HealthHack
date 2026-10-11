@@ -1,6 +1,6 @@
 """End-to-end demonstration smoke test against a RUNNING server.
 
-    export GLUCOTWIN_DEMO_PASSWORD=...
+    export GLIMPSE_DEMO_PASSWORD=...
     python scripts/smoke_demo.py http://127.0.0.1:8000 [--scenario new_user|returning_user] [--leave-at CHECKPOINT]
 
 Signs in as the demo account, resets it, and walks the whole replay over real HTTP,
@@ -10,7 +10,7 @@ and that the personalization states match the committed manifest.
 
 Finishes by resetting again, so the server is left at the start of the replay (or at
 `--leave-at`). Exits 0 only when every step passes. The server must be running with
-GLUCOTWIN_DEMO_MODE=1 and must already have been seeded (`python -m scripts.demo_seed`).
+GLIMPSE_DEMO_MODE=1 and must already have been seeded (`python -m scripts.demo_seed`).
 """
 
 from __future__ import annotations
@@ -34,11 +34,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--scenario", choices=["new_user", "returning_user"], default="new_user")
     args = parser.parse_args(argv)
     returning = args.scenario == "returning_user"
-    email = (os.environ.get("GLUCOTWIN_DEMO_RETURNING_EMAIL", "demo-returning@glimpse.example") if returning
-             else os.environ.get("GLUCOTWIN_DEMO_EMAIL", "demo@glimpse.example"))
-    password = os.environ.get("GLUCOTWIN_DEMO_PASSWORD")
+    email = (os.environ.get("GLIMPSE_DEMO_RETURNING_EMAIL", "demo-returning@glimpse.example") if returning
+             else os.environ.get("GLIMPSE_DEMO_EMAIL", "demo@glimpse.example"))
+    password = os.environ.get("GLIMPSE_DEMO_PASSWORD") or os.environ.get("GLUCOTWIN_DEMO_PASSWORD")
     if not password:
-        print("ERROR: GLUCOTWIN_DEMO_PASSWORD is not set", file=sys.stderr)
+        print("ERROR: GLIMPSE_DEMO_PASSWORD is not set", file=sys.stderr)
         return 1
     manifest = json.loads((MANIFEST.with_name("manifest_returning_user.json") if returning else MANIFEST).read_text())
     first_display = manifest.get("plan", {}).get("display_from_meal", 1)

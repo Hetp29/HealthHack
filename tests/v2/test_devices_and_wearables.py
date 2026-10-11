@@ -97,8 +97,8 @@ def test_an_unconfigured_provider_cannot_be_connected_and_says_what_is_missing(h
     response = harness.client.post("/api/v2/devices/fitbit/connect", headers=headers)
     assert response.status_code == 503 and response.json()["code"] == "provider_not_configured"
     assert response.json()["details"]["missing_configuration"] == [
-        "FITBIT_CLIENT_ID", "FITBIT_CLIENT_SECRET", "GLUCOTWIN_TOKEN_ENCRYPTION_KEY",
-        "GLUCOTWIN_PUBLIC_API_BASE_URL"]
+        "FITBIT_CLIENT_ID", "FITBIT_CLIENT_SECRET", "GLIMPSE_TOKEN_ENCRYPTION_KEY",
+        "GLIMPSE_PUBLIC_API_BASE_URL"]
     assert harness.client.post("/api/v2/devices/garmin/connect", headers=headers).status_code == 404
     assert harness.client.get("/api/v2/devices", headers=headers).json()["connections"] == []
 

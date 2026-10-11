@@ -209,7 +209,7 @@ class TestBackendResolution:
 
     def test_unknown_backend_raises_a_clear_error(self):
         settings = Settings(data_backend="postgres_somewhere")
-        with pytest.raises(DataLayerError, match="unknown GLUCOTWIN_DATA_BACKEND"):
+        with pytest.raises(DataLayerError, match="unknown GLIMPSE_DATA_BACKEND"):
             build_repository(settings)
 
     # --- approved replacement for the obsolete negative test, from Het (8e436e5) ---

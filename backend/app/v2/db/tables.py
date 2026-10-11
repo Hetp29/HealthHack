@@ -2,7 +2,7 @@
 
 This is the store for real users. It is deliberately separate from the research
 warehouse in `data/storage` (CGMacros / MetaboNet, owner: Het): different lifecycle,
-different sensitivity, and a different database URL (`GLUCOTWIN_APP_DB_URL`).
+different sensitivity, and a different database URL (`GLIMPSE_APP_DB_URL`).
 
 Conventions that hold for every table:
 

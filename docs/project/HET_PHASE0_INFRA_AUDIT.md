@@ -26,13 +26,13 @@ manifest (checked `main.py`, `config.py`).
 | F2 | **The frozen artifact is not in Git** (5 files, about 440 KB; checksums are in `HANDOFF_HET.md` §4). Ruhaan holds the only copy. | **Open: B-004, owned by Het.** | Private, versioned, write-once S3 artifact prefix. The pipeline fetches it into the build context and checks the SHA-256 before `docker build`. |
 | F3 | Earlier assumption: the CGMacros warehouse (568 MB) is needed at runtime. | **Not needed for deployment.** v2 uses its own application database. The demo needs only `cgmacros_demo_bundle.json` (87 KB) and optionally `cgmacros_returning_user_bundle.json` (94 KB). | Bundles are research data: store them privately alongside the artifact, never bake them into a public image, and mount or fetch them at start. **The CGMacros redistribution terms still need checking** before upload. |
 | F4 | The backend source is hash-locked by the freeze (v1 `backend/app/*`, routes, services, `contracts/openapi.yaml`). | Unchanged; still holds. | Infra never edits backend code. Request IDs, auth and v2 CORS are now in Ruhaan's separate v2 ASGI app (`backend.app.v2.asgi:app`, D-003), outside the frozen files. |
-| F5 | Frozen v1 CORS allows only the `Content-Type` header. | **Resolved for v2.** v2 sets its own CORS (`Authorization`, `If-Match`, `Content-Type`; exposes `X-Request-ID`) from `GLUCOTWIN_CORS_ORIGINS`. v1 keeps its frozen policy. | **Do not add CORS headers at the CDN or gateway** (duplicate headers break browsers). One origin (CloudFront) remains the recommended design, so no cross-origin requests happen at all. |
+| F5 | Frozen v1 CORS allows only the `Content-Type` header. | **Resolved for v2.** v2 sets its own CORS (`Authorization`, `If-Match`, `Content-Type`; exposes `X-Request-ID`) from `GLIMPSE_CORS_ORIGINS`. v1 keeps its frozen policy. | **Do not add CORS headers at the CDN or gateway** (duplicate headers break browsers). One origin (CloudFront) remains the recommended design, so no cross-origin requests happen at all. |
 | F6 | The frontend is TanStack Start with server-side rendering (Lovable Vite config, Nitro with a Cloudflare default target), and `VITE_API_BASE_URL` is set at build time. | Unchanged. | Hosting choice needed from Neil (§4.3). |
 | F7 | **The frontend is not wired to the real backend yet.** On `origin/neil`, `/auth` is a stub (hard-coded test credentials, local state), `/connect-devices` uses mock actions, and the app defaults to fixture/"Demo data" mode. | New; Neil + Ruhaan. | Infra can host it, but the end-to-end acceptance test (a browser using real auth against the deployed API) needs that wiring first. |
 | F8 | **Local tooling:** Docker 28.0.4 installed but the **daemon is not running**. AWS CLI credentials in `~/.aws` are **invalid** (`InvalidClientTokenId`). Terraform 1.14.3 is available. | Open. | H2 needs Docker Desktop started. H3+ needs valid non-root AWS credentials and an account/region/budget decision. |
 | F9 | **v2 has never run on PostgreSQL** (B-007), and `S3ImageStore` has never been exercised, with **`boto3` not pinned** (B-008). | Open; Het + Ruhaan. | Provide a scratch PostgreSQL to run `alembic upgrade head && alembic check && alembic downgrade base` and the v2 suite. Add a pinned `boto3` (with Ruhaan's agreement) and test against the real bucket. |
 | F10 | **No rate limiting in the app** (B-005). | Open. | Rate-limit `/api/v2/auth/*` and the upload routes at the edge (WAF rate rule or equivalent). |
-| F11 | Demo mode is **single-process** (an in-process advance lock), and seeding the returning-user scenario runs 31 forecasts (about 5 s). | By design. | The demo environment runs **one container, one worker**. Seed before taking traffic. `GLUCOTWIN_DEMO_MODE=1` only in the demo environment, never anywhere real users could be. |
+| F11 | Demo mode is **single-process** (an in-process advance lock), and seeding the returning-user scenario runs 31 forecasts (about 5 s). | By design. | The demo environment runs **one container, one worker**. Seed before taking traffic. `GLIMPSE_DEMO_MODE=1` only in the demo environment, never anywhere real users could be. |
 
 ---
 
@@ -119,12 +119,12 @@ ECS task (`alembic upgrade head`) before** a rollout, never at container boot.
 ### 4.3 Frontend hosting: decide with Neil
 | Option | Notes |
 |---|---|
-| A. Keep Lovable hosting | Zero AWS work, but cross-origin: requires `GLUCOTWIN_CORS_ORIGINS` set to the Lovable origin. Works with v2's CORS. |
+| A. Keep Lovable hosting | Zero AWS work, but cross-origin: requires `GLIMPSE_CORS_ORIGINS` set to the Lovable origin. Works with v2's CORS. |
 | B. Amplify Hosting (SSR) via Nitro's AWS preset | Managed SSR, but the build preset changes in the Lovable config (Neil's agreement needed). |
 | C. Static/SPA build → S3 + CloudFront | Cheapest and gives one origin. Only valid if the app doesn't need SSR (Neil to confirm). |
 
 ### 4.4 Environments
-- **demo:** `GLUCOTWIN_DEMO_MODE=1`, a single container, a demo password secret, the bundles mounted. **No real users.**
+- **demo:** `GLIMPSE_DEMO_MODE=1`, a single container, a demo password secret, the bundles mounted. **No real users.**
 - **staging:** demo mode off, used for integration and smoke tests.
 - **prod:** out of scope before the deadline, and needs the compliance review in §7.
 
@@ -134,17 +134,17 @@ ECS task (`alembic upgrade head`) before** a rollout, never at container boot.
 
 | Secret | Used by | Owner who enters it | Notes |
 |---|---|---|---|
-| `GLUCOTWIN_APP_DB_URL` | API, all workers, migrations | Het (generated with RDS) | `postgresql+psycopg://…` |
-| `GLUCOTWIN_TOKEN_ENCRYPTION_KEY` | API, `device_sync` | Het (generated once) | Fernet key. **Losing it makes stored OAuth tokens unreadable; rotating it disconnects every user.** Never auto-rotate. |
+| `GLIMPSE_APP_DB_URL` | API, all workers, migrations | Het (generated with RDS) | `postgresql+psycopg://…` |
+| `GLIMPSE_TOKEN_ENCRYPTION_KEY` | API, `device_sync` | Het (generated once) | Fernet key. **Losing it makes stored OAuth tokens unreadable; rotating it disconnects every user.** Never auto-rotate. |
 | `OPENAI_API_KEY` | API only | team / Ruhaan | Not needed for the demo. |
 | `DEXCOM_CLIENT_SECRET`, `FITBIT_CLIENT_SECRET`, `WHOOP_CLIENT_SECRET` | API, `device_sync` | whoever registers the developer app | B-002: none exist yet. |
-| `GLUCOTWIN_DEMO_PASSWORD` | demo environment only | Het | Shared with Neil out of band. |
+| `GLIMPSE_DEMO_PASSWORD` | demo environment only | Het | Shared with Neil out of band. |
 
-Non-secret configuration (environment variables): `GLUCOTWIN_MODEL_ARTIFACT`, `GLUCOTWIN_METRICS_PATH`,
-`GLUCOTWIN_EXPECTED_MODEL_SHA256` (as the Dockerfile sets them; never overridden), `GLUCOTWIN_CORS_ORIGINS`,
-`GLUCOTWIN_PUBLIC_API_BASE_URL`, `GLUCOTWIN_FRONTEND_RETURN_URL`, `GLUCOTWIN_IMAGE_S3_BUCKET`/`_PREFIX`,
-`GLUCOTWIN_OPENAI_VISION_MODEL`, the provider client IDs, `DEXCOM_ENVIRONMENT`, the demo variables. **Never set
-`GLUCOTWIN_PERSONALIZATION_POLICY`** (D-007). The frontend gets `VITE_API_BASE_URL` only.
+Non-secret configuration (environment variables): `GLIMPSE_MODEL_ARTIFACT`, `GLIMPSE_METRICS_PATH`,
+`GLIMPSE_EXPECTED_MODEL_SHA256` (as the Dockerfile sets them; never overridden), `GLIMPSE_CORS_ORIGINS`,
+`GLIMPSE_PUBLIC_API_BASE_URL`, `GLIMPSE_FRONTEND_RETURN_URL`, `GLIMPSE_IMAGE_S3_BUCKET`/`_PREFIX`,
+`GLIMPSE_OPENAI_VISION_MODEL`, the provider client IDs, `DEXCOM_ENVIRONMENT`, the demo variables. **Never set
+`GLIMPSE_PERSONALIZATION_POLICY`** (D-007). The frontend gets `VITE_API_BASE_URL` only.
 
 ---
 

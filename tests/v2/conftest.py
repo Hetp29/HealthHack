@@ -184,10 +184,10 @@ def build_harness(tmp_path, v1_settings, **setting_overrides) -> Harness:
     clock = FakeClock()
     vision = FakeVision()
     v1_app = create_app(v1_settings)
-    # Set GLUCOTWIN_TEST_APP_DB_URL to run this whole suite against another database
+    # Set GLIMPSE_TEST_APP_DB_URL to run this whole suite against another database
     # (e.g. a scratch PostgreSQL). Its schema is dropped and recreated for every test,
     # so NEVER point it at a database that holds anything.
-    external = os.environ.get("GLUCOTWIN_TEST_APP_DB_URL")
+    external = os.environ.get("GLIMPSE_TEST_APP_DB_URL")
     settings = V2Settings(
         app_db_url=external or f"sqlite:///{tmp_path / 'app.db'}",
         cors_origins=["http://localhost:5173"],

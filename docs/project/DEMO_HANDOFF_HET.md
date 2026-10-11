@@ -12,7 +12,7 @@ General deployment requirements: `HANDOFF_HET.md` (still current).
 | **NEW USER** (default) | *(none)* or `--scenario new_user` | `demo@glimpse.example` | no meals; history builds over nine meals | `cgmacros_demo_bundle.json` |
 | **RETURNING USER** (optional) | `--scenario returning_user` | `demo-returning@glimpse.example` | 31 earlier meals already replayed; personal history active | `cgmacros_returning_user_bundle.json` |
 
-They are separate accounts with the same password (`GLUCOTWIN_DEMO_PASSWORD`). Seed
+They are separate accounts with the same password (`GLIMPSE_DEMO_PASSWORD`). Seed
 either or both; they never share state, and resetting one does not touch the other.
 The returning-user scenario is optional — if its bundle is not installed, it reports
 `demo_data_unavailable` and the default scenario works normally.
@@ -54,24 +54,24 @@ The 568 MB warehouse is **not** needed in a deployment. Only the bundle is.
 
 | name | secret? | value |
 |---|---|---|
-| `GLUCOTWIN_DEMO_MODE` | no | `1` — **only in the demo environment** |
-| `GLUCOTWIN_DEMO_PASSWORD` | **yes** | you choose it (10+ chars); give it to Neil for the demo login |
-| `GLUCOTWIN_DEMO_BUNDLE` | no | path to the bundle; default `data/local/demo/cgmacros_demo_bundle.json` |
-| `GLUCOTWIN_DEMO_EMAIL` | no | optional; default `demo@glimpse.example` |
-| `GLUCOTWIN_DEMO_RETURNING_BUNDLE` | no | path to the returning-user bundle; default `data/local/demo/cgmacros_returning_user_bundle.json` |
-| `GLUCOTWIN_DEMO_RETURNING_EMAIL` | no | optional; default `demo-returning@glimpse.example` |
+| `GLIMPSE_DEMO_MODE` | no | `1` — **only in the demo environment** |
+| `GLIMPSE_DEMO_PASSWORD` | **yes** | you choose it (10+ chars); give it to Neil for the demo login |
+| `GLIMPSE_DEMO_BUNDLE` | no | path to the bundle; default `data/local/demo/cgmacros_demo_bundle.json` |
+| `GLIMPSE_DEMO_EMAIL` | no | optional; default `demo@glimpse.example` |
+| `GLIMPSE_DEMO_RETURNING_BUNDLE` | no | path to the returning-user bundle; default `data/local/demo/cgmacros_returning_user_bundle.json` |
+| `GLIMPSE_DEMO_RETURNING_EMAIL` | no | optional; default `demo-returning@glimpse.example` |
 
 Plus the standing ones, which the demo **requires**:
 
 ```
-GLUCOTWIN_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
-GLUCOTWIN_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json
-GLUCOTWIN_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
-GLUCOTWIN_APP_DB_URL=…
-GLUCOTWIN_CORS_ORIGINS=<the frontend origin>
+GLIMPSE_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
+GLIMPSE_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json
+GLIMPSE_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
+GLIMPSE_APP_DB_URL=…
+GLIMPSE_CORS_ORIGINS=<the frontend origin>
 ```
 
-Do **not** set `GLUCOTWIN_PERSONALIZATION_POLICY`. The demo refuses to run with
+Do **not** set `GLIMPSE_PERSONALIZATION_POLICY`. The demo refuses to run with
 Level B enabled. `OPENAI_API_KEY` is **not** needed: the demo uses recorded meals.
 
 ## 4 · Initialization order
@@ -95,7 +95,7 @@ python scripts/smoke_demo.py https://<demo-url> --leave-at meal_06_outcome
 python scripts/smoke_demo.py https://<demo-url> --scenario returning_user     # if seeded
 ```
 
-Steps 2, 3 and 5 need `GLUCOTWIN_DEMO_PASSWORD` exported; steps 2 and 3 run inside
+Steps 2, 3 and 5 need `GLIMPSE_DEMO_PASSWORD` exported; steps 2 and 3 run inside
 the image (`python -m scripts.…` — `scripts/` is now copied into it).
 
 `demo_seed` is idempotent: if the demo account exists it is left exactly as it is.
@@ -135,7 +135,7 @@ recording, so its presented meals are `meal_32_forecast` … `meal_40_outcome`
 
 ## 7 · Where demo mode must not be on
 
-With `GLUCOTWIN_DEMO_MODE` unset, the `/api/v2/demo/*` routes are **not registered**
+With `GLIMPSE_DEMO_MODE` unset, the `/api/v2/demo/*` routes are **not registered**
 — they are 404, absent from `/api/v2/openapi.json`, and `GET /api/v2/status` reports
 `"demo_mode": false`. Keep it unset in any environment that holds, or might hold,
 real users. A startup warning (`demo_mode_enabled`) is logged when it is on.
@@ -164,8 +164,8 @@ Already handled by the `Dockerfile` on this branch (never built — B-004):
 `migrations/`, `alembic.ini`, `ml/`, `data/` (code only), the artifact directory.
 The manifests for both scenarios are in `backend/app/v2/demo/`. The **bundles are
 not copied by the Dockerfile** (`.dockerignore` excludes `data/local`): mount them,
-or fetch them at start, and point `GLUCOTWIN_DEMO_BUNDLE` (and, if used,
-`GLUCOTWIN_DEMO_RETURNING_BUNDLE`) at them.
+or fetch them at start, and point `GLIMPSE_DEMO_BUNDLE` (and, if used,
+`GLIMPSE_DEMO_RETURNING_BUNDLE`) at them.
 
 ## 10 · What I need back
 
@@ -182,7 +182,7 @@ WHOOP data through demo-only routes. Operationally this adds almost nothing:
 | | |
 |---|---|
 | New sample bundles | **none** — the values are generated in code from a fixed seed |
-| New environment flags | **none** — it is part of `GLUCOTWIN_DEMO_MODE` |
+| New environment flags | **none** — it is part of `GLIMPSE_DEMO_MODE` |
 | Vendor credentials | **none, and none must be set for it.** No Apple, Fitbit, WHOOP or Dexcom client id, secret or token is used; nothing calls out |
 | Network | works fully offline: only the application database and the frozen artifact |
 | Database change | migration **`0003`**: `device_connections.status` may now be `demo_simulated`. Backward compatible; `alembic upgrade head` applies it. Downgrading removes any simulated connection rows first |

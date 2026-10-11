@@ -43,8 +43,8 @@ transformations and exclusions are in `docs/data_audit/data_quality.md`.
 `tests/test_data_contract.py`'s own test classes against it (`tests/test_data_sqlite_protocol.py`).
 
 ```bash
-export GLUCOTWIN_DATA_BACKEND=sqlite
-export GLUCOTWIN_DB_URL=sqlite:///data/glucotwin.db      # CGMacros
+export GLIMPSE_DATA_BACKEND=sqlite
+export GLIMPSE_DB_URL=sqlite:///data/glucotwin.db      # CGMacros
 uvicorn backend.app.main:app
 ```
 
@@ -72,7 +72,7 @@ repo.get_participant_metadata("cgmacros_001")     # source_dataset, run id, cgm_
 | Regenerate fixtures (deterministic) | `python -m data.fixtures.generator` |
 | Reset + reload local demo DB | `python -m data.seed --reset --yes` |
 
-Database location: `--db-url` > `$GLUCOTWIN_DB_URL` > `sqlite:///data/glucotwin.db` (relative paths resolve
+Database location: `--db-url` > `$GLIMPSE_DB_URL` > `sqlite:///data/glucotwin.db` (relative paths resolve
 against the repo root). `*.db` files are gitignored.
 
 ## Using it from the backend / ML (Ruhaan)

@@ -14,7 +14,7 @@ from backend.app.v2.db import tables
 def alembic(*args: str, url: str) -> subprocess.CompletedProcess:
     return subprocess.run(
         [sys.executable, "-m", "alembic", *args], capture_output=True, text=True,
-        env={**os.environ, "GLUCOTWIN_APP_DB_URL": url},
+        env={**os.environ, "GLIMPSE_APP_DB_URL": url},
     )
 
 

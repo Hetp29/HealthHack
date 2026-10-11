@@ -44,7 +44,7 @@ responses in each provider's documented shape, and **none has ever contacted its
 provider.** Nothing is, or should be described as, connected.
 
 To unblock each: register the application, set the redirect URI to
-`{GLUCOTWIN_PUBLIC_API_BASE_URL}/api/v2/devices/{provider}/callback`, and provide the
+`{GLIMPSE_PUBLIC_API_BASE_URL}/api/v2/devices/{provider}/callback`, and provide the
 client id and secret through the secret store.
 
 ## B-003 · No native iOS app, so no HealthKit or Apple Watch — TEAM
@@ -95,7 +95,7 @@ The schema and migration are tested on SQLite. The migration is confirmed to *re
 valid PostgreSQL DDL (`TIMESTAMP WITH TIME ZONE`, 24 tables) in Alembic's offline
 mode, but has never run against a PostgreSQL server — none was available. First run
 `alembic upgrade head` against a scratch RDS instance and run the test suite with
-`GLUCOTWIN_APP_DB_URL` pointed at it.
+`GLIMPSE_APP_DB_URL` pointed at it.
 
 ## B-008 · The S3 image store is written but not exercised — HET
 

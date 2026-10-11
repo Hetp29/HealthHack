@@ -1,6 +1,6 @@
 """Create the canonical SQLite schema.
 
-    python -m data.storage.init_db                       # uses $GLUCOTWIN_DB_URL or data/glucotwin.db
+    python -m data.storage.init_db                       # uses $GLIMPSE_DB_URL or data/glucotwin.db
     python -m data.storage.init_db --db-url sqlite:///data/local/dev.db
     python -m data.storage.init_db --reset --yes         # DROP and recreate (local dev only)
 """

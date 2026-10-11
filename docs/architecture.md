@@ -66,7 +66,7 @@ Two implementations:
 - `ml/devfixture.py::SyntheticDevRepository` — the labelled temporary fixture, in
   memory, deterministic. Default today.
 - `data/storage/repository.py::SqliteDataRepository` — Het's canonical layer.
-  Selected by `GLUCOTWIN_DATA_BACKEND=sqlite`; the branch already exists and fails
+  Selected by `GLIMPSE_DATA_BACKEND=sqlite`; the branch already exists and fails
   with a message naming the missing module until it lands.
 
 Swapping them is one environment variable. `tests/test_data_contract.py` is the

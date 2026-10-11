@@ -263,7 +263,7 @@ FEATURES COMPLETED: All twelve orchestration steps; SQL + frozen double filter
 TESTS PASSED:       test_prediction (29)
 INTERFACES PUBLISHED: /meals/{id}/predict, /predictions, /predictions/{id},
                     /predictions/{id}/reproduce
-HANDOFFS TO HET:    GLUCOTWIN_EXPECTED_MODEL_SHA256; artifact delivery (B-004)
+HANDOFFS TO HET:    GLIMPSE_EXPECTED_MODEL_SHA256; artifact delivery (B-004)
 HANDOFFS TO NEIL:   forecast is exactly the v1 ForecastResponse; context_quality
 EXTERNAL BLOCKERS:  none
 MODEL INTEGRITY:    PASS — orchestrator output equals a direct frozen-engine call
@@ -389,9 +389,9 @@ alembic check
 alembic downgrade base
 
 # Run with the frozen artifact, checksum enforced
-export GLUCOTWIN_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
-export GLUCOTWIN_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json
-export GLUCOTWIN_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
+export GLIMPSE_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
+export GLIMPSE_METRICS_PATH=ml/artifacts_cgmacros_fs13/metrics.json
+export GLIMPSE_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
 uvicorn backend.app.v2.asgi:app --host 127.0.0.1 --port 8000
 
 # End-to-end over real HTTP (creates and deletes a throwaway account)
@@ -407,7 +407,7 @@ python -m contracts.v2.build_contract                   # regenerate
 python -m contracts.v2.build_contract --check           # CI drift guard
 
 # Opt-in real OpenAI test (spends money; one call)
-GLUCOTWIN_OPENAI_TEST_KEY=… GLUCOTWIN_OPENAI_TEST_MODEL=… GLUCOTWIN_OPENAI_TEST_MAX_CALLS=1 \
+GLIMPSE_OPENAI_TEST_KEY=… GLIMPSE_OPENAI_TEST_MODEL=… GLIMPSE_OPENAI_TEST_MAX_CALLS=1 \
   python -m pytest tests/v2/test_meals_and_vision.py -k real_openai
 ```
 

@@ -118,7 +118,7 @@ def build_platform(tmp: pathlib.Path):
                                           metrics_path=FROZEN_ARTIFACT.parent / "metrics.json")
     v1_app = create_app(v1_settings)
     # Demo mode ON so the gated /demo routes are part of the published contract. They
-    # exist in a deployment only when GLUCOTWIN_DEMO_MODE is enabled.
+    # exist in a deployment only when GLIMPSE_DEMO_MODE is enabled.
     settings = V2Settings(app_db_url=f"sqlite:///{tmp / 'app.db'}", image_dir=tmp / "images",
                           cors_origins=["http://localhost:5173"], demo_mode=True,
                           demo_password="example-only-password")

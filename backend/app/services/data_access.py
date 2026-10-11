@@ -4,7 +4,7 @@
 This file is the authoritative Python declaration of the interface the backend
 consumes. Implement `DataRepository` in `data/` and the backend binds to it with
 no change on the ML/backend side: add a branch to `build_repository` below (or
-tell me and I will add it) and set `GLUCOTWIN_DATA_BACKEND=sqlite`.
+tell me and I will add it) and set `GLIMPSE_DATA_BACKEND=sqlite`.
 
 It is a `typing.Protocol`, so there is nothing to subclass or import from
 `backend/`. Any object with these five methods satisfies it, and
@@ -78,7 +78,7 @@ class DataLayerError(RuntimeError):
 
 
 def build_repository(settings) -> DataRepository:
-    """Resolve `GLUCOTWIN_DATA_BACKEND` to a repository instance.
+    """Resolve `GLIMPSE_DATA_BACKEND` to a repository instance.
 
     `synthetic_dev` is the labelled temporary ML development fixture. It is the
     default only until the canonical data layer lands; every record it produces
@@ -103,7 +103,7 @@ def build_repository(settings) -> DataRepository:
             from data.storage.repository import SqliteDataRepository
         except Exception as error:
             raise DataLayerError(
-                "GLUCOTWIN_DATA_BACKEND=sqlite requires the canonical data layer at "
+                "GLIMPSE_DATA_BACKEND=sqlite requires the canonical data layer at "
                 f"data/storage/repository.py, which is not importable: {error}"
             ) from error
 
@@ -118,5 +118,5 @@ def build_repository(settings) -> DataRepository:
             ) from error
 
     raise DataLayerError(
-        f"unknown GLUCOTWIN_DATA_BACKEND={backend!r}; expected 'synthetic_dev' or 'sqlite'"
+        f"unknown GLIMPSE_DATA_BACKEND={backend!r}; expected 'synthetic_dev' or 'sqlite'"
     )

@@ -1,7 +1,7 @@
 """`SqliteDataRepository`: the canonical SQLite store behind the backend's Protocol.
 
 This is the class `backend/app/services/data_access.py::build_repository` imports when
-``GLUCOTWIN_DATA_BACKEND=sqlite``. It satisfies that ``DataRepository`` Protocol
+``GLIMPSE_DATA_BACKEND=sqlite``. It satisfies that ``DataRepository`` Protocol
 structurally and returns the record types from ``ml/schema.py`` (the backend's typed
 mirror of the canonical contract), so the ML/backend side binds with no changes.
 

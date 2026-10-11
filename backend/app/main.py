@@ -67,7 +67,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     if settings.cors_origins:
         if settings.cors_allows_wildcard:
             logger.warning(
-                "cors_wildcard_configured origins=* -- restrict GLUCOTWIN_CORS_ORIGINS "
+                "cors_wildcard_configured origins=* -- restrict GLIMPSE_CORS_ORIGINS "
                 "to explicit frontend origins before any judged deployment"
             )
         app.add_middleware(

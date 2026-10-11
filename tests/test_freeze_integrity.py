@@ -25,7 +25,9 @@ CONTRACT = pathlib.Path("contracts/openapi.yaml")
 #: Recorded at freeze time. A change here means a new model version.
 FROZEN_MODEL_SHA256 = "12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe"
 #: Contract v1.0 as frozen at commit 388d24e.
-FROZEN_CONTRACT_SHA256 = "be836dddaac5ed4cd78af7adac02bf9b7a1b77133143b84df34621f1be9200f4"
+# Re-recorded 2026-10-11 (approved by Ruhaan): env prefix GLUCOTWIN_ -> GLIMPSE_ in a description only;
+# no path, schema or response change. Previous value: be836dddaac5ed4cd78af7adac02bf9b7a1b77133143b84df34621f1be9200f4
+FROZEN_CONTRACT_SHA256 = "eb27926630ec6f6c7d6120800b65b27a4ba1c896f93e259410ee60e9f90abaad"
 
 FROZEN_FEATURE_COUNT = 39
 FROZEN_FEATURE_SET = "fs-1.3"

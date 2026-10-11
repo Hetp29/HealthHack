@@ -26,7 +26,7 @@ down() {
 
 up() {
   down; mkdir -p "$STATE"; chmod 700 "$STATE"
-  SHA=$(git rev-parse --short=12 HEAD); IMG=glucotwin-backend:$SHA
+  SHA=$(git rev-parse --short=12 HEAD); IMG=glimpse-backend:$SHA
   if ! docker image inspect "$IMG" >/dev/null 2>&1; then
     CTX=$(mktemp -d); git archive HEAD | tar -x -C "$CTX"
     mkdir -p "$CTX/ml/artifacts_cgmacros_fs13" && cp ml/artifacts_cgmacros_fs13/* "$CTX/ml/artifacts_cgmacros_fs13/"
@@ -41,18 +41,18 @@ up() {
     -e POSTGRES_DB=glucotwin postgres:16-alpine >/dev/null
   for _ in $(seq 1 30); do docker exec "$PG" pg_isready -U glucotwin >/dev/null 2>&1 && break; sleep 1; done
   DB="postgresql+psycopg://glucotwin:$PW@$PG:5432/glucotwin"
-  ENV=(-e GLUCOTWIN_APP_DB_URL="$DB" -e GLUCOTWIN_DEMO_MODE=1 -e GLUCOTWIN_DEMO_PASSWORD="$DEMO_PW"
+  ENV=(-e GLIMPSE_APP_DB_URL="$DB" -e GLIMPSE_DEMO_MODE=1 -e GLIMPSE_DEMO_PASSWORD="$DEMO_PW"
        -v "$PWD/data/local/demo:/app/data/local/demo:ro")
   docker run --rm --network "$NET" "${ENV[@]}" "$IMG" alembic -q upgrade head
   docker run --rm --network "$NET" "${ENV[@]}" "$IMG" python -m scripts.demo_seed >/dev/null
   docker run --rm --network "$NET" "${ENV[@]}" "$IMG" python -m scripts.demo_seed --scenario returning_user >/dev/null
   OPENAI=()
   if [ -n "${OPENAI_KEY_FILE:-}" ] && [ -s "$OPENAI_KEY_FILE" ]; then
-    OPENAI=(-e OPENAI_API_KEY="$(cat "$OPENAI_KEY_FILE")" -e GLUCOTWIN_OPENAI_VISION_MODEL="${VISION_MODEL:?set VISION_MODEL}")
+    OPENAI=(-e OPENAI_API_KEY="$(cat "$OPENAI_KEY_FILE")" -e GLIMPSE_OPENAI_VISION_MODEL="${VISION_MODEL:?set VISION_MODEL}")
   fi
   # Single worker: the demo replay lock is in-process.
   docker run -d --name "$API" --network "$NET" -p "127.0.0.1:$API_PORT:8000" "${ENV[@]}" \
-    -e GLUCOTWIN_CORS_ORIGINS="$FE_ORIGIN" ${OPENAI[@]+"${OPENAI[@]}"} --read-only --tmpfs /tmp --tmpfs /app/var:uid=10001 "$IMG" >/dev/null
+    -e GLIMPSE_CORS_ORIGINS="$FE_ORIGIN" ${OPENAI[@]+"${OPENAI[@]}"} --read-only --tmpfs /tmp --tmpfs /app/var:uid=10001 "$IMG" >/dev/null
   for _ in $(seq 1 60); do curl -fsS "localhost:$API_PORT/api/v2/ready" >/dev/null 2>&1 && break; sleep 1; done
 
   VITE_API_BASE_URL="http://localhost:$API_PORT" VITE_DATA_MODE=live \

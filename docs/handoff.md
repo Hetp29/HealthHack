@@ -104,8 +104,8 @@ currently fails with a message naming the missing module. Once
 `data/storage/repository.py::SqliteDataRepository` is importable:
 
 ```bash
-export GLUCOTWIN_DATA_BACKEND=sqlite
-export GLUCOTWIN_DB_URL=sqlite:///data/glucotwin.db
+export GLIMPSE_DATA_BACKEND=sqlite
+export GLIMPSE_DB_URL=sqlite:///data/glucotwin.db
 uvicorn backend.app.main:app
 ```
 
@@ -206,7 +206,7 @@ display verbatim.
 | Before `ml.train` has been run | `503 model_not_trained` |
 
 `detail` is always an object, so you can render it structurally. The `503` is easy to
-reproduce — just point `GLUCOTWIN_MODEL_ARTIFACT` at a nonexistent path.
+reproduce — just point `GLIMPSE_MODEL_ARTIFACT` at a nonexistent path.
 
 ### What I need from you
 

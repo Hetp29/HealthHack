@@ -32,9 +32,9 @@ def missing_configuration(settings: V2Settings, provider: str) -> list[str]:
     if not client.client_secret:
         missing.append(f"{env}_CLIENT_SECRET")
     if not settings.token_encryption_key:
-        missing.append("GLUCOTWIN_TOKEN_ENCRYPTION_KEY")
+        missing.append("GLIMPSE_TOKEN_ENCRYPTION_KEY")
     if not settings.public_api_base_url:
-        missing.append("GLUCOTWIN_PUBLIC_API_BASE_URL")
+        missing.append("GLIMPSE_PUBLIC_API_BASE_URL")
     return missing
 
 

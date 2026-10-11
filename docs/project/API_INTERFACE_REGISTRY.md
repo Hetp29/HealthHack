@@ -135,7 +135,7 @@ Owner: Ruhaan · Consumer: Neil
 | DELETE | `/account` | bearer | 204. Body `{password}`. Deletes every row and photo; revokes provider grants where the provider allows. **Irreversible.** | 401 `invalid_credentials` | — |
 
 Idempotency: register is naturally idempotent-safe (second call → 409). Token lifetime
-14 days (`GLUCOTWIN_SESSION_TTL_HOURS`). On 401 the frontend should return to login.
+14 days (`GLIMPSE_SESSION_TTL_HOURS`). On 401 the frontend should return to login.
 
 ## 5 · Onboarding and consent
 
@@ -281,7 +281,7 @@ Owner: Ruhaan · Consumer: Neil (UI), Het (redirect URIs, secrets)
 |---|---|---|---|---|---|
 | GET | `/devices` | bearer | The user's connections plus the capability matrix for every provider. | — | `devices_list` |
 | POST | `/devices/{provider}/connect` | bearer + C | Returns `authorization_url` to open in the browser. Providers: `dexcom_api`, `fitbit`, `whoop`. | 503 `provider_not_configured` (names the missing settings), 404 | `error_provider_not_configured` |
-| GET | `/devices/{provider}/callback` | **none** — authenticated by the single-use `state` | OAuth redirect target. 303 to `GLUCOTWIN_FRONTEND_RETURN_URL?provider=…&status=…` when set, else JSON. | 400 `invalid_oauth_state` | — |
+| GET | `/devices/{provider}/callback` | **none** — authenticated by the single-use `state` | OAuth redirect target. 303 to `GLIMPSE_FRONTEND_RETURN_URL?provider=…&status=…` when set, else JSON. | 400 `invalid_oauth_state` | — |
 | POST | `/devices/{provider}/sync` | bearer + C | Always 200 once the provider was contacted — read `outcome`: `ok`, `authorization_revoked`, `rate_limited`, `provider_error`, `provider_unreachable`. | 409 `not_authorized` / `authorization_revoked`, 503 | — |
 | DELETE | `/devices/{provider}` | bearer | Destroys stored tokens; `revoked_upstream` says whether the provider was told. Stored data is kept. | 404 | — |
 
@@ -376,7 +376,7 @@ and returned with `available: false`; attempts are recorded as
 
 The GLIMPSE frontend's client-side `spikeAlert.ts` should become display-only once this is wired.
 
-## 12a · Demonstration replay — exists only when `GLUCOTWIN_DEMO_MODE` is enabled
+## 12a · Demonstration replay — exists only when `GLIMPSE_DEMO_MODE` is enabled
 
 Owner: Ruhaan · Consumer: Neil · Auth: bearer, **demo account only** · Status: **PROPOSED**
 

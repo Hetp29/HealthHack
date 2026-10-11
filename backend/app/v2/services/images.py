@@ -188,7 +188,7 @@ class S3ImageStore:
 
     NOT EXERCISED: there is no AWS account or bucket yet, and `boto3` is not a pinned
     dependency. Written to the interface so Het's bucket can be bound by setting
-    `GLUCOTWIN_IMAGE_S3_BUCKET`; it must be verified against the real bucket before any
+    `GLIMPSE_IMAGE_S3_BUCKET`; it must be verified against the real bucket before any
     deployment relies on it.
     """
 

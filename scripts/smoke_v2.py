@@ -54,7 +54,7 @@ def main(base_url: str) -> int:
         step("artifact is the frozen fs-1.3 checksum", frozen,
              "" if frozen else f"loaded {str(model['artifact_sha256'])[:16]}… -- NOT the frozen model")
         step("artifact checksum is enforced", bool(model["integrity_enforced"]),
-             "" if model["integrity_enforced"] else "GLUCOTWIN_EXPECTED_MODEL_SHA256 is not set")
+             "" if model["integrity_enforced"] else "GLIMPSE_EXPECTED_MODEL_SHA256 is not set")
         step("unauthenticated request is refused", client.get("/api/v2/meals").status_code == 401)
 
         registered = client.post("/api/v2/auth/register", json={
