@@ -25,7 +25,7 @@
         "fat_g": 16.0,
         "fiber_g": 7.0,
         "calories_kcal": 380.0,
-        "source": "research_dataset_meal_record"
+        "source": "test_fixture_meal_record"
       }
     },
     "aliases": {
@@ -196,7 +196,7 @@
       "glucose_and_meals": {
         "data_class": "demo",
         "source": "generated test fixture",
-        "description": "Historical research recording replayed in order. Not a live device and not this account's own data."
+        "description": "Generated test fixture replayed in order. Not real data."
       },
       "profile_and_medications": {
         "data_class": "fictional",

@@ -68,7 +68,7 @@ Example: `demo_replay_state_initial.json`.
 | `wall_clock` | the real time. Shown only so nobody confuses the two |
 | `status` | `ready` or `complete` |
 | `event_index` / `event_count` | progress; pass `event_index` back as `expected_event_index` |
-| `next_checkpoint` | `{id, kind, at, meal}`; for a meal, also `meal_record` — the recorded meal about to be logged |
+| `next_checkpoint` | `{id, kind, at, meal}`; for a meal, also `meal_record` — the recorded meal about to be logged, with `source` = `research_dataset_meal_record` (or `test_fixture_meal_record` in the published examples) |
 | `checkpoints[]` | every checkpoint with `done` and, once done, its `result` |
 | `aliases` | `retrieval_activation`, `final_meal`, `end` → checkpoint ids |
 | `personalization_progress` | `admissible_prior_meals`, `retrieval_active`, `retrieval_min_history: 5`, and a sentence you can show verbatim |

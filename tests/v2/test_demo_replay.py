@@ -134,7 +134,10 @@ def test_initial_state_holds_only_pre_start_data_and_labelled_fictional_records(
     state = demo.client.get("/api/v2/demo/replay", headers=headers).json()
     assert state["position"] == core.rfc3339(bundle.start) and state["event_index"] == 0
     assert state["next_checkpoint"]["id"] == "meal_01_forecast"
-    assert state["next_checkpoint"]["meal_record"]["source"] == "research_dataset_meal_record"
+    # The fixture is labelled as a fixture everywhere -- never as research data.
+    assert state["next_checkpoint"]["meal_record"]["source"] == "test_fixture_meal_record"
+    assert state["provenance"]["glucose_and_meals"]["data_class"] == "demo"
+    assert "not real data" in state["provenance"]["glucose_and_meals"]["description"].lower()
     assert state["provenance"]["labels"] == ["DEMO", "HISTORICAL REPLAY", "NOT LIVE"]
     assert state["provenance"]["profile_and_medications"]["data_class"] == "fictional"
     assert "No model parameter is retrained" in state["personalization_progress"]["description"]
@@ -178,7 +181,7 @@ def test_each_step_releases_data_only_up_to_its_instant_and_forecasts_prospectiv
     meal = demo.client.get("/api/v2/meals", headers=headers).json()["meals"][0]
     assert meal["occurred_at"] == core.rfc3339(first.occurred_at)   # historical time kept, not re-dated
     assert meal["confirmation"]["carbs_g"] == first.macros["carbs_g"]
-    assert "fixture_meal_01" in meal["note"]
+    assert "fixture_meal_01" in meal["note"] and "Research" not in meal["note"]
     prediction = demo.client.get(f"/api/v2/predictions/{meal['prediction_id']}", headers=headers).json()
     assert prediction["prediction_kind"] == "prospective"
     assert prediction["created_at"] == core.rfc3339(first.occurred_at)

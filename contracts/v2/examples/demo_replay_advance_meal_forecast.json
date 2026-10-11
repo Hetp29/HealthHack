@@ -201,7 +201,7 @@
       "glucose_and_meals": {
         "data_class": "demo",
         "source": "generated test fixture",
-        "description": "Historical research recording replayed in order. Not a live device and not this account's own data."
+        "description": "Generated test fixture replayed in order. Not real data."
       },
       "profile_and_medications": {
         "data_class": "fictional",

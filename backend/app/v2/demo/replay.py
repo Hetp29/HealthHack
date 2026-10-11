@@ -335,12 +335,18 @@ def reset(app, ctx: V2Context) -> dict:
 # --------------------------------------------------------------------------- #
 
 
+def _meal_label(bundle: Bundle) -> str:
+    """How a replayed meal says where it came from. A fixture is never called research."""
+    if bundle.data_class == "research_dataset":
+        return f"Research dataset meal record ({bundle.source.get('dataset', 'dataset')})"
+    return "Generated test-fixture meal record (not real data)"
+
+
 def _run_meal(api: _Api, bundle: Bundle, event: dict) -> dict:
     meal = bundle.meals[event["meal"] - 1]
     created = api.ok("POST", "/meals", json={
         "occurred_at": meal.occurred_at.isoformat(), "macros": meal.macros,
-        "note": f"Research dataset meal record ({bundle.source.get('dataset', 'dataset')}): "
-                f"{meal.source_meal_id}"})
+        "note": f"{_meal_label(bundle)}: {meal.source_meal_id}"})
     record = {"meal_id": created["meal_id"], "source_meal_id": meal.source_meal_id}
     response = api.call("POST", f"/meals/{created['meal_id']}/predict")
     body = response.json()
@@ -476,7 +482,7 @@ def _state(ctx: V2Context, row: dict, bundle: Bundle, timeline: list[dict]) -> d
             # The meal about to be logged. Its composition is known when it is eaten.
             next_checkpoint["meal_record"] = {
                 "occurred_at": core.rfc3339(meal.occurred_at), **meal.macros,
-                "source": "research_dataset_meal_record"}
+                "source": f"{bundle.data_class}_meal_record"}
     forecasts = [e for e in row["log"] if e["kind"] == "meal_forecast" and e.get("forecast") == "created"]
     latest = forecasts[-1] if forecasts else None
     released = bundle.readings_between(None, row["position"])
@@ -512,8 +518,10 @@ def _state(ctx: V2Context, row: dict, bundle: Bundle, timeline: list[dict]) -> d
         "provenance": {
             "glucose_and_meals": {
                 "data_class": bundle.store_labels[1], "source": bundle.source.get("dataset"),
-                "description": "Historical research recording replayed in order. Not a "
-                               "live device and not this account's own data."},
+                "description": (
+                    "Historical research recording replayed in order. Not a live device "
+                    "and not this account's own data." if bundle.data_class == "research_dataset"
+                    else "Generated test fixture replayed in order. Not real data.")},
             "profile_and_medications": {
                 "data_class": "fictional", "description": profile.FICTIONAL_NOTICE},
             "forecasts": {
