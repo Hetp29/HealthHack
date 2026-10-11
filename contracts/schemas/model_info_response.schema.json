@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://glucotwin.local/contracts/v1/model_info_response.schema.json",
+  "title": "ModelInfoResponse",
+  "description": "GlucoTwin contract v1.0.0 \u2014 generated from contracts/openapi.yaml by contracts/build_schemas.py. Do not edit by hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "model_version",
+    "trained_at",
+    "data_source",
+    "feature_set_version",
+    "metrics_available",
+    "limitations"
+  ],
+  "properties": {
+    "model_version": {
+      "type": "string",
+      "description": "`\"none\"` when no artifact is loaded."
+    },
+    "trained_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "`null` when no artifact is loaded."
+    },
+    "data_source": {
+      "$ref": "#/$defs/DataSource"
+    },
+    "feature_set_version": {
+      "type": "string",
+      "description": "Version of the feature contract used at training time. Inference refuses mismatches."
+    },
+    "metrics_available": {
+      "type": "boolean",
+      "description": "Whether `GET /api/model/metrics` will return measured results."
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "DataSource": {
+      "type": "string",
+      "description": "Provenance label attached to every record and every forecast. `synthetic_dev` is\nthe team's development fixture data and must be displayed as such. `official` is\nthe organizer-supplied dataset.\n",
+      "enum": [
+        "synthetic_dev",
+        "official",
+        "mixed",
+        "unknown"
+      ]
+    }
+  }
+}

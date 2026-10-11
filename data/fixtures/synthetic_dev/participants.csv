@@ -1,0 +1,7 @@
+participant_id,display_name,timezone
+synthetic_p001,Participant 001,America/New_York
+synthetic_p002,Participant 002,America/Chicago
+synthetic_p003,Participant 003,America/Los_Angeles
+synthetic_p004,Participant 004,America/New_York
+synthetic_p005,Participant 005,America/Denver
+synthetic_p006,Participant 006,America/Phoenix

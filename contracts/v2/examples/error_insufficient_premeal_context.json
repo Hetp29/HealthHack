@@ -1,0 +1,14 @@
+{
+  "request": "POST /api/v2/meals/meal_0000000000000000000000000000008c/predict",
+  "status": 422,
+  "body": {
+    "code": "insufficient_premeal_context",
+    "message": "No CGM reading close enough before the meal to anchor a forecast.",
+    "request_id": "req_00000000000000000000",
+    "details": {
+      "baseline_tolerance_minutes": 15.0,
+      "latest_cgm_age_minutes": 1590.0,
+      "cgm_readings_in_lookback": 115
+    }
+  }
+}

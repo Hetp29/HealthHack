@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://glucotwin.local/contracts/v1/participants_response.schema.json",
+  "title": "ParticipantsResponse",
+  "description": "GlucoTwin contract v1.0.0 \u2014 generated from contracts/openapi.yaml by contracts/build_schemas.py. Do not edit by hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "participants"
+  ],
+  "properties": {
+    "participants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ParticipantSummary"
+      }
+    }
+  },
+  "$defs": {
+    "DataSource": {
+      "type": "string",
+      "description": "Provenance label attached to every record and every forecast. `synthetic_dev` is\nthe team's development fixture data and must be displayed as such. `official` is\nthe organizer-supplied dataset.\n",
+      "enum": [
+        "synthetic_dev",
+        "official",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "ParticipantSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "participant_id",
+        "display_name",
+        "data_source",
+        "days_available"
+      ],
+      "properties": {
+        "participant_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Opaque identifier."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Synthetic display label. Never a real patient identifier."
+        },
+        "data_source": {
+          "$ref": "#/$defs/DataSource"
+        },
+        "days_available": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0,
+          "description": "Span of observed CGM coverage in days, computed as\n(last CGM timestamp - first CGM timestamp) / 86400, rounded to 2 decimals.\nThis is calendar span, not a gap-free coverage guarantee.\n"
+        }
+      }
+    }
+  }
+}

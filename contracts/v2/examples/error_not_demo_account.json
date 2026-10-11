@@ -1,0 +1,10 @@
+{
+  "request": "GET /api/v2/demo/replay",
+  "status": 403,
+  "body": {
+    "code": "not_demo_account",
+    "message": "This account is not a demo replay account.",
+    "request_id": "req_00000000000000000000",
+    "details": {}
+  }
+}

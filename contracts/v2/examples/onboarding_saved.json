@@ -1,0 +1,77 @@
+{
+  "request": "PATCH /api/v2/onboarding",
+  "status": 200,
+  "body": {
+    "answers": {
+      "primary_goal": "spike_awareness",
+      "diabetes_status": "prediabetes",
+      "weight": {
+        "value": 165,
+        "unit": "lb"
+      },
+      "hba1c": {
+        "value": 5.9,
+        "unit": "%"
+      },
+      "fasting_glucose": "unknown",
+      "monitoring_method": "cgm",
+      "wants_spike_alerts": true,
+      "alert_threshold": {
+        "value": 160,
+        "unit": "mg/dL"
+      }
+    },
+    "completed": false,
+    "version": 1,
+    "updated_at": "2026-09-20T16:00:00Z",
+    "sections": {
+      "basics": [
+        "date_of_birth",
+        "sex_assigned_at_birth",
+        "height",
+        "weight",
+        "primary_goal"
+      ],
+      "metabolic": [
+        "diabetes_status",
+        "diagnosis_year",
+        "hba1c",
+        "fasting_glucose",
+        "clinician_plan"
+      ],
+      "monitoring": [
+        "monitoring_method",
+        "cgm_brand",
+        "cgm_connect_preference",
+        "cgm_usage_duration"
+      ],
+      "medications": [
+        "takes_glucose_medication",
+        "medication_names",
+        "medication_schedule",
+        "uses_insulin",
+        "wants_medication_reminders",
+        "discontinued_medications"
+      ],
+      "meals": [
+        "meals_per_day",
+        "meal_time_ranges",
+        "dietary_pattern",
+        "dietary_restrictions",
+        "meal_logging_method"
+      ],
+      "wearables": [
+        "uses_wearable",
+        "wearable_platform",
+        "wearable_connect_preference",
+        "wearable_permissions"
+      ],
+      "alerts": [
+        "wants_spike_alerts",
+        "alert_threshold",
+        "alert_channels",
+        "quiet_hours"
+      ]
+    }
+  }
+}

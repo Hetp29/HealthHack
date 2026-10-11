@@ -1,0 +1,31 @@
+{
+  "request": "GET /api/v2/medications",
+  "status": 200,
+  "body": {
+    "regimens": [
+      {
+        "regimen_id": "rgm_0000000000000000000000000000005a",
+        "name": "Metformin",
+        "medication_class": "metformin",
+        "form": "tablet",
+        "dose": {
+          "amount": 500.0,
+          "unit": "mg"
+        },
+        "frequency": "twice daily",
+        "schedule_times": [
+          "12:30",
+          "20:00"
+        ],
+        "timezone": "America/New_York",
+        "start_date": null,
+        "end_date": null,
+        "status": "current",
+        "reminders_enabled": true,
+        "prescriber_note": null,
+        "created_at": "2026-09-20T16:00:00Z",
+        "updated_at": "2026-09-20T16:00:00Z"
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "request": "POST /api/v2/medication-doses",
+  "status": 201,
+  "body": {
+    "dose_id": "dos_0000000000000000000000000000005c",
+    "regimen_id": "rgm_0000000000000000000000000000005a",
+    "scheduled_at": null,
+    "action": "taken",
+    "actual_at": "2026-09-20T16:00:00Z",
+    "snoozed_until": null,
+    "actor": "user",
+    "provenance": "user_action",
+    "client_event_id": "client-evt-0001",
+    "recorded_at": "2026-09-20T16:00:00Z",
+    "replayed": false
+  }
+}

@@ -1,0 +1,1023 @@
+openapi: 3.0.3
+info:
+  title: GlucoTwin API
+  description: |
+    GlucoTwin postprandial glucose response forecasting API.
+
+    **CONTRACT VERSION 1.0 — FROZEN.**
+    Transcribed from GlucoTwin_MASTER_Build_Specification.docx v1.0 ("Frozen REST API: version 1.0").
+    Owner/approver: Ruhaan Shah. Consumers: Het (data layer), Neil (frontend).
+
+    Any change to a path, field name, type, unit, or enum value requires a documented
+    contract version bump approved by Ruhaan. Producers must not add, rename, or
+    re-shape fields silently.
+
+    ## Conventions
+    - All datetimes are RFC3339 / ISO 8601 with an explicit UTC offset. `Z` is preferred.
+      Offset-naive datetimes are rejected with 422.
+    - Units: glucose `mg/dL`, heart rate `bpm`, macronutrients `g`, energy `kcal`,
+      incremental AUC `mg/dL*min`, time `minutes`.
+    - Participant IDs and meal IDs are opaque strings. Clients must not parse them.
+    - A missing optional value is `null`. It is never silently coerced to `0`.
+    - Research prototype on synthetic data. Not a medical device, not for clinical
+      decision-making.
+  version: "1.0.0"
+  contact:
+    name: Ruhaan Shah (API owner)
+  license:
+    name: See repository LICENSE
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+  - url: "{deployedBaseUrl}"
+    description: Deployed instance (set via VITE_API_BASE_URL / GLUCOTWIN_API_BASE_URL)
+    variables:
+      deployedBaseUrl:
+        default: http://localhost:8000
+
+tags:
+  - name: system
+    description: Liveness and model provenance
+  - name: participants
+    description: Participant roster and observed history
+  - name: prediction
+    description: Postprandial forecast generation
+  - name: model
+    description: Model metadata and measured evaluation results
+
+paths:
+  /health:
+    get:
+      tags: [system]
+      summary: Liveness probe
+      description: |
+        Always returns 200 when the process is serving. Deliberately does NOT depend on
+        model-artifact availability or data-layer availability, so that orchestrators can
+        distinguish "process up" from "model ready". Use `GET /api/model/info` for readiness.
+      operationId: getHealth
+      responses:
+        "200":
+          description: Service is serving
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: ok
+                version: "1.0.0"
+
+  /api/participants:
+    get:
+      tags: [participants]
+      summary: List available participants
+      operationId: listParticipants
+      responses:
+        "200":
+          description: Participant roster. May be an empty list if no data is loaded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ParticipantsResponse"
+        "503":
+          description: Data layer unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/participants/{id}/history:
+    get:
+      tags: [participants]
+      summary: Observed history for one participant
+      description: |
+        Returns observed (not predicted) records for a single participant, sorted
+        chronologically ascending within each modality. Strictly filtered by
+        `participant_id`; records from other participants can never appear.
+      operationId: getParticipantHistory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Opaque participant identifier
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+          example: synthetic_p001
+        - name: start
+          in: query
+          required: false
+          description: Inclusive lower bound on record timestamp (RFC3339, offset-aware)
+          schema:
+            type: string
+            format: date-time
+          example: "2026-10-01T00:00:00Z"
+        - name: end
+          in: query
+          required: false
+          description: Inclusive upper bound on record timestamp (RFC3339, offset-aware)
+          schema:
+            type: string
+            format: date-time
+          example: "2026-10-08T00:00:00Z"
+      responses:
+        "200":
+          description: Observed history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoryResponse"
+        "404":
+          description: Unknown participant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: participant_not_found
+                message: Unknown participant identifier.
+                detail: { participant_id: nope_p999 }
+        "422":
+          description: Invalid query parameters (e.g. offset-naive datetime, start > end)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Data layer unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/predict:
+    post:
+      tags: [prediction]
+      summary: Forecast the postprandial glucose response to one meal
+      description: |
+        Generates a 0–120 minute forecast for a specific participant and meal.
+
+        The request may only carry information that genuinely exists at prediction time:
+        the participant, the meal timestamp, and the meal composition. Pre-meal physiological
+        context (recent CGM, recent heart rate, prior meal timing, medication exposure) is
+        reconstructed server-side from stored history truncated at `meal_timestamp`.
+        No post-meal observation for this meal is ever read as a model input.
+      operationId: postPredict
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PredictRequest"
+      responses:
+        "200":
+          description: Forecast produced
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForecastResponse"
+        "404":
+          description: Unknown participant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: |
+            Invalid request. Causes include: negative or non-finite macronutrient values,
+            offset-naive `meal_timestamp`, `context_override` carrying a future timestamp,
+            or insufficient pre-meal CGM coverage to establish a baseline.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: insufficient_premeal_context
+                message: No CGM observation within the baseline tolerance before the meal timestamp.
+                detail:
+                  participant_id: synthetic_p001
+                  meal_timestamp: "2026-10-08T12:30:00Z"
+                  baseline_tolerance_minutes: 15
+        "503":
+          description: No trained model artifact is loaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                code: model_not_trained
+                message: No trained model artifact is available. Run `python -m ml.train`.
+                detail: { artifact_path: ml/artifacts/model.joblib }
+
+  /api/compare:
+    post:
+      tags: [prediction]
+      summary: Compare the same meal across two prediction contexts (P1)
+      description: |
+        P1 / standout feature. Returns exactly two `ForecastResponse` objects for the same
+        meal under two different contexts (typically two participants), plus a mandatory
+        interpretive caveat.
+
+        This endpoint illustrates between-person variability in modelled response. It is
+        **not** a dietary recommendation and does not rank participants or meals.
+        Until implemented, this path returns 503 with code `not_implemented`.
+      operationId: postCompare
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompareRequest"
+      responses:
+        "200":
+          description: Two forecasts plus caveat
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompareResponse"
+        "404":
+          description: One or both participants unknown
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Model not trained, or endpoint not yet implemented
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/model/metrics:
+    get:
+      tags: [model]
+      summary: Measured held-out evaluation results
+      description: |
+        Returns evaluation results that were actually computed by `python -m ml.evaluate`.
+        If no evaluation has been run, `by_model` and `by_horizon` are empty and
+        `limitations` states that no validated metrics exist. The service never
+        synthesizes, interpolates, or estimates metric values.
+      operationId: getModelMetrics
+      responses:
+        "200":
+          description: Metrics report (possibly empty, explicitly flagged)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetricsResponse"
+        "503":
+          description: Metrics subsystem unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/model/info:
+    get:
+      tags: [model]
+      summary: Loaded model provenance and readiness
+      operationId: getModelInfo
+      responses:
+        "200":
+          description: |
+            Model provenance. Returned with `model_version: "none"` and
+            `metrics_available: false` when no artifact is loaded, so that clients can
+            render a readiness state without triggering an error path.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelInfoResponse"
+
+components:
+  schemas:
+
+    # ---------- system ----------
+
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status, version]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        version:
+          type: string
+          description: Contract version served by this process.
+          example: "1.0.0"
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [code, message, detail]
+      description: |
+        Uniform error envelope for every non-2xx response produced by GlucoTwin,
+        including FastAPI/Pydantic validation failures, which are translated into this
+        shape. `detail` is a JSON object (never a bare string or array) and never
+        contains participant-level physiological values or stack traces.
+      properties:
+        code:
+          type: string
+          description: Stable machine-readable error code. Clients may branch on this.
+          enum:
+            - participant_not_found
+            - invalid_request
+            - naive_datetime
+            - future_context_override
+            - insufficient_premeal_context
+            - model_not_trained
+            - data_layer_unavailable
+            - not_implemented
+            - internal_error
+        message:
+          type: string
+          description: Short human-readable, non-sensitive explanation.
+        detail:
+          type: object
+          additionalProperties: true
+          description: Structured context for debugging and UI display. May be empty.
+
+    # ---------- participants ----------
+
+    ParticipantsResponse:
+      type: object
+      additionalProperties: false
+      required: [participants]
+      properties:
+        participants:
+          type: array
+          items:
+            $ref: "#/components/schemas/ParticipantSummary"
+
+    ParticipantSummary:
+      type: object
+      additionalProperties: false
+      required: [participant_id, display_name, data_source, days_available]
+      properties:
+        participant_id:
+          type: string
+          minLength: 1
+          description: Opaque identifier.
+          example: synthetic_p001
+        display_name:
+          type: string
+          description: Synthetic display label. Never a real patient identifier.
+          example: Participant 001
+        data_source:
+          $ref: "#/components/schemas/DataSource"
+        days_available:
+          type: number
+          format: double
+          minimum: 0
+          description: |
+            Span of observed CGM coverage in days, computed as
+            (last CGM timestamp - first CGM timestamp) / 86400, rounded to 2 decimals.
+            This is calendar span, not a gap-free coverage guarantee.
+          example: 7.0
+
+    HistoryResponse:
+      type: object
+      additionalProperties: false
+      required: [participant_id, cgm, meals, heart_rate]
+      description: |
+        Observed records only. Each array is sorted by ascending `timestamp`.
+        `heart_rate` is `[]` (not null) when the modality is absent for this participant.
+      properties:
+        participant_id:
+          type: string
+        cgm:
+          type: array
+          items:
+            $ref: "#/components/schemas/CgmPoint"
+        meals:
+          type: array
+          items:
+            $ref: "#/components/schemas/MealRecord"
+        heart_rate:
+          type: array
+          items:
+            $ref: "#/components/schemas/HeartRatePoint"
+
+    CgmPoint:
+      type: object
+      additionalProperties: false
+      required: [timestamp, glucose_mg_dl]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: RFC3339, offset-aware, normalized to UTC.
+        glucose_mg_dl:
+          type: number
+          format: double
+          minimum: 0
+          description: Interstitial glucose in mg/dL. Non-finite and negative values are rejected at ingestion.
+
+    HeartRatePoint:
+      type: object
+      additionalProperties: false
+      required: [timestamp, heart_rate_bpm]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        heart_rate_bpm:
+          type: number
+          format: double
+          minimum: 0
+        resting_heart_rate_bpm:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+          description: Optional. `null` when the source does not supply it.
+
+    MealRecord:
+      type: object
+      additionalProperties: false
+      required: [meal_id, participant_id, timestamp]
+      description: |
+        An observed meal. Macronutrients are optional at ingestion; a meal with missing
+        macros cannot be used as a prediction input without a reviewed estimate.
+      properties:
+        meal_id:
+          type: string
+          minLength: 1
+        participant_id:
+          type: string
+          minLength: 1
+        timestamp:
+          type: string
+          format: date-time
+        carbs_g:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+        protein_g:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+        fat_g:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+        fiber_g:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+        calories_kcal:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+        image_ref:
+          type: string
+          nullable: true
+          description: |
+            Opaque reference to a meal photo held by the data layer. Never a filesystem
+            path resolved from client input. Nutrition is NOT inferred from images unless a
+            reviewed, licensed service is in use.
+
+    DataSource:
+      type: string
+      description: |
+        Provenance label attached to every record and every forecast. `synthetic_dev` is
+        the team's development fixture data and must be displayed as such. `official` is
+        the organizer-supplied dataset.
+      enum: [synthetic_dev, official, mixed, unknown]
+
+    # ---------- prediction ----------
+
+    MealInput:
+      type: object
+      additionalProperties: false
+      required: [carbs_g, protein_g, fat_g, fiber_g, calories_kcal]
+      description: |
+        Meal composition for the meal being forecast. All five fields are required by the
+        prediction contract (unlike an ingested `MealRecord`, where macros are optional),
+        because the model consumes them directly.
+      properties:
+        carbs_g:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1000
+          example: 55
+        protein_g:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1000
+          example: 22
+        fat_g:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1000
+          example: 16
+        fiber_g:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 200
+          example: 7
+        calories_kcal:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 10000
+          example: 460
+
+    ContextOverride:
+      type: object
+      additionalProperties: false
+      nullable: true
+      description: |
+        Optional pre-meal context supplied by the caller instead of being read from
+        stored history. Every field is optional and defaults to `null`, in which case the
+        server derives that value from history truncated at `meal_timestamp`.
+
+        IMPLEMENTATION CHOICE: the master specification fixes this field as present and
+        nullable but does not enumerate its members. This object is the v1.0 definition.
+        It is additive-only; new members require a contract bump.
+
+        Server-side guard: any supplied `as_of` strictly later than `meal_timestamp` is
+        rejected 422 `future_context_override`. The override can never be used to inject a
+        post-meal observation.
+      properties:
+        premeal_glucose_mg_dl:
+          type: number
+          format: double
+          nullable: true
+          minimum: 20
+          maximum: 600
+          description: Overrides the measured baseline glucose at minute 0.
+        recent_heart_rate_bpm:
+          type: number
+          format: double
+          nullable: true
+          minimum: 20
+          maximum: 250
+          description: Overrides the mean pre-meal heart rate feature.
+        minutes_since_prior_meal:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+          maximum: 1440
+          description: Overrides time elapsed since the previous meal.
+        as_of:
+          type: string
+          format: date-time
+          nullable: true
+          description: |
+            Timestamp the supplied context was observed. Must be <= `meal_timestamp`.
+            Defaults to `meal_timestamp` when omitted.
+
+    PredictRequest:
+      type: object
+      additionalProperties: false
+      required: [participant_id, meal_timestamp, meal]
+      properties:
+        participant_id:
+          type: string
+          minLength: 1
+          maxLength: 128
+          example: synthetic_p001
+        meal_timestamp:
+          type: string
+          format: date-time
+          description: RFC3339 with explicit offset. Offset-naive input is rejected 422.
+          example: "2026-10-08T12:30:00Z"
+        meal:
+          $ref: "#/components/schemas/MealInput"
+        context_override:
+          $ref: "#/components/schemas/ContextOverride"
+
+    PredictionStatus:
+      type: string
+      description: |
+        Whether the returned forecast used participant-specific calibration.
+        - `personalized`: the participant had at least the configured minimum number of
+          training meal episodes, and a shrunk per-participant correction was applied.
+        - `generalized_fallback`: the cohort-level model was used alone. The reason is
+          stated as the first entry in `limitations`.
+      enum: [personalized, generalized_fallback]
+
+    UncertaintyStatus:
+      type: string
+      description: |
+        - `not_calibrated`: no empirically validated interval exists. `lower_mg_dl` and
+          `upper_mg_dl` MUST be `null` and clients MUST NOT draw a band.
+        - `empirical_holdout`: bounds derive from measured held-out residual quantiles whose
+          coverage was computed and is reported in `GET /api/model/metrics`.
+      enum: [not_calibrated, empirical_holdout]
+
+    ForecastPoint:
+      type: object
+      additionalProperties: false
+      required: [minute, glucose_mg_dl, lower_mg_dl, upper_mg_dl]
+      properties:
+        minute:
+          type: integer
+          minimum: 0
+          maximum: 120
+          multipleOf: 5
+          description: Minutes after `meal_timestamp`.
+        glucose_mg_dl:
+          type: number
+          format: double
+          description: Predicted glucose in mg/dL.
+        lower_mg_dl:
+          type: number
+          format: double
+          nullable: true
+          description: Lower interval bound. `null` unless `uncertainty_status` is `empirical_holdout`.
+        upper_mg_dl:
+          type: number
+          format: double
+          nullable: true
+          description: Upper interval bound. `null` unless `uncertainty_status` is `empirical_holdout`.
+
+    ForecastMetrics:
+      type: object
+      additionalProperties: false
+      required: [peak_mg_dl, peak_delta_mg_dl, time_to_peak_minutes, incremental_auc_mg_dl_min]
+      description: |
+        Summary statistics derived from the 25 sampled `points`. These are computed from
+        the returned curve, never predicted independently, so they are always mutually
+        consistent with `points`.
+      properties:
+        peak_mg_dl:
+          type: number
+          format: double
+          description: Maximum `glucose_mg_dl` over the 25 sampled points.
+        peak_delta_mg_dl:
+          type: number
+          format: double
+          description: "`peak_mg_dl` minus baseline glucose at minute 0. May be <= 0."
+        time_to_peak_minutes:
+          type: integer
+          minimum: 0
+          maximum: 120
+          multipleOf: 5
+          description: Minute of the peak. On ties, the EARLIEST minute wins.
+        incremental_auc_mg_dl_min:
+          type: number
+          format: double
+          minimum: 0
+          description: |
+            Positive incremental AUC in mg/dL*min: five-minute trapezoidal integration of
+            max(predicted glucose - baseline glucose, 0) over minutes 0..120.
+            This is strictly non-negative and is NOT signed net excursion.
+
+    Driver:
+      type: object
+      additionalProperties: false
+      required: [feature, contribution_mg_dl, explanation]
+      description: |
+        A model-attribution term, not a causal physiological claim. For the linear model
+        family, contributions form an exact additive decomposition of the predicted
+        excursion at the reported horizon.
+      properties:
+        feature:
+          type: string
+          description: Feature name, or `participant_calibration` for the personalization offset.
+          example: carbs_g
+        contribution_mg_dl:
+          type: number
+          format: double
+          description: Signed contribution to the predicted excursion, in mg/dL.
+          example: 12.5
+        explanation:
+          type: string
+          description: Plain-language statement of what the number means and does not mean.
+          example: Model-based contribution
+
+    ForecastResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - participant_id
+        - meal_timestamp
+        - model_version
+        - data_source
+        - prediction_status
+        - points
+        - glucose_at_minutes
+        - metrics
+        - drivers
+        - uncertainty_status
+        - limitations
+      properties:
+        participant_id:
+          type: string
+        meal_timestamp:
+          type: string
+          format: date-time
+          description: Echoed back normalized to UTC.
+        model_version:
+          type: string
+          description: Version of the artifact that produced this forecast.
+          example: v0.1.0
+        data_source:
+          $ref: "#/components/schemas/DataSource"
+        prediction_status:
+          $ref: "#/components/schemas/PredictionStatus"
+        points:
+          type: array
+          minItems: 25
+          maxItems: 25
+          description: |
+            EXACTLY 25 points at minutes 0, 5, 10, ..., 120 inclusive, in strictly
+            ascending minute order. Minute 0 is the measured pre-meal baseline glucose,
+            not a model output.
+          items:
+            $ref: "#/components/schemas/ForecastPoint"
+        glucose_at_minutes:
+          type: object
+          additionalProperties: false
+          required: ["30", "60", "90", "120"]
+          description: |
+            Convenience read-out of the four required horizons. DERIVED from `points` by
+            exact minute lookup, never independently generated. Keys are strings.
+          properties:
+            "30": { type: number, format: double }
+            "60": { type: number, format: double }
+            "90": { type: number, format: double }
+            "120": { type: number, format: double }
+        metrics:
+          $ref: "#/components/schemas/ForecastMetrics"
+        drivers:
+          type: array
+          description: |
+            Ranked by absolute contribution, descending. MAY be empty `[]` when the loaded
+            model family does not support attribution; in that case `limitations` says so.
+            An empty list is honest; a fabricated list is a P1 defect.
+          items:
+            $ref: "#/components/schemas/Driver"
+        uncertainty_status:
+          $ref: "#/components/schemas/UncertaintyStatus"
+        limitations:
+          type: array
+          minItems: 1
+          description: |
+            Human-readable caveats that the client MUST surface. Always contains at least
+            the research-use disclaimer. When `prediction_status` is
+            `generalized_fallback`, the first entry states the fallback reason.
+          items:
+            type: string
+
+    CompareRequest:
+      type: object
+      additionalProperties: false
+      required: [participant_ids, meal_timestamp, meal]
+      description: The same meal evaluated under exactly two participant contexts.
+      properties:
+        participant_ids:
+          type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            type: string
+            minLength: 1
+        meal_timestamp:
+          type: string
+          format: date-time
+        meal:
+          $ref: "#/components/schemas/MealInput"
+        context_override:
+          $ref: "#/components/schemas/ContextOverride"
+
+    CompareResponse:
+      type: object
+      additionalProperties: false
+      required: [comparison_id, forecasts, caveat]
+      properties:
+        comparison_id:
+          type: string
+          description: Opaque identifier for this comparison.
+        forecasts:
+          type: array
+          minItems: 2
+          maxItems: 2
+          items:
+            $ref: "#/components/schemas/ForecastResponse"
+        caveat:
+          type: string
+          description: Mandatory interpretive caveat. Clients MUST display it verbatim.
+
+    # ---------- model ----------
+
+    HorizonMetric:
+      type: object
+      additionalProperties: false
+      required: [horizon_minutes, n, mae_mg_dl, rmse_mg_dl]
+      properties:
+        horizon_minutes:
+          type: integer
+          enum: [30, 60, 90, 120]
+        n:
+          type: integer
+          minimum: 0
+          description: Number of held-out meal episodes with an available target at this horizon.
+        mae_mg_dl:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+        rmse_mg_dl:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+        interval_coverage:
+          type: number
+          format: double
+          nullable: true
+          minimum: 0
+          maximum: 1
+          description: |
+            Empirical fraction of held-out targets falling inside the predicted interval.
+            `null` unless intervals were produced and coverage was actually measured.
+
+    CurveMetric:
+      type: object
+      additionalProperties: false
+      required:
+        - n
+        - peak_mae_mg_dl
+        - peak_delta_mae_mg_dl
+        - time_to_peak_mae_minutes
+        - iauc_mae_mg_dl_min
+      description: Errors on curve-derived summary statistics, computed on held-out episodes.
+      properties:
+        n: { type: integer, minimum: 0 }
+        peak_mae_mg_dl: { type: number, format: double, nullable: true, minimum: 0 }
+        peak_delta_mae_mg_dl: { type: number, format: double, nullable: true, minimum: 0 }
+        time_to_peak_mae_minutes: { type: number, format: double, nullable: true, minimum: 0 }
+        iauc_mae_mg_dl_min: { type: number, format: double, nullable: true, minimum: 0 }
+
+    ModelMetricBlock:
+      type: object
+      additionalProperties: false
+      required: [model_name, overall_mae_mg_dl, overall_rmse_mg_dl, by_horizon, curve]
+      properties:
+        model_name:
+          type: string
+          description: "One of: persistence, generalized, personalized."
+          example: personalized
+        overall_mae_mg_dl: { type: number, format: double, nullable: true, minimum: 0 }
+        overall_rmse_mg_dl: { type: number, format: double, nullable: true, minimum: 0 }
+        by_horizon:
+          type: array
+          items:
+            $ref: "#/components/schemas/HorizonMetric"
+        curve:
+          $ref: "#/components/schemas/CurveMetric"
+
+    ParticipantSampleCount:
+      type: object
+      additionalProperties: false
+      required: [participant_id, train_episodes, test_episodes, personalized]
+      properties:
+        participant_id: { type: string }
+        train_episodes: { type: integer, minimum: 0 }
+        test_episodes: { type: integer, minimum: 0 }
+        personalized:
+          type: boolean
+          description: Whether this participant met the minimum-episode threshold for calibration.
+
+    PersonalizationComparison:
+      type: object
+      additionalProperties: false
+      required: [participants_improved, participants_worsened, participants_unchanged, by_participant]
+      description: |
+        Falsifiable personalized-vs-generalized comparison on strictly later held-out
+        meal episodes. A negative or null result is reported as-is.
+      properties:
+        participants_improved: { type: integer, minimum: 0 }
+        participants_worsened: { type: integer, minimum: 0 }
+        participants_unchanged: { type: integer, minimum: 0 }
+        by_participant:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [participant_id, n, generalized_mae_mg_dl, personalized_mae_mg_dl, delta_mae_mg_dl]
+            properties:
+              participant_id: { type: string }
+              n: { type: integer, minimum: 0 }
+              generalized_mae_mg_dl: { type: number, format: double, nullable: true }
+              personalized_mae_mg_dl: { type: number, format: double, nullable: true }
+              delta_mae_mg_dl:
+                type: number
+                format: double
+                nullable: true
+                description: generalized MAE minus personalized MAE. Positive means personalization helped.
+
+    MetricsResponse:
+      type: object
+      additionalProperties: false
+      required: [dataset_source, evaluation_protocol, by_model, by_horizon, sample_counts, limitations]
+      properties:
+        dataset_source:
+          $ref: "#/components/schemas/DataSource"
+        evaluation_protocol:
+          type: object
+          additionalProperties: false
+          required: [name, description, split_unit, test_fraction, evaluated_at]
+          properties:
+            name:
+              type: string
+              enum: [within_person_chronological, cohort_holdout]
+              description: |
+                - `within_person_chronological`: per participant, earliest meals train and
+                  latest meals test. Supports personalization claims.
+                - `cohort_holdout`: entire participants are held out. Tests generalization
+                  to unseen people; personalization is unavailable by construction.
+            description: { type: string }
+            split_unit:
+              type: string
+              enum: [meal_episode]
+              description: Splits are always by whole meal episode. Five-minute CGM rows are never randomly split.
+            test_fraction: { type: number, format: double, minimum: 0, maximum: 1 }
+            evaluated_at: { type: string, format: date-time }
+            excluded_overlapping_meals:
+              type: boolean
+              nullable: true
+              description: Whether episodes with a subsequent meal inside the 120-minute window were excluded.
+        by_model:
+          type: array
+          description: Empty when no evaluation has been run.
+          items:
+            $ref: "#/components/schemas/ModelMetricBlock"
+        by_horizon:
+          type: array
+          description: |
+            Per-horizon metrics for the primary (personalized) model, duplicated here as a
+            flat convenience view of `by_model`. Empty when no evaluation has been run.
+          items:
+            $ref: "#/components/schemas/HorizonMetric"
+        sample_counts:
+          type: object
+          additionalProperties: false
+          required: [participants, train_episodes, test_episodes, by_participant]
+          properties:
+            participants: { type: integer, minimum: 0 }
+            train_episodes: { type: integer, minimum: 0 }
+            test_episodes: { type: integer, minimum: 0 }
+            excluded_episodes:
+              type: integer
+              nullable: true
+              minimum: 0
+              description: Episodes dropped for insufficient target coverage or overlap, when recorded.
+            by_participant:
+              type: array
+              items:
+                $ref: "#/components/schemas/ParticipantSampleCount"
+        personalization:
+          $ref: "#/components/schemas/PersonalizationComparison"
+        limitations:
+          type: array
+          minItems: 1
+          items: { type: string }
+
+    ModelInfoResponse:
+      type: object
+      additionalProperties: false
+      required: [model_version, trained_at, data_source, feature_set_version, metrics_available, limitations]
+      properties:
+        model_version:
+          type: string
+          description: '`"none"` when no artifact is loaded.'
+          example: v0.1.0
+        trained_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: "`null` when no artifact is loaded."
+        data_source:
+          $ref: "#/components/schemas/DataSource"
+        feature_set_version:
+          type: string
+          description: Version of the feature contract used at training time. Inference refuses mismatches.
+          example: fs-1.0
+        metrics_available:
+          type: boolean
+          description: Whether `GET /api/model/metrics` will return measured results.
+        limitations:
+          type: array
+          minItems: 1
+          items: { type: string }

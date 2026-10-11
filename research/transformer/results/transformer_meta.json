@@ -1,0 +1,30 @@
+{
+  "metabonet_windows": 30000,
+  "groups": {
+    "A fs-1.3 (reference)": "reference",
+    "T1 temporal transformer": "direct",
+    "T2 patch transformer (PatchTST-inspired)": "direct",
+    "T3 meal-conditioned transformer": "direct",
+    "T8 historical-meal cross-attention": "direct",
+    "T4 masked-CGM pretrained": "direct",
+    "T5 forecast pretrained": "direct",
+    "T6 MetaboNet pretrained (transfer)": "direct",
+    "CTRL shuffled-objective pretrained": "direct",
+    "T7 frozen pretrained embeddings + fs-1.3": "frozen",
+    "CTRL random frozen embeddings + fs-1.3": "frozen",
+    "CTRL shuffled-pretrained frozen + fs-1.3": "frozen"
+  },
+  "params": {
+    "T1 temporal transformer": 19684,
+    "T2 patch transformer (PatchTST-inspired)": 20324,
+    "T3 meal-conditioned transformer": 22020,
+    "T8 historical-meal cross-attention": 10084,
+    "T4 masked-CGM pretrained": 19684,
+    "T5 forecast pretrained": 19684,
+    "T6 MetaboNet pretrained (transfer)": 19684,
+    "CTRL shuffled-objective pretrained": 19684,
+    "T7 frozen pretrained embeddings + fs-1.3": 17248,
+    "CTRL random frozen embeddings + fs-1.3": 17248,
+    "CTRL shuffled-pretrained frozen + fs-1.3": 17248
+  }
+}

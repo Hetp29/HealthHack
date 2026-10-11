@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://glucotwin.local/contracts/v1/health_response.schema.json",
+  "title": "HealthResponse",
+  "description": "GlucoTwin contract v1.0.0 \u2014 generated from contracts/openapi.yaml by contracts/build_schemas.py. Do not edit by hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "version"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "description": "Contract version served by this process."
+    }
+  }
+}

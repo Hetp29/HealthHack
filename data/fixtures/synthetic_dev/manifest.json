@@ -1,0 +1,55 @@
+{
+  "data_source": "synthetic_dev",
+  "label": "SYNTHETIC DEVELOPMENT DATA (synthetic_dev). Fictional participants from a hand-written simulator; not real people, not learned physiology, not clinical evidence.",
+  "generator": "data/fixtures/generator.py",
+  "generator_version": "1.0.0",
+  "seed": 20261011,
+  "local_start_date": "2026-10-01",
+  "days": 7,
+  "participants": [
+    "synthetic_p001",
+    "synthetic_p002",
+    "synthetic_p003",
+    "synthetic_p004",
+    "synthetic_p005",
+    "synthetic_p006"
+  ],
+  "files": {
+    "participants.csv": {
+      "rows": 6,
+      "sha256": "6cc6bb7291e9fe2ed34e157c8590f519817c776a9124bb6099ded8c114caef39"
+    },
+    "cgm.csv": {
+      "rows": 11772,
+      "sha256": "0ffb63ccc57ad9727ff31da2ca7ab25f724dd815e09c6ac9c5c5941c3a304687"
+    },
+    "heart_rate.csv": {
+      "rows": 9676,
+      "sha256": "237dc013c3f34b39403300c7402688a8826cb02af43abdd16f3ee279ea547c07"
+    },
+    "meals.csv": {
+      "rows": 138,
+      "sha256": "4901dffd168ee4fd76601053e33294e3218ea5fbfcc7e18d8ff1efe9f48f158b"
+    },
+    "medications.csv": {
+      "rows": 20,
+      "sha256": "6f2eb83e0dd1901e99f7c7ea9b48ec00064dedbebde89babd64d6e9e41d15edf"
+    },
+    "activity.csv": {
+      "rows": 3360,
+      "sha256": "8dfedd155a0889714e417df4cc285ae042f179f29b826e59d9f25310b2fb1f70"
+    }
+  },
+  "simulator_truth": "kept outside this directory on purpose; never a model input",
+  "assumptions": [
+    "Hand-written simulator; parameters are illustrative, not fitted to any human data.",
+    "CGM nominal 5-min cadence on a per-participant clock offset; values rounded and clipped to 40-400 mg/dL like a consumer CGM display.",
+    "~1.5% random CGM dropouts plus one deterministic signal-loss block per participant.",
+    "Logged meal times differ from true times by 0-8 min; logged macros carry ~8% self-report noise; some fiber/calorie labels are missing; synthetic_p005 logs snacks as carbs only; synthetic_p006 logs only 3 of its meals (unlogged meals still move glucose); one synthetic_p003 meal has no nutrition logged.",
+    "Some days include a snack 45-90 min after lunch, producing overlapping meal responses.",
+    "Heart rate: 5-min samples, ~4% missing; synthetic_p005 has no heart-rate or activity data at all.",
+    "Activity: steps summed per 15-min window.",
+    "Medications are recorded events with NO simulated physiological effect.",
+    "No meal images exist; image_ref is null everywhere."
+  ]
+}

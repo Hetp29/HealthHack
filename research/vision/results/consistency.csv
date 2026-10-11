@@ -1,0 +1,21 @@
+scope,covered,covered,full,full,n_pos,mean_delta
+regime,cold_start,within_person,cold_start,within_person,,
+model,,,,,,
+A1 + image-availability indicator,0.0,0.0,-0.008,-0.001,0,-0.0023
+A2 CONTROL random-weight backbone (PCA16),-0.264,-0.178,-0.382,-0.275,0,-0.2748
+A3 + ResNet-18 embeddings (PCA16),-0.163,-0.395,-0.236,-0.219,0,-0.2533
+A4 CONTROL embeddings permuted among training meals,-0.078,0.014,-0.114,-0.4,1,-0.1445
+A5 CONTROL embeddings permuted within participants,-0.294,-0.263,-0.349,-0.33,0,-0.309
+A6 CONTROL macronutrients only (no CGM),-5.701,-4.133,-5.64,-3.889,0,-4.8408
+A7 + source Meal Type one-hot,0.047,-0.033,0.025,-0.059,2,-0.005
+A8 + enriched composition (source macros only),0.098,0.135,0.071,0.21,4,0.1285
+C + CLIP ViT-B/32 (PCA16),-0.052,-0.479,-0.144,-0.146,0,-0.2052
+C + EfficientNet-B0 (PCA16),-0.192,-0.275,-0.241,-0.061,0,-0.1922
+C4 ResNet-18 PCA32,-0.272,-0.349,-0.412,-0.312,0,-0.3362
+C4 ResNet-18 PCA8,-0.033,-0.34,-0.113,-0.174,0,-0.165
+C5/E3 CLIP food-text similarity,0.048,0.153,-0.025,0.013,3,0.0473
+C6/E5 image-similar own-meal retrieval,-0.167,0.139,-0.187,-0.046,1,-0.0652
+E2 ImageNet food-class posteriors,-0.038,-0.153,-0.068,-0.154,0,-0.1032
+E6 ResNet-18 + Meal Type,-0.105,-0.498,-0.164,-0.256,0,-0.2558
+E7 ResNet-18 + enriched composition,-0.067,-0.154,-0.098,0.087,1,-0.058
+E7b composition + Meal Type + food posteriors,0.107,-0.037,0.1,0.043,3,0.0532

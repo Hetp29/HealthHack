@@ -1,0 +1,37 @@
+{
+  "request": "GET /api/v2/meals/meal_00000000000000000000000000000053/outcome",
+  "status": 200,
+  "body": {
+    "episode_id": "epi_00000000000000000000000000000059",
+    "prediction_id": "prd_00000000000000000000000000000058",
+    "meal_id": "meal_00000000000000000000000000000053",
+    "status": "pending",
+    "window_end_at": "2026-09-20T18:00:00Z",
+    "scoring_not_before": "2026-09-20T18:30:00Z",
+    "scored_at": null,
+    "score_revision": 0,
+    "eligible_for_personalization": false,
+    "ineligibility_reasons": [],
+    "coverage": null,
+    "observed": null,
+    "errors": null,
+    "predicted": {
+      "glucose_at_minutes": {
+        "30": 101.0,
+        "60": 128.1,
+        "90": 124.9,
+        "120": 118.8
+      },
+      "metrics": {
+        "peak_mg_dl": 128.1,
+        "peak_delta_mg_dl": 33.9,
+        "time_to_peak_minutes": 60,
+        "incremental_auc_mg_dl_min": 2510.7
+      }
+    },
+    "units": {
+      "glucose": "mg/dL",
+      "time": "minutes"
+    }
+  }
+}

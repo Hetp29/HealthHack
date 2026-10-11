@@ -1,0 +1,22 @@
+{
+  "participants": [
+    {
+      "participant_id": "synthetic_p001",
+      "display_name": "Participant 001",
+      "data_source": "synthetic_dev",
+      "days_available": 7.0
+    },
+    {
+      "participant_id": "synthetic_p002",
+      "display_name": "Participant 002",
+      "data_source": "synthetic_dev",
+      "days_available": 7.0
+    },
+    {
+      "participant_id": "synthetic_p006",
+      "display_name": "Participant 006",
+      "data_source": "synthetic_dev",
+      "days_available": 6.83
+    }
+  ]
+}

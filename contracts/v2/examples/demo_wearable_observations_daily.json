@@ -1,0 +1,243 @@
+{
+  "request": "GET /api/v2/wearables/observations",
+  "status": 200,
+  "body": {
+    "start": "2026-09-15T00:00:00Z",
+    "end": "2026-09-19T00:00:00Z",
+    "observations": [
+      {
+        "observation_id": "wob_00000000000000000000000000000cf7",
+        "provider": "demo_whoop",
+        "metric": "sleep_duration",
+        "value": 407.0,
+        "unit": "min",
+        "observed_at": "2026-09-15T23:24:00Z",
+        "observed_end_at": "2026-09-16T06:45:00Z",
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cf4",
+        "provider": "demo_whoop",
+        "metric": "hrv_rmssd",
+        "value": 46.9,
+        "unit": "ms",
+        "observed_at": "2026-09-16T06:45:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1",
+          "measured_during": "sleep"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cf5",
+        "provider": "demo_whoop",
+        "metric": "recovery_score",
+        "value": 57.0,
+        "unit": "percent",
+        "observed_at": "2026-09-16T06:45:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cf6",
+        "provider": "demo_whoop",
+        "metric": "resting_heart_rate",
+        "value": 59.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-16T06:45:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1",
+          "local_date": "2026-09-16"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cfb",
+        "provider": "demo_whoop",
+        "metric": "sleep_duration",
+        "value": 393.0,
+        "unit": "min",
+        "observed_at": "2026-09-16T22:53:00Z",
+        "observed_end_at": "2026-09-17T06:00:00Z",
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cf8",
+        "provider": "demo_whoop",
+        "metric": "hrv_rmssd",
+        "value": 50.9,
+        "unit": "ms",
+        "observed_at": "2026-09-17T06:00:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1",
+          "measured_during": "sleep"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cf9",
+        "provider": "demo_whoop",
+        "metric": "recovery_score",
+        "value": 66.0,
+        "unit": "percent",
+        "observed_at": "2026-09-17T06:00:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cfa",
+        "provider": "demo_whoop",
+        "metric": "resting_heart_rate",
+        "value": 57.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-17T06:00:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1",
+          "local_date": "2026-09-17"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cff",
+        "provider": "demo_whoop",
+        "metric": "sleep_duration",
+        "value": 398.0,
+        "unit": "min",
+        "observed_at": "2026-09-17T23:03:00Z",
+        "observed_end_at": "2026-09-18T06:15:00Z",
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cfc",
+        "provider": "demo_whoop",
+        "metric": "hrv_rmssd",
+        "value": 45.1,
+        "unit": "ms",
+        "observed_at": "2026-09-18T06:15:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1",
+          "measured_during": "sleep"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cfd",
+        "provider": "demo_whoop",
+        "metric": "recovery_score",
+        "value": 79.0,
+        "unit": "percent",
+        "observed_at": "2026-09-18T06:15:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      },
+      {
+        "observation_id": "wob_00000000000000000000000000000cfe",
+        "provider": "demo_whoop",
+        "metric": "resting_heart_rate",
+        "value": 58.0,
+        "unit": "bpm",
+        "observed_at": "2026-09-18T06:15:00Z",
+        "observed_end_at": null,
+        "received_at": "2026-09-18T19:00:00Z",
+        "detail": {
+          "simulated": true,
+          "device_profile": "whoop",
+          "source_label": "WHOOP",
+          "simulation_version": "sim-1",
+          "local_date": "2026-09-18"
+        },
+        "data_class": "demo",
+        "used_by_forecast_model": false
+      }
+    ],
+    "units": {
+      "heart_rate": "bpm",
+      "resting_heart_rate": "bpm",
+      "steps_daily": "count",
+      "sleep_duration": "min",
+      "hrv_rmssd": "ms",
+      "hrv_sdnn": "ms",
+      "recovery_score": "percent",
+      "workout": "min"
+    },
+    "note": "Wearable data is stored for display. It is not an input to the forecast model."
+  }
+}

@@ -1,0 +1,1776 @@
+dataset,source,participant_id,candidate_meals,with_7d_history,history_coverage_ok,baseline_ok,horizons_ok,eligible_episodes,eligible_without_overlap,first_eligible_meal_time,eligible_with_complete_macros
+cgmacros,CGMacros,cgmacros_001,43,12,12,42,42,11,9,2020-05-08 13:26:00,10
+cgmacros,CGMacros,cgmacros_002,37,9,9,36,36,8,6,2019-11-23 09:59:00,8
+cgmacros,CGMacros,cgmacros_003,35,12,12,35,34,11,9,2020-03-18 13:34:00,11
+cgmacros,CGMacros,cgmacros_004,62,24,24,62,61,23,11,2023-09-18 12:23:00,23
+cgmacros,CGMacros,cgmacros_005,46,16,16,46,45,15,10,2020-08-24 12:57:00,15
+cgmacros,CGMacros,cgmacros_006,38,13,13,38,38,13,10,2023-04-14 14:30:00,13
+cgmacros,CGMacros,cgmacros_007,17,1,0,17,9,0,0,,0
+cgmacros,CGMacros,cgmacros_008,30,9,9,30,29,8,8,2023-02-06 12:24:00,8
+cgmacros,CGMacros,cgmacros_009,41,11,11,41,40,10,10,2020-09-22 12:24:00,10
+cgmacros,CGMacros,cgmacros_010,45,13,13,45,45,13,10,2020-06-28 11:46:00,13
+cgmacros,CGMacros,cgmacros_011,39,11,11,39,38,10,9,2020-10-10 11:52:00,10
+cgmacros,CGMacros,cgmacros_012,33,11,11,32,32,10,10,2023-03-05 09:58:00,10
+cgmacros,CGMacros,cgmacros_013,39,13,13,39,38,12,10,2024-02-01 11:44:00,12
+cgmacros,CGMacros,cgmacros_014,40,14,14,40,39,13,11,2023-05-16 14:44:00,13
+cgmacros,CGMacros,cgmacros_015,52,19,19,51,51,18,11,2024-02-01 11:53:00,18
+cgmacros,CGMacros,cgmacros_016,28,10,10,28,27,9,9,2023-07-21 12:24:00,9
+cgmacros,CGMacros,cgmacros_017,48,15,15,47,47,14,10,2023-10-17 11:12:00,14
+cgmacros,CGMacros,cgmacros_018,39,37,15,39,39,15,13,2024-02-12 08:15:00,15
+cgmacros,CGMacros,cgmacros_019,48,14,14,47,47,13,10,2020-10-06 12:32:00,13
+cgmacros,CGMacros,cgmacros_020,41,11,11,41,40,10,9,2024-03-26 12:58:00,10
+cgmacros,CGMacros,cgmacros_021,39,14,14,38,38,13,9,2020-06-15 12:41:00,13
+cgmacros,CGMacros,cgmacros_022,42,12,12,41,41,11,10,2021-04-04 13:08:00,11
+cgmacros,CGMacros,cgmacros_023,42,12,12,41,41,11,11,2021-05-12 12:13:00,11
+cgmacros,CGMacros,cgmacros_026,36,10,10,32,32,10,10,2021-04-02 10:01:00,10
+cgmacros,CGMacros,cgmacros_027,36,12,12,35,35,11,8,2024-06-17 13:11:00,11
+cgmacros,CGMacros,cgmacros_028,34,11,11,33,32,9,9,2023-12-05 09:45:00,9
+cgmacros,CGMacros,cgmacros_029,30,9,9,30,29,8,8,2024-01-24 11:39:00,8
+cgmacros,CGMacros,cgmacros_030,28,9,9,27,27,8,8,2021-01-30 12:30:00,8
+cgmacros,CGMacros,cgmacros_031,54,15,15,54,53,14,8,2022-07-06 20:30:00,14
+cgmacros,CGMacros,cgmacros_032,20,5,5,20,20,5,5,2022-01-09 05:32:00,5
+cgmacros,CGMacros,cgmacros_033,33,10,10,33,32,9,9,2022-04-23 12:33:00,9
+cgmacros,CGMacros,cgmacros_034,49,11,11,49,49,11,8,2022-03-09 13:15:00,11
+cgmacros,CGMacros,cgmacros_035,27,7,7,27,27,7,7,2024-12-19 12:09:00,7
+cgmacros,CGMacros,cgmacros_036,30,9,9,30,29,8,8,2022-04-05 11:59:00,8
+cgmacros,CGMacros,cgmacros_038,40,12,12,40,40,12,10,2022-02-01 11:13:00,12
+cgmacros,CGMacros,cgmacros_039,34,9,9,33,33,8,8,2025-02-14 11:39:00,8
+cgmacros,CGMacros,cgmacros_041,48,13,13,48,48,13,11,2022-05-03 11:07:00,13
+cgmacros,CGMacros,cgmacros_042,22,5,5,22,22,5,5,2025-08-01 15:09:00,5
+cgmacros,CGMacros,cgmacros_043,64,22,22,64,63,21,10,2025-10-21 12:50:00,21
+cgmacros,CGMacros,cgmacros_044,43,13,13,42,42,12,9,2022-10-24 12:06:00,12
+cgmacros,CGMacros,cgmacros_045,32,10,10,31,31,9,8,2025-04-01 20:39:00,9
+cgmacros,CGMacros,cgmacros_046,29,8,8,29,29,8,8,2025-05-08 11:43:00,8
+cgmacros,CGMacros,cgmacros_047,29,8,8,29,28,7,6,2025-11-06 11:47:00,7
+cgmacros,CGMacros,cgmacros_048,36,12,12,35,35,11,11,2022-11-21 12:33:00,11
+cgmacros,CGMacros,cgmacros_049,28,8,8,28,27,7,7,2025-05-18 13:01:00,7
+metabonet,AZT1D,metabonet_azt1d_1,220,183,183,220,214,179,98,2023-12-15 08:00:00,0
+metabonet,AZT1D,metabonet_azt1d_11,304,252,252,304,298,246,126,2024-01-15 07:05:00,0
+metabonet,AZT1D,metabonet_azt1d_12,142,119,119,142,142,119,109,2024-01-15 08:35:00,0
+metabonet,AZT1D,metabonet_azt1d_13,151,129,129,151,147,125,105,2024-01-20 10:25:00,0
+metabonet,AZT1D,metabonet_azt1d_14,249,213,213,249,247,212,152,2024-01-20 07:35:00,0
+metabonet,AZT1D,metabonet_azt1d_15,44,42,42,44,42,40,32,2024-01-19 17:45:00,0
+metabonet,AZT1D,metabonet_azt1d_17,102,85,85,102,100,84,79,2024-01-17 13:45:00,0
+metabonet,AZT1D,metabonet_azt1d_18,42,22,22,42,38,18,17,2024-02-15 11:55:00,0
+metabonet,AZT1D,metabonet_azt1d_19,166,141,141,166,163,139,129,2024-02-08 08:15:00,0
+metabonet,AZT1D,metabonet_azt1d_2,247,207,207,247,240,201,110,2023-12-17 09:35:00,0
+metabonet,AZT1D,metabonet_azt1d_21,142,117,117,142,139,114,89,2024-02-08 19:55:00,0
+metabonet,AZT1D,metabonet_azt1d_22,172,142,142,172,166,138,108,2024-03-01 07:30:00,0
+metabonet,AZT1D,metabonet_azt1d_24,141,111,111,141,141,111,93,2024-03-08 06:30:00,0
+metabonet,AZT1D,metabonet_azt1d_25,161,126,126,161,157,122,95,2024-03-08 06:55:00,0
+metabonet,AZT1D,metabonet_azt1d_3,219,174,174,219,216,171,85,2023-12-16 13:20:00,0
+metabonet,AZT1D,metabonet_azt1d_4,133,113,113,133,130,111,100,2023-12-15 10:55:00,0
+metabonet,AZT1D,metabonet_azt1d_5,90,65,65,90,85,60,47,2023-12-19 09:55:00,0
+metabonet,AZT1D,metabonet_azt1d_6,143,117,117,143,138,112,107,2023-12-16 07:45:00,0
+metabonet,AZT1D,metabonet_azt1d_7,583,483,483,583,568,475,131,2023-12-23 09:00:00,0
+metabonet,AZT1D,metabonet_azt1d_8,191,140,140,191,191,140,73,2024-01-19 08:00:00,0
+metabonet,AZT1D,metabonet_azt1d_9,100,87,87,100,99,86,84,2024-01-08 06:05:00,0
+metabonet,BrisT1D,metabonet_brist1d_P01,474,446,0,465,458,0,0,,0
+metabonet,BrisT1D,metabonet_brist1d_P02,641,613,551,581,573,530,463,2023-06-08 10:15:00,0
+metabonet,BrisT1D,metabonet_brist1d_P03,326,305,305,319,314,293,262,2023-06-08 12:05:00,0
+metabonet,BrisT1D,metabonet_brist1d_P04,1064,1024,956,984,975,914,572,2023-06-13 09:45:00,0
+metabonet,BrisT1D,metabonet_brist1d_P05,1016,986,0,965,944,0,0,,0
+metabonet,BrisT1D,metabonet_brist1d_P06,518,518,0,492,482,0,0,,0
+metabonet,BrisT1D,metabonet_brist1d_P07,765,728,728,745,721,688,582,2023-06-09 10:15:00,0
+metabonet,BrisT1D,metabonet_brist1d_P10,704,676,554,580,574,532,430,2023-06-08 07:15:00,0
+metabonet,BrisT1D,metabonet_brist1d_P11,743,743,598,595,586,562,454,2023-07-07 17:40:00,0
+metabonet,BrisT1D,metabonet_brist1d_P12,1027,985,985,1002,990,948,456,2023-06-08 10:45:00,0
+metabonet,BrisT1D,metabonet_brist1d_P13,245,224,0,242,241,0,0,,0
+metabonet,BrisT1D,metabonet_brist1d_P15,1865,1695,1695,1768,1742,1646,618,2023-06-16 06:30:00,0
+metabonet,BrisT1D,metabonet_brist1d_P16,2288,2196,2196,2225,2195,2098,408,2023-06-12 16:20:00,0
+metabonet,BrisT1D,metabonet_brist1d_P18,414,393,297,353,337,261,208,2023-06-08 07:45:00,0
+metabonet,BrisT1D,metabonet_brist1d_P19,829,801,801,821,812,784,601,2023-06-08 06:40:00,0
+metabonet,BrisT1D,metabonet_brist1d_P21,712,712,91,698,684,88,46,2023-11-28 13:05:00,0
+metabonet,BrisT1D,metabonet_brist1d_P22,1061,997,834,859,845,781,471,2023-06-12 13:20:00,0
+metabonet,BrisT1D,metabonet_brist1d_P23,350,315,179,225,221,169,118,2023-06-15 11:20:00,0
+metabonet,CTR3,metabonet_ctr3_1,160,160,93,151,150,87,59,2013-12-22 08:55:00,0
+metabonet,CTR3,metabonet_ctr3_10,0,0,0,0,0,0,0,,0
+metabonet,CTR3,metabonet_ctr3_11,608,608,476,493,485,451,403,2012-07-15 20:30:00,0
+metabonet,CTR3,metabonet_ctr3_12,10,10,10,10,10,10,5,2013-07-28 12:05:00,0
+metabonet,CTR3,metabonet_ctr3_13,0,0,0,0,0,0,0,,0
+metabonet,CTR3,metabonet_ctr3_14,922,922,797,784,764,721,480,2013-09-06 12:05:00,0
+metabonet,CTR3,metabonet_ctr3_15,515,515,427,462,462,404,379,2012-04-28 12:45:00,0
+metabonet,CTR3,metabonet_ctr3_16,276,276,228,268,264,216,165,2012-05-30 20:15:00,0
+metabonet,CTR3,metabonet_ctr3_17,651,651,499,533,526,467,387,2013-07-27 14:15:00,0
+metabonet,CTR3,metabonet_ctr3_18,218,218,209,218,218,209,153,2012-11-25 20:35:00,0
+metabonet,CTR3,metabonet_ctr3_19,204,204,197,197,196,184,166,2014-07-22 14:10:00,0
+metabonet,CTR3,metabonet_ctr3_2,763,763,579,606,599,550,456,2013-12-16 17:55:00,0
+metabonet,CTR3,metabonet_ctr3_20,891,891,712,715,701,672,405,2013-08-03 14:05:00,0
+metabonet,CTR3,metabonet_ctr3_21,85,85,85,81,77,77,65,2014-05-31 12:40:00,0
+metabonet,CTR3,metabonet_ctr3_22,207,207,207,204,203,201,148,2015-01-17 11:30:00,0
+metabonet,CTR3,metabonet_ctr3_23,177,177,177,172,168,167,126,2014-11-30 13:15:00,0
+metabonet,CTR3,metabonet_ctr3_24,298,298,298,289,287,286,184,2012-08-31 10:50:00,0
+metabonet,CTR3,metabonet_ctr3_25,149,149,149,149,148,148,132,2014-11-17 19:20:00,0
+metabonet,CTR3,metabonet_ctr3_26,186,186,123,115,114,111,103,2013-10-03 19:45:00,0
+metabonet,CTR3,metabonet_ctr3_27,158,158,124,136,129,109,103,2013-03-07 19:55:00,0
+metabonet,CTR3,metabonet_ctr3_28,253,253,215,236,229,198,138,2013-02-11 06:20:00,0
+metabonet,CTR3,metabonet_ctr3_29,243,243,243,234,222,221,159,2013-10-17 19:40:00,0
+metabonet,CTR3,metabonet_ctr3_3,578,578,456,516,511,416,399,2014-07-16 17:55:00,0
+metabonet,CTR3,metabonet_ctr3_30,148,148,0,0,0,0,0,,0
+metabonet,CTR3,metabonet_ctr3_4,690,690,627,639,636,594,535,2012-06-18 19:25:00,0
+metabonet,CTR3,metabonet_ctr3_5,292,292,238,279,277,222,196,2014-01-29 06:50:00,0
+metabonet,CTR3,metabonet_ctr3_6,724,724,461,462,458,392,250,2014-04-12 13:45:00,0
+metabonet,CTR3,metabonet_ctr3_7,1353,1353,856,917,896,771,366,2014-09-28 15:25:00,0
+metabonet,CTR3,metabonet_ctr3_8,876,876,528,498,492,467,281,2014-03-10 13:10:00,0
+metabonet,CTR3,metabonet_ctr3_9,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_10,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_100,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_102,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_105,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_111,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_114,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_115,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_116,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_117,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_118,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_120,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_121,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_126,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_128,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_129,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_13,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_133,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_134,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_135,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_137,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_138,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_14,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_141,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_142,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_144,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_145,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_147,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_148,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_149,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_15,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_150,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_153,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_154,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_155,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_157,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_158,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_159,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_160,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_162,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_164,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_165,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_166,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_167,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_168,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_169,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_17,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_171,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_18,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_19,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_20,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_21,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_22,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_24,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_25,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_26,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_28,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_29,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_3,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_31,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_32,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_37,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_38,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_39,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_41,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_43,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_46,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_47,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_48,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_5,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_51,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_54,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_55,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_56,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_57,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_58,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_59,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_6,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_60,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_63,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_64,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_67,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_68,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_69,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_7,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_71,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_72,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_77,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_78,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_79,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_8,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_80,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_86,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_88,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_90,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_91,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_93,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_94,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_95,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_96,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_97,0,0,0,0,0,0,0,,0
+metabonet,DCLP3,metabonet_dclp3_98,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_10,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_100,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_101,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_11,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_13,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_15,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_16,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_17,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_18,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_20,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_24,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_25,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_26,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_27,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_28,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_29,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_3,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_30,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_31,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_32,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_33,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_34,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_35,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_36,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_37,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_38,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_39,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_4,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_40,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_41,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_42,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_44,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_45,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_46,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_47,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_48,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_49,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_5,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_50,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_51,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_52,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_53,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_54,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_55,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_56,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_57,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_58,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_59,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_6,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_60,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_61,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_62,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_63,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_64,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_66,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_67,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_68,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_69,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_7,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_70,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_71,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_72,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_73,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_74,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_75,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_76,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_77,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_78,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_79,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_80,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_81,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_82,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_83,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_84,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_85,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_86,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_87,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_88,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_89,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_9,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_90,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_91,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_92,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_93,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_94,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_95,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_96,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_97,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_98,0,0,0,0,0,0,0,,0
+metabonet,DCLP5,metabonet_dclp5_99,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_1,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_10,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_100,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_101,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_102,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_104,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_106,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_107,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_108,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_109,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_11,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_111,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_112,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_113,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_114,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_115,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_116,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_117,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_119,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_12,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_120,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_121,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_122,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_123,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_124,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_126,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_15,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_16,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_17,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_18,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_19,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_2,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_20,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_21,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_22,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_25,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_26,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_28,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_29,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_3,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_30,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_31,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_33,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_35,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_36,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_37,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_38,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_39,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_4,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_40,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_43,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_44,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_45,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_46,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_47,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_48,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_49,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_5,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_50,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_52,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_54,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_55,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_56,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_57,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_58,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_59,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_6,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_60,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_61,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_62,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_63,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_64,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_65,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_66,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_67,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_68,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_69,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_7,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_71,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_72,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_73,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_74,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_75,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_77,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_78,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_79,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_81,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_82,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_83,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_84,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_85,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_86,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_87,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_9,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_90,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_91,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_92,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_93,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_96,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_97,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_98,0,0,0,0,0,0,0,,0
+metabonet,Flair,metabonet_flair_99,0,0,0,0,0,0,0,,0
+metabonet,HUPA-UCM,metabonet_hupaucm_1,40,16,16,40,40,16,16,2018-06-20 21:40:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_10,42,15,15,42,42,15,10,2018-11-14 22:00:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_14,40,19,19,40,40,19,19,2018-11-14 21:30:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_16,83,43,43,83,82,42,26,2019-04-03 18:20:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_17,35,16,16,35,35,16,15,2019-04-04 13:30:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_19,53,25,25,53,52,24,22,2019-07-10 21:45:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_2,6,3,3,6,6,3,3,2018-06-21 09:10:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_20,0,0,0,0,0,0,0,,0
+metabonet,HUPA-UCM,metabonet_hupaucm_22,27,12,12,27,27,12,10,2020-01-24 07:00:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_24,14,4,4,14,14,4,4,2020-01-27 15:30:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_25,20,2,2,20,20,2,2,2020-01-25 03:15:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_26,46,46,46,46,46,46,42,2020-08-05 01:45:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_27,997,965,965,997,997,965,720,2020-07-03 22:15:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_28,217,216,216,217,216,215,192,2022-03-08 11:00:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_3,66,30,30,66,65,29,21,2018-06-21 06:20:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_4,0,0,0,0,0,0,0,,0
+metabonet,HUPA-UCM,metabonet_hupaucm_5,55,27,27,55,54,26,21,2018-07-16 21:25:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_6,37,4,4,37,36,3,2,2018-07-16 20:40:00,0
+metabonet,HUPA-UCM,metabonet_hupaucm_7,41,0,0,41,40,0,0,,0
+metabonet,HUPA-UCM,metabonet_hupaucm_9,44,19,19,44,43,18,18,2018-09-26 16:10:00,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-10,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-100,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-101,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-103,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-105,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-107,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-111,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-112,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-113,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-116,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-119,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-121,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-125,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-126,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-13,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-130,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-131,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-133,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-134,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-135,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-137,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-138,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-139,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-141,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-143,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-144,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-148,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-153,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-154,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-155,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-156,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-158,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-160,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-162,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-163,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-164,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-166,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-167,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-168,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-17,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-170,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-173,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-176,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-177,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-178,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-18,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-181,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-182,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-183,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-184,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-185,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-186,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-188,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-189,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-191,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-193,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-194,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-195,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-198,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-199,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-20,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-200,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-202,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-205,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-206,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-207,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-209,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-21,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-214,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-217,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-218,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-221,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-222,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-223,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-224,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-226,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-227,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-234,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-235,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-236,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-240,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-241,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-242,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-245,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-247,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-249,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-25,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-250,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-252,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-254,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-255,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-258,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-260,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-261,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-266,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-270,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-271,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-273,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-274,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-276,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-277,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-280,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-281,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-282,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-283,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-288,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-289,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-290,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-291,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-292,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-293,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-295,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-297,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-299,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-3,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-300,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-301,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-304,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-306,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-307,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-309,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-31,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-312,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-313,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-315,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-317,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-321,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-322,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-323,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-324,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-326,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-328,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-331,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-332,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-336,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-338,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-339,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-34,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-341,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-344,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-347,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-348,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-349,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-350,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-352,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-357,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-359,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-360,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-364,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-365,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-366,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-367,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-369,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-37,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-371,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-372,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-373,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-376,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-377,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-378,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-38,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-383,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-387,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-389,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-39,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-391,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-393,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-394,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-396,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-4,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-400,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-402,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-404,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-405,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-408,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-410,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-411,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-412,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-413,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-417,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-42,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-421,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-423,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-426,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-428,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-429,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-43,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-430,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-432,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-436,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-438,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-440,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-441,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-443,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-446,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-447,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-451,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-452,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-457,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-459,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-462,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-463,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-464,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-466,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-467,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-468,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-47,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-472,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-473,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-474,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-48,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-480,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-482,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-483,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-490,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-493,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-494,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-496,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-497,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-498,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-50,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-501,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-502,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-503,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-504,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-507,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-509,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-51,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-510,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-511,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-512,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-514,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-516,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-519,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-525,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-529,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-53,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-535,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-54,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-541,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-542,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-543,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-546,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-547,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-549,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-55,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-551,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-552,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-554,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-555,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-556,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-557,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-56,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-560,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-564,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-567,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-569,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-57,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-570,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-571,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-573,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-574,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-576,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-577,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-578,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-580,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-581,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-583,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-584,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-586,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-588,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-589,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-59,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-591,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-593,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-597,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-6,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-60,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-600,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-62,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-63,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-65,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-67,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-68,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-69,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-71,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-72,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-76,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-78,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-79,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-8,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-81,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-9,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-90,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-92,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-93,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-94,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-97,0,0,0,0,0,0,0,,0
+metabonet,IOBP2,metabonet_iobp2_IOBP2-99,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_10,1785,1785,1731,1747,1698,1639,796,2019-03-19 17:40:00,0
+metabonet,Loop,metabonet_loop_100,410,410,410,402,392,390,297,2019-05-27 14:50:00,0
+metabonet,Loop,metabonet_loop_1001,299,299,257,299,295,254,90,2019-04-23 18:25:00,0
+metabonet,Loop,metabonet_loop_1004,2488,2457,2433,2461,2425,2364,1468,2018-01-06 10:25:00,0
+metabonet,Loop,metabonet_loop_1005,473,473,445,440,428,410,250,2018-09-20 18:15:00,0
+metabonet,Loop,metabonet_loop_1008,655,644,550,603,572,496,440,2017-12-12 18:30:00,0
+metabonet,Loop,metabonet_loop_1009,1068,1037,1037,1059,1045,1013,699,2018-02-27 16:15:00,0
+metabonet,Loop,metabonet_loop_101,2680,2637,2507,2462,2365,2239,1587,2018-01-24 05:35:00,0
+metabonet,Loop,metabonet_loop_1011,3468,3414,3414,3437,3398,3332,774,2018-10-15 08:25:00,0
+metabonet,Loop,metabonet_loop_1012,1308,1308,1308,1284,1252,1243,866,2019-03-07 18:00:00,0
+metabonet,Loop,metabonet_loop_1013,1020,1020,961,966,937,891,696,2018-04-30 21:10:00,0
+metabonet,Loop,metabonet_loop_1014,1914,1861,1484,1699,1638,1364,788,2018-12-18 14:15:00,0
+metabonet,Loop,metabonet_loop_1016,1932,1932,1932,1910,1886,1879,1068,2019-03-15 16:50:00,0
+metabonet,Loop,metabonet_loop_1017,1176,1129,1129,1165,1136,1087,513,2018-10-25 18:05:00,0
+metabonet,Loop,metabonet_loop_1018,1268,1268,1268,1257,1236,1235,853,2018-07-14 19:15:00,0
+metabonet,Loop,metabonet_loop_1019,1092,1092,1060,1068,1030,989,721,2018-11-14 05:50:00,0
+metabonet,Loop,metabonet_loop_102,990,968,942,972,894,844,643,2017-11-08 15:50:00,0
+metabonet,Loop,metabonet_loop_1021,222,222,190,203,197,177,119,2019-01-11 17:50:00,0
+metabonet,Loop,metabonet_loop_1023,1861,1806,1806,1823,1745,1676,884,2019-03-29 18:10:00,0
+metabonet,Loop,metabonet_loop_1025,1573,1573,1559,1513,1446,1415,760,2019-03-18 20:45:00,0
+metabonet,Loop,metabonet_loop_1026,1348,1348,1330,1334,1316,1295,893,2019-04-02 06:35:00,0
+metabonet,Loop,metabonet_loop_1027,1096,1071,1071,1071,1016,984,789,2018-08-28 09:35:00,0
+metabonet,Loop,metabonet_loop_1029,2117,2058,1314,1553,1499,1178,435,2019-05-18 06:50:00,0
+metabonet,Loop,metabonet_loop_1030,1183,1183,1183,1166,1137,1135,630,2019-01-24 14:25:00,0
+metabonet,Loop,metabonet_loop_1031,1708,1708,1636,1649,1609,1557,903,2018-06-19 18:50:00,0
+metabonet,Loop,metabonet_loop_1033,1488,1488,786,1125,1028,609,434,2019-01-09 19:20:00,0
+metabonet,Loop,metabonet_loop_1036,2778,2743,2743,2722,2663,2607,1477,2018-01-29 07:15:00,0
+metabonet,Loop,metabonet_loop_1037,1153,1153,1119,1131,1097,1068,691,2018-07-27 14:15:00,0
+metabonet,Loop,metabonet_loop_1039,1250,1250,1250,1229,1198,1187,758,2019-04-17 18:20:00,0
+metabonet,Loop,metabonet_loop_104,2803,2766,2513,2583,2493,2334,1495,2018-08-06 18:25:00,0
+metabonet,Loop,metabonet_loop_1041,402,401,401,392,391,388,328,2018-07-18 19:30:00,0
+metabonet,Loop,metabonet_loop_1042,1114,1114,1068,1086,1048,1008,670,2018-08-13 10:05:00,0
+metabonet,Loop,metabonet_loop_1043,2508,2508,2337,2338,2300,2271,1019,2019-01-27 18:15:00,0
+metabonet,Loop,metabonet_loop_1044,2307,2257,2141,2281,2173,2022,886,2018-09-25 18:30:00,0
+metabonet,Loop,metabonet_loop_1045,1710,1667,1596,1631,1595,1503,738,2019-02-08 07:20:00,0
+metabonet,Loop,metabonet_loop_1047,1648,1641,1641,1621,1595,1583,956,2018-09-14 08:05:00,0
+metabonet,Loop,metabonet_loop_1049,258,258,258,249,233,227,140,2018-07-30 04:35:00,0
+metabonet,Loop,metabonet_loop_105,2790,2757,2757,2735,2690,2638,1635,2018-09-08 08:35:00,0
+metabonet,Loop,metabonet_loop_1052,2301,2264,2264,2238,2183,2137,1357,2018-12-17 09:50:00,0
+metabonet,Loop,metabonet_loop_1053,2245,2245,2245,2208,2158,2145,1184,2018-06-27 08:05:00,0
+metabonet,Loop,metabonet_loop_1054,5120,4439,4417,4441,4309,4199,1157,2018-10-03 13:50:00,0
+metabonet,Loop,metabonet_loop_1055,1602,1602,1029,1257,1237,883,573,2019-02-09 18:15:00,0
+metabonet,Loop,metabonet_loop_1056,675,675,675,659,647,641,542,2019-02-05 21:45:00,0
+metabonet,Loop,metabonet_loop_1057,2708,2613,2613,2690,2603,2499,1060,2019-01-17 16:25:00,0
+metabonet,Loop,metabonet_loop_1058,1347,1347,1098,1131,1074,976,789,2018-10-25 12:15:00,0
+metabonet,Loop,metabonet_loop_1059,1536,1506,1379,1451,1397,1298,1024,2018-07-11 21:10:00,0
+metabonet,Loop,metabonet_loop_106,1046,1046,835,916,829,724,697,2019-01-29 04:35:00,0
+metabonet,Loop,metabonet_loop_1060,434,434,389,422,414,378,213,2019-01-17 07:45:00,0
+metabonet,Loop,metabonet_loop_1061,256,247,246,245,244,230,216,2018-08-12 11:10:00,0
+metabonet,Loop,metabonet_loop_1062,2067,2067,2067,2041,2026,2020,1093,2018-07-25 11:25:00,0
+metabonet,Loop,metabonet_loop_1063,2260,2260,2249,2223,2188,2164,867,2019-05-23 08:10:00,0
+metabonet,Loop,metabonet_loop_1064,1535,1535,1535,1490,1435,1423,583,2018-09-27 18:55:00,0
+metabonet,Loop,metabonet_loop_1065,888,872,872,869,837,820,695,2018-11-23 13:35:00,0
+metabonet,Loop,metabonet_loop_1066,644,644,644,633,627,624,342,2018-06-03 18:30:00,0
+metabonet,Loop,metabonet_loop_1067,2188,2160,2121,2144,2119,2067,1278,2018-05-08 11:55:00,0
+metabonet,Loop,metabonet_loop_1068,1607,1607,1607,1589,1548,1546,1041,2018-07-31 05:20:00,0
+metabonet,Loop,metabonet_loop_1069,1731,1731,1731,1691,1635,1622,752,2018-09-30 07:35:00,0
+metabonet,Loop,metabonet_loop_107,581,581,561,577,565,544,477,2018-12-01 18:05:00,0
+metabonet,Loop,metabonet_loop_1070,3474,3474,3437,3380,3304,3294,865,2018-09-05 16:30:00,0
+metabonet,Loop,metabonet_loop_1071,1626,1615,1615,1612,1569,1553,884,2018-04-26 06:00:00,0
+metabonet,Loop,metabonet_loop_1074,238,238,238,235,226,226,181,2018-09-16 16:05:00,0
+metabonet,Loop,metabonet_loop_1075,1598,1598,1573,1538,1500,1466,858,2018-11-05 17:45:00,0
+metabonet,Loop,metabonet_loop_1078,1295,1295,1234,1213,1181,1178,591,2018-12-25 18:55:00,0
+metabonet,Loop,metabonet_loop_1079,869,835,817,860,847,796,670,2018-02-20 20:05:00,0
+metabonet,Loop,metabonet_loop_1082,239,189,189,239,231,181,58,2018-04-19 13:15:00,0
+metabonet,Loop,metabonet_loop_1083,543,508,508,537,528,490,380,2018-09-09 08:20:00,0
+metabonet,Loop,metabonet_loop_1084,1422,1422,1295,1317,1282,1216,891,2018-12-04 22:05:00,0
+metabonet,Loop,metabonet_loop_1085,1708,1577,863,1171,1109,740,622,2018-05-25 19:35:00,0
+metabonet,Loop,metabonet_loop_1086,6305,6140,5942,6086,5960,5676,816,2018-10-10 16:45:00,0
+metabonet,Loop,metabonet_loop_1087,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_1089,1407,1407,964,1158,1108,821,433,2018-06-28 08:55:00,0
+metabonet,Loop,metabonet_loop_1090,1738,1738,1417,1527,1487,1296,807,2018-09-18 03:45:00,0
+metabonet,Loop,metabonet_loop_1091,1497,1497,1497,1462,1440,1429,787,2018-09-09 18:05:00,0
+metabonet,Loop,metabonet_loop_1092,335,335,335,332,328,328,320,2018-09-14 08:20:00,0
+metabonet,Loop,metabonet_loop_1093,2595,2595,2550,2549,2475,2440,1062,2018-04-24 10:35:00,0
+metabonet,Loop,metabonet_loop_1094,1161,1161,997,1086,1042,913,574,2018-12-28 10:45:00,0
+metabonet,Loop,metabonet_loop_1095,247,245,224,243,240,218,211,2018-06-09 07:05:00,0
+metabonet,Loop,metabonet_loop_1097,2018,2018,1796,1787,1761,1715,1202,2018-03-20 12:30:00,0
+metabonet,Loop,metabonet_loop_1099,4354,4281,3207,3710,3356,2677,1049,2018-08-27 22:25:00,0
+metabonet,Loop,metabonet_loop_11,2927,2927,2927,2881,2858,2847,946,2018-06-02 01:35:00,0
+metabonet,Loop,metabonet_loop_110,1339,1339,933,962,939,867,676,2018-12-12 07:30:00,0
+metabonet,Loop,metabonet_loop_1100,937,937,879,879,864,822,606,2018-09-30 16:35:00,0
+metabonet,Loop,metabonet_loop_1101,708,680,680,702,689,659,420,2019-02-24 13:45:00,0
+metabonet,Loop,metabonet_loop_1103,2489,2489,2457,2447,2402,2363,1621,2018-09-07 07:05:00,0
+metabonet,Loop,metabonet_loop_1104,822,822,804,819,804,786,570,2019-01-14 19:50:00,0
+metabonet,Loop,metabonet_loop_1105,3414,3374,3338,3326,3236,3152,1789,2018-08-29 07:00:00,0
+metabonet,Loop,metabonet_loop_1108,1713,1713,1713,1690,1645,1637,1031,2018-04-18 17:55:00,0
+metabonet,Loop,metabonet_loop_1109,1357,1357,1357,1316,1280,1269,682,2018-06-02 16:15:00,0
+metabonet,Loop,metabonet_loop_1112,2355,2355,2355,2325,2311,2303,1144,2018-12-06 10:45:00,0
+metabonet,Loop,metabonet_loop_1114,372,372,363,371,359,349,264,2018-08-22 19:35:00,0
+metabonet,Loop,metabonet_loop_1115,887,887,826,877,853,792,669,2019-05-25 05:05:00,0
+metabonet,Loop,metabonet_loop_1116,1790,1790,1790,1773,1743,1742,853,2019-03-24 09:30:00,0
+metabonet,Loop,metabonet_loop_1117,1321,1318,1317,1307,1260,1256,658,2018-06-12 10:20:00,0
+metabonet,Loop,metabonet_loop_1118,2902,2902,2902,2879,2826,2817,1030,2019-03-31 03:40:00,0
+metabonet,Loop,metabonet_loop_1119,1699,1699,1699,1672,1645,1638,931,2018-09-22 10:10:00,0
+metabonet,Loop,metabonet_loop_112,1735,1735,1735,1680,1592,1581,734,2019-01-01 15:10:00,0
+metabonet,Loop,metabonet_loop_1120,2166,2166,2166,2148,2119,2115,1052,2019-04-13 12:55:00,0
+metabonet,Loop,metabonet_loop_1121,447,447,447,436,419,415,384,2019-08-02 20:15:00,0
+metabonet,Loop,metabonet_loop_1122,124,124,80,92,70,66,57,2018-07-11 11:45:00,0
+metabonet,Loop,metabonet_loop_1123,2241,2190,2114,2176,2126,2039,784,2018-06-17 17:40:00,0
+metabonet,Loop,metabonet_loop_1124,1864,1864,1864,1853,1798,1796,721,2019-04-03 17:35:00,0
+metabonet,Loop,metabonet_loop_1125,1643,1643,1612,1605,1567,1539,1095,2018-09-06 08:10:00,0
+metabonet,Loop,metabonet_loop_1126,618,611,611,612,605,597,413,2018-08-15 16:50:00,0
+metabonet,Loop,metabonet_loop_1127,2,2,2,2,1,1,1,2019-02-21 23:45:00,0
+metabonet,Loop,metabonet_loop_1129,2054,2054,1984,1966,1943,1901,971,2018-11-01 09:05:00,0
+metabonet,Loop,metabonet_loop_113,1077,1077,1077,1070,1050,1048,816,2019-02-23 18:55:00,0
+metabonet,Loop,metabonet_loop_1131,887,887,887,869,855,846,654,2018-10-28 13:10:00,0
+metabonet,Loop,metabonet_loop_1132,2159,2159,2094,2111,2044,1974,1087,2019-02-08 09:05:00,0
+metabonet,Loop,metabonet_loop_1134,326,173,144,181,171,128,98,2019-03-11 09:00:00,0
+metabonet,Loop,metabonet_loop_1135,766,749,591,632,624,561,476,2018-11-19 07:25:00,0
+metabonet,Loop,metabonet_loop_1137,3201,3162,3059,3082,3019,2890,1586,2018-04-23 17:20:00,0
+metabonet,Loop,metabonet_loop_1138,2835,2772,2728,2722,2649,2574,1697,2018-03-12 09:40:00,0
+metabonet,Loop,metabonet_loop_1139,1533,1529,1469,1478,1460,1425,727,2018-07-15 20:55:00,0
+metabonet,Loop,metabonet_loop_114,1809,1782,1727,1729,1677,1592,893,2018-11-12 17:05:00,0
+metabonet,Loop,metabonet_loop_1142,1233,1233,1233,1230,1219,1219,721,2018-09-24 05:50:00,0
+metabonet,Loop,metabonet_loop_1143,2424,2385,2045,2162,2129,1934,1270,2018-05-01 20:15:00,0
+metabonet,Loop,metabonet_loop_1147,2625,2625,2593,2615,2547,2513,1471,2018-03-20 13:10:00,0
+metabonet,Loop,metabonet_loop_1148,1109,1106,1106,1104,1087,1083,752,2018-08-11 10:45:00,0
+metabonet,Loop,metabonet_loop_1149,1174,1174,1174,1160,1132,1127,700,2019-05-11 17:25:00,0
+metabonet,Loop,metabonet_loop_1150,3001,2928,2905,2979,2950,2848,1323,2018-07-18 16:30:00,0
+metabonet,Loop,metabonet_loop_1151,1968,1968,1944,1938,1920,1879,1117,2019-05-16 04:45:00,0
+metabonet,Loop,metabonet_loop_1152,1952,1941,1922,1903,1866,1838,1191,2018-09-04 16:15:00,0
+metabonet,Loop,metabonet_loop_1153,1751,1751,1751,1732,1712,1711,971,2018-06-17 15:15:00,0
+metabonet,Loop,metabonet_loop_1154,517,517,464,473,458,417,382,2018-11-10 13:25:00,0
+metabonet,Loop,metabonet_loop_1155,499,482,482,496,482,466,389,2018-07-05 21:00:00,0
+metabonet,Loop,metabonet_loop_1158,2568,2568,2568,2556,2532,2529,1478,2018-07-08 18:30:00,0
+metabonet,Loop,metabonet_loop_1159,1694,1694,1694,1673,1637,1628,1047,2018-08-19 21:05:00,0
+metabonet,Loop,metabonet_loop_116,4320,4262,4262,4287,4219,4148,1640,2018-08-10 13:05:00,0
+metabonet,Loop,metabonet_loop_1162,2912,2456,2391,2469,2426,2316,1168,2018-06-25 08:05:00,0
+metabonet,Loop,metabonet_loop_1163,3834,3813,2616,2821,2695,2119,765,2018-08-22 19:05:00,0
+metabonet,Loop,metabonet_loop_1165,2006,2006,2006,1990,1941,1938,1021,2018-06-16 07:45:00,0
+metabonet,Loop,metabonet_loop_1167,1432,1432,1432,1419,1403,1398,631,2019-04-03 06:15:00,0
+metabonet,Loop,metabonet_loop_1169,609,609,558,579,551,512,426,2018-01-29 16:10:00,0
+metabonet,Loop,metabonet_loop_1170,710,710,710,701,675,670,539,2019-02-03 18:20:00,0
+metabonet,Loop,metabonet_loop_1171,1982,1982,1528,1754,1677,1404,846,2019-04-10 18:00:00,0
+metabonet,Loop,metabonet_loop_1173,2138,2134,2134,2113,2088,2081,1229,2018-10-21 00:15:00,0
+metabonet,Loop,metabonet_loop_1175,1796,1734,1626,1725,1671,1536,745,2018-10-23 11:40:00,0
+metabonet,Loop,metabonet_loop_1176,1844,1837,1771,1723,1674,1655,881,2018-04-30 12:35:00,0
+metabonet,Loop,metabonet_loop_1177,1875,1875,1808,1796,1741,1704,1044,2018-08-22 20:10:00,0
+metabonet,Loop,metabonet_loop_1179,1497,1445,1410,1478,1457,1369,786,2019-03-06 15:10:00,0
+metabonet,Loop,metabonet_loop_1181,2132,2093,1634,1759,1719,1489,991,2018-02-25 08:00:00,0
+metabonet,Loop,metabonet_loop_1183,1619,1617,1012,1169,1142,883,531,2019-02-14 08:05:00,0
+metabonet,Loop,metabonet_loop_1184,362,362,351,335,325,323,230,2019-02-10 16:30:00,0
+metabonet,Loop,metabonet_loop_1187,1270,1247,1237,1261,1230,1197,960,2018-10-17 19:50:00,0
+metabonet,Loop,metabonet_loop_1188,916,914,640,736,694,546,411,2018-12-18 10:00:00,0
+metabonet,Loop,metabonet_loop_119,697,672,669,684,670,641,515,2018-06-16 19:55:00,0
+metabonet,Loop,metabonet_loop_1190,1815,1796,1775,1766,1688,1636,1249,2018-06-25 16:55:00,0
+metabonet,Loop,metabonet_loop_1191,1712,1712,1712,1712,1680,1680,712,2019-01-19 21:30:00,0
+metabonet,Loop,metabonet_loop_1193,917,917,917,906,887,884,662,2018-10-12 18:55:00,0
+metabonet,Loop,metabonet_loop_1195,3,2,2,3,3,2,2,2018-11-19 08:45:00,0
+metabonet,Loop,metabonet_loop_1196,1105,1105,1105,1083,1063,1060,798,2019-03-28 16:00:00,0
+metabonet,Loop,metabonet_loop_1199,2616,2576,2576,2565,2533,2482,1391,2018-02-06 18:00:00,0
+metabonet,Loop,metabonet_loop_12,2981,2765,2621,2874,2774,2453,1354,2018-07-13 21:45:00,0
+metabonet,Loop,metabonet_loop_120,874,874,874,863,852,848,521,2018-10-14 15:35:00,0
+metabonet,Loop,metabonet_loop_1200,1847,1810,1771,1821,1763,1683,721,2018-11-01 08:30:00,0
+metabonet,Loop,metabonet_loop_1201,2350,2350,2350,2321,2248,2238,997,2018-12-03 18:30:00,0
+metabonet,Loop,metabonet_loop_1202,2228,2228,2217,2190,2160,2150,896,2019-04-09 14:20:00,0
+metabonet,Loop,metabonet_loop_1203,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_1204,450,450,381,447,397,338,199,2018-12-28 12:55:00,0
+metabonet,Loop,metabonet_loop_1205,1091,1091,680,810,784,600,411,2019-04-09 19:50:00,0
+metabonet,Loop,metabonet_loop_1206,838,816,795,824,775,732,644,2018-05-25 08:20:00,0
+metabonet,Loop,metabonet_loop_1207,1034,999,972,998,977,938,754,2018-06-02 21:55:00,0
+metabonet,Loop,metabonet_loop_1208,1576,1576,1576,1570,1567,1564,949,2019-01-28 20:35:00,0
+metabonet,Loop,metabonet_loop_1209,2059,2059,2059,2026,1992,1980,1004,2019-04-22 19:45:00,0
+metabonet,Loop,metabonet_loop_121,777,777,777,760,739,734,568,2018-07-24 18:05:00,0
+metabonet,Loop,metabonet_loop_1210,920,906,832,856,813,734,629,2018-05-01 22:55:00,0
+metabonet,Loop,metabonet_loop_1211,2224,2190,2048,2120,2038,1912,1455,2018-08-06 20:35:00,0
+metabonet,Loop,metabonet_loop_1212,634,634,616,630,616,600,412,2018-07-09 19:45:00,0
+metabonet,Loop,metabonet_loop_124,361,340,340,355,348,326,283,2019-04-20 12:00:00,0
+metabonet,Loop,metabonet_loop_125,2774,2756,2642,2669,2564,2487,1566,2018-06-14 10:30:00,0
+metabonet,Loop,metabonet_loop_128,602,602,602,586,566,562,342,2018-06-22 16:35:00,0
+metabonet,Loop,metabonet_loop_129,153,153,153,151,150,149,84,2018-11-14 18:30:00,0
+metabonet,Loop,metabonet_loop_13,699,699,662,654,646,626,475,2017-12-04 12:30:00,0
+metabonet,Loop,metabonet_loop_130,4684,4624,4309,4270,4218,4064,1302,2017-12-22 19:00:00,0
+metabonet,Loop,metabonet_loop_131,400,400,400,395,388,388,262,2019-06-02 03:40:00,0
+metabonet,Loop,metabonet_loop_133,780,780,729,755,733,684,487,2018-11-08 06:35:00,0
+metabonet,Loop,metabonet_loop_134,1662,1662,1662,1629,1592,1579,895,2019-04-07 01:35:00,0
+metabonet,Loop,metabonet_loop_137,1766,1720,1607,1652,1604,1544,1011,2018-12-08 16:10:00,0
+metabonet,Loop,metabonet_loop_139,9560,9560,9152,8887,8695,8386,586,2018-09-29 06:35:00,0
+metabonet,Loop,metabonet_loop_141,2228,2225,2225,2201,2162,2151,998,2018-12-22 17:45:00,0
+metabonet,Loop,metabonet_loop_142,1409,1409,1409,1377,1367,1362,1114,2018-11-05 21:45:00,0
+metabonet,Loop,metabonet_loop_143,1832,1822,1427,1431,1406,1382,936,2018-10-14 00:00:00,0
+metabonet,Loop,metabonet_loop_145,1790,1759,1759,1758,1723,1687,1161,2018-09-26 16:50:00,0
+metabonet,Loop,metabonet_loop_146,1934,1934,1677,1812,1725,1521,914,2018-07-14 02:50:00,0
+metabonet,Loop,metabonet_loop_148,1169,1169,1145,1128,1096,1067,888,2018-08-03 07:50:00,0
+metabonet,Loop,metabonet_loop_149,917,917,917,913,901,901,666,2019-03-28 18:05:00,0
+metabonet,Loop,metabonet_loop_15,420,386,386,419,404,370,264,2018-10-24 20:15:00,0
+metabonet,Loop,metabonet_loop_151,1291,1291,528,704,662,402,306,2019-02-28 18:05:00,0
+metabonet,Loop,metabonet_loop_153,2368,2292,1988,2022,1971,1892,1244,2018-07-15 11:10:00,0
+metabonet,Loop,metabonet_loop_154,3149,3046,748,1822,1755,534,162,2019-01-25 06:40:00,0
+metabonet,Loop,metabonet_loop_155,1116,1116,204,190,185,184,141,2018-11-25 17:45:00,0
+metabonet,Loop,metabonet_loop_157,2773,2773,2730,2693,2614,2555,1068,2018-05-21 18:05:00,0
+metabonet,Loop,metabonet_loop_158,1825,1793,1438,1653,1582,1329,833,2018-02-28 15:40:00,0
+metabonet,Loop,metabonet_loop_16,182,182,182,179,178,177,89,2018-12-01 12:50:00,0
+metabonet,Loop,metabonet_loop_160,2407,2407,2165,2393,2310,2067,566,2019-06-12 16:25:00,0
+metabonet,Loop,metabonet_loop_163,1939,1939,1311,1548,1511,1114,588,2018-11-14 21:00:00,0
+metabonet,Loop,metabonet_loop_164,3703,3653,3603,3683,3603,3495,1530,2018-05-31 18:20:00,0
+metabonet,Loop,metabonet_loop_165,1439,1426,1426,1394,1375,1359,865,2019-03-02 17:40:00,0
+metabonet,Loop,metabonet_loop_167,3539,3522,3425,3418,3304,3205,1497,2018-01-21 20:55:00,0
+metabonet,Loop,metabonet_loop_169,1062,1023,739,850,836,660,432,2018-10-04 20:10:00,0
+metabonet,Loop,metabonet_loop_171,223,223,187,215,208,174,153,2018-07-25 12:05:00,0
+metabonet,Loop,metabonet_loop_173,1680,1644,1644,1676,1658,1621,755,2018-07-18 12:35:00,0
+metabonet,Loop,metabonet_loop_175,431,401,381,396,369,324,247,2019-01-28 19:15:00,0
+metabonet,Loop,metabonet_loop_176,1146,1146,1146,1142,1124,1123,828,2019-01-23 13:10:00,0
+metabonet,Loop,metabonet_loop_178,1771,1722,1555,1662,1610,1413,791,2018-07-03 15:30:00,0
+metabonet,Loop,metabonet_loop_179,119,117,102,118,115,99,95,2018-05-27 17:35:00,0
+metabonet,Loop,metabonet_loop_18,1594,1594,1332,1420,1393,1183,495,2018-11-17 16:35:00,0
+metabonet,Loop,metabonet_loop_181,1160,1160,1126,1147,1124,1090,869,2018-11-25 19:45:00,0
+metabonet,Loop,metabonet_loop_183,1655,1655,1534,1572,1524,1427,991,2019-01-15 10:55:00,0
+metabonet,Loop,metabonet_loop_184,1741,1741,1741,1722,1694,1688,947,2018-09-07 15:15:00,0
+metabonet,Loop,metabonet_loop_185,452,452,452,450,442,441,368,2018-10-28 06:15:00,0
+metabonet,Loop,metabonet_loop_186,2121,2023,1513,1598,1494,1342,844,2019-02-07 06:40:00,0
+metabonet,Loop,metabonet_loop_188,1380,1375,1374,1340,1300,1288,717,2019-01-14 17:25:00,0
+metabonet,Loop,metabonet_loop_189,1241,1241,948,1027,1019,793,533,2019-04-26 18:10:00,0
+metabonet,Loop,metabonet_loop_19,1373,1373,1354,1354,1319,1294,824,2018-06-21 11:00:00,0
+metabonet,Loop,metabonet_loop_190,1315,1315,1315,1307,1274,1272,469,2018-06-25 14:35:00,0
+metabonet,Loop,metabonet_loop_191,623,622,610,617,614,601,516,2018-08-18 08:30:00,0
+metabonet,Loop,metabonet_loop_193,1606,1606,1547,1540,1513,1470,622,2018-08-31 11:50:00,0
+metabonet,Loop,metabonet_loop_194,575,573,573,570,564,561,153,2019-01-06 11:20:00,0
+metabonet,Loop,metabonet_loop_195,2144,2144,1936,2024,1925,1798,964,2018-10-28 17:55:00,0
+metabonet,Loop,metabonet_loop_198,642,642,621,639,629,610,359,2019-04-01 20:20:00,0
+metabonet,Loop,metabonet_loop_20,585,585,585,577,564,564,494,2019-03-12 17:35:00,0
+metabonet,Loop,metabonet_loop_201,3153,3109,3109,3062,2902,2827,1562,2018-03-13 17:35:00,0
+metabonet,Loop,metabonet_loop_202,656,637,637,654,642,624,509,2018-01-21 19:35:00,0
+metabonet,Loop,metabonet_loop_203,1050,1019,1019,1046,1029,996,711,2019-04-11 06:10:00,0
+metabonet,Loop,metabonet_loop_204,604,535,377,465,422,281,210,2018-08-28 11:15:00,0
+metabonet,Loop,metabonet_loop_205,588,576,576,578,563,549,495,2018-11-21 17:20:00,0
+metabonet,Loop,metabonet_loop_206,647,647,557,596,560,511,434,2019-01-08 21:15:00,0
+metabonet,Loop,metabonet_loop_207,2270,2270,2270,2221,2130,2124,1208,2018-04-21 15:20:00,0
+metabonet,Loop,metabonet_loop_209,2603,2603,2491,2564,2492,2375,859,2018-10-27 20:35:00,0
+metabonet,Loop,metabonet_loop_21,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_212,1771,1771,1750,1742,1699,1673,1016,2018-02-10 08:50:00,0
+metabonet,Loop,metabonet_loop_213,3260,3213,3141,3153,3087,2993,1867,2017-12-23 09:15:00,0
+metabonet,Loop,metabonet_loop_214,496,496,496,485,485,483,390,2019-05-09 18:25:00,0
+metabonet,Loop,metabonet_loop_215,1049,1049,1040,1041,1025,1014,705,2019-01-23 11:55:00,0
+metabonet,Loop,metabonet_loop_216,2500,2462,1945,2131,2013,1729,1101,2018-04-23 08:20:00,0
+metabonet,Loop,metabonet_loop_217,456,456,421,424,410,365,310,2019-02-09 21:15:00,0
+metabonet,Loop,metabonet_loop_219,417,399,399,416,411,392,298,2018-09-17 18:40:00,0
+metabonet,Loop,metabonet_loop_221,1005,1005,1005,998,964,964,554,2019-02-04 09:10:00,0
+metabonet,Loop,metabonet_loop_222,1554,1554,1367,1365,1340,1300,766,2019-01-25 10:20:00,0
+metabonet,Loop,metabonet_loop_223,626,626,626,617,606,604,482,2018-12-03 09:20:00,0
+metabonet,Loop,metabonet_loop_224,5517,5515,5515,5454,5315,5293,1674,2018-02-12 06:25:00,0
+metabonet,Loop,metabonet_loop_227,1524,1501,1501,1507,1493,1462,1348,2017-12-28 08:45:00,0
+metabonet,Loop,metabonet_loop_228,3092,3047,2996,3014,2977,2900,1484,2018-05-24 18:05:00,0
+metabonet,Loop,metabonet_loop_230,945,945,890,903,875,843,685,2019-06-04 09:55:00,0
+metabonet,Loop,metabonet_loop_231,1548,1548,1482,1502,1447,1412,816,2018-01-09 19:35:00,0
+metabonet,Loop,metabonet_loop_232,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_235,841,841,814,810,801,793,607,2018-11-10 06:50:00,0
+metabonet,Loop,metabonet_loop_237,2461,2461,1393,1606,1438,1249,466,2018-07-19 20:55:00,0
+metabonet,Loop,metabonet_loop_238,1770,1736,1630,1653,1625,1565,933,2019-02-12 08:25:00,0
+metabonet,Loop,metabonet_loop_239,1242,1242,1206,1197,1165,1140,855,2019-05-07 01:20:00,0
+metabonet,Loop,metabonet_loop_24,2102,2102,2102,1979,1884,1861,1049,2018-11-04 17:25:00,0
+metabonet,Loop,metabonet_loop_240,97,97,97,97,96,96,90,2018-07-28 17:30:00,0
+metabonet,Loop,metabonet_loop_241,916,916,884,912,896,864,575,2018-08-11 17:10:00,0
+metabonet,Loop,metabonet_loop_242,3351,3305,3270,3261,3152,3060,1743,2018-10-03 07:50:00,0
+metabonet,Loop,metabonet_loop_244,1295,1295,1231,1273,1221,1155,707,2019-04-04 19:25:00,0
+metabonet,Loop,metabonet_loop_246,570,524,513,561,544,492,365,2018-09-01 19:25:00,0
+metabonet,Loop,metabonet_loop_247,1961,1936,1936,1946,1854,1824,1195,2019-01-06 19:45:00,0
+metabonet,Loop,metabonet_loop_248,107,107,107,104,98,98,76,2019-03-05 16:15:00,0
+metabonet,Loop,metabonet_loop_249,385,385,385,378,372,372,270,2019-04-05 06:00:00,0
+metabonet,Loop,metabonet_loop_25,1909,1909,1909,1891,1854,1846,978,2018-07-23 09:30:00,0
+metabonet,Loop,metabonet_loop_250,1929,1929,1929,1906,1868,1865,1238,2018-07-16 18:35:00,0
+metabonet,Loop,metabonet_loop_251,1981,1981,1766,1881,1829,1672,1035,2018-07-06 17:00:00,0
+metabonet,Loop,metabonet_loop_252,574,574,574,557,535,529,414,2019-03-08 18:20:00,0
+metabonet,Loop,metabonet_loop_254,656,656,636,641,609,587,573,2019-05-28 14:25:00,0
+metabonet,Loop,metabonet_loop_255,400,400,400,396,379,378,214,2018-11-05 17:45:00,0
+metabonet,Loop,metabonet_loop_256,916,916,897,890,878,858,377,2018-06-24 16:10:00,0
+metabonet,Loop,metabonet_loop_258,583,583,583,576,557,555,315,2018-11-09 17:25:00,0
+metabonet,Loop,metabonet_loop_260,1262,1262,1262,1220,1188,1173,695,2019-04-11 01:35:00,0
+metabonet,Loop,metabonet_loop_263,839,839,643,674,643,589,450,2019-04-26 11:35:00,0
+metabonet,Loop,metabonet_loop_264,2072,2072,2072,2035,1999,1987,1129,2018-12-12 20:30:00,0
+metabonet,Loop,metabonet_loop_266,712,696,677,707,704,667,532,2018-03-31 07:15:00,0
+metabonet,Loop,metabonet_loop_267,3450,3187,2905,2995,2963,2789,1563,2018-10-31 12:30:00,0
+metabonet,Loop,metabonet_loop_268,938,938,908,924,901,865,497,2019-07-04 13:10:00,0
+metabonet,Loop,metabonet_loop_269,1418,1418,1418,1387,1341,1332,616,2018-10-13 17:45:00,0
+metabonet,Loop,metabonet_loop_27,1445,1445,1420,1429,1366,1340,866,2018-12-18 12:05:00,0
+metabonet,Loop,metabonet_loop_270,3181,3181,3181,3116,2949,2927,1047,2019-02-19 06:20:00,0
+metabonet,Loop,metabonet_loop_271,2349,2299,2277,2333,2201,2127,1286,2018-07-31 18:45:00,0
+metabonet,Loop,metabonet_loop_272,283,283,257,276,269,242,239,2018-09-28 21:15:00,0
+metabonet,Loop,metabonet_loop_274,49,49,4,49,40,4,4,2019-06-13 17:45:00,0
+metabonet,Loop,metabonet_loop_278,1144,1112,1112,1124,1061,1021,667,2018-09-29 19:40:00,0
+metabonet,Loop,metabonet_loop_280,2006,1960,1181,1529,1467,979,515,2018-08-14 17:50:00,0
+metabonet,Loop,metabonet_loop_283,1050,1000,928,958,925,856,588,2018-11-24 19:40:00,0
+metabonet,Loop,metabonet_loop_284,231,231,231,228,222,222,110,2018-04-13 17:50:00,0
+metabonet,Loop,metabonet_loop_293,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_296,2854,2854,2854,2837,2797,2790,1202,2018-06-06 14:50:00,0
+metabonet,Loop,metabonet_loop_299,2605,2545,2545,2571,2475,2408,783,2019-04-26 09:45:00,0
+metabonet,Loop,metabonet_loop_3,1574,1547,1546,1528,1485,1455,925,2018-06-23 07:40:00,0
+metabonet,Loop,metabonet_loop_30,1824,1824,1824,1787,1770,1761,919,2018-09-01 18:15:00,0
+metabonet,Loop,metabonet_loop_300,2162,2162,2113,2147,2068,2010,897,2019-02-20 20:35:00,0
+metabonet,Loop,metabonet_loop_301,2332,2332,1898,2023,1983,1765,803,2018-09-26 16:05:00,0
+metabonet,Loop,metabonet_loop_302,1746,1746,1746,1729,1705,1702,1142,2018-08-05 17:20:00,0
+metabonet,Loop,metabonet_loop_303,2528,2490,2014,2109,2079,1924,1381,2018-10-05 16:20:00,0
+metabonet,Loop,metabonet_loop_304,351,351,351,351,339,339,258,2019-01-29 08:20:00,0
+metabonet,Loop,metabonet_loop_306,80,80,80,77,74,74,38,2018-05-07 20:10:00,0
+metabonet,Loop,metabonet_loop_307,189,189,177,189,182,170,110,2018-12-13 06:00:00,0
+metabonet,Loop,metabonet_loop_310,1280,1280,1276,1238,1189,1172,670,2019-07-27 09:15:00,0
+metabonet,Loop,metabonet_loop_311,1335,1241,1061,1105,1075,963,604,2019-04-23 13:45:00,0
+metabonet,Loop,metabonet_loop_312,943,905,878,927,902,851,497,2018-01-08 21:35:00,0
+metabonet,Loop,metabonet_loop_316,1892,1892,1892,1873,1839,1833,829,2019-04-18 20:15:00,0
+metabonet,Loop,metabonet_loop_317,1025,1025,1025,1009,1003,996,587,2018-09-26 08:20:00,0
+metabonet,Loop,metabonet_loop_319,2865,2820,2820,2816,2786,2729,1386,2018-02-06 07:20:00,0
+metabonet,Loop,metabonet_loop_32,717,717,676,682,654,629,463,2018-03-15 13:25:00,0
+metabonet,Loop,metabonet_loop_320,944,851,851,906,875,786,274,2018-05-18 19:10:00,0
+metabonet,Loop,metabonet_loop_321,1848,1848,1848,1834,1809,1806,680,2018-07-05 04:10:00,0
+metabonet,Loop,metabonet_loop_324,809,800,782,782,763,739,521,2018-09-08 12:35:00,0
+metabonet,Loop,metabonet_loop_326,723,723,723,710,675,671,430,2019-01-03 14:30:00,0
+metabonet,Loop,metabonet_loop_329,1007,992,925,959,931,866,439,2019-01-02 16:25:00,0
+metabonet,Loop,metabonet_loop_33,2606,2606,2606,2556,2459,2437,852,2018-07-28 20:40:00,0
+metabonet,Loop,metabonet_loop_330,2212,2180,2180,2187,2101,2065,692,2019-07-03 09:45:00,0
+metabonet,Loop,metabonet_loop_335,1596,1571,1542,1547,1478,1424,1009,2018-05-18 17:50:00,0
+metabonet,Loop,metabonet_loop_336,2463,2463,2375,2372,2274,2174,1118,2018-12-10 15:40:00,0
+metabonet,Loop,metabonet_loop_337,1834,1834,1834,1810,1783,1779,1167,2018-04-28 20:50:00,0
+metabonet,Loop,metabonet_loop_338,611,611,595,603,586,573,543,2018-05-20 08:50:00,0
+metabonet,Loop,metabonet_loop_339,1606,1606,1592,1451,1408,1386,726,2018-10-13 08:20:00,0
+metabonet,Loop,metabonet_loop_34,2224,2224,2224,2192,2163,2156,1176,2018-02-14 17:05:00,0
+metabonet,Loop,metabonet_loop_341,516,516,495,513,509,487,380,2018-11-24 07:05:00,0
+metabonet,Loop,metabonet_loop_342,1483,1483,1483,1472,1444,1440,925,2018-10-01 17:40:00,0
+metabonet,Loop,metabonet_loop_343,827,827,804,791,770,767,553,2018-12-12 06:05:00,0
+metabonet,Loop,metabonet_loop_346,3167,3154,2866,2864,2751,2667,1356,2018-02-05 16:50:00,0
+metabonet,Loop,metabonet_loop_347,2134,2134,1317,1525,1473,1156,495,2018-08-06 12:55:00,0
+metabonet,Loop,metabonet_loop_349,763,763,742,736,699,668,529,2018-08-08 13:10:00,0
+metabonet,Loop,metabonet_loop_352,2918,2918,2918,2897,2874,2863,973,2018-11-03 12:45:00,0
+metabonet,Loop,metabonet_loop_353,678,645,645,666,657,621,394,2018-06-27 19:55:00,0
+metabonet,Loop,metabonet_loop_355,1575,1575,1575,1557,1523,1522,844,2018-12-13 16:30:00,0
+metabonet,Loop,metabonet_loop_356,348,318,273,341,338,265,173,2018-12-06 03:45:00,0
+metabonet,Loop,metabonet_loop_358,1066,1066,1066,1058,1044,1042,387,2018-06-08 11:35:00,0
+metabonet,Loop,metabonet_loop_359,885,885,843,847,836,823,719,2019-03-02 17:25:00,0
+metabonet,Loop,metabonet_loop_360,660,660,660,644,631,631,362,2019-02-07 17:25:00,0
+metabonet,Loop,metabonet_loop_361,3737,3671,3383,3436,3398,3302,1295,2018-06-17 19:10:00,0
+metabonet,Loop,metabonet_loop_363,490,490,490,487,482,481,330,2018-06-28 19:05:00,0
+metabonet,Loop,metabonet_loop_364,1639,1632,1612,1593,1582,1573,471,2018-11-04 20:20:00,0
+metabonet,Loop,metabonet_loop_365,743,740,740,729,716,707,618,2018-05-24 19:40:00,0
+metabonet,Loop,metabonet_loop_366,532,532,532,531,513,513,365,2018-07-20 17:15:00,0
+metabonet,Loop,metabonet_loop_369,1610,1610,1296,1399,1344,1089,781,2019-01-31 07:10:00,0
+metabonet,Loop,metabonet_loop_375,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_376,2066,2066,2066,2027,1951,1942,883,2018-10-03 19:10:00,0
+metabonet,Loop,metabonet_loop_379,1662,1642,1642,1660,1649,1627,1170,2019-01-15 14:25:00,0
+metabonet,Loop,metabonet_loop_38,287,278,262,276,267,250,206,2019-02-16 18:40:00,0
+metabonet,Loop,metabonet_loop_380,1399,1399,945,1024,1003,873,633,2018-06-09 09:00:00,0
+metabonet,Loop,metabonet_loop_381,234,203,177,221,204,148,123,2018-05-12 19:45:00,0
+metabonet,Loop,metabonet_loop_382,645,645,95,147,144,82,49,2019-02-08 07:35:00,0
+metabonet,Loop,metabonet_loop_383,1041,1041,1041,1015,995,989,782,2018-12-21 08:05:00,0
+metabonet,Loop,metabonet_loop_385,1104,1104,956,1010,983,899,642,2019-06-12 16:40:00,0
+metabonet,Loop,metabonet_loop_386,412,412,396,404,397,380,337,2018-09-04 15:40:00,0
+metabonet,Loop,metabonet_loop_387,1187,1187,1187,1174,1153,1147,819,2018-11-05 07:30:00,0
+metabonet,Loop,metabonet_loop_388,1560,1527,1527,1542,1537,1500,1233,2018-03-12 22:30:00,0
+metabonet,Loop,metabonet_loop_389,2804,2755,2755,2774,2696,2645,1257,2018-12-04 20:40:00,0
+metabonet,Loop,metabonet_loop_390,1337,1337,1334,1297,1246,1237,976,2019-05-05 19:10:00,0
+metabonet,Loop,metabonet_loop_393,647,647,647,638,631,629,445,2019-04-15 11:30:00,0
+metabonet,Loop,metabonet_loop_394,1156,1156,1104,1123,1087,1054,723,2019-01-21 07:55:00,0
+metabonet,Loop,metabonet_loop_395,374,374,374,361,362,360,320,2018-07-31 17:55:00,0
+metabonet,Loop,metabonet_loop_399,1779,1779,1779,1729,1648,1633,1019,2018-04-03 00:50:00,0
+metabonet,Loop,metabonet_loop_4,689,635,605,640,632,590,536,2018-09-03 12:40:00,0
+metabonet,Loop,metabonet_loop_401,1849,1821,1821,1791,1726,1676,1187,2018-12-02 17:25:00,0
+metabonet,Loop,metabonet_loop_402,2806,2806,246,703,647,217,68,2018-09-04 13:25:00,0
+metabonet,Loop,metabonet_loop_405,203,203,203,199,199,195,182,2018-09-22 20:25:00,0
+metabonet,Loop,metabonet_loop_406,722,722,722,709,708,706,501,2018-08-13 14:45:00,0
+metabonet,Loop,metabonet_loop_407,2596,2326,2218,2248,2200,2117,1438,2018-04-02 10:15:00,0
+metabonet,Loop,metabonet_loop_408,672,672,672,668,659,656,320,2019-02-12 13:30:00,0
+metabonet,Loop,metabonet_loop_409,1124,1124,1101,1099,1060,1029,600,2018-11-02 22:30:00,0
+metabonet,Loop,metabonet_loop_41,883,883,579,850,784,516,413,2018-02-21 00:25:00,0
+metabonet,Loop,metabonet_loop_410,132,132,101,119,117,93,89,2019-02-11 09:20:00,0
+metabonet,Loop,metabonet_loop_413,1520,1520,1520,1506,1461,1456,763,2018-08-17 19:15:00,0
+metabonet,Loop,metabonet_loop_414,391,391,391,390,377,377,293,2018-11-04 07:30:00,0
+metabonet,Loop,metabonet_loop_415,1769,1732,1333,1363,1336,1237,786,2018-12-08 10:05:00,0
+metabonet,Loop,metabonet_loop_416,767,767,767,761,726,724,407,2019-06-26 11:30:00,0
+metabonet,Loop,metabonet_loop_419,911,911,911,884,867,863,563,2019-01-18 17:45:00,0
+metabonet,Loop,metabonet_loop_420,1437,1437,1437,1424,1408,1404,879,2018-09-07 05:50:00,0
+metabonet,Loop,metabonet_loop_423,2054,2054,2054,2018,1989,1981,855,2018-11-21 07:15:00,0
+metabonet,Loop,metabonet_loop_427,423,423,423,416,407,406,301,2018-06-13 09:05:00,0
+metabonet,Loop,metabonet_loop_428,1844,1808,1792,1841,1819,1767,1495,2018-09-24 07:55:00,0
+metabonet,Loop,metabonet_loop_43,1969,1969,1631,1699,1672,1545,998,2018-10-31 16:20:00,0
+metabonet,Loop,metabonet_loop_430,213,213,213,211,203,203,128,2018-07-13 12:05:00,0
+metabonet,Loop,metabonet_loop_431,1556,1556,1302,1442,1379,1215,606,2019-03-16 07:35:00,0
+metabonet,Loop,metabonet_loop_432,2522,2492,2492,2490,2445,2407,1372,2017-12-01 19:20:00,0
+metabonet,Loop,metabonet_loop_433,1359,1359,1359,1345,1308,1306,823,2019-06-09 08:55:00,0
+metabonet,Loop,metabonet_loop_434,1397,1364,1342,1337,1295,1235,936,2019-02-07 20:00:00,0
+metabonet,Loop,metabonet_loop_436,1571,1571,1571,1526,1482,1473,807,2019-03-18 14:35:00,0
+metabonet,Loop,metabonet_loop_437,1663,1663,1663,1624,1573,1566,707,2019-05-15 20:30:00,0
+metabonet,Loop,metabonet_loop_438,2772,2772,2638,2748,2707,2566,1435,2018-06-14 16:30:00,0
+metabonet,Loop,metabonet_loop_439,1432,1374,1374,1405,1360,1299,567,2019-01-31 07:55:00,0
+metabonet,Loop,metabonet_loop_44,2122,2091,1956,2055,2006,1853,1179,2018-09-15 16:15:00,0
+metabonet,Loop,metabonet_loop_441,1050,1050,1023,982,924,895,681,2018-12-19 13:50:00,0
+metabonet,Loop,metabonet_loop_443,1336,1336,1336,1329,1303,1303,745,2018-12-20 08:15:00,0
+metabonet,Loop,metabonet_loop_445,1686,1686,1686,1672,1637,1630,864,2018-11-29 06:05:00,0
+metabonet,Loop,metabonet_loop_446,1125,1125,1125,1099,1065,1055,641,2019-04-05 10:55:00,0
+metabonet,Loop,metabonet_loop_447,633,633,633,624,616,615,495,2019-03-26 11:20:00,0
+metabonet,Loop,metabonet_loop_448,1715,1680,924,1206,1149,807,595,2018-12-11 06:35:00,0
+metabonet,Loop,metabonet_loop_449,265,265,224,259,249,206,190,2018-08-17 05:50:00,0
+metabonet,Loop,metabonet_loop_45,130,130,130,127,123,122,92,2019-02-10 06:30:00,0
+metabonet,Loop,metabonet_loop_450,1774,1673,1673,1682,1602,1548,954,2018-06-26 05:40:00,0
+metabonet,Loop,metabonet_loop_452,894,894,847,881,850,810,633,2019-02-18 04:55:00,0
+metabonet,Loop,metabonet_loop_453,294,294,294,279,279,279,172,2019-04-15 01:50:00,0
+metabonet,Loop,metabonet_loop_454,1633,1578,1546,1592,1557,1468,919,2019-02-25 08:05:00,0
+metabonet,Loop,metabonet_loop_455,2545,2545,2545,2471,2392,2365,879,2019-06-07 13:45:00,0
+metabonet,Loop,metabonet_loop_457,2155,2122,2099,2114,2068,2013,1443,2018-01-13 19:30:00,0
+metabonet,Loop,metabonet_loop_458,1761,1733,1733,1723,1687,1655,1316,2018-06-13 19:30:00,0
+metabonet,Loop,metabonet_loop_459,1021,1021,840,872,858,703,533,2019-05-04 08:35:00,0
+metabonet,Loop,metabonet_loop_46,30,23,23,30,25,19,10,2019-02-21 18:40:00,0
+metabonet,Loop,metabonet_loop_461,1394,1394,1349,1360,1249,1196,802,2018-10-06 08:00:00,0
+metabonet,Loop,metabonet_loop_462,2401,2010,2010,2033,1989,1951,1417,2018-12-24 11:05:00,0
+metabonet,Loop,metabonet_loop_464,2215,2215,2105,2114,2080,2007,1064,2018-11-29 21:40:00,0
+metabonet,Loop,metabonet_loop_467,1992,1942,1942,1970,1979,1916,934,2018-04-27 18:50:00,0
+metabonet,Loop,metabonet_loop_468,1496,1496,1496,1452,1414,1400,769,2018-08-22 17:45:00,0
+metabonet,Loop,metabonet_loop_47,863,863,863,854,842,837,745,2019-02-20 09:55:00,0
+metabonet,Loop,metabonet_loop_470,1753,1753,1541,1618,1513,1302,687,2018-08-27 17:55:00,0
+metabonet,Loop,metabonet_loop_471,1313,1313,1267,1285,1267,1224,693,2019-03-09 08:15:00,0
+metabonet,Loop,metabonet_loop_473,580,507,507,571,537,463,204,2018-08-02 07:35:00,0
+metabonet,Loop,metabonet_loop_476,1178,1172,1172,1172,1169,1160,1011,2019-03-01 08:15:00,0
+metabonet,Loop,metabonet_loop_477,346,346,323,330,327,306,216,2018-10-09 18:05:00,0
+metabonet,Loop,metabonet_loop_482,1300,1300,1300,1289,1281,1278,932,2018-12-28 07:45:00,0
+metabonet,Loop,metabonet_loop_484,4289,4289,3643,3710,3683,3505,1066,2018-05-14 10:55:00,0
+metabonet,Loop,metabonet_loop_488,1393,1387,1357,1359,1317,1277,591,2019-05-25 14:05:00,0
+metabonet,Loop,metabonet_loop_489,1927,1927,1899,1886,1852,1820,889,2018-11-06 20:05:00,0
+metabonet,Loop,metabonet_loop_493,1180,1180,1180,1162,1136,1129,844,2018-07-08 09:30:00,0
+metabonet,Loop,metabonet_loop_495,4500,4439,3758,3983,3813,3381,1271,2017-11-29 18:35:00,0
+metabonet,Loop,metabonet_loop_496,966,966,907,903,874,827,613,2019-03-21 14:25:00,0
+metabonet,Loop,metabonet_loop_498,929,929,929,909,894,892,522,2018-06-10 19:55:00,0
+metabonet,Loop,metabonet_loop_5,936,936,936,922,909,905,457,2018-12-30 16:20:00,0
+metabonet,Loop,metabonet_loop_50,487,487,460,479,469,440,399,2018-11-21 22:30:00,0
+metabonet,Loop,metabonet_loop_500,1129,1129,1129,1121,1092,1092,824,2018-07-14 07:35:00,0
+metabonet,Loop,metabonet_loop_503,1840,1819,1722,1750,1724,1661,1387,2018-11-04 19:55:00,0
+metabonet,Loop,metabonet_loop_504,1638,1611,963,1394,1121,727,555,2018-08-22 05:50:00,0
+metabonet,Loop,metabonet_loop_505,1285,1285,771,911,911,624,456,2018-11-02 06:15:00,0
+metabonet,Loop,metabonet_loop_508,2776,2717,2658,2673,2499,2381,1552,2018-06-15 12:25:00,0
+metabonet,Loop,metabonet_loop_510,1911,1911,1785,1820,1781,1700,1190,2018-07-21 23:45:00,0
+metabonet,Loop,metabonet_loop_511,1341,1312,1312,1331,1322,1292,992,2018-10-18 21:35:00,0
+metabonet,Loop,metabonet_loop_513,1322,1322,1322,1313,1290,1287,768,2018-09-30 16:30:00,0
+metabonet,Loop,metabonet_loop_516,2,2,2,2,2,2,2,2019-04-16 12:00:00,0
+metabonet,Loop,metabonet_loop_52,1400,1338,1338,1398,1343,1285,641,2019-03-01 10:15:00,0
+metabonet,Loop,metabonet_loop_520,257,257,257,252,250,250,212,2018-11-16 09:20:00,0
+metabonet,Loop,metabonet_loop_521,86,86,86,86,81,81,76,2018-05-31 10:45:00,0
+metabonet,Loop,metabonet_loop_522,230,230,230,226,216,215,97,2019-03-06 06:55:00,0
+metabonet,Loop,metabonet_loop_525,1979,1979,1979,1907,1798,1784,1001,2018-04-23 06:35:00,0
+metabonet,Loop,metabonet_loop_527,1310,1310,1310,1297,1278,1276,898,2018-06-11 20:10:00,0
+metabonet,Loop,metabonet_loop_528,2047,2032,2032,2014,1960,1943,1000,2018-08-08 09:05:00,0
+metabonet,Loop,metabonet_loop_53,209,207,207,207,204,202,70,2018-06-30 17:00:00,0
+metabonet,Loop,metabonet_loop_532,580,580,481,502,467,398,250,2019-04-18 05:55:00,0
+metabonet,Loop,metabonet_loop_533,1709,1684,1662,1703,1671,1621,1202,2018-08-31 18:10:00,0
+metabonet,Loop,metabonet_loop_535,1874,1874,1814,1839,1797,1732,1233,2018-10-18 22:50:00,0
+metabonet,Loop,metabonet_loop_536,3188,3188,3109,3085,3009,2956,985,2018-10-24 19:05:00,0
+metabonet,Loop,metabonet_loop_537,184,184,184,183,180,180,158,2018-05-03 18:10:00,0
+metabonet,Loop,metabonet_loop_538,1617,1590,1588,1587,1569,1538,1313,2018-09-17 06:45:00,0
+metabonet,Loop,metabonet_loop_539,1054,1054,1041,1037,1019,1005,761,2018-08-25 09:05:00,0
+metabonet,Loop,metabonet_loop_540,817,804,757,791,776,726,591,2018-10-05 07:40:00,0
+metabonet,Loop,metabonet_loop_542,375,318,288,365,354,276,157,2018-05-16 09:40:00,0
+metabonet,Loop,metabonet_loop_543,1061,1039,996,1055,1035,971,755,2017-12-26 11:20:00,0
+metabonet,Loop,metabonet_loop_545,1356,1356,1189,1198,1135,1086,647,2019-02-12 06:10:00,0
+metabonet,Loop,metabonet_loop_546,1112,1112,1112,1098,1086,1083,895,2018-08-28 07:55:00,0
+metabonet,Loop,metabonet_loop_548,592,592,592,588,578,577,500,2018-07-31 21:25:00,0
+metabonet,Loop,metabonet_loop_549,2123,2074,2067,2075,2047,1994,1015,2018-09-01 13:20:00,0
+metabonet,Loop,metabonet_loop_55,3109,3072,2980,3030,2986,2873,1409,2018-09-04 17:20:00,0
+metabonet,Loop,metabonet_loop_550,755,755,649,683,670,626,519,2019-02-13 11:30:00,0
+metabonet,Loop,metabonet_loop_551,1380,1380,1380,1361,1340,1334,860,2018-07-21 15:30:00,0
+metabonet,Loop,metabonet_loop_552,1617,1617,964,1114,1055,791,364,2018-07-31 18:00:00,0
+metabonet,Loop,metabonet_loop_554,690,690,656,677,654,618,430,2018-09-01 13:35:00,0
+metabonet,Loop,metabonet_loop_556,871,869,869,862,852,849,494,2019-04-22 08:10:00,0
+metabonet,Loop,metabonet_loop_559,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_561,1701,1701,1701,1680,1659,1653,876,2018-05-30 14:15:00,0
+metabonet,Loop,metabonet_loop_565,1185,1185,1037,1032,1013,972,696,2018-09-02 00:20:00,0
+metabonet,Loop,metabonet_loop_568,3221,3181,3181,3194,3141,3097,1059,2019-01-08 16:15:00,0
+metabonet,Loop,metabonet_loop_569,252,252,243,247,241,230,189,2018-07-31 18:50:00,0
+metabonet,Loop,metabonet_loop_57,2089,2060,2042,2071,2029,1976,1310,2018-02-19 16:05:00,0
+metabonet,Loop,metabonet_loop_570,2675,2641,2610,2621,2563,2495,1945,2018-08-31 16:25:00,0
+metabonet,Loop,metabonet_loop_571,2402,2388,2388,2333,2278,2246,1058,2018-03-15 07:10:00,0
+metabonet,Loop,metabonet_loop_572,1104,1084,1084,1097,1086,1062,940,2019-01-26 17:10:00,0
+metabonet,Loop,metabonet_loop_573,1264,1227,1227,1234,1200,1156,798,2019-03-10 09:40:00,0
+metabonet,Loop,metabonet_loop_574,2250,2250,2250,2229,2188,2185,848,2019-04-06 10:40:00,0
+metabonet,Loop,metabonet_loop_577,233,233,233,227,226,223,204,2019-02-23 06:25:00,0
+metabonet,Loop,metabonet_loop_578,2096,2072,2072,2067,2048,2017,1013,2019-01-28 10:35:00,0
+metabonet,Loop,metabonet_loop_580,198,198,83,112,108,71,60,2019-03-25 07:10:00,0
+metabonet,Loop,metabonet_loop_582,1223,1175,918,982,952,873,569,2018-11-11 16:30:00,0
+metabonet,Loop,metabonet_loop_583,1375,1336,1297,1351,1312,1234,836,2019-07-09 08:00:00,0
+metabonet,Loop,metabonet_loop_584,161,161,160,157,141,140,104,2019-02-11 07:15:00,0
+metabonet,Loop,metabonet_loop_585,1884,1884,1884,1827,1775,1757,1246,2018-12-31 20:05:00,0
+metabonet,Loop,metabonet_loop_587,1377,866,836,870,848,802,557,2018-01-31 21:40:00,0
+metabonet,Loop,metabonet_loop_588,287,287,287,286,277,277,196,2019-04-07 11:20:00,0
+metabonet,Loop,metabonet_loop_589,2707,2683,2683,2661,2629,2586,1790,2018-06-21 22:35:00,0
+metabonet,Loop,metabonet_loop_59,468,468,451,460,450,433,369,2019-06-10 07:30:00,0
+metabonet,Loop,metabonet_loop_590,3275,3226,3171,3185,3136,3044,1592,2018-09-08 19:50:00,0
+metabonet,Loop,metabonet_loop_592,971,971,971,962,964,960,361,2018-07-14 15:05:00,0
+metabonet,Loop,metabonet_loop_594,925,925,925,925,894,894,563,2019-07-30 20:55:00,0
+metabonet,Loop,metabonet_loop_596,104,99,81,104,97,77,66,2018-05-25 17:10:00,0
+metabonet,Loop,metabonet_loop_597,3017,3017,2758,2801,2751,2608,944,2019-03-15 14:05:00,0
+metabonet,Loop,metabonet_loop_598,155,155,135,138,131,115,55,2019-02-24 10:15:00,0
+metabonet,Loop,metabonet_loop_599,1240,1240,708,942,912,612,365,2019-01-13 17:20:00,0
+metabonet,Loop,metabonet_loop_6,1088,1088,985,1010,945,856,603,2018-12-24 20:15:00,0
+metabonet,Loop,metabonet_loop_60,3283,3231,2852,2930,2828,2685,1223,2018-07-15 18:10:00,0
+metabonet,Loop,metabonet_loop_602,186,186,115,157,150,105,99,2018-12-25 11:50:00,0
+metabonet,Loop,metabonet_loop_605,2171,2144,2125,2145,2105,2063,1384,2017-11-20 18:25:00,0
+metabonet,Loop,metabonet_loop_606,1151,1151,1151,1112,1102,1094,727,2019-03-09 08:10:00,0
+metabonet,Loop,metabonet_loop_607,3257,3186,2997,3102,2963,2818,1215,2018-03-21 11:45:00,0
+metabonet,Loop,metabonet_loop_609,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_610,476,450,349,421,404,332,299,2018-09-18 15:05:00,0
+metabonet,Loop,metabonet_loop_611,1403,1403,1013,1078,1046,898,539,2018-09-09 12:00:00,0
+metabonet,Loop,metabonet_loop_613,962,962,619,755,713,513,351,2018-10-16 07:45:00,0
+metabonet,Loop,metabonet_loop_615,1827,1827,1827,1779,1726,1717,789,2019-02-07 07:45:00,0
+metabonet,Loop,metabonet_loop_616,1066,1066,1037,1044,1035,1015,940,2019-02-12 11:10:00,0
+metabonet,Loop,metabonet_loop_617,1040,937,932,959,907,877,676,2018-09-01 20:15:00,0
+metabonet,Loop,metabonet_loop_62,592,592,592,573,572,562,361,2018-07-27 08:00:00,0
+metabonet,Loop,metabonet_loop_620,963,948,936,960,930,902,734,2018-05-29 18:45:00,0
+metabonet,Loop,metabonet_loop_621,1814,1801,1801,1775,1736,1716,1159,2018-05-27 13:25:00,0
+metabonet,Loop,metabonet_loop_623,2209,2209,2185,2125,2037,1997,1146,2018-12-20 16:50:00,0
+metabonet,Loop,metabonet_loop_625,1597,1597,1476,1492,1446,1360,806,2018-08-26 14:00:00,0
+metabonet,Loop,metabonet_loop_626,1031,1012,873,1000,934,785,542,2018-10-24 19:40:00,0
+metabonet,Loop,metabonet_loop_627,1653,1653,1653,1640,1590,1585,1152,2018-09-23 12:20:00,0
+metabonet,Loop,metabonet_loop_629,1338,1338,1338,1317,1275,1271,885,2018-12-17 11:15:00,0
+metabonet,Loop,metabonet_loop_63,1421,1421,1421,1403,1398,1393,1066,2019-01-13 09:05:00,0
+metabonet,Loop,metabonet_loop_630,546,546,546,539,519,519,260,2019-02-24 12:40:00,0
+metabonet,Loop,metabonet_loop_632,3123,3123,3077,3048,2977,2920,890,2018-07-22 07:40:00,0
+metabonet,Loop,metabonet_loop_633,33,33,33,33,32,32,16,2018-11-25 19:50:00,0
+metabonet,Loop,metabonet_loop_634,1681,1646,1601,1622,1579,1516,1212,2018-10-14 21:00:00,0
+metabonet,Loop,metabonet_loop_635,420,420,357,364,357,314,138,2019-04-20 08:00:00,0
+metabonet,Loop,metabonet_loop_637,1676,1655,1655,1617,1606,1572,1147,2019-01-11 11:40:00,0
+metabonet,Loop,metabonet_loop_638,2143,2065,2048,2070,2027,1989,700,2019-03-08 15:30:00,0
+metabonet,Loop,metabonet_loop_639,414,414,414,407,397,396,325,2019-04-01 15:45:00,0
+metabonet,Loop,metabonet_loop_642,1761,1761,1761,1720,1674,1659,874,2019-08-12 17:25:00,0
+metabonet,Loop,metabonet_loop_644,3861,3810,3767,3785,3730,3621,1905,2018-10-03 21:35:00,0
+metabonet,Loop,metabonet_loop_645,1377,1377,1377,1348,1289,1279,657,2019-06-23 08:05:00,0
+metabonet,Loop,metabonet_loop_647,2536,2536,2536,2514,2485,2480,1133,2018-03-14 12:40:00,0
+metabonet,Loop,metabonet_loop_650,3310,3310,3258,3234,3107,3048,1432,2017-12-10 15:20:00,0
+metabonet,Loop,metabonet_loop_651,1914,1899,1899,1875,1837,1815,751,2018-09-18 15:35:00,0
+metabonet,Loop,metabonet_loop_653,3013,2971,2824,2859,2801,2714,1840,2018-10-15 21:00:00,0
+metabonet,Loop,metabonet_loop_657,2627,2627,2627,2595,2559,2551,1067,2018-04-05 00:50:00,0
+metabonet,Loop,metabonet_loop_659,957,957,841,873,852,752,407,2018-07-23 11:40:00,0
+metabonet,Loop,metabonet_loop_66,1921,1917,1883,1876,1844,1809,1207,2019-01-30 14:30:00,0
+metabonet,Loop,metabonet_loop_663,744,708,708,741,726,689,424,2018-06-27 08:20:00,0
+metabonet,Loop,metabonet_loop_664,2384,2384,2384,2370,2346,2344,1357,2018-07-02 21:00:00,0
+metabonet,Loop,metabonet_loop_665,2859,2800,2771,2812,2729,2635,1031,2019-02-11 16:40:00,0
+metabonet,Loop,metabonet_loop_666,102,102,102,102,102,102,63,2019-01-27 06:15:00,0
+metabonet,Loop,metabonet_loop_668,2733,2733,2733,2687,2632,2622,925,2019-04-22 17:35:00,0
+metabonet,Loop,metabonet_loop_669,3013,2970,2856,2910,2841,2751,947,2018-11-05 08:45:00,0
+metabonet,Loop,metabonet_loop_67,683,668,668,680,667,652,600,2018-09-05 11:40:00,0
+metabonet,Loop,metabonet_loop_672,1291,1268,1268,1257,1226,1196,1058,2019-02-12 19:20:00,0
+metabonet,Loop,metabonet_loop_675,242,241,241,241,230,229,108,2018-09-03 09:20:00,0
+metabonet,Loop,metabonet_loop_676,1039,847,847,849,825,814,687,2018-10-31 04:20:00,0
+metabonet,Loop,metabonet_loop_677,1494,1494,1493,1452,1410,1398,882,2018-12-13 18:50:00,0
+metabonet,Loop,metabonet_loop_68,820,820,820,800,787,778,577,2018-07-23 09:00:00,0
+metabonet,Loop,metabonet_loop_680,1080,1040,1039,1050,1013,973,655,2018-12-31 14:10:00,0
+metabonet,Loop,metabonet_loop_681,2480,2480,2480,2466,2432,2428,671,2019-01-14 12:25:00,0
+metabonet,Loop,metabonet_loop_682,559,559,559,542,528,524,382,2019-01-27 09:25:00,0
+metabonet,Loop,metabonet_loop_683,639,616,564,607,595,529,438,2018-09-28 21:15:00,0
+metabonet,Loop,metabonet_loop_684,1191,1191,1191,1180,1151,1145,826,2018-07-25 17:20:00,0
+metabonet,Loop,metabonet_loop_685,547,510,382,513,482,334,252,2018-10-02 07:50:00,0
+metabonet,Loop,metabonet_loop_686,2208,2208,2123,2023,1990,1909,862,2019-05-25 19:35:00,0
+metabonet,Loop,metabonet_loop_687,1698,1647,1510,1526,1403,1228,691,2018-09-04 07:05:00,0
+metabonet,Loop,metabonet_loop_688,2042,1994,1862,1887,1824,1728,1256,2018-04-23 08:50:00,0
+metabonet,Loop,metabonet_loop_69,1634,1632,1601,1583,1477,1433,959,2018-07-06 00:50:00,0
+metabonet,Loop,metabonet_loop_691,1943,1919,1919,1928,1883,1853,1088,2018-07-16 20:05:00,0
+metabonet,Loop,metabonet_loop_695,1953,1923,1855,1938,1909,1809,859,2018-10-16 11:40:00,0
+metabonet,Loop,metabonet_loop_696,65,65,65,64,61,61,29,2019-02-04 18:50:00,0
+metabonet,Loop,metabonet_loop_697,1691,1655,1600,1645,1625,1550,979,2018-08-31 18:20:00,0
+metabonet,Loop,metabonet_loop_699,3763,3763,3682,3657,3628,3578,1691,2018-03-07 14:35:00,0
+metabonet,Loop,metabonet_loop_7,252,220,138,236,181,97,73,2019-03-04 06:15:00,0
+metabonet,Loop,metabonet_loop_70,851,851,851,842,803,799,395,2018-07-28 11:05:00,0
+metabonet,Loop,metabonet_loop_700,147,147,83,144,135,78,41,2018-12-14 18:35:00,0
+metabonet,Loop,metabonet_loop_701,1548,1528,1481,1497,1469,1423,1035,2018-07-06 21:15:00,0
+metabonet,Loop,metabonet_loop_703,1332,1332,1332,1306,1276,1273,868,2018-07-29 05:30:00,0
+metabonet,Loop,metabonet_loop_705,1134,1134,1134,1094,1071,1066,935,2018-08-23 16:50:00,0
+metabonet,Loop,metabonet_loop_71,1432,1405,1405,1405,1389,1352,1037,2018-01-28 17:30:00,0
+metabonet,Loop,metabonet_loop_710,3821,3821,3821,3726,3658,3627,1109,2019-03-23 19:20:00,0
+metabonet,Loop,metabonet_loop_711,1852,1852,1696,1738,1707,1640,882,2018-04-01 22:00:00,0
+metabonet,Loop,metabonet_loop_712,934,912,877,896,877,837,671,2019-03-08 11:05:00,0
+metabonet,Loop,metabonet_loop_713,2062,2010,1612,1658,1593,1508,608,2019-05-27 19:25:00,0
+metabonet,Loop,metabonet_loop_716,318,318,318,313,312,312,298,2018-06-12 06:35:00,0
+metabonet,Loop,metabonet_loop_718,1242,1206,1096,1158,1120,1002,747,2019-05-27 06:50:00,0
+metabonet,Loop,metabonet_loop_722,2302,2258,1152,1733,1714,903,461,2019-02-14 18:50:00,0
+metabonet,Loop,metabonet_loop_723,533,533,520,521,507,490,371,2018-12-23 09:35:00,0
+metabonet,Loop,metabonet_loop_724,998,978,970,994,973,943,829,2018-10-28 19:55:00,0
+metabonet,Loop,metabonet_loop_725,2075,2017,1925,1996,1976,1875,722,2018-12-24 16:30:00,0
+metabonet,Loop,metabonet_loop_726,1039,1006,1006,1006,967,935,764,2018-06-25 00:10:00,0
+metabonet,Loop,metabonet_loop_727,1912,1869,1830,1871,1841,1776,1384,2018-05-23 01:25:00,0
+metabonet,Loop,metabonet_loop_728,293,293,239,292,273,219,139,2019-04-03 08:25:00,0
+metabonet,Loop,metabonet_loop_729,382,330,302,347,324,260,174,2019-06-14 11:05:00,0
+metabonet,Loop,metabonet_loop_73,2157,2136,2136,2134,2086,2057,1346,2019-03-03 15:50:00,0
+metabonet,Loop,metabonet_loop_730,206,177,177,202,202,171,138,2018-11-09 18:15:00,0
+metabonet,Loop,metabonet_loop_732,398,398,398,394,392,390,312,2018-10-13 11:10:00,0
+metabonet,Loop,metabonet_loop_736,1688,1546,1169,1310,1232,1037,508,2019-02-18 11:20:00,0
+metabonet,Loop,metabonet_loop_738,1825,1797,1645,1648,1598,1511,1134,2017-12-18 12:50:00,0
+metabonet,Loop,metabonet_loop_739,651,651,609,612,568,518,395,2018-09-03 18:35:00,0
+metabonet,Loop,metabonet_loop_74,156,156,156,150,148,147,106,2019-04-20 12:45:00,0
+metabonet,Loop,metabonet_loop_740,952,952,905,913,897,852,532,2019-01-30 21:00:00,0
+metabonet,Loop,metabonet_loop_741,909,858,394,582,557,316,166,2018-03-20 13:35:00,0
+metabonet,Loop,metabonet_loop_742,1933,1933,1763,1782,1755,1669,830,2018-11-02 22:50:00,0
+metabonet,Loop,metabonet_loop_743,2321,2287,2275,2253,2245,2186,1413,2018-02-26 21:00:00,0
+metabonet,Loop,metabonet_loop_745,2488,2470,2396,2449,2417,2322,1273,2017-12-03 08:45:00,0
+metabonet,Loop,metabonet_loop_747,569,569,564,553,518,514,445,2019-02-19 04:00:00,0
+metabonet,Loop,metabonet_loop_75,2345,2316,2316,2325,2304,2272,1521,2018-09-25 21:25:00,0
+metabonet,Loop,metabonet_loop_750,1399,1399,1399,1378,1316,1306,734,2018-12-10 20:40:00,0
+metabonet,Loop,metabonet_loop_751,1879,1879,1709,1711,1690,1653,1080,2018-07-20 14:10:00,0
+metabonet,Loop,metabonet_loop_752,122,122,122,121,119,119,71,2019-03-11 05:20:00,0
+metabonet,Loop,metabonet_loop_753,1386,1386,1386,1361,1332,1326,875,2019-03-02 08:40:00,0
+metabonet,Loop,metabonet_loop_755,1394,1394,1381,1379,1335,1324,975,2018-03-30 14:20:00,0
+metabonet,Loop,metabonet_loop_756,706,706,680,701,693,667,483,2018-05-06 08:50:00,0
+metabonet,Loop,metabonet_loop_758,2200,2178,2178,2172,2153,2121,1467,2018-11-26 11:05:00,0
+metabonet,Loop,metabonet_loop_759,2600,2556,2556,2544,2475,2414,1555,2018-01-30 08:15:00,0
+metabonet,Loop,metabonet_loop_76,429,429,429,424,415,413,296,2018-05-10 10:40:00,0
+metabonet,Loop,metabonet_loop_760,1108,1078,63,139,130,42,28,2018-08-10 01:05:00,0
+metabonet,Loop,metabonet_loop_763,854,823,701,823,783,635,512,2018-08-10 13:10:00,0
+metabonet,Loop,metabonet_loop_764,570,523,523,551,527,478,346,2019-02-16 13:35:00,0
+metabonet,Loop,metabonet_loop_765,1935,1807,1641,1688,1626,1437,678,2019-04-08 07:10:00,0
+metabonet,Loop,metabonet_loop_766,3448,3400,3400,3361,3319,3246,1770,2018-06-07 17:55:00,0
+metabonet,Loop,metabonet_loop_767,1765,1765,1765,1763,1705,1703,1215,2018-05-11 17:40:00,0
+metabonet,Loop,metabonet_loop_769,891,891,891,858,842,836,664,2019-02-24 15:00:00,0
+metabonet,Loop,metabonet_loop_770,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_772,272,272,272,260,251,248,240,2018-11-09 17:45:00,0
+metabonet,Loop,metabonet_loop_773,1167,1123,1123,1149,1125,1076,808,2018-09-08 21:30:00,0
+metabonet,Loop,metabonet_loop_775,2076,2076,1735,1887,1819,1529,753,2018-11-19 19:35:00,0
+metabonet,Loop,metabonet_loop_776,1559,1524,1524,1536,1451,1402,899,2019-02-24 17:45:00,0
+metabonet,Loop,metabonet_loop_779,526,526,510,525,507,491,397,2018-07-11 15:35:00,0
+metabonet,Loop,metabonet_loop_78,1001,1001,783,868,763,618,416,2018-09-04 18:35:00,0
+metabonet,Loop,metabonet_loop_784,997,997,997,990,975,973,841,2018-06-25 19:10:00,0
+metabonet,Loop,metabonet_loop_785,1017,1017,1017,998,973,959,634,2019-04-04 16:20:00,0
+metabonet,Loop,metabonet_loop_787,1579,1553,1553,1561,1542,1512,881,2018-01-18 17:35:00,0
+metabonet,Loop,metabonet_loop_788,393,393,393,392,382,381,241,2018-09-18 16:25:00,0
+metabonet,Loop,metabonet_loop_79,312,312,269,312,308,265,100,2019-06-21 18:25:00,0
+metabonet,Loop,metabonet_loop_790,2077,2077,2032,1995,1961,1916,860,2019-04-25 09:50:00,0
+metabonet,Loop,metabonet_loop_791,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_792,457,457,381,416,370,319,295,2019-04-17 12:40:00,0
+metabonet,Loop,metabonet_loop_793,1526,1271,1135,1198,1136,1026,661,2018-02-18 20:00:00,0
+metabonet,Loop,metabonet_loop_794,2552,2370,1655,1788,1671,1440,861,2018-10-09 07:50:00,0
+metabonet,Loop,metabonet_loop_795,435,433,433,433,427,424,267,2018-10-13 14:10:00,0
+metabonet,Loop,metabonet_loop_796,740,721,720,725,680,660,558,2018-03-12 16:40:00,0
+metabonet,Loop,metabonet_loop_797,1941,1882,1832,1850,1811,1754,1165,2018-09-22 10:15:00,0
+metabonet,Loop,metabonet_loop_798,1878,1835,1199,1448,1390,1087,584,2018-06-17 07:35:00,0
+metabonet,Loop,metabonet_loop_799,570,570,570,569,548,548,408,2018-08-04 19:05:00,0
+metabonet,Loop,metabonet_loop_800,1180,1154,992,1145,1050,896,559,2019-03-10 18:00:00,0
+metabonet,Loop,metabonet_loop_801,1996,1996,1948,1884,1820,1772,901,2018-08-27 06:25:00,0
+metabonet,Loop,metabonet_loop_803,2176,2176,2176,2146,2110,2102,958,2019-04-06 17:05:00,0
+metabonet,Loop,metabonet_loop_805,8,6,6,8,8,6,4,2019-05-22 00:40:00,0
+metabonet,Loop,metabonet_loop_807,1596,1581,1581,1589,1548,1533,1348,2018-06-24 16:35:00,0
+metabonet,Loop,metabonet_loop_81,1936,1907,1882,1910,1843,1782,1254,2018-07-11 19:15:00,0
+metabonet,Loop,metabonet_loop_814,535,535,535,528,522,520,320,2018-06-22 20:50:00,0
+metabonet,Loop,metabonet_loop_815,24,24,24,24,23,23,17,2018-07-29 06:30:00,0
+metabonet,Loop,metabonet_loop_816,1883,1883,1861,1873,1838,1816,868,2019-04-24 06:15:00,0
+metabonet,Loop,metabonet_loop_819,1818,1783,1689,1751,1675,1540,1230,2017-11-16 19:40:00,0
+metabonet,Loop,metabonet_loop_82,817,817,730,759,747,699,463,2018-06-21 10:30:00,0
+metabonet,Loop,metabonet_loop_821,2025,2010,1439,1583,1543,1285,800,2018-07-18 16:05:00,0
+metabonet,Loop,metabonet_loop_823,727,727,727,713,704,702,427,2018-05-21 15:05:00,0
+metabonet,Loop,metabonet_loop_824,1286,1260,1260,1257,1219,1181,924,2018-09-07 17:15:00,0
+metabonet,Loop,metabonet_loop_829,2161,2119,1858,1950,1912,1742,1188,2018-03-27 21:10:00,0
+metabonet,Loop,metabonet_loop_831,748,748,748,729,671,665,304,2019-02-12 19:55:00,0
+metabonet,Loop,metabonet_loop_834,1647,1618,1008,1481,1400,927,610,2017-12-29 20:20:00,0
+metabonet,Loop,metabonet_loop_835,1511,1494,1494,1487,1443,1415,831,2018-08-04 19:05:00,0
+metabonet,Loop,metabonet_loop_84,4884,4884,4101,4359,4149,3614,1458,2018-08-17 18:50:00,0
+metabonet,Loop,metabonet_loop_841,1543,1543,1543,1498,1461,1444,800,2018-08-13 16:25:00,0
+metabonet,Loop,metabonet_loop_842,1224,1224,1209,1185,1175,1154,1029,2018-08-31 21:15:00,0
+metabonet,Loop,metabonet_loop_843,2212,2212,2212,2186,2150,2146,1074,2018-12-22 21:40:00,0
+metabonet,Loop,metabonet_loop_844,1412,1386,1363,1337,1282,1236,951,2019-03-14 12:45:00,0
+metabonet,Loop,metabonet_loop_847,1324,1324,1324,1275,1198,1183,749,2019-06-10 17:30:00,0
+metabonet,Loop,metabonet_loop_848,248,248,237,237,232,220,139,2018-07-19 07:15:00,0
+metabonet,Loop,metabonet_loop_85,660,660,660,650,642,639,597,2018-08-20 14:35:00,0
+metabonet,Loop,metabonet_loop_850,1155,1155,1155,1145,1124,1123,531,2019-03-21 16:55:00,0
+metabonet,Loop,metabonet_loop_851,1822,1526,1526,1547,1524,1500,1068,2018-01-17 21:05:00,0
+metabonet,Loop,metabonet_loop_852,2518,2480,2480,2476,2455,2402,1715,2018-03-26 19:45:00,0
+metabonet,Loop,metabonet_loop_854,109,109,109,108,106,106,75,2019-04-05 17:20:00,0
+metabonet,Loop,metabonet_loop_856,2417,2378,2378,2365,2268,2215,1599,2017-10-30 17:25:00,0
+metabonet,Loop,metabonet_loop_858,1280,1273,801,956,893,609,462,2018-12-22 07:15:00,0
+metabonet,Loop,metabonet_loop_859,3059,2972,2928,2983,2942,2819,1546,2018-08-22 12:15:00,0
+metabonet,Loop,metabonet_loop_86,1053,1053,1013,1037,1022,979,568,2018-09-20 13:00:00,0
+metabonet,Loop,metabonet_loop_862,92,75,73,90,88,69,61,2018-06-15 16:35:00,0
+metabonet,Loop,metabonet_loop_867,3376,3340,3237,3280,3179,3055,1465,2018-01-08 14:50:00,0
+metabonet,Loop,metabonet_loop_870,587,564,451,493,469,404,312,2018-10-26 17:20:00,0
+metabonet,Loop,metabonet_loop_874,1099,1099,1057,1073,1048,1005,875,2018-09-22 17:50:00,0
+metabonet,Loop,metabonet_loop_877,2749,2749,826,1631,1546,678,222,2018-08-28 18:30:00,0
+metabonet,Loop,metabonet_loop_878,2231,2231,2109,2170,2115,1998,909,2019-01-15 23:45:00,0
+metabonet,Loop,metabonet_loop_879,2327,2326,2027,2121,2061,1912,445,2018-11-18 14:40:00,0
+metabonet,Loop,metabonet_loop_88,1657,1657,1624,1600,1542,1502,805,2018-06-03 18:45:00,0
+metabonet,Loop,metabonet_loop_881,1236,1236,1236,1216,1194,1188,811,2019-05-03 17:50:00,0
+metabonet,Loop,metabonet_loop_884,4156,4156,4156,4110,4071,4051,1765,2018-04-09 11:10:00,0
+metabonet,Loop,metabonet_loop_887,1104,1104,1104,1064,980,973,601,2019-04-02 18:00:00,0
+metabonet,Loop,metabonet_loop_888,1402,1402,1402,1380,1348,1342,1085,2018-07-06 09:20:00,0
+metabonet,Loop,metabonet_loop_889,920,920,631,697,657,545,384,2019-04-27 09:25:00,0
+metabonet,Loop,metabonet_loop_891,1938,1938,1900,1826,1757,1711,1077,2019-05-07 19:50:00,0
+metabonet,Loop,metabonet_loop_892,3905,3905,2471,2786,2593,2250,1093,2018-02-06 14:00:00,0
+metabonet,Loop,metabonet_loop_893,1970,1970,1970,1944,1918,1914,1036,2018-11-23 16:50:00,0
+metabonet,Loop,metabonet_loop_895,552,552,548,532,519,514,422,2019-02-21 11:35:00,0
+metabonet,Loop,metabonet_loop_897,1060,1049,941,966,933,897,686,2018-06-03 12:20:00,0
+metabonet,Loop,metabonet_loop_899,780,780,633,738,711,566,384,2018-06-28 06:05:00,0
+metabonet,Loop,metabonet_loop_9,2120,2098,2098,2110,2099,2075,1555,2018-01-06 20:00:00,0
+metabonet,Loop,metabonet_loop_90,1698,1698,1698,1666,1652,1644,731,2018-10-06 12:55:00,0
+metabonet,Loop,metabonet_loop_900,741,723,723,735,728,710,429,2018-07-17 09:50:00,0
+metabonet,Loop,metabonet_loop_902,1980,1980,1786,1763,1633,1510,683,2019-02-24 20:00:00,0
+metabonet,Loop,metabonet_loop_903,3285,3285,3285,3220,3163,3146,1840,2017-12-09 10:40:00,0
+metabonet,Loop,metabonet_loop_904,2085,2085,2085,2048,1991,1980,837,2018-07-25 07:55:00,0
+metabonet,Loop,metabonet_loop_905,1882,1871,1871,1839,1756,1739,1166,2018-10-03 10:25:00,0
+metabonet,Loop,metabonet_loop_907,3301,2852,2784,3188,3123,2655,1178,2018-04-06 19:50:00,0
+metabonet,Loop,metabonet_loop_908,2564,2532,2067,2253,2108,1820,1030,2018-03-26 18:15:00,0
+metabonet,Loop,metabonet_loop_909,1380,1380,1357,1351,1341,1310,1090,2018-12-02 18:30:00,0
+metabonet,Loop,metabonet_loop_91,2502,2502,2075,2089,2041,1967,752,2018-10-17 14:20:00,0
+metabonet,Loop,metabonet_loop_910,1230,1230,1208,1192,1174,1144,898,2019-05-14 10:40:00,0
+metabonet,Loop,metabonet_loop_911,807,807,807,795,786,783,603,2019-04-05 23:50:00,0
+metabonet,Loop,metabonet_loop_913,69,67,67,68,62,61,52,2018-09-05 16:35:00,0
+metabonet,Loop,metabonet_loop_916,1481,1447,1227,1236,1188,1157,998,2018-09-12 22:30:00,0
+metabonet,Loop,metabonet_loop_917,1175,1110,1110,1129,1094,1058,787,2019-04-27 08:05:00,0
+metabonet,Loop,metabonet_loop_918,2077,2041,1917,1977,1927,1785,1001,2019-01-13 15:25:00,0
+metabonet,Loop,metabonet_loop_919,409,399,313,356,350,272,213,2018-12-02 11:00:00,0
+metabonet,Loop,metabonet_loop_92,2718,2718,2631,2697,2668,2591,1278,2019-01-12 16:45:00,0
+metabonet,Loop,metabonet_loop_920,1737,1709,1709,1717,1690,1658,1443,2018-02-10 07:55:00,0
+metabonet,Loop,metabonet_loop_923,2399,2399,2358,2340,2298,2254,1212,2018-06-01 16:50:00,0
+metabonet,Loop,metabonet_loop_925,1993,1993,1752,1817,1752,1595,845,2018-08-07 22:25:00,0
+metabonet,Loop,metabonet_loop_926,1530,1489,1489,1517,1486,1446,958,2019-01-07 15:30:00,0
+metabonet,Loop,metabonet_loop_928,1762,1762,1762,1712,1636,1626,1114,2018-10-03 08:25:00,0
+metabonet,Loop,metabonet_loop_929,508,508,469,496,487,448,343,2018-08-24 09:50:00,0
+metabonet,Loop,metabonet_loop_93,998,998,944,979,871,838,701,2018-08-21 10:00:00,0
+metabonet,Loop,metabonet_loop_930,1483,1424,1348,1469,1426,1306,690,2018-11-23 14:40:00,0
+metabonet,Loop,metabonet_loop_931,275,275,275,273,269,268,204,2019-01-29 21:35:00,0
+metabonet,Loop,metabonet_loop_932,3329,3284,3284,3297,3270,3215,1864,2017-12-15 18:50:00,0
+metabonet,Loop,metabonet_loop_934,3222,3222,3222,3181,3086,3077,1011,2019-01-18 15:40:00,0
+metabonet,Loop,metabonet_loop_935,2472,2428,2428,2406,2270,2205,791,2018-11-27 08:35:00,0
+metabonet,Loop,metabonet_loop_936,937,923,908,910,892,856,837,2018-04-14 16:35:00,0
+metabonet,Loop,metabonet_loop_937,375,375,375,371,367,367,328,2019-03-13 11:50:00,0
+metabonet,Loop,metabonet_loop_939,1544,1494,1354,1448,1373,1225,789,2019-03-08 21:15:00,0
+metabonet,Loop,metabonet_loop_941,1616,1616,1235,1498,1395,1121,825,2018-01-31 13:25:00,0
+metabonet,Loop,metabonet_loop_942,1462,1441,1381,1397,1374,1300,1187,2018-01-07 19:45:00,0
+metabonet,Loop,metabonet_loop_943,231,231,231,226,222,222,131,2018-12-03 20:15:00,0
+metabonet,Loop,metabonet_loop_944,2649,2605,2577,2584,2549,2469,1609,2018-06-19 20:55:00,0
+metabonet,Loop,metabonet_loop_946,922,922,922,908,877,868,359,2019-05-02 18:00:00,0
+metabonet,Loop,metabonet_loop_947,736,736,736,732,720,720,707,2018-08-14 18:15:00,0
+metabonet,Loop,metabonet_loop_949,3194,2709,2709,2722,2668,2611,1428,2018-11-24 22:40:00,0
+metabonet,Loop,metabonet_loop_95,674,674,533,616,596,467,352,2019-01-13 21:00:00,0
+metabonet,Loop,metabonet_loop_953,1173,1173,1105,1087,1041,1006,703,2018-07-06 00:55:00,0
+metabonet,Loop,metabonet_loop_954,1944,1943,1683,1699,1633,1497,744,2019-05-08 09:55:00,0
+metabonet,Loop,metabonet_loop_956,1169,1169,1169,1143,1113,1109,773,2018-12-21 18:55:00,0
+metabonet,Loop,metabonet_loop_957,5231,5184,5184,5185,5100,5036,1423,2018-05-02 17:45:00,0
+metabonet,Loop,metabonet_loop_958,2937,2908,2908,2921,2860,2827,1572,2018-02-26 05:55:00,0
+metabonet,Loop,metabonet_loop_96,889,866,854,862,814,779,644,2018-03-12 16:35:00,0
+metabonet,Loop,metabonet_loop_960,2462,2459,2159,2305,2238,2055,1432,2017-12-02 16:45:00,0
+metabonet,Loop,metabonet_loop_961,2875,2838,2683,2694,2575,2489,1575,2018-08-03 19:45:00,0
+metabonet,Loop,metabonet_loop_962,1600,1600,1600,1586,1551,1549,853,2019-02-28 03:50:00,0
+metabonet,Loop,metabonet_loop_963,1293,1267,1260,1269,1230,1214,1135,2018-09-14 06:40:00,0
+metabonet,Loop,metabonet_loop_968,1516,1513,1513,1510,1489,1480,639,2018-04-12 15:20:00,0
+metabonet,Loop,metabonet_loop_969,781,781,759,768,753,730,405,2019-03-04 17:25:00,0
+metabonet,Loop,metabonet_loop_970,2960,2918,1921,2148,2068,1687,977,2018-05-05 16:35:00,0
+metabonet,Loop,metabonet_loop_971,1021,1021,1021,1016,980,979,677,2018-10-08 21:40:00,0
+metabonet,Loop,metabonet_loop_972,1237,1237,1237,1217,1182,1180,903,2018-11-21 15:30:00,0
+metabonet,Loop,metabonet_loop_973,102,102,89,101,97,84,74,2018-04-07 21:20:00,0
+metabonet,Loop,metabonet_loop_974,1935,1935,1935,1933,1897,1897,764,2018-09-05 17:45:00,0
+metabonet,Loop,metabonet_loop_975,3262,3262,3106,3126,3063,2956,1330,2018-05-15 10:05:00,0
+metabonet,Loop,metabonet_loop_976,0,0,0,0,0,0,0,,0
+metabonet,Loop,metabonet_loop_977,3662,3589,3589,3636,3595,3516,1797,2018-04-18 16:40:00,0
+metabonet,Loop,metabonet_loop_978,1302,1302,1302,1298,1268,1268,616,2019-02-09 12:55:00,0
+metabonet,Loop,metabonet_loop_979,637,637,637,631,620,619,348,2019-02-13 08:35:00,0
+metabonet,Loop,metabonet_loop_98,1282,1244,1218,1278,1225,1161,804,2018-08-17 12:45:00,0
+metabonet,Loop,metabonet_loop_980,1405,1405,1371,1394,1354,1317,548,2019-01-15 18:20:00,0
+metabonet,Loop,metabonet_loop_981,1878,1844,1820,1798,1704,1621,1172,2018-02-28 11:15:00,0
+metabonet,Loop,metabonet_loop_982,93,93,93,93,92,92,76,2019-01-01 08:30:00,0
+metabonet,Loop,metabonet_loop_983,471,397,397,469,463,389,202,2018-11-28 06:15:00,0
+metabonet,Loop,metabonet_loop_984,956,956,956,941,906,900,671,2019-07-16 20:00:00,0
+metabonet,Loop,metabonet_loop_987,893,867,851,887,865,826,726,2019-05-18 11:25:00,0
+metabonet,Loop,metabonet_loop_988,1288,1288,1247,1270,1248,1202,687,2018-07-31 09:30:00,0
+metabonet,Loop,metabonet_loop_989,1707,1707,1660,1628,1593,1539,903,2018-07-23 08:30:00,0
+metabonet,Loop,metabonet_loop_99,301,301,301,284,264,264,220,2018-09-27 10:10:00,0
+metabonet,Loop,metabonet_loop_992,1296,1296,1137,1132,1097,1069,994,2018-06-22 09:40:00,0
+metabonet,Loop,metabonet_loop_993,2349,2349,2349,2318,2271,2260,1569,2017-11-22 06:05:00,0
+metabonet,Loop,metabonet_loop_995,1544,1500,1500,1488,1405,1355,935,2018-09-03 09:00:00,0
+metabonet,Loop,metabonet_loop_996,949,949,934,906,864,841,707,2019-05-08 17:15:00,0
+metabonet,Loop,metabonet_loop_997,1947,1915,1536,1618,1562,1406,509,2019-04-12 17:05:00,0
+metabonet,Loop,metabonet_loop_998,2262,2237,2237,2228,2202,2171,1716,2018-03-19 18:15:00,0
+metabonet,Loop,metabonet_loop_999,3562,3562,3562,3461,3441,3412,1170,2018-09-08 15:05:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_540,100,93,93,88,89,80,74,2027-05-27 11:05:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_544,196,169,148,167,171,125,120,2027-05-18 03:25:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_552,98,71,52,85,80,41,39,2025-04-23 13:05:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_559,179,149,149,163,159,119,113,2021-12-14 18:50:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_563,155,133,133,144,141,119,115,2021-09-20 13:05:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_567,32,24,24,25,28,17,17,2027-01-07 08:10:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_570,169,142,142,161,162,134,129,2021-12-14 18:40:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_575,285,248,248,269,267,223,159,2021-11-24 12:50:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_584,118,101,101,105,103,87,82,2025-05-21 06:35:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_588,257,212,212,249,246,203,184,2021-09-06 12:05:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_591,253,214,177,225,217,156,125,2021-12-07 17:50:00,0
+metabonet,OhioT1DM,metabonet_ohiot1dm_596,318,272,227,246,239,178,130,2027-04-16 16:35:00,0
+metabonet,PEDAP,metabonet_pedap_10,2024,1984,1984,1896,1790,1719,992,2021-08-25 07:30:00,0
+metabonet,PEDAP,metabonet_pedap_100,1833,1761,1761,1816,1803,1728,550,2021-09-11 14:40:00,0
+metabonet,PEDAP,metabonet_pedap_102,1274,1244,1244,1230,1183,1136,921,2021-04-19 07:20:00,0
+metabonet,PEDAP,metabonet_pedap_103,1664,1634,1609,1618,1533,1475,946,2020-06-16 18:15:00,0
+metabonet,PEDAP,metabonet_pedap_106,2295,2257,2203,2261,2227,2136,789,2021-03-14 11:20:00,0
+metabonet,PEDAP,metabonet_pedap_107,1374,1344,1323,1319,1288,1226,742,2021-08-02 15:25:00,0
+metabonet,PEDAP,metabonet_pedap_109,701,659,659,684,671,626,449,2021-08-16 12:15:00,0
+metabonet,PEDAP,metabonet_pedap_11,1039,1006,986,1020,1002,945,564,2021-08-03 10:50:00,0
+metabonet,PEDAP,metabonet_pedap_13,778,765,765,770,750,734,457,2021-03-14 09:40:00,0
+metabonet,PEDAP,metabonet_pedap_14,904,876,876,898,881,851,655,2021-02-17 12:40:00,0
+metabonet,PEDAP,metabonet_pedap_16,1385,1355,1332,1367,1335,1284,889,2021-02-18 16:50:00,0
+metabonet,PEDAP,metabonet_pedap_18,1232,1204,1186,1202,1168,1114,737,2020-12-24 15:50:00,0
+metabonet,PEDAP,metabonet_pedap_19,1452,1427,1404,1422,1371,1319,755,2020-09-04 11:35:00,0
+metabonet,PEDAP,metabonet_pedap_20,3805,3731,3731,3739,3664,3575,1220,2020-09-03 18:30:00,0
+metabonet,PEDAP,metabonet_pedap_23,1670,1632,1632,1652,1618,1577,1109,2021-07-17 15:20:00,0
+metabonet,PEDAP,metabonet_pedap_24,2742,2676,2642,2703,2640,2538,959,2021-04-18 18:45:00,0
+metabonet,PEDAP,metabonet_pedap_27,3619,3565,3516,3598,3523,3414,1214,2021-01-04 17:35:00,0
+metabonet,PEDAP,metabonet_pedap_28,1317,1276,1276,1226,1154,1086,730,2021-11-20 12:20:00,0
+metabonet,PEDAP,metabonet_pedap_29,2493,2427,2427,2473,2404,2335,743,2021-07-04 17:00:00,0
+metabonet,PEDAP,metabonet_pedap_3,426,404,404,420,407,382,349,2021-10-05 10:20:00,0
+metabonet,PEDAP,metabonet_pedap_31,930,893,864,903,876,799,360,2021-04-22 18:00:00,0
+metabonet,PEDAP,metabonet_pedap_34,341,312,312,329,303,272,178,2021-06-12 10:35:00,0
+metabonet,PEDAP,metabonet_pedap_36,3246,3207,3207,3173,3105,3042,1032,2020-11-09 16:55:00,0
+metabonet,PEDAP,metabonet_pedap_38,2188,2156,2114,2181,2157,2084,1110,2021-06-20 18:30:00,0
+metabonet,PEDAP,metabonet_pedap_4,1647,1608,1561,1621,1558,1464,991,2021-02-04 12:55:00,0
+metabonet,PEDAP,metabonet_pedap_40,710,683,683,695,684,654,434,2021-03-22 12:00:00,0
+metabonet,PEDAP,metabonet_pedap_44,758,733,733,751,734,708,592,2021-01-17 08:40:00,0
+metabonet,PEDAP,metabonet_pedap_46,1395,1352,1352,1357,1318,1270,783,2020-12-16 07:25:00,0
+metabonet,PEDAP,metabonet_pedap_49,742,715,715,734,722,692,476,2021-02-07 11:55:00,0
+metabonet,PEDAP,metabonet_pedap_5,605,583,583,588,576,548,425,2021-06-14 18:25:00,0
+metabonet,PEDAP,metabonet_pedap_51,1860,1846,1812,1831,1790,1730,877,2020-09-27 11:55:00,0
+metabonet,PEDAP,metabonet_pedap_52,1674,1620,1620,1661,1634,1573,722,2021-06-01 14:40:00,0
+metabonet,PEDAP,metabonet_pedap_53,2223,2190,2125,2187,2152,2052,995,2020-10-27 08:25:00,0
+metabonet,PEDAP,metabonet_pedap_58,1972,1926,1926,1912,1841,1788,1178,2021-02-17 14:25:00,0
+metabonet,PEDAP,metabonet_pedap_59,339,316,281,292,280,226,179,2021-02-17 19:20:00,0
+metabonet,PEDAP,metabonet_pedap_60,2695,2656,2656,2644,2580,2532,936,2021-01-11 06:40:00,0
+metabonet,PEDAP,metabonet_pedap_61,1947,1894,1894,1931,1901,1845,980,2021-08-05 12:20:00,0
+metabonet,PEDAP,metabonet_pedap_62,1525,1469,1469,1454,1414,1359,844,2021-05-01 16:25:00,0
+metabonet,PEDAP,metabonet_pedap_66,688,666,656,656,600,568,531,2020-10-25 10:40:00,0
+metabonet,PEDAP,metabonet_pedap_68,1569,1530,1509,1512,1444,1365,691,2021-05-28 11:35:00,0
+metabonet,PEDAP,metabonet_pedap_69,972,942,922,960,937,888,675,2021-07-17 09:25:00,0
+metabonet,PEDAP,metabonet_pedap_70,1918,1875,1823,1904,1866,1767,904,2021-03-24 09:10:00,0
+metabonet,PEDAP,metabonet_pedap_72,144,95,95,140,137,93,35,2020-09-23 09:50:00,0
+metabonet,PEDAP,metabonet_pedap_75,7,0,0,4,4,0,0,,0
+metabonet,PEDAP,metabonet_pedap_77,2158,2136,2101,2139,2103,2038,1063,2020-08-30 17:30:00,0
+metabonet,PEDAP,metabonet_pedap_78,1571,1528,1528,1542,1504,1449,622,2021-07-09 12:40:00,0
+metabonet,PEDAP,metabonet_pedap_8,1048,1030,1002,978,953,895,787,2020-12-26 22:30:00,0
+metabonet,PEDAP,metabonet_pedap_81,1099,1061,1061,1077,1061,1027,637,2021-05-31 08:00:00,0
+metabonet,PEDAP,metabonet_pedap_82,1149,1127,1071,1130,1098,1017,910,2020-10-23 16:30:00,0
+metabonet,PEDAP,metabonet_pedap_83,2022,1983,1887,1965,1932,1781,818,2020-08-24 14:05:00,0
+metabonet,PEDAP,metabonet_pedap_84,2021,1987,1958,1860,1737,1647,926,2021-02-19 18:15:00,0
+metabonet,PEDAP,metabonet_pedap_88,3168,3091,3091,3124,3088,3001,1359,2021-06-19 10:45:00,0
+metabonet,PEDAP,metabonet_pedap_89,25,24,24,23,24,22,21,2021-11-05 18:55:00,0
+metabonet,PEDAP,metabonet_pedap_9,1675,1641,1621,1632,1595,1532,1047,2020-11-01 18:05:00,0
+metabonet,PEDAP,metabonet_pedap_90,2000,1964,1892,1982,1945,1830,955,2021-05-17 07:25:00,0
+metabonet,PEDAP,metabonet_pedap_91,2101,2066,1935,2068,2024,1859,904,2020-09-17 13:05:00,0
+metabonet,PEDAP,metabonet_pedap_94,987,965,965,967,939,909,648,2021-07-25 11:00:00,0
+metabonet,PEDAP,metabonet_pedap_95,1751,1694,1694,1719,1695,1634,1033,2021-05-17 17:40:00,0
+metabonet,PEDAP,metabonet_pedap_99,1479,1441,1388,1445,1395,1301,854,2021-04-21 12:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_10,1661,624,596,607,590,558,425,2014-12-09 08:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_101,991,991,991,955,949,940,649,2015-03-03 07:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_102,633,577,577,562,548,540,491,2015-01-15 19:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_103,1285,1007,1007,1017,999,957,772,2015-01-08 21:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_105,626,346,346,360,350,321,234,2015-02-28 23:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_108,1677,1503,1330,1400,1385,1208,668,2015-01-11 12:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_109,1406,1144,1144,1158,1138,1108,882,2015-01-08 20:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_11,1464,1302,1270,1170,1068,1001,566,2014-12-05 07:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_110,585,585,471,479,478,401,360,2015-03-19 09:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_111,743,726,646,625,622,562,557,2014-10-01 06:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_112,28,21,21,19,19,18,18,2015-01-13 17:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_115,1212,875,728,765,735,625,528,2015-01-08 18:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_116,1405,1277,1106,1148,1117,1055,804,2015-01-06 16:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_118,1159,523,507,526,515,468,433,2015-01-08 13:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_119,429,429,407,387,363,347,283,2014-11-16 21:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_121,1505,1143,1052,1042,1000,937,584,2015-04-06 20:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_123,569,520,520,512,498,488,450,2015-01-08 12:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_127,332,311,292,310,299,259,214,2014-12-03 17:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_128,1191,908,722,803,772,642,389,2015-01-08 18:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_129,2394,1732,1556,1613,1585,1458,692,2014-12-08 13:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_130,1895,1354,1328,1315,1291,1239,797,2014-12-09 09:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_131,1444,745,651,674,645,585,524,2014-12-07 11:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_132,709,709,629,631,604,529,352,2015-04-08 19:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_134,427,341,341,343,339,325,309,2015-01-08 14:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_135,711,662,640,609,602,578,509,2014-12-01 16:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_136,0,0,0,0,0,0,0,,0
+metabonet,ReplaceBG,metabonet_replacebg_137,1154,1154,897,919,902,821,645,2014-11-04 13:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_138,90,90,90,89,87,86,81,2015-01-01 12:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_140,1723,1089,1089,1078,1053,1002,518,2014-12-08 14:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_141,1165,1165,910,994,956,744,447,2014-11-19 23:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_143,1079,842,778,774,753,681,597,2015-01-09 20:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_145,7,7,0,0,0,0,0,,0
+metabonet,ReplaceBG,metabonet_replacebg_146,1417,1417,1227,1217,1219,1179,759,2015-01-06 13:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_147,822,732,693,678,653,618,525,2014-11-28 18:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_148,578,384,327,337,330,286,262,2015-01-08 16:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_149,1467,1175,1042,1048,1030,896,467,2015-01-09 08:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_15,727,128,128,147,142,117,114,2014-12-10 06:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_152,1208,990,990,977,937,903,694,2014-12-08 17:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_155,1331,1331,1120,1193,1158,1030,705,2014-12-26 19:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_156,938,704,704,711,699,684,649,2015-01-08 13:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_16,738,738,551,549,519,501,498,2015-01-06 18:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_160,892,845,838,840,824,792,695,2014-12-09 08:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_163,1048,878,760,771,767,707,667,2015-01-08 12:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_164,315,315,285,266,266,241,235,2014-11-19 16:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_165,538,499,499,506,494,477,450,2015-01-08 19:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_166,791,735,735,738,726,705,684,2015-01-27 12:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_167,1102,1102,634,758,714,490,357,2015-01-24 20:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_168,1377,1139,1131,1126,1015,963,638,2015-01-08 16:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_169,997,761,686,702,662,608,491,2014-12-06 13:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_17,1051,1011,1011,1019,1015,970,755,2015-01-08 12:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_170,974,974,729,740,699,629,566,2014-12-09 16:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_171,1896,1498,1453,1359,1298,1187,858,2015-01-08 16:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_172,844,695,695,719,701,638,341,2014-12-08 16:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_173,988,704,648,656,628,572,526,2015-01-10 19:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_174,1349,740,683,692,697,646,616,2014-11-25 10:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_175,502,466,466,464,458,437,421,2015-01-09 12:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_176,1429,961,621,646,619,560,506,2015-01-06 13:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_177,1095,985,567,797,750,441,319,2015-01-16 10:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_179,412,411,394,391,384,372,334,2015-01-15 20:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_18,945,828,776,783,738,692,608,2015-01-08 19:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_181,3202,1013,837,870,860,758,379,2015-01-08 21:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_183,1221,739,739,742,730,697,644,2014-12-09 08:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_185,1109,981,981,980,952,913,741,2015-01-08 12:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_186,591,232,125,163,165,107,100,2015-01-08 18:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_187,2010,1979,1356,1379,1327,1171,707,2014-09-30 12:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_188,1397,1064,1064,1059,1039,1009,798,2015-01-09 07:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_189,1082,924,850,875,857,804,680,2015-01-09 06:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_19,7,6,6,6,6,6,5,2015-02-06 06:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_190,513,492,477,471,452,413,363,2015-01-08 18:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_198,191,137,137,144,141,130,130,2015-01-09 09:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_20,947,738,646,677,658,600,585,2014-12-09 07:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_200,1241,1137,743,920,882,620,505,2014-12-05 18:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_201,1052,1052,965,951,937,866,715,2014-11-06 06:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_203,880,364,241,294,285,208,176,2014-12-09 08:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_204,1438,746,746,711,687,661,575,2014-12-05 07:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_205,802,767,767,783,771,741,696,2015-01-08 13:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_206,1208,904,861,852,817,767,523,2015-01-08 21:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_209,318,281,228,239,224,205,190,2015-01-09 06:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_21,441,331,221,237,228,202,169,2015-01-08 17:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_213,652,641,626,619,617,591,417,2014-12-08 20:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_214,1558,1375,1375,1378,1353,1273,783,2015-01-08 14:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_215,1456,1223,959,1019,1007,891,645,2014-12-24 10:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_216,284,3,3,4,4,3,3,2015-01-09 11:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_218,1077,1050,1050,1050,1035,1007,751,2015-01-08 14:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_219,1131,1097,868,917,901,750,624,2014-11-19 17:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_220,148,148,142,131,131,125,118,2014-11-03 11:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_221,2206,1867,1604,1628,1598,1354,704,2015-01-08 12:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_222,960,145,145,188,186,143,107,2014-12-09 08:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_224,820,783,783,765,759,731,669,2015-01-09 17:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_227,1190,1190,1140,1088,1064,1009,867,2014-10-30 07:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_228,1257,1257,982,979,975,911,724,2014-10-14 10:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_229,822,822,750,743,719,679,501,2014-08-26 17:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_23,810,810,809,770,762,756,725,2014-11-17 12:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_231,1302,1143,1143,1140,1127,1086,694,2014-12-09 08:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_232,602,602,602,594,575,573,493,2015-01-09 20:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_233,1326,203,203,246,242,195,124,2015-01-08 18:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_234,1153,890,867,878,873,826,754,2015-01-08 20:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_235,66,66,36,50,52,33,33,2014-11-26 11:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_240,937,937,725,686,635,560,506,2014-12-03 21:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_241,1109,1002,844,868,838,774,603,2014-12-09 06:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_243,1137,874,874,872,858,823,710,2015-01-04 20:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_244,1786,1529,1232,1282,1237,1067,555,2015-01-08 22:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_245,1024,1024,817,862,847,755,713,2014-11-08 13:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_246,1353,923,912,917,879,853,664,2014-12-09 15:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_247,1006,947,919,902,878,810,548,2014-12-06 09:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_248,674,674,551,535,529,505,393,2015-02-09 21:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_249,1067,1067,453,535,512,379,255,2014-11-14 14:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_250,380,207,207,210,210,197,192,2014-12-15 12:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_253,159,159,159,155,151,150,122,2015-02-26 21:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_254,999,743,740,751,725,674,362,2015-01-08 18:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_256,2051,1071,1071,1073,1032,985,319,2015-01-08 19:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_258,1002,534,534,543,537,514,431,2015-01-08 21:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_26,758,758,738,718,705,681,614,2015-01-10 18:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_263,1169,1169,1128,1108,1078,1034,874,2014-11-04 17:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_264,929,635,635,600,562,523,396,2015-02-05 12:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_266,784,690,549,668,657,477,284,2014-12-03 07:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_269,707,707,696,668,636,618,610,2014-10-23 08:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_27,2714,2100,2100,2106,2073,1988,801,2015-01-08 14:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_271,966,966,697,733,713,621,571,2014-11-12 05:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_272,974,810,810,826,820,790,785,2014-12-09 06:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_273,847,821,768,791,776,720,553,2015-01-08 14:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_274,228,189,189,186,181,179,162,2015-01-09 08:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_275,1403,821,616,651,653,559,493,2014-12-01 14:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_276,0,0,0,0,0,0,0,,0
+metabonet,ReplaceBG,metabonet_replacebg_277,948,936,869,870,846,783,770,2014-10-07 13:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_278,1005,831,831,841,839,810,708,2015-01-08 17:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_280,324,316,301,286,275,261,242,2015-01-01 15:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_281,1428,1428,1315,1312,1292,1208,662,2014-12-07 03:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_283,708,708,708,701,683,679,531,2015-02-03 19:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_284,277,254,202,240,234,173,171,2015-01-09 09:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_285,730,18,18,45,41,16,15,2014-12-08 17:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_288,1004,761,761,750,719,696,607,2015-01-09 07:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_29,1210,797,730,751,743,644,552,2015-01-08 14:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_290,880,710,664,645,624,575,520,2014-12-09 12:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_291,1037,753,649,654,648,591,525,2015-01-08 20:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_292,1014,1014,848,840,775,716,548,2014-10-28 23:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_293,1030,806,806,781,758,732,629,2014-12-08 19:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_3,752,708,708,695,681,673,619,2015-01-08 22:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_30,1939,972,972,981,966,924,750,2014-12-09 12:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_31,722,467,467,473,471,444,313,2015-01-09 07:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_32,1117,1055,1010,1012,982,921,745,2015-01-16 21:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_33,608,501,501,494,492,475,444,2015-01-08 18:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_35,1170,604,604,598,587,572,518,2014-12-09 20:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_36,659,600,600,591,572,564,517,2014-12-20 08:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_38,989,989,989,965,942,933,717,2014-12-13 19:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_39,700,700,449,441,434,403,291,2015-03-07 10:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_40,1946,684,679,661,633,604,520,2015-01-02 13:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_41,535,465,378,414,406,343,264,2014-11-21 08:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_43,961,818,818,817,795,761,647,2014-12-06 16:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_45,1,1,0,0,1,0,0,,0
+metabonet,ReplaceBG,metabonet_replacebg_46,700,700,587,580,579,509,466,2014-12-22 21:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_48,1188,676,634,660,655,583,465,2015-01-08 18:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_49,1367,1069,952,952,941,866,562,2015-01-08 17:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_5,614,614,404,436,424,382,350,2014-12-14 07:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_50,842,771,753,763,746,704,549,2014-12-06 10:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_52,590,297,297,317,306,272,200,2015-01-08 19:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_53,1114,1061,1036,1027,1010,978,637,2015-01-08 23:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_54,407,342,342,358,345,322,315,2015-01-08 11:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_55,857,857,534,636,573,388,355,2014-11-23 21:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_57,155,80,75,86,87,68,66,2015-01-08 19:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_60,987,953,953,952,898,868,729,2015-01-05 12:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_61,845,781,781,795,765,732,663,2015-01-09 06:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_62,87,42,42,42,42,36,34,2015-01-09 09:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_64,124,121,121,113,109,104,103,2015-01-19 21:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_65,1454,1312,1312,1330,1292,1241,911,2015-01-08 19:50:00,0
+metabonet,ReplaceBG,metabonet_replacebg_67,265,265,250,244,242,234,231,2014-11-20 13:15:00,0
+metabonet,ReplaceBG,metabonet_replacebg_69,68,64,61,62,62,59,55,2015-01-18 21:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_7,1207,1207,949,935,918,890,718,2015-01-06 16:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_70,1012,763,763,753,728,708,697,2015-01-22 19:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_71,954,901,901,892,863,837,726,2014-12-07 15:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_72,825,825,580,653,637,480,470,2014-09-26 06:55:00,0
+metabonet,ReplaceBG,metabonet_replacebg_73,0,0,0,0,0,0,0,,0
+metabonet,ReplaceBG,metabonet_replacebg_74,2440,1271,1271,1285,1248,1210,962,2015-01-09 07:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_76,860,860,838,821,799,778,617,2015-01-25 20:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_78,1232,620,599,615,593,556,493,2015-01-08 18:25:00,0
+metabonet,ReplaceBG,metabonet_replacebg_79,2818,1630,1329,1379,1358,1216,621,2014-11-22 20:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_8,449,394,394,372,354,332,301,2015-01-10 12:40:00,0
+metabonet,ReplaceBG,metabonet_replacebg_80,775,450,383,398,385,340,334,2015-01-08 18:00:00,0
+metabonet,ReplaceBG,metabonet_replacebg_82,62,39,37,53,53,36,34,2014-11-29 17:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_86,864,843,594,622,596,509,489,2014-12-04 16:30:00,0
+metabonet,ReplaceBG,metabonet_replacebg_87,1146,754,754,752,737,709,583,2015-01-14 19:05:00,0
+metabonet,ReplaceBG,metabonet_replacebg_90,1297,1015,987,984,915,861,628,2014-12-07 16:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_91,1629,977,860,884,865,785,691,2014-12-08 08:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_93,1505,1505,960,955,945,839,710,2015-01-06 06:35:00,0
+metabonet,ReplaceBG,metabonet_replacebg_95,2220,1507,1328,1350,1327,1206,878,2014-11-06 07:10:00,0
+metabonet,ReplaceBG,metabonet_replacebg_96,452,360,340,351,344,306,255,2014-12-05 10:45:00,0
+metabonet,ReplaceBG,metabonet_replacebg_97,751,606,584,545,510,476,405,2015-01-09 16:20:00,0
+metabonet,ReplaceBG,metabonet_replacebg_98,722,722,722,709,702,701,349,2015-03-26 23:00:00,0
+metabonet,SIESTA,metabonet_siesta_SIESTA-01,0,0,0,0,0,0,0,,0
+metabonet,SIESTA,metabonet_siesta_SIESTA-02,0,0,0,0,0,0,0,,0
+metabonet,SIESTA,metabonet_siesta_SIESTA-03,0,0,0,0,0,0,0,,0
+metabonet,SIESTA,metabonet_siesta_SIESTA-04,0,0,0,0,0,0,0,,0
+metabonet,SIESTA,metabonet_siesta_SIESTA-05,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1001,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1002,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1004,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1005,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1006,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1007,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1008,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1009,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1010,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1011,0,0,0,0,0,0,0,,0
+metabonet,ShanghaiT1DM,metabonet_shanghait1dm_1012,0,0,0,0,0,0,0,,0
+metabonet,T1D-UOM,metabonet_t1duom_2301,252,252,252,251,245,245,197,2023-10-22 12:00:00,0
+metabonet,T1D-UOM,metabonet_t1duom_2302,215,215,0,204,188,0,0,,0
+metabonet,T1D-UOM,metabonet_t1duom_2304,202,182,182,201,200,180,138,2023-10-15 12:30:00,0
+metabonet,T1D-UOM,metabonet_t1duom_2305,122,85,0,93,94,0,0,,0
+metabonet,T1D-UOM,metabonet_t1duom_2306,365,348,0,365,357,0,0,,0
+metabonet,T1D-UOM,metabonet_t1duom_2307,233,97,97,127,127,94,73,2023-11-13 09:05:00,0
+metabonet,T1D-UOM,metabonet_t1duom_2308,242,240,240,230,226,226,223,2023-12-05 19:40:00,0
+metabonet,T1D-UOM,metabonet_t1duom_2309,208,187,158,169,166,126,112,2024-02-14 12:05:00,0
+metabonet,T1D-UOM,metabonet_t1duom_2310,0,0,0,0,0,0,0,,0
+metabonet,T1D-UOM,metabonet_t1duom_2313,92,59,59,73,72,57,51,2023-11-20 10:45:00,0
+metabonet,T1D-UOM,metabonet_t1duom_2314,526,451,0,480,477,0,0,,0
+metabonet,T1D-UOM,metabonet_t1duom_2401,485,438,0,483,481,0,0,,0
+metabonet,T1D-UOM,metabonet_t1duom_2405,255,239,0,255,247,0,0,,0

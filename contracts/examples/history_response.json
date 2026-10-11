@@ -1,0 +1,50 @@
+{
+  "participant_id": "synthetic_p001",
+  "cgm": [
+    {
+      "timestamp": "2026-10-08T12:15:00Z",
+      "glucose_mg_dl": 101.0
+    },
+    {
+      "timestamp": "2026-10-08T12:20:00Z",
+      "glucose_mg_dl": 103.0
+    },
+    {
+      "timestamp": "2026-10-08T12:25:00Z",
+      "glucose_mg_dl": 104.0
+    },
+    {
+      "timestamp": "2026-10-08T12:30:00Z",
+      "glucose_mg_dl": 105.0
+    },
+    {
+      "timestamp": "2026-10-08T12:35:00Z",
+      "glucose_mg_dl": 109.0
+    }
+  ],
+  "meals": [
+    {
+      "meal_id": "synthetic_p001_m017",
+      "participant_id": "synthetic_p001",
+      "timestamp": "2026-10-08T12:30:00Z",
+      "carbs_g": 55.0,
+      "protein_g": 22.0,
+      "fat_g": 16.0,
+      "fiber_g": 7.0,
+      "calories_kcal": 460.0,
+      "image_ref": null
+    }
+  ],
+  "heart_rate": [
+    {
+      "timestamp": "2026-10-08T12:25:00Z",
+      "heart_rate_bpm": 68.0,
+      "resting_heart_rate_bpm": 61.0
+    },
+    {
+      "timestamp": "2026-10-08T12:30:00Z",
+      "heart_rate_bpm": 71.0,
+      "resting_heart_rate_bpm": 61.0
+    }
+  ]
+}

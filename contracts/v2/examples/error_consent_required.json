@@ -1,0 +1,12 @@
+{
+  "request": "GET /api/v2/meals",
+  "status": 403,
+  "body": {
+    "code": "consent_required",
+    "message": "Consent to necessary meal and glucose processing has not been granted.",
+    "request_id": "req_00000000000000000000",
+    "details": {
+      "consent_type": "necessary_processing"
+    }
+  }
+}

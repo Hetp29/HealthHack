@@ -1,0 +1,37 @@
+{
+  "request": "POST /api/v2/demo/replay/advance",
+  "status": 422,
+  "body": {
+    "code": "unknown_checkpoint",
+    "message": "No such replay checkpoint.",
+    "request_id": "req_00000000000000000000",
+    "details": {
+      "allowed": [
+        "next",
+        "end",
+        "final_meal",
+        "retrieval_activation"
+      ],
+      "checkpoint_ids": [
+        "meal_01_forecast",
+        "meal_01_outcome",
+        "meal_02_forecast",
+        "meal_03_forecast",
+        "meal_02_outcome",
+        "meal_03_outcome",
+        "meal_04_forecast",
+        "meal_04_outcome",
+        "meal_05_forecast",
+        "meal_05_outcome",
+        "meal_06_forecast",
+        "meal_06_outcome",
+        "meal_07_forecast",
+        "meal_07_outcome",
+        "meal_08_forecast",
+        "meal_08_outcome",
+        "meal_09_forecast",
+        "meal_09_outcome"
+      ]
+    }
+  }
+}

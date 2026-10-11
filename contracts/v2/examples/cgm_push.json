@@ -1,0 +1,20 @@
+{
+  "request": "POST /api/v2/cgm/readings",
+  "status": 200,
+  "body": {
+    "batch_id": "imp_00000000000000000000000000000008",
+    "provider": "demo",
+    "data_class": "demo",
+    "received_at": "2026-09-20T16:00:00Z",
+    "counts": {
+      "received": 73,
+      "inserted": 73,
+      "duplicates": 0,
+      "corrected": 0,
+      "rejected": 0,
+      "rejected_by_reason": {}
+    },
+    "rejections": [],
+    "rejections_truncated": false
+  }
+}

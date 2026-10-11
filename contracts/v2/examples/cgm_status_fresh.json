@@ -1,0 +1,54 @@
+{
+  "request": "GET /api/v2/cgm/status",
+  "status": 200,
+  "body": {
+    "as_of": "2026-09-20T16:00:00Z",
+    "freshness": "fresh",
+    "latest": {
+      "observation_id": "glu_00000000000000000000000000000052",
+      "observed_at": "2026-09-20T16:00:00Z",
+      "received_at": "2026-09-20T16:00:00Z",
+      "glucose_mg_dl": 94.2,
+      "glucose": 94.2,
+      "unit": "mg/dL",
+      "source": {
+        "value": 94.2,
+        "unit": "mg/dL",
+        "conversion": "none",
+        "timestamp": "2026-09-20T16:00:00+00:00",
+        "timezone": null
+      },
+      "provider": "demo",
+      "device_id": "demo-sensor",
+      "record_kind": "cgm",
+      "quality_flags": [],
+      "data_class": "demo",
+      "corrected": false
+    },
+    "latest_age_minutes": 0.0,
+    "forecast_ready": true,
+    "forecast_requirement": "A forecast needs a CGM reading no more than 15 minutes before the meal time.",
+    "model_series": {
+      "device": {
+        "provider": "demo",
+        "device_id": "demo-sensor",
+        "data_class": "demo"
+      },
+      "other_devices": [],
+      "multi_device_overlap": false
+    },
+    "last_24h": {
+      "readings": 73,
+      "median_interval_minutes": 5.0,
+      "coverage": 0.253,
+      "gaps": [
+        {
+          "start": "2026-09-19T16:00:00Z",
+          "end": "2026-09-20T10:00:00Z",
+          "minutes": 1080.0
+        }
+      ]
+    },
+    "data_class": "demo"
+  }
+}
