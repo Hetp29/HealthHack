@@ -438,6 +438,61 @@ model version (the model id and frozen files). None was done.
 
 ---
 
+## D-019 · A meal entered into a demonstration is hypothetical: forecast, never scored
+
+**Status:** decided and implemented (2026-10-11, release integration). **Owner:** Ruhaan.
+
+**Problem.** A demonstration account replays one CGMacros participant's recorded
+glucose. Anyone exploring it can add a meal by hand or by photo. Before this decision
+the backend treated that meal like any other: it scored the forecast against the
+participant's subsequent recorded glucose, could mark it eligible as personal history,
+used it as a prior meal for later forecasts, let it disqualify a genuine meal as an
+"intervening meal", and let its alert put a genuine meal's alert into cooldown. All
+five are wrong for the same reason: the participant never ate that meal.
+
+**Decision.** In a demonstration account (one with a `demo_replay_state` row) a meal is
+either
+
+* **authentic recorded** — logged by the governed replay from the dataset; or
+* **hypothetical** — everything else.
+
+A hypothetical meal still receives a genuine fs-1.3 forecast from the recorded glucose
+history. Beyond that it is inert:
+
+| | Authentic recorded meal | Hypothetical meal |
+|---|---|---|
+| Forecast | yes | yes |
+| Response episode created | yes | **no** |
+| `GET /meals/{id}/outcome` | pending → scored | `status: "not_applicable"`, `reason: "hypothetical_demo_meal"`, no observed values |
+| `outcome_status` on the forecast | pending / scored / … | `"not_applicable"` |
+| Eligible as personal history | by the usual rules | **never** |
+| Counted as a prior meal / "minutes since prior meal" | yes | **no**, for any forecast |
+| Can make another meal an `intervening_meal` case | yes | **no** |
+| Its alert counts towards an authentic meal's cooldown | yes | **no** |
+
+`not_applicable` is deliberately distinct from `pending` and `scored`: an absent outcome
+is never presented as a successful one.
+
+**How the two are told apart.** By the meal's note. The replay writes a reserved prefix
+(`Research dataset meal record` / `Generated test-fixture meal record`). The public API
+now rejects that prefix (422) unless the request carries the replay's in-process token,
+which is generated at start-up and never leaves the process, so the label cannot be
+forged through the API. This needed **no schema change and no migration**.
+
+**What did not change.** The frozen model, its features, retrieval rules and artifact;
+Contract v1.0; every non-demonstration account (all of whose meals are the user's own);
+and the scripted replay itself. `tests/v2/test_hypothetical_meal_isolation.py` replays
+the whole scenario twice, once clean and once with hypothetical meals inserted before
+every event, and requires identical forecasts, scores, eligibility and alert results
+for every recorded meal.
+
+**Legacy rows.** A database that already holds an episode for a hypothetical meal is
+safe: the eligibility query ignores it, the outcome endpoint reports `not_applicable`,
+and a rescore voids it with reason `hypothetical_demo_meal`.
+
+**API surface (v2, additive).** `outcome_status` and outcome `status` gain the value
+`not_applicable`; the outcome body gains `reason` and `message` in that case.
+
 ## Open decisions (nobody has decided these)
 
 | # | decision | who | blocks |

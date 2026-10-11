@@ -204,11 +204,20 @@ export function OutcomeView({
   formatTime: (iso: string) => string;
 }) {
   const { unit, glucose } = useUnits();
+  if (outcome.status === "not_applicable") {
+    return (
+      <Notice title="No comparison for this meal">
+        You added this meal to a historical replay. The recorded participant did not eat it, so the
+        glucose recorded afterwards is not this meal's response. GLIMPSE does not score it and never
+        uses it as personal history.
+      </Notice>
+    );
+  }
   if (outcome.status === "pending") {
     return (
       <Notice title="Waiting for the two hours after this meal">
-        The comparison appears once the glucose readings for the full two hours are in, from{" "}
-        {formatTime(outcome.scoring_not_before)}.
+        The comparison appears once the glucose readings for the full two hours are in
+        {outcome.scoring_not_before ? `, from ${formatTime(outcome.scoring_not_before)}` : ""}.
       </Notice>
     );
   }

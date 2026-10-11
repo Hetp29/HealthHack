@@ -80,10 +80,9 @@ function MealPage() {
   const settings = useAlertSettings();
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // A meal typed into a replay is not the meal the recording's glucose responded to,
-  // so the recording must never be presented as that meal's outcome.
-  const comparable = meal.data ? !isDemoAccount || isRecordedMeal(meal.data) : false;
-  const outcome = useOutcome(mealId, comparable && !!meal.data?.prediction_id);
+  // Whether an outcome exists is the server's decision: a meal typed into a replay comes
+  // back `not_applicable`, because the recording belongs to what the participant ate.
+  const outcome = useOutcome(mealId, !!meal.data?.prediction_id);
 
   const forecast = useMutation({
     retry: false,
@@ -243,16 +242,9 @@ function MealPage() {
               title="How it compared"
               description="The forecast against the glucose recorded afterwards."
             >
-              {comparable ? (
-                <Async query={outcome} skeleton={<SkeletonLines lines={4} />} compact>
-                  {(o) => <OutcomeView outcome={o} formatTime={clock.dateTime} />}
-                </Async>
-              ) : (
-                <Notice title="No comparison for this meal">
-                  You added this meal to a historical replay. The recording's glucose reflects what
-                  the participant actually ate, not this meal, so GLIMPSE doesn't compare the two.
-                </Notice>
-              )}
+              <Async query={outcome} skeleton={<SkeletonLines lines={4} />} compact>
+                {(o) => <OutcomeView outcome={o} formatTime={clock.dateTime} />}
+              </Async>
             </Panel>
           )}
         </div>

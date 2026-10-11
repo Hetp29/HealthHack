@@ -26,7 +26,7 @@ from backend.app.v2.db import tables as t
 from backend.app.v2.deps import (
     CONSENT_PERSONALIZATION, MODEL_ID, V2Context, has_consent, participant_id_for,
 )
-from backend.app.v2.services import alerts, history, outcomes, personalization
+from backend.app.v2.services import alerts, history, meal_provenance, outcomes, personalization
 from ml.config import HORIZONS
 from ml.features import FEATURE_NAMES, FeatureError, InsufficientPremealContext, build_features
 from ml.inference import forecast as frozen_forecast
@@ -238,9 +238,12 @@ def predict_meal(conn: Connection, ctx: V2Context, user: dict, meal_id: str, *,
             raise
         return prediction_payload(conn, stored, replayed=True)
 
-    conn.execute(t.response_episodes.insert().values(
-        **outcomes.new_episode_values(prediction_id, meal, user_id,
-                                      ctx.settings.outcome_grace_minutes)))
+    if not meal_provenance.is_hypothetical(conn, user_id, meal):
+        # A hypothetical demonstration meal is forecast but never scored: it gets no
+        # response episode, so it can never become personal history.
+        conn.execute(t.response_episodes.insert().values(
+            **outcomes.new_episode_values(prediction_id, meal, user_id,
+                                          ctx.settings.outcome_grace_minutes)))
 
     alert = alerts.evaluate_forecast(conn, ctx, user, values,
                                      inputs.context["cgm"]["latest_age_minutes"])
@@ -272,6 +275,10 @@ def prediction_payload(conn: Connection, row: dict, *, replayed: bool = False,
         alert = alerts.alert_payload(dict(stored_alert)) if stored_alert else None
     personal = row["personalization"]
     cgm = snapshot["context"].get("cgm", {})
+    owner = conn.execute(
+        select(t.meals.c.user_id, t.meals.c.note).where(t.meals.c.meal_id == row["meal_id"])
+    ).mappings().first()
+    hypothetical = owner is not None and meal_provenance.is_hypothetical(conn, owner["user_id"], dict(owner))
     return {
         "prediction_id": row["prediction_id"],
         "meal_id": row["meal_id"],
@@ -305,8 +312,11 @@ def prediction_payload(conn: Connection, row: dict, *, replayed: bool = False,
             "offset_change_at": snapshot["context"].get("offset_change_at"),
         },
         "snapshot": {"snapshot_id": row["snapshot_id"], "history_sha256": snapshot["history_sha256"]},
-        "outcome_status": None if episode is None else episode["status"],
-        "outcome_not_before": None if episode is None else core.rfc3339(episode["eligible_after"]),
+        # A hypothetical demonstration meal has no outcome, and says so (D-019).
+        "outcome_status": (meal_provenance.OUTCOME_NOT_APPLICABLE if hypothetical
+                           else None if episode is None else episode["status"]),
+        "outcome_not_before": (None if hypothetical or episode is None
+                               else core.rfc3339(episode["eligible_after"])),
         "alert": alert,
         # Exactly the frozen contract v1.0 `ForecastResponse`.
         "forecast": row["forecast"],

@@ -37,7 +37,7 @@ from sqlalchemy.engine import Connection
 
 from backend.app.v2 import core
 from backend.app.v2.db import tables as t
-from backend.app.v2.services import glucose
+from backend.app.v2.services import glucose, meal_provenance
 from ml.config import HORIZON_WINDOW_MINUTES
 from ml.features import ContextOverride, MealComposition
 from ml.provenance import SOURCE_LOCAL_UNKNOWN_TZ
@@ -151,6 +151,15 @@ def _iso(value: dt.datetime) -> str:
 
 def eligible_meal_ids(conn: Connection, user_id: str) -> set[str]:
     """Meals whose scored outcome, for their CURRENT confirmation, is eligible."""
+    conditions = [
+        t.meals.c.user_id == user_id,
+        t.response_episodes.c.status == "scored",
+        t.response_episodes.c.eligible_for_personalization.is_(True),
+    ]
+    # Belt and braces for episodes scored before hypothetical meals were told apart.
+    authentic = meal_provenance.authentic_meals_only(conn, user_id)
+    if authentic is not None:
+        conditions.append(authentic)
     rows = conn.execute(
         select(t.meals.c.meal_id)
         .select_from(
@@ -161,11 +170,7 @@ def eligible_meal_ids(conn: Connection, user_id: str) -> set[str]:
             ).join(t.response_episodes,
                    t.response_episodes.c.prediction_id == t.predictions.c.prediction_id)
         )
-        .where(and_(
-            t.meals.c.user_id == user_id,
-            t.response_episodes.c.status == "scored",
-            t.response_episodes.c.eligible_for_personalization.is_(True),
-        ))
+        .where(and_(*conditions))
     )
     return {row[0] for row in rows}
 
@@ -191,16 +196,23 @@ def build_engine_inputs(
     )
 
     m, c = t.meals, t.meal_confirmations
+    prior = and_(
+        m.c.user_id == user_id, m.c.status == "confirmed",
+        m.c.meal_id != meal["meal_id"],
+        m.c.occurred_at < as_of, m.c.occurred_at >= as_of - LOOKBACK,
+        m.c.consumption_status != "not_eaten",
+    )
+    # In a demonstration account only meals the recorded participant really ate are
+    # context: a hypothetical meal is neither a prior meal nor a "time since last
+    # meal" for any forecast (DECISIONS D-019).
+    authentic = meal_provenance.authentic_meals_only(conn, user_id)
+    if authentic is not None:
+        prior = and_(prior, authentic)
     prior_rows = conn.execute(
         select(m.c.meal_id, m.c.occurred_at, m.c.consumption_status,
                c.c.carbs_g, c.c.protein_g, c.c.fat_g, c.c.fiber_g, c.c.calories_kcal)
         .select_from(m.join(c, c.c.confirmation_id == m.c.current_confirmation_id))
-        .where(and_(
-            m.c.user_id == user_id, m.c.status == "confirmed",
-            m.c.meal_id != meal["meal_id"],
-            m.c.occurred_at < as_of, m.c.occurred_at >= as_of - LOOKBACK,
-            m.c.consumption_status != "not_eaten",
-        ))
+        .where(prior)
         .order_by(m.c.occurred_at, m.c.meal_id)
     ).mappings().all()
 

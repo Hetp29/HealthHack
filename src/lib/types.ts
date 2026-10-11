@@ -251,19 +251,23 @@ export interface Prediction {
     missing_features: string[];
     history_truncated_at_offset_change: boolean;
   };
-  outcome_status: "pending" | "scored" | "insufficient_data" | "voided" | null;
+  /** `not_applicable`: a hypothetical demonstration meal, which never has an outcome. */
+  outcome_status: "pending" | "scored" | "insufficient_data" | "voided" | "not_applicable" | null;
   outcome_not_before: string | null;
   alert: (Pick<AlertEvent, "alert_id" | "status" | "kind"> & { payload: AlertPayload }) | null;
   forecast: Forecast;
 }
 
 export interface Outcome {
-  episode_id: string;
+  episode_id: string | null;
   prediction_id: string;
   meal_id: string;
-  status: "pending" | "scored" | "insufficient_data" | "voided";
-  window_end_at: string;
-  scoring_not_before: string;
+  status: "pending" | "scored" | "insufficient_data" | "voided" | "not_applicable";
+  /** Why there is no outcome, when `status` is `not_applicable`. */
+  reason?: string;
+  message?: string;
+  window_end_at: string | null;
+  scoring_not_before: string | null;
   scored_at: string | null;
   eligible_for_personalization: boolean;
   ineligibility_reasons: string[];

@@ -17,6 +17,7 @@ from sqlalchemy.exc import IntegrityError
 
 from backend.app.v2 import core
 from backend.app.v2.db import tables as t
+from backend.app.v2.services import meal_provenance
 from backend.app.v2.deps import V2Context
 
 KIND_FORECAST_ABOVE_THRESHOLD = "forecast_above_threshold"
@@ -77,14 +78,23 @@ def evaluate_forecast(conn: Connection, ctx: V2Context, user: dict, prediction: 
         status = "suppressed_quiet_hours"
     else:
         since = now - dt.timedelta(minutes=int(rule["cooldown_minutes"]))
-        recent = conn.execute(
-            select(t.alert_events.c.alert_id).where(and_(
-                t.alert_events.c.user_id == user["user_id"],
-                t.alert_events.c.kind == KIND_FORECAST_ABOVE_THRESHOLD,
-                t.alert_events.c.status == "active",
-                t.alert_events.c.created_at > since,
-            )).limit(1)
-        ).first()
+        recent_query = select(t.alert_events.c.alert_id).where(and_(
+            t.alert_events.c.user_id == user["user_id"],
+            t.alert_events.c.kind == KIND_FORECAST_ABOVE_THRESHOLD,
+            t.alert_events.c.status == "active",
+            t.alert_events.c.created_at > since,
+        ))
+        # In a demonstration, an alert about a hypothetical meal must not silence the
+        # alert for a meal the participant really ate (DECISIONS D-019).
+        authentic = meal_provenance.authentic_meals_only(conn, user["user_id"])
+        this_meal = conn.execute(
+            select(t.meals.c.note).where(t.meals.c.meal_id == prediction["meal_id"])).first()
+        if authentic is not None and this_meal is not None and meal_provenance.has_reserved_prefix(this_meal[0]):
+            recent_query = recent_query.where(t.alert_events.c.prediction_id.in_(
+                select(t.predictions.c.prediction_id)
+                .select_from(t.predictions.join(t.meals, t.meals.c.meal_id == t.predictions.c.meal_id))
+                .where(authentic)))
+        recent = conn.execute(recent_query.limit(1)).first()
         if recent is not None:
             status = "suppressed_cooldown"
 
