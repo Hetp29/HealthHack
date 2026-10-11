@@ -15,8 +15,10 @@ Implemented in `backend/app/v2/services/history.py`. Each stored prediction keep
 |---|---|
 | Nothing observed after the meal instant is read | SQL `observed_at <= meal time`, then the frozen `history.truncated_at` |
 | One sensor per forecast | `services/glucose.py::select_model_series` |
-| Lookback 8 days | mirrors the frozen `PredictionService._prediction_history` |
-| Clock = account-local wall clock | `project_local_clock`; see DECISIONS D-006 |
+| Lookback 8 days at most | mirrors the frozen `PredictionService._prediction_history` |
+| Clock = local wall clock, IANA zone, converted per observation | `project_local_clock`; DECISIONS D-006 |
+| History never spans a UTC-offset change | `engine_lookback_start`: the lookback starts at the change when one falls inside the 8 days |
+| Storage stays true UTC | only the engine input is projected |
 | Only `record_kind = cgm` readings | scans and fingersticks are stored but not used |
 | Readings are never interpolated or filled | a gap stays a gap |
 
@@ -117,5 +119,8 @@ training data, and reported accuracy does not transfer across them automatically
    the 20-reading retrieval rule (BLOCKERS B-011).
 4. **Stricter history.** Live history excludes confounded episodes that training
    retained (D-009), so `r_hist_n` runs lower for the same person.
-5. **Clock.** Exact within a DST regime; one hour off for clock-dependent features
-   across a DST change inside the lookback (D-006).
+5. **Clock.** Each observation is read on its own correct local clock, and elapsed
+   times are exact. For up to 8 days after a daylight-saving change the history is
+   shorter (it starts at the change), so history-dependent inputs are sparser and
+   `g_dev_from_night` may be missing. Travel and account-timezone changes are not
+   tracked per observation (D-006).

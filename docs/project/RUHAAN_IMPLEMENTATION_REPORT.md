@@ -7,9 +7,60 @@
 | `df3129c` | the four canonical planning documents (cherry-pickable, docs only) |
 | `63e7007` | the v2 application layer |
 | `2a755d7` | its test suite |
-| *(next)* | contract artifacts, registry, decisions, blockers, handoffs, this report |
+| `c3512b8` | contract artifacts, registry, decisions, blockers, handoffs, this report |
+| *(follow-up)* | review rulings, D-006 rework, Docker artifact gates — see §0 |
 
-Nothing has been pushed.
+Pushed to `origin/ruhaan` after the follow-up; the final SHA is in the push record.
+
+## 0 · Addendum — review rulings and follow-up (2026-10-10)
+
+Ruhaan reviewed R0–R8 and accepted the implementation as the **integration
+baseline**, subject to the external and deployment blockers. It was explicitly not a
+blanket approval: every v2 endpoint remains PROPOSED until the shared interface
+review. The rulings are quoted verbatim in `DECISIONS.md` (R-001, D-006, D-007).
+Sections 1–8 below are the original report; where this addendum differs, it wins.
+
+| ruling | action taken |
+|---|---|
+| D-006 conditionally approved; no account-level fixed offset | Reworked to IANA, per-observation conversion. The engine's history never spans a UTC-offset change. True UTC stays in storage. 22 DST tests. No frozen file touched. |
+| D-007 not approved for enablement | Level A retained. Level B stays off; documented as not to be enabled; evaluation by chronological replay recorded as the precondition (not started — out of scope for integration). |
+| Keep v2 endpoints PROPOSED | Registry approval table rewritten to say so. |
+| Docker path must never train or substitute a synthetic model | Training removed from the Dockerfile. Build-time and start-time checksum gates. `.dockerignore` excludes every other model directory. |
+
+**A defect the D-006 rework found in the first version.** The UTC offset was computed
+with `ZoneInfo.utcoffset()` on a UTC datetime, which reads its argument as local wall
+time. Correct away from a transition; wrong within hours of one. Fixed, and covered
+by the new tests. Section 4 and the "Known limitations" list below describe the
+fixed-offset design, which no longer exists.
+
+**Verification after these changes**
+
+| check | result |
+|---|---|
+| `python -m pytest -q -rsxX` | **965 passed, 1 skipped, 0 failed** (703 pre-existing + 262 v2; the skip is the opt-in real-OpenAI call) |
+| `python -m research.freeze.verify_artifacts` | **PASS** |
+| `model.joblib` SHA-256 | `12ed0602…7415fe` — unchanged |
+| `contracts/openapi.yaml` SHA-256 | `be836ddd…200f4` — unchanged |
+| 23 frozen source files vs the manifest | all match |
+| `scripts/smoke_v2.py` against a live server, frozen artifact, checksum enforced | **21 of 21 steps passed**, started with the container's own command (gate, then uvicorn) |
+| `alembic upgrade head` / `check` / `downgrade base` (SQLite) | pass |
+| `python -m contracts.v2.build_contract --check` | pass |
+
+**Still not verified against anything real — unchanged by this follow-up:**
+
+| | state |
+|---|---|
+| OpenAI | never called; mocked |
+| Dexcom API, Fitbit, WHOOP | never contacted; mocked |
+| Dexcom Clarity / LibreView file imports | fixtures only; no genuine export seen |
+| Apple Health | no native app exists |
+| PostgreSQL | DDL renders offline; never run on a server |
+| S3 | never exercised |
+| Docker image | never built (no daemon here) |
+| Glimpse frontend | does not call v2 |
+| A real user's device data | none has ever been received |
+
+---
 
 ## 1 · Bottom line
 

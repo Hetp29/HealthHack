@@ -42,11 +42,13 @@
         "q_retr_peak_delta",
         "q_retr_ttp",
         "q_retr_curve_spread"
-      ]
+      ],
+      "history_truncated_at_offset_change": false,
+      "offset_change_at": null
     },
     "snapshot": {
       "snapshot_id": "snp_0000000000000000000000000000040e",
-      "history_sha256": "48a7fec883a0ca7e42502ec9bf761c58c38e0bc99886ac8befaafbc69cd2822e"
+      "history_sha256": "ac711056f3abb03a1884f0de0dd25091b2997505868f755c7f80ec62aeeaa378"
     },
     "outcome_status": "pending",
     "outcome_not_before": "2026-09-20T18:30:00Z",
@@ -272,7 +274,7 @@
         "Drivers are reported at the 60-minute horizon, where this forecast peaks, and describe that horizon only.",
         "This forecast averages an interpretable linear model (50%) with a gradient-boosted model (50%). The drivers below decompose the linear half exactly and are scaled by its weight; the boosted half has no exact additive decomposition and its contribution is NOT attributed here. Treat the listed drivers as a partial explanation.",
         "These inputs were unavailable for this meal and were filled with training-set medians plus an explicit missing-value flag: hr_mean_30min_bpm, q_retr_curve_spread, q_retr_delta_120, q_retr_delta_30, q_retr_delta_60, q_retr_delta_90, q_retr_mean_distance, q_retr_peak_delta, q_retr_ttp.",
-        "Timestamps were expressed on this account's local clock, using its UTC offset at the meal time, so that time-of-day inputs match how the model was trained."
+        "Timestamps were expressed on this account's local clock, each using the UTC offset in force in its timezone at that moment, so that time-of-day inputs match how the model was trained."
       ]
     }
   }

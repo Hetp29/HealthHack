@@ -5,7 +5,9 @@ One register for all three workstreams (master §6). Blocking issues first.
 **Legend:** EXT = needs an external account, credential or approval · TEAM = needs a
 team decision · HET / NEIL / RUHAAN = waiting on that person's work.
 
-Last updated 2026-10-10 by Ruhaan's implementation pass.
+Last updated 2026-10-10, after Ruhaan's review of R0–R8.
+
+**Nothing in this register is verified against a real external system.** OpenAI, Dexcom, LibreView, Fitbit, WHOOP, Apple Health, PostgreSQL, S3, Docker and the Glimpse frontend have each been exercised only by mocks, fixtures, offline rendering or not at all. None may be described as verified until a real integration test against it has passed.
 
 ---
 
@@ -55,15 +57,22 @@ tested (`POST /cgm/readings` and `POST /wearables/observations` with source
 
 ## B-004 · The frozen artifact has no delivery path to a deployment — HET
 
-`ml/artifacts_*/` is gitignored, so the fs-1.3 artifact is not in the repository. The
-existing `Dockerfile` trains a **synthetic** model inside the image; a container built
-from it would serve a different model under the same version string.
+`ml/artifacts_*/` is gitignored, so the fs-1.3 artifact is not in the repository and
+a clean clone cannot build the image.
 
-**Needs from Het:** an immutable artifact store (e.g. versioned S3), fetch at build or
-start, and `GLUCOTWIN_EXPECTED_MODEL_SHA256` set in every environment. With that
-variable set, v2 refuses to forecast on any other artifact and `/api/v2/ready` fails —
-so a wrong artifact is a failed deployment, not a silent one. Note the guard covers
-v2 only; the frozen v1 `/api/predict` has no such check and cannot be given one.
+**Fixed on this branch:** the `Dockerfile` no longer trains anything and has no
+synthetic fallback. It carries only `ml/artifacts_cgmacros_fs13/`, runs
+`python -m backend.app.v2.verify_artifact` at build time (no artifact or wrong
+checksum → no image) and again before the container starts serving (→ the container
+exits). That start-time gate also protects the frozen v1 `/api/predict`, which cannot
+check for itself. `.dockerignore` excludes every other model directory.
+
+**Still needed from Het:** an immutable artifact store (e.g. a versioned, write-once
+S3 prefix) and a pipeline step that places the five files in the build context.
+
+**Not verified:** the image has never been built — there is no Docker daemon on the
+development machine. The guards are tested as Python and as static checks on the
+Dockerfile text, not by running a container.
 
 ## B-005 · Things real users need that are not built — RUHAAN / TEAM
 
@@ -129,6 +138,22 @@ someone qualified has reviewed it.
 
 ---
 
+## B-014 · Level B calibration is unevaluated and not approved — RUHAAN
+
+Ruled NOT APPROVED FOR ENABLEMENT (DECISIONS D-007). It stays off. Approval may be
+requested only after a leakage-safe chronological replay on the development folds.
+Not started; out of scope during team integration.
+
+## B-015 · Shared interface review has not happened — HET, NEIL, RUHAAN
+
+Every v2 endpoint is PROPOSED (DECISIONS R-001). Het and Neil have not yet reviewed
+the registry. Until they have, field names can still change.
+
+---
+
 ## Resolved
 
-*(none yet)*
+| | resolved | how |
+|---|---|---|
+| D-006 fixed-offset clock projection | 2026-10-10 | Replaced by IANA per-observation conversion with a transition-bounded lookback; 22 DST tests. See DECISIONS D-006. |
+| Dockerfile trained a synthetic model | 2026-10-10 | Training removed; build-time and start-time checksum gates. See B-004 for what remains. |

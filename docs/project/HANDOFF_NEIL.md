@@ -1,9 +1,48 @@
 # Handoff to Neil — building Glimpse against the v2 API
 
 From Ruhaan. What you can build against today, where the payloads are, and the rules
-the UI has to respect. All of it is **PROPOSED** until I sign the registry off — field
-names are meant to be stable, but tell me before you depend on something that looks
-wrong, and I will tell you before changing anything.
+the UI has to respect. The backend is accepted as the integration baseline, and every
+v2 endpoint is still **PROPOSED** until the shared interface review — yours included —
+is done. Field names are meant to be stable; tell me what looks wrong during the
+review, and I will announce any change in `DECISIONS.md` before making it.
+
+## 0 · How to get this work onto your branch
+
+Everything is on the remote branch **`origin/ruhaan`**. Nothing is on `main`.
+
+```bash
+git fetch origin
+
+# (a) The four canonical planning documents -- one documentation-only commit, made to
+#     be cherry-picked so all three branches hold identical copies (master plan §5).
+git cherry-pick df3129c
+
+# (b) Read anything without changing your branch:
+git show origin/ruhaan:docs/project/API_INTERFACE_REGISTRY.md
+git show origin/ruhaan:contracts/v2/openapi.json > /tmp/glucotwin-v2-openapi.json
+
+# (c) Copy the shared docs, v2 contract and examples into your working tree:
+git checkout origin/ruhaan -- docs/project contracts/v2
+```
+
+| you want | path on `origin/ruhaan` |
+|---|---|
+| Canonical plan and role briefs | `docs/project/00_MASTER_…md`, `01_RUHAAN_…md`, `02_HET_…md`, `03_NEIL_…md` |
+| Shared decision log, blocker register, interface registry | `docs/project/DECISIONS.md`, `BLOCKERS.md`, `API_INTERFACE_REGISTRY.md` |
+| v2 contract (machine-readable) | `contracts/v2/openapi.json` |
+| Integration examples — real captured responses | `contracts/v2/examples/*.json` (`_meta.json` explains what they are) |
+| Frozen v1 contract | `contracts/openapi.yaml`, `contracts/schemas/`, `contracts/examples/` |
+
+`DECISIONS.md`, `BLOCKERS.md` and `API_INTERFACE_REGISTRY.md` are the **single shared
+copies**. Do not create your own: propose changes by pull request against `ruhaan`
+(or send them to Ruhaan), so there is one log.
+
+To run the backend itself, merge or check out `origin/ruhaan`; step (c) alone gives
+you documents and contracts, not code.
+
+**Status of what you are integrating against:** accepted as the integration baseline,
+with every v2 endpoint still PROPOSED pending the shared interface review. Nothing
+external is verified — see `BLOCKERS.md`.
 
 ## 1 · Where everything is
 
@@ -153,6 +192,10 @@ Manual entry skips the photo and analysis: `POST /meals` with `macros`.
   logged" progress indicator from `admissible_prior_meals` is accurate.
 * `context_quality.latest_cgm_age_minutes` and `missing_features` are worth
   surfacing as "based on a reading N minutes old".
+* `context_quality.history_truncated_at_offset_change: true` appears for up to 8 days
+  after a daylight-saving change: the forecast used a shorter history. The matching
+  sentence is already in `forecast.limitations`; no special handling is needed beyond
+  showing limitations.
 * `422 insufficient_premeal_context` → "your sensor data is too old to forecast"
   with `details.latest_cgm_age_minutes`. Not a generic error.
 * **Call predict for every confirmed meal**, including ones logged after the fact.

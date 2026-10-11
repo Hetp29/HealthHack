@@ -34,11 +34,13 @@
       "multi_device_overlap": false,
       "missing_features": [
         "hr_mean_30min_bpm"
-      ]
+      ],
+      "history_truncated_at_offset_change": false,
+      "offset_change_at": null
     },
     "snapshot": {
       "snapshot_id": "snp_00000000000000000000000000000796",
-      "history_sha256": "f2b596479e25a7a44269a810e39d69ed48df8d835aa60c31b0e091e114e16217"
+      "history_sha256": "df4d353e8bb66b3c8634d0446e0e2567bf79ab21e2a0e70befd87483aa55841f"
     },
     "outcome_status": "pending",
     "outcome_not_before": "2026-09-20T18:30:00Z",
@@ -264,7 +266,7 @@
         "Drivers are reported at the 60-minute horizon, where this forecast peaks, and describe that horizon only.",
         "This forecast averages an interpretable linear model (50%) with a gradient-boosted model (50%). The drivers below decompose the linear half exactly and are scaled by its weight; the boosted half has no exact additive decomposition and its contribution is NOT attributed here. Treat the listed drivers as a partial explanation.",
         "These inputs were unavailable for this meal and were filled with training-set medians plus an explicit missing-value flag: hr_mean_30min_bpm.",
-        "Timestamps were expressed on this account's local clock, using its UTC offset at the meal time, so that time-of-day inputs match how the model was trained."
+        "Timestamps were expressed on this account's local clock, each using the UTC offset in force in its timezone at that moment, so that time-of-day inputs match how the model was trained."
       ]
     }
   }

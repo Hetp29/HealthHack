@@ -4,6 +4,44 @@ From Ruhaan. Everything the backend needs from its environment. Nothing here
 provisions anything: AWS resources, networking, secrets infrastructure and CI/CD are
 yours. Where something is unverified it says so.
 
+## 0 · How to get this work onto your branch
+
+Everything is on the remote branch **`origin/ruhaan`**. Nothing is on `main`.
+
+```bash
+git fetch origin
+
+# (a) The four canonical planning documents -- one documentation-only commit, made to
+#     be cherry-picked so all three branches hold identical copies (master plan §5).
+git cherry-pick df3129c
+
+# (b) Read anything without changing your branch:
+git show origin/ruhaan:docs/project/API_INTERFACE_REGISTRY.md
+git show origin/ruhaan:contracts/v2/openapi.json > /tmp/glucotwin-v2-openapi.json
+
+# (c) Copy the shared docs, v2 contract and examples into your working tree:
+git checkout origin/ruhaan -- docs/project contracts/v2
+```
+
+| you want | path on `origin/ruhaan` |
+|---|---|
+| Canonical plan and role briefs | `docs/project/00_MASTER_…md`, `01_RUHAAN_…md`, `02_HET_…md`, `03_NEIL_…md` |
+| Shared decision log, blocker register, interface registry | `docs/project/DECISIONS.md`, `BLOCKERS.md`, `API_INTERFACE_REGISTRY.md` |
+| v2 contract (machine-readable) | `contracts/v2/openapi.json` |
+| Integration examples — real captured responses | `contracts/v2/examples/*.json` (`_meta.json` explains what they are) |
+| Frozen v1 contract | `contracts/openapi.yaml`, `contracts/schemas/`, `contracts/examples/` |
+
+`DECISIONS.md`, `BLOCKERS.md` and `API_INTERFACE_REGISTRY.md` are the **single shared
+copies**. Do not create your own: propose changes by pull request against `ruhaan`
+(or send them to Ruhaan), so there is one log.
+
+To run the backend itself, merge or check out `origin/ruhaan`; step (c) alone gives
+you documents and contracts, not code.
+
+**Status of what you are integrating against:** accepted as the integration baseline,
+with every v2 endpoint still PROPOSED pending the shared interface review. Nothing
+external is verified — see `BLOCKERS.md`.
+
 ## 1 · Runtime
 
 | | |
@@ -45,11 +83,20 @@ Route traffic on readiness, restart on liveness.
 
 ## 4 · The model artifact — action needed (BLOCKERS B-004)
 
-The frozen artifact directory `ml/artifacts_cgmacros_fs13/` is **gitignored**. A clean
-clone does not contain it, and the existing `Dockerfile` trains a *synthetic* model
-instead. Do not ship that image as it stands.
+**The deployment path never trains a model and never substitutes a synthetic one.**
+The `Dockerfile` on this branch carries exactly the frozen fs-1.3 artifact and is
+gated twice by `python -m backend.app.v2.verify_artifact`:
 
-Required:
+* **at build** — if `ml/artifacts_cgmacros_fs13/model.joblib` is missing from the
+  build context, or is not the approved checksum, the build fails. No image.
+* **at start** — the container command runs the same check before `uvicorn`. A wrong
+  artifact means the container exits instead of serving. This is what protects the
+  frozen v1 `/api/predict`, which cannot check for itself.
+
+`.dockerignore` keeps every other model directory out of the image.
+
+The frozen artifact directory is **gitignored**, so a clean clone cannot build. What
+is needed from you:
 
 1. Store these five files immutably (e.g. a versioned, write-once S3 prefix):
 
@@ -61,7 +108,14 @@ Required:
    | `metrics_day8_holdout.json` | same as `metrics.json` |
    | `evaluation_detail_day8_holdout.json` | `ec8829178554a12058b568e9ec9cd286b3241b8612b20ec1077e8a87f34e47fe` |
 
-2. Place them in the image or fetch at start, read-only, and set:
+   Ruhaan holds the only copy today (local disk). Agree the transfer with him; do not
+   regenerate it — `python -m ml.train` produces a *different* artifact.
+
+2. In the pipeline, fetch them into `ml/artifacts_cgmacros_fs13/` before
+   `docker build`.
+
+3. Keep these three variables as the Dockerfile sets them; never override the
+   artifact path to anything else:
 
    ```
    GLUCOTWIN_MODEL_ARTIFACT=ml/artifacts_cgmacros_fs13/model.joblib
@@ -69,16 +123,18 @@ Required:
    GLUCOTWIN_EXPECTED_MODEL_SHA256=12ed06026f34eae252fda5a837ff404cb91a4d0d56253fe8d1fc6b43597415fe
    ```
 
-3. Remove the `RUN python -m ml.train …` step from the image. Nothing may train in a
-   deployment.
+4. Never run `python -m ml.train` or `python -m ml.evaluate` in a build or a
+   deployment. (The test suite trains a small synthetic model under `ml/artifacts/`
+   for its own use; that directory is excluded from the image.)
 
-With `GLUCOTWIN_EXPECTED_MODEL_SHA256` set, a wrong or missing artifact makes
-`/api/v2/ready` return 503 and every v2 forecast return `503 model_integrity_failure`.
-**Caveat:** that guard protects v2 only. The frozen v1 `/api/predict` cannot be given
-a check without modifying frozen code, so also verify the checksum in your pipeline
-(`python -m research.freeze.verify_artifacts`, or `shasum -a 256`).
+Independently of the container gates, v2 also refuses to forecast
+(`503 model_integrity_failure`) and `/api/v2/ready` returns 503 when the loaded
+artifact does not match `GLUCOTWIN_EXPECTED_MODEL_SHA256`.
 
-The container user needs read access to the artifact and no write access to it.
+**Unverified:** the image has never been built or run — there is no Docker daemon on
+the development machine. Please build it, run `python scripts/smoke_v2.py <url>`
+against the container, and tell me what breaks. Also confirm the gate by building once
+with a deliberately wrong file: the build must fail.
 
 ## 5 · Environment variables
 
@@ -111,8 +167,10 @@ Names only. Full annotated list: `.env.example`.
 | `GLUCOTWIN_IMAGE_S3_BUCKET` | no | S3 photo storage (else local disk) |
 | `GLUCOTWIN_IMAGE_S3_PREFIX` | no | default `meal-images/` |
 
-**Tunables with safe defaults:** `GLUCOTWIN_PERSONALIZATION_POLICY` (leave
-`history_only`), `GLUCOTWIN_OUTCOME_GRACE_MINUTES`, `GLUCOTWIN_SESSION_TTL_HOURS`,
+**Do not set** `GLUCOTWIN_PERSONALIZATION_POLICY`. It must stay at its default,
+`history_only`: the other value is ruled NOT APPROVED FOR ENABLEMENT (DECISIONS D-007).
+
+**Tunables with safe defaults:** `GLUCOTWIN_OUTCOME_GRACE_MINUTES`, `GLUCOTWIN_SESSION_TTL_HOURS`,
 `GLUCOTWIN_REGISTRATION_OPEN`, `GLUCOTWIN_MAX_IMAGE_BYTES`,
 `GLUCOTWIN_VISION_DAILY_LIMIT`, `GLUCOTWIN_OPENAI_TIMEOUT_SECONDS`,
 `GLUCOTWIN_CONSENT_POLICY_VERSION`, `GLUCOTWIN_LOG_LEVEL`.

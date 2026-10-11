@@ -17,16 +17,20 @@ endpoint, its guarantees, and its status.
 
 ## Approval status
 
-Every v2 endpoint below is **PROPOSED**: implemented, tested, and awaiting sign-off.
+**Every v2 endpoint below is PROPOSED.** On 2026-10-10 Ruhaan accepted the
+implementation as the *integration baseline* and stated explicitly that this is not
+blanket API approval (DECISIONS R-001). Endpoints move to APPROVED only after the
+shared interface review.
 
 | who | what they sign off | status |
 |---|---|---|
-| Ruhaan | server contract and correctness | **not yet recorded** |
-| Neil | that the payloads support the screens | not yet reviewed |
-| Het | reachability, CORS, body-size limits | not yet reviewed |
+| Ruhaan | server contract and correctness | accepted as integration baseline; **endpoints remain PROPOSED** |
+| Neil | that the payloads support the screens | **not yet reviewed** |
+| Het | reachability, CORS, body-size limits | **not yet reviewed** |
 
-Until Ruhaan approves, treat field names as stable-but-changeable; any change after
-approval is a versioned change announced in `DECISIONS.md`.
+Build against these contracts now, and raise anything wrong during the review. Field
+names are intended to be stable; a change before approval will be announced in
+`DECISIONS.md`, and any change after approval is a versioned change.
 
 ---
 
@@ -219,7 +223,7 @@ Around it, v2 adds:
 | `inputs_confirmed` | `false` only for the opt-in unreviewed-AI path — label the forecast prominently |
 | `model` | id, version, feature set, artifact SHA-256 |
 | `personalization` | `policy`, `consent`, `admissible_prior_meals`, `retrieval_active` (true from 5 completed meals), `calibration_applied` |
-| `context_quality` | `latest_cgm_age_minutes`, `cgm_readings_last_60_min`, `cgm_device`, `multi_device_overlap`, `missing_features[]` |
+| `context_quality` | `latest_cgm_age_minutes`, `cgm_readings_last_60_min`, `cgm_device`, `multi_device_overlap`, `missing_features[]`, `history_truncated_at_offset_change`, `offset_change_at` (true for up to 8 days after a daylight-saving change: a shorter history was used) |
 | `outcome_status`, `outcome_not_before` | when the comparison with reality will exist |
 | `alert` | the alert event this forecast raised, or `null` |
 
@@ -388,7 +392,7 @@ Glimpse's client-side `spikeAlert.ts` should become display-only once this is wi
 | Forecast orchestration, snapshot, reproduction | **IMPLEMENTED AND VERIFIED**, including with genuine CGMacros sensor data and the frozen artifact |
 | Outcome scoring, eligibility, rescoring | **IMPLEMENTED AND VERIFIED** |
 | Personalization Level A | **IMPLEMENTED AND VERIFIED** |
-| Personalization Level B | IMPLEMENTED AND VERIFIED, **disabled by default** pending governance (D-007) |
+| Personalization Level B | PRESENT, **DISABLED — NOT APPROVED FOR ENABLEMENT** (D-007); needs a chronological replay evaluation first |
 | Medications, doses, reminders | **IMPLEMENTED AND VERIFIED** (in-app) |
 | Forecast alerts | **IMPLEMENTED AND VERIFIED** (in-app) |
 | Push / email delivery | **NOT IMPLEMENTED** |
@@ -398,6 +402,9 @@ Glimpse's client-side `spikeAlert.ts` should become display-only once this is wi
 | Apple Health / Apple Watch | Server ingest IMPLEMENTED AND VERIFIED. Native client **NOT IMPLEMENTED — REQUIRES TEAM DECISION** (B-003) |
 | Real-time CGM for live forecasts | **BLOCKED** (B-001) |
 | Frontend consuming v2 | **NOT IMPLEMENTED** (B-009) |
+| Local-clock policy across DST | **IMPLEMENTED AND VERIFIED** — IANA, per observation (D-006, conditionally approved) |
+| Container image | Dockerfile PRESENT, **NEVER BUILT**; never trains, ships only the checksum-verified frozen artifact |
+| PostgreSQL | **NOT VERIFIED** — DDL renders offline only (B-007) |
 | Deployment | **NOT IMPLEMENTED** — Het |
 
 "IMPLEMENTED AND VERIFIED" means automated tests exercise the behaviour, including its

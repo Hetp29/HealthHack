@@ -11,7 +11,25 @@ One log for all three workstreams (master §6). Newest entries at the bottom.
 * **SUPERSEDED** — replaced; kept for history.
 
 Every entry below was written during Ruhaan's R0–R8 implementation pass on
-2026-10-10 and is **PROPOSED**. Each names who needs to sign it off.
+2026-10-10. Ruhaan reviewed the pass the same day and ruled on D-006 and D-007; those
+rulings are quoted verbatim in their entries. **Every other entry is still PROPOSED**,
+and the review explicitly was not a blanket approval of the v2 API (see R-001).
+
+---
+
+## R-001 · Review ruling on R0–R8 (Ruhaan, 2026-10-10)
+
+> R0–R8 reviewed. The backend implementation and testing results are accepted as the
+> integration baseline, subject to the remaining external and deployment blockers.
+
+> Keep all v2 endpoints PROPOSED until the shared interface review is complete; do
+> not treat this message as blanket API approval.
+
+> The objective now is controlled team integration, not further model development.
+
+Consequences recorded here: the code on `ruhaan` is the baseline Het and Neil
+integrate against; every v2 endpoint stays PROPOSED until Het and Neil have reviewed
+the registry; no model development is in scope.
 
 ---
 
@@ -67,67 +85,127 @@ login rate limiting, MFA. See BLOCKERS B-005.
 calibration for that id and therefore reports `generalized_fallback`, with its own
 explanation in `limitations`. A user is never mapped onto a CGMacros participant.
 
-## D-006 · Live timestamps are projected onto the account's local clock before inference
+## D-006 · Live timestamps are projected onto the local wall clock before inference
 
-**Status:** PROPOSED — **needs Ruhaan's explicit sign-off; this is the model-compatibility gate**
+**Status:** **CONDITIONALLY APPROVED** by Ruhaan, 2026-10-10 — condition implemented; see "Compliance"
+
+**Ruling (verbatim):**
+
+> **D-006 — CONDITIONAL APPROVAL.** I approve local wall-clock projection as necessary
+> for compatibility with the frozen fs-1.3 features. I do not approve using an
+> account-level fixed UTC offset as the unrestricted production solution. Use IANA
+> timezone-aware, observation-time-specific conversion, preserve true UTC timestamps
+> in storage, document the policy, and test DST boundaries. Do not modify frozen model
+> files or feature definitions. If the current implementation cannot safely support
+> this, keep production forecasting gated and report the blocker.
 
 **The incompatibility.** fs-1.3 was trained on CGMacros, which stores
 participant-local wall-clock time under a `+00:00` label. Two frozen features read
 that stored clock directly: `g_dev_from_night` (readings with stored hour 2–5) and
 the time-of-day components of every retrieval vector. Given genuine UTC instants they
-would read the UTC hour: for a user in New York the "overnight" baseline would come
-from 21:00–01:00 local, and a retrieval query built from local time would be compared
-with prior meals described in UTC.
+would read the UTC hour.
 
-**What is done.** No frozen file is changed. Before calling the engine, the
-orchestrator shifts every timestamp in the history by one fixed offset — the
-account's UTC offset at the meal instant — and passes
-`time_basis="source_local_unknown_tz"`, the basis the model was trained under. A
-uniform shift preserves every elapsed time and ordering exactly, so slopes, gaps and
-window boundaries are unchanged; only the clock reading moves.
-(`services/history.py::project_local_clock`.)
+**The policy now implemented** (`services/history.py`):
 
-**Known approximation.** Observations on the far side of a DST change inside the
-8-day lookback have a clock reading one hour off. Elapsed times are still exact.
+1. **Storage is true UTC, always.** Every `observed_at`, `occurred_at` and `as_of` in
+   the database is the real instant. The local-clock form exists only inside the
+   input handed to the engine, and in the snapshot of that input.
+2. **Conversion is IANA and per observation.** `project_local_clock(instant, zone)`
+   gives each observation the UTC offset its zone had *at that observation's own
+   instant*. There is no account-level fixed offset.
+3. **The engine's history never spans an offset change.** If the zone's offset
+   changed inside the 8-day lookback, the history shown to the engine starts at the
+   change (`engine_lookback_start`).
 
-**Two response fields are corrected** so they are true for a live account:
-`meal_timestamp` is restored to the real UTC instant, and the dataset caveat ("dates
-are shifted… ordering keys rather than real UTC instants") is replaced with a
-statement of what was done. The schema is unchanged and still validates against the
-frozen JSON Schema.
+**Why rule 3 is required for rule 2 to be safe.** Local wall-clock time is not a
+timeline across a daylight-saving change: an hour repeats (fall back) or is skipped
+(spring forward). Per-observation local times spanning a change would be out of order
+or would mis-state every elapsed time across it by an hour — and the frozen feature
+code assumes an ascending series and takes slopes, gaps and 120-minute response
+windows from timestamp differences. Restricting the history to one side of the change
+makes both properties exact: each timestamp carries its own correct local clock
+reading, and every difference between two of them is the true elapsed time. The code
+asserts this invariant and refuses to forecast if it is ever violated.
 
-**Alternative rejected:** passing real UTC with `time_basis="utc"`. `tod_sin/cos`
-would be right but the two clock-reading features above would be silently wrong.
+**Cost, stated plainly.** For up to 8 days after an offset change (twice a year in
+most DST zones), a forecast uses a shorter history: fewer or no admissible prior
+meals, and possibly no overnight baseline. The engine handles this exactly as it
+handles any new account — missing inputs are imputed and disclosed — and the response
+says so: `context_quality.history_truncated_at_offset_change`, `offset_change_at`,
+and an added `limitations` entry. The timing of a meal from before the change still
+reaches the model as true elapsed minutes through the frozen `context_override`. In
+the first minutes after a change, before any post-change reading exists, the forecast
+is refused with `insufficient_premeal_context` rather than anchored on a pre-change
+reading.
 
-**Evidence:** `test_time_of_day_is_read_on_the_account_local_clock` — same UTC data
-in New York, UTC and Tokyo: clock features follow local time, all 36 other features
-are bit-identical.
+**No frozen file or feature definition was modified.** Two response fields are
+corrected so they are true for a live account, as before: `meal_timestamp` is the
+real UTC instant, and the research-dataset clock caveat is replaced by a statement of
+the policy. The frozen response schema still validates.
 
-## D-007 · Personalization: Level A on; Level B implemented but off by default
+**Compliance with the ruling**
 
-**Status:** PROPOSED — **needs Ruhaan's governance decision**
+| condition | where met | evidence |
+|---|---|---|
+| IANA timezone-aware | `ZoneInfo(account timezone)` | `test_offset_transitions_are_located_to_the_second` (incl. a 30-minute zone) |
+| observation-time-specific | `project_local_clock` per row | `test_each_observation_is_converted_with_its_own_offset` |
+| true UTC preserved in storage | nothing projected is stored except the engine-input snapshot | `test_storage_keeps_true_utc_regardless_of_projection` |
+| DST boundaries tested | spring forward and fall back, America/New_York 2026 | `tests/v2/test_dst_clock_policy.py` (22 tests) |
+| no fixed account-level offset | removed | the invariant check in `build_engine_inputs` |
+| frozen files unmodified | — | `test_every_frozen_source_file_still_matches_the_freeze_manifest` |
+| policy documented | this entry, `FS13_INPUT_MAPPING.md` | — |
 
-* **Level A (on).** Scored, eligible completed meals are passed to the engine as the
-  user's history. The frozen `r_hist_*` and `q_retr_*` features individualize the
-  forecast with no fitted parameter. This is what the code comments in
-  `ml/features.py` describe as cold-start personalization.
-* **Level B (off; `GLUCOTWIN_PERSONALIZATION_POLICY=history_plus_frozen_calibration`).**
-  The frozen `PersonalizationModel.fit` — same class, same config: `n/(n+3)`,
-  minimum 4 episodes, cap 60 mg/dL — is run on the user's own eligible residuals and
-  the resulting offset is supplied through a shallow copy of the loaded artifact. The
-  artifact file and the loaded object are not modified.
+**A defect this rework found and fixed.** The first implementation computed the
+offset with `ZoneInfo.utcoffset(utc_datetime)`, which reads its argument as *local*
+wall time. Away from a transition that returns the right answer; within hours of one
+it returned the offset from the wrong side. It now converts into the zone first.
+
+**Remaining limitations (not gated, but real):**
+
+* The zone is the account's current `timezone`. A person who travels, or who changes
+  their account timezone, has earlier observations read on the new zone's clock.
+  Per-observation source zones are stored only for file imports.
+* The cut is at offset *changes*, so a zone that changes its rules is handled, but a
+  zone-database update that retroactively moves a transition is not replayed.
+
+**Production gate.** Not required by this entry any more: the fixed-offset approach
+is gone and the per-observation policy is safe by construction. Production
+forecasting for real users remains blocked for other reasons (BLOCKERS B-001, B-004).
+
+## D-007 · Personalization: Level A retained; Level B not approved for enablement
+
+**Status:** **RULED** by Ruhaan, 2026-10-10 — Level A approved to remain; **Level B NOT APPROVED**
+
+**Ruling (verbatim):**
+
+> **D-007 — NOT APPROVED FOR ENABLEMENT.** Retain Level A historical-response
+> personalization. Keep Level B calibration disabled by default. Evaluate it
+> separately through leakage-safe chronological replay before requesting approval.
+
+* **Level A (on, retained).** Scored, eligible completed meals are passed to the
+  engine as the user's history. The frozen `r_hist_*` and `q_retr_*` features
+  individualize the forecast with no fitted parameter.
+* **Level B (off, not approved).** The frozen `PersonalizationModel.fit` run on a
+  user's own eligible residuals, supplied through a shallow copy of the loaded
+  artifact. The code and its tests remain so the evaluation below can be run; the
+  default is `GLUCOTWIN_PERSONALIZATION_POLICY=history_only`.
+  **Do not set `history_plus_frozen_calibration` in any deployed environment.**
+  `GET /api/v2/status` reports the active policy, and every stored prediction records
+  the policy that produced it, so an accidental enablement is visible.
 * **Level C.** Not implemented. Not authorized.
 
-**Why B is gated rather than on:** the artifact contains calibrations for its 45
-training participants only. Producing one for a new user uses the frozen estimator
-unchanged, but yields a parameter the artifact does not contain, reported under the
-frozen version string. There is also a real statistical difference: training
-offsets were fitted on in-sample residuals, a live user's are prospective. Whether
-that is "applying the frozen policy" or "a new calibration" is a governance question,
-so it does not get switched on by an engineering default. Every stored prediction
-records the policy that produced it.
+**Before approval can be requested for Level B** — not started; out of scope while
+the objective is team integration:
 
-**To enable:** set the environment variable. Tests for both settings pass.
+1. A leakage-safe chronological replay on the development folds: for each
+   participant, walk their meals in time order; at each meal fit the offset only from
+   episodes whose 120-minute window ended strictly before it; compare forecast error
+   with and without the offset.
+2. Report it per participant, including who it harms, with participant-clustered
+   intervals — not a single pooled number.
+3. The 394-episode reference set must not be used for the decision
+   (freeze §20, rule 3).
+4. State the result against a threshold declared before measurement.
 
 ## D-008 · Wearable heart rate and medication records are not model inputs
 
@@ -220,8 +298,8 @@ analyses per 24 hours is enforced server-side. Requests set `store=False`.
 
 | # | decision | who | blocks |
 |---|---|---|---|
-| O-1 | Sign off D-006 (clock projection) | Ruhaan | production use of any live forecast |
-| O-2 | Enable or reject Level B (D-007) | Ruhaan / governance | calibration offsets for app users |
+| O-2 | Level B: run the chronological replay evaluation, then request approval (D-007) | Ruhaan | calibration offsets for app users |
+| O-10 | Shared interface review of the v2 registry by Het and Neil (R-001) | Het, Neil, Ruhaan | moving any v2 endpoint from PROPOSED to APPROVED |
 | O-3 | Identity provider | team | real user sign-up |
 | O-4 | Approved OpenAI model, cost ceiling, image retention period | team | live meal analysis |
 | O-5 | A real-time CGM source (see BLOCKERS B-001) | team | prospective forecasts for real users |
