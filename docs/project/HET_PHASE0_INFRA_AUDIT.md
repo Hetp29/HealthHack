@@ -1,196 +1,217 @@
 # H0: Infrastructure audit (Het)
 
-**Date:** 2026-10-11 00:47 UTC · **Branch:** `het` @ `09c896d` (merge of Ruhaan's freeze `e362e88`) ·
-**Status:** audit only. No AWS resources were created, and none of the files audited here were changed.
+**Revision 2:** 2026-10-11 ~03:30 UTC · **Branch:** `het` @ `a1ab3f9` (includes Ruhaan's `origin/ruhaan` @ `72dc336`:
+the fs-1.3 freeze, the v2 application layer and demo replay). The frontend was read from `origin/neil` @ `94e305d`
+(read, not merged).
+**Status:** audit only. No AWS resources were created, and none of the backend, model or frontend files were changed.
 
-Scope: everything needed to run GlucoTwin (frontend + FastAPI + frozen fs-1.3) on AWS.
-Sources: the repository at the commit above, `origin/neil` @ `e763598` for the frontend (read,
-not merged), `docs/governance/FS13_MODEL_FREEZE_V1.md`, `docs/governance/fs13_integrity_manifest.json`,
-and the four plan documents in this folder.
+Revision 1 (at `09c896d`) predated Ruhaan's v2 work. Its findings F1 (a Dockerfile that trains) and F5 (no
+`Authorization` header via CORS) are **now resolved on Ruhaan's side**, and F3 (the 568 MB warehouse at runtime) **no
+longer applies to the deployment**. See §1.
+
+Sources: the repository at the commit above, `docs/governance/FS13_MODEL_FREEZE_V1.md` and its manifest,
+the four plan documents, and Ruhaan's `HANDOFF_HET.md`, `DEMO_HANDOFF_HET.md`, `BLOCKERS.md` and `DECISIONS.md`.
+
+**Local verification at `a1ab3f9`:** `pip install -r requirements-dev.txt` followed by `python -m pytest -q` gave
+**955 passed, 52 skipped, 0 failed** (6 min 13 s, macOS, Python 3.12.7). Frozen backend source hashes match the
+manifest (checked `main.py`, `config.py`).
 
 ---
 
-## 1. Findings that change the plan
+## 1. Findings
 
-| # | Finding | Why it matters |
-|---|---|---|
-| F1 | **The existing `Dockerfile` trains a model at build time** (`RUN python -m ml.train --source synthetic_dev`). It points at `ml/artifacts/model.joblib`, not the frozen `ml/artifacts_cgmacros_fs13/`. | It directly violates the freeze ("never retrain"), and it would serve a synthetic-data model. H2 must replace this build path. The file also says it was never built (no Docker daemon). |
-| F2 | **The frozen artifact is not in Git.** `ml/artifacts_*/` is gitignored, and `model.joblib` (SHA `12ed0602…15fe`) exists only on Ruhaan's machine. | We can't build the real container until Ruhaan hands it over. It will be delivered through a private S3 artifact bucket, with the SHA-256 verified at build and at startup. |
-| F3 | **Inference needs the CGMacros SQLite warehouse at runtime.** It uses `GLUCOTWIN_DATA_BACKEND=sqlite` and `GLUCOTWIN_DB_URL`. The freeze was verified against `data/local/cgmacros_v2.db` (on Ruhaan's machine). This machine has `data/glucotwin.db` (0.57 GB) from the same adapter. | (a) We must confirm with Ruhaan that both files are the same build, or obtain his. (b) The directive says there must be no raw CGMacros data in container layers, so the database lives outside the image, in a private S3 bucket and/or attached storage. (c) **The dataset licence must permit hosting derived data in the cloud.** This is not yet verified. |
-| F4 | **The backend source is hash-locked by the freeze.** `fs13_integrity_manifest.json → inference_source_sha256` covers `backend/app/{main,config,schemas,errors,dependencies}.py`, all routes, `services/*` and `contracts/openapi.yaml`. Current hashes match (checked `main.py`, `config.py`). | Infra cannot add auth, request IDs, structured logging or CORS changes **inside** the backend. These must come from a wrapper or the edge (see §4), and must not change any response bytes. |
-| F5 | **CORS is hard-coded in the frozen `main.py`:** `allow_headers=["Content-Type"]`, `allow_credentials=False`. | A browser on a *different* origin can't send an `Authorization` header. Recommended fix: **serve frontend and API from one origin** (CloudFront path routing `/api/*`, `/health` → backend). No cross-origin requests means no CORS problem, with no frozen-code change. |
-| F6 | **The frontend is TanStack Start with server-side rendering**, built through `@lovable.dev/vite-tanstack-config` (Nitro, Cloudflare target by default). `VITE_API_BASE_URL` is baked in at **build** time. It is hosted today by Lovable. | It is not a plain static site. AWS options are in §4.3. With one origin (F5), the API base URL becomes relative and builds stop being per-environment. |
-| F7 | **No auth, no Postgres, no object storage, no jobs, no CI.** No `.github/`, no IaC. | These are all new (H3–H7). New API routes are Ruhaan's (`/api/v2/*`, still proposals), so the infra builds the platform and his code fills it in. |
-| F8 | **Local tooling:** Docker 28.0.4 installed but the **daemon is not running**. AWS CLI 2.32.28 installed and `~/.aws` exists, but the **credentials are invalid or expired** (`InvalidClientTokenId`). Terraform 1.14.3 is installed. No CDK, SAM or `gh`. | H2 needs Docker Desktop started. H3+ needs valid, non-root AWS credentials plus an account/region/budget decision. |
+| # | Finding | Status | Consequence for infra |
+|---|---|---|---|
+| F1 | The old Dockerfile trained a synthetic model at build time. | **Resolved by Ruhaan (`0c7003d`).** The image now carries only `ml/artifacts_cgmacros_fs13/`, and `backend.app.v2.verify_artifact` runs at build (no image if missing or wrong) and at start (the container exits). `.dockerignore` excludes all other model directories. | Infra still has to **prove** it, because the image has never been built. H2 includes a deliberately-wrong-artifact build that must fail. |
+| F2 | **The frozen artifact is not in Git** (5 files, about 440 KB; checksums are in `HANDOFF_HET.md` §4). Ruhaan holds the only copy. | **Open: B-004, owned by Het.** | Private, versioned, write-once S3 artifact prefix. The pipeline fetches it into the build context and checks the SHA-256 before `docker build`. |
+| F3 | Earlier assumption: the CGMacros warehouse (568 MB) is needed at runtime. | **Not needed for deployment.** v2 uses its own application database. The demo needs only `cgmacros_demo_bundle.json` (87 KB) and optionally `cgmacros_returning_user_bundle.json` (94 KB). | Bundles are research data: store them privately alongside the artifact, never bake them into a public image, and mount or fetch them at start. **The CGMacros redistribution terms still need checking** before upload. |
+| F4 | The backend source is hash-locked by the freeze (v1 `backend/app/*`, routes, services, `contracts/openapi.yaml`). | Unchanged; still holds. | Infra never edits backend code. Request IDs, auth and v2 CORS are now in Ruhaan's separate v2 ASGI app (`backend.app.v2.asgi:app`, D-003), outside the frozen files. |
+| F5 | Frozen v1 CORS allows only the `Content-Type` header. | **Resolved for v2.** v2 sets its own CORS (`Authorization`, `If-Match`, `Content-Type`; exposes `X-Request-ID`) from `GLUCOTWIN_CORS_ORIGINS`. v1 keeps its frozen policy. | **Do not add CORS headers at the CDN or gateway** (duplicate headers break browsers). One origin (CloudFront) remains the recommended design, so no cross-origin requests happen at all. |
+| F6 | The frontend is TanStack Start with server-side rendering (Lovable Vite config, Nitro with a Cloudflare default target), and `VITE_API_BASE_URL` is set at build time. | Unchanged. | Hosting choice needed from Neil (§4.3). |
+| F7 | **The frontend is not wired to the real backend yet.** On `origin/neil`, `/auth` is a stub (hard-coded test credentials, local state), `/connect-devices` uses mock actions, and the app defaults to fixture/"Demo data" mode. | New; Neil + Ruhaan. | Infra can host it, but the end-to-end acceptance test (a browser using real auth against the deployed API) needs that wiring first. |
+| F8 | **Local tooling:** Docker 28.0.4 installed but the **daemon is not running**. AWS CLI credentials in `~/.aws` are **invalid** (`InvalidClientTokenId`). Terraform 1.14.3 is available. | Open. | H2 needs Docker Desktop started. H3+ needs valid non-root AWS credentials and an account/region/budget decision. |
+| F9 | **v2 has never run on PostgreSQL** (B-007), and `S3ImageStore` has never been exercised, with **`boto3` not pinned** (B-008). | Open; Het + Ruhaan. | Provide a scratch PostgreSQL to run `alembic upgrade head && alembic check && alembic downgrade base` and the v2 suite. Add a pinned `boto3` (with Ruhaan's agreement) and test against the real bucket. |
+| F10 | **No rate limiting in the app** (B-005). | Open. | Rate-limit `/api/v2/auth/*` and the upload routes at the edge (WAF rate rule or equivalent). |
+| F11 | Demo mode is **single-process** (an in-process advance lock), and seeding the returning-user scenario runs 31 forecasts (about 5 s). | By design. | The demo environment runs **one container, one worker**. Seed before taking traffic. `GLUCOTWIN_DEMO_MODE=1` only in the demo environment, never anywhere real users could be. |
 
 ---
 
 ## 2. Component inventory
 
-Status values: **present** (exists and works as needed), **incomplete** (exists, gaps), **missing**,
-**blocked** (can't proceed without someone else).
+Status values: **present**, **incomplete**, **missing**, **blocked**.
 
 | Component | Status | Evidence / notes |
 |---|---|---|
-| Frontend framework | present | TanStack Start 1.168 (React 19, Vite 8, Tailwind 4, Nitro 3 beta) on `origin/neil`. `npm run build` → `.output/`. Vitest tests pass (11). |
-| Frontend build target for AWS | incomplete | Nitro defaults to Cloudflare via the Lovable config. An AWS preset or SPA mode is needed (§4.3). |
-| Frontend API base URL | incomplete | `VITE_API_BASE_URL` is build-time; it is `""` in production unless set, and then requests error with "not configured". |
-| Backend entry point | present | `uvicorn backend.app.main:app`, a FastAPI 0.109 factory. Port from `$PORT` in the Dockerfile. |
-| Python version | present | 3.12 (`python:3.12-slim`; local `.venv` is 3.12.7). |
-| Dependencies | incomplete | `requirements.txt` is pinned with `==`, but there is no hash-locked lockfile, so transitive dependencies float. |
-| Dockerfile | **blocked / non-compliant** | F1: trains at build time and was never built. Needs a frozen-artifact build (H2). |
-| docker-compose | incomplete | Never run. Its frontend service expects a `./frontend/` folder that doesn't exist. |
-| Model artifact | **blocked** | F2: not in the repository; Ruhaan must supply it. The SHA is in the manifest. |
-| Model loading | present | `GLUCOTWIN_MODEL_ARTIFACT`, `GLUCOTWIN_METRICS_PATH`; `/api/predict` returns 503 `model_not_trained` if missing. |
-| Startup checksum verification | missing | Not done at app startup. It can't be added to frozen `main.py`, so it goes in a container entrypoint (H2). |
-| Runtime data store | incomplete | Read-only SQLite (`SqliteDataRepository`, WAL). Needs a cloud placement and a licence check (F3). |
-| Health check | present | `GET /health`: liveness only, independent of the model by design. |
-| Readiness check | incomplete | No route for it. Readiness is inferred from `GET /api/model/info` (`model_version != "none"`). Infra probe planned in H2. |
-| Logging | incomplete | Plain single-line stdout logs. No request ID and no JSON. Can't change in-app (F4); request ID goes at the edge or in a wrapper. |
-| CORS | present (strict) | An explicit origin list from `GLUCOTWIN_CORS_ORIGINS` (wildcard warned). Headers are fixed to `Content-Type` (F5). |
-| Authentication | missing | None ("The API has no auth"). Identity provider not chosen (master plan §17). |
-| Relational DB (Postgres) | missing | Proposed entities exist only in the master plan §10. Ruhaan owns the schema and migrations. |
-| Object storage (meal photos) | missing | None. |
-| Secrets | missing (none needed yet) | No secrets today. Future: OpenAI, DB, auth, Fitbit, WHOOP, CGM, notifications, webhooks. |
-| Background jobs / scheduler | missing | No workers, queues or schedules. |
-| Webhooks / OAuth callbacks | missing | None implemented. Provider access isn't confirmed. |
-| CI/CD | missing | No `.github/workflows`. Tests run locally (pytest: 507 at `8e436e5`; frontend vitest: 11). |
-| IaC | missing | None. Terraform is available locally. |
-| Environments | missing | Only local. Lovable hosts the frontend preview. |
-| AWS account / credentials | **blocked** | F8: local credentials are invalid. Account, region and budget not agreed. |
-| Domain / DNS / TLS | missing | No domain decided. A CloudFront default `*.cloudfront.net` HTTPS URL works without one. |
+| Frontend framework | present | TanStack Start 1.168 / React 19 / Vite 8 / Nitro 3 beta on `origin/neil`. |
+| Frontend → backend wiring | incomplete | Stub auth, mock devices, fixture mode by default (F7). The API base URL is set at build time. |
+| Frontend AWS build target | incomplete | Nitro targets Cloudflare by default (F6). |
+| Backend entry point | present | **`uvicorn backend.app.v2.asgi:app`**, which serves the frozen v1 plus `/api/v2`. Stateless, so multiple workers are fine (except in demo mode). |
+| Python / dependencies | present | 3.12, every package pinned with `==` (new: Pillow, openai, cryptography, httpx, alembic, psycopg). No hash lockfile. **scikit-learn must stay 1.4.2** (pickle). `boto3` missing (F9). |
+| Dockerfile | incomplete | Frozen-artifact-only, two checksum gates, non-root user, read-only artifact. **Never built** (F1, F8). |
+| Model artifact | **blocked** | F2 / B-004. |
+| Demo bundles | **blocked** | Ruhaan's machine only (87 KB + 94 KB); verified with `python -m scripts.demo_verify`. |
+| Liveness | present | `GET /health` (frozen). |
+| Readiness | present | `GET /api/v2/ready`: database + model + checksum, 503 with per-check flags. |
+| Capabilities | present | `GET /api/v2/status` (no secrets). |
+| Logging | present | Single-line stdout logs. v2 lines carry the request ID only, never health values. `X-Request-ID` is returned. |
+| Authentication | present (unverified in the cloud) | Built-in email + password with opaque bearer tokens (D-004). No email verification or MFA (B-005). |
+| Application DB | incomplete | 24 tables, Alembic migrations `0001`/`0002`, `postgresql+psycopg://`. **Never run on PostgreSQL** (F9). |
+| Object storage | incomplete | Private bucket, streamed by the API (**no presigned URLs**, D-012), keys `<prefix><user_id>/<photo_id>.jpg`. Never exercised (F9). |
+| Secrets | missing (infra) | Names are defined (§5). No store exists yet. |
+| Background jobs | present (code) / missing (scheduler) | `workers.outcome_scoring` (5 min), `workers.reminders` (1 min), `workers.device_sync` (15 min). Idempotent one-shot commands from the same image. Need a real scheduler. |
+| OAuth callbacks | present (code) | `/api/v2/devices/{dexcom_api,fitbit,whoop}/callback`. No provider credentials exist (B-002). No inbound webhooks (sync is by polling). |
+| Rate limiting | missing | F10. |
+| CI/CD, IaC, environments | missing | No `.github/`, no IaC, no cloud environment. |
+| AWS account / credentials | **blocked** | F8. |
+| Domain / TLS | missing | No domain decided. CloudFront's default HTTPS hostname works without one. |
 
 ---
 
 ## 3. Current architecture (as found)
 
 ```
- Browser ──HTTPS──► Lovable-hosted frontend (TanStack Start SSR)
-    │
-    └─(would call)─► VITE_API_BASE_URL  ──►  nothing deployed
-                                              (backend runs only on a laptop:
-                                               uvicorn → frozen fs-1.3 → local SQLite)
+ Browser ─HTTPS─► Lovable-hosted Glimpse (SSR) ── fixture/demo data; stub auth
+                                     ╳ (no deployed API)
+ Laptop only:  uvicorn backend.app.v2.asgi:app ─► frozen fs-1.3 (+ v2 app layer)
+               ├─ application DB: SQLite file      ├─ photos: local disk
+               └─ workers: run by hand              └─ secrets: none configured
 ```
 
 ---
 
-## 4. Proposed target architecture (staging first)
+## 4. Proposed target architecture (staging, then demo/prod)
 
-Design goals: run the **frozen backend unchanged**, add security at the edge rather than in
-frozen code, use **one origin** to avoid CORS, stick to managed services, avoid NAT gateways
-and idle-heavy resources, and define everything in Terraform.
+Design goals: run the **unchanged** image, keep **one origin**, add rate limiting at the edge, use managed services
+only, have **no NAT gateway**, define everything in Terraform, and keep the artifact and bundles private.
 
 ```
-                      ┌─────────────────────── CloudFront (HTTPS, one origin) ────────────────────────┐
- Browser ── HTTPS ──► │  /*            → frontend (see §4.3)                                         │
-                      │  /api/*, /health, /docs → backend origin                                     │
-                      └──────────────────────────────────────────────────────────────────────────────┘
-                                                         │
-                                       ┌─────────────────▼──────────────────┐
-                                       │ Backend container (App Runner or   │  image: ECR, tagged by git SHA
-                                       │ ECS Fargate) — frozen FastAPI +    │  entrypoint verifies model SHA,
-                                       │ fs-1.3, read-only                  │  never trains
-                                       └──┬───────────┬──────────────┬──────┘
-                       private S3 (artifacts,│           │Secrets Manager│ CloudWatch logs/metrics/alarms
-                       CGMacros warehouse)  ─┘           │               │
-                                                         ▼
-                                (H5+, after Ruhaan's schema) RDS PostgreSQL — private
-                                (H5+) private S3 meal-photo bucket, short-lived presigned URLs
-                                (H6)  EventBridge Scheduler → SQS (+DLQ) → worker (Lambda/Fargate task)
-                                (H5)  Cognito user pool (if chosen as the identity provider)
+                ┌──────────────── CloudFront (HTTPS, one origin, WAF rate rules) ─────────────────┐
+ Browser ─────► │ /*                       → frontend (§4.3)                                        │
+                │ /api/*, /health, /docs   → backend   (no CORS headers added here; body ≤16 MB,    │
+                │                                       origin timeout ≥60 s)                      │
+                └───────────────────────────────────────┬──────────────────────────────────────────┘
+                                                        ▼
+                     ┌───────── Backend: one container image, tagged by git SHA (ECR) ─────────┐
+                     │ API:     verify_artifact → uvicorn backend.app.v2.asgi:app               │
+                     │ Workers: same image; python -m workers.{outcome_scoring,reminders,        │
+                     │          device_sync}, triggered by EventBridge Scheduler                │
+                     └──┬────────────┬───────────────┬──────────────┬───────────────────────────┘
+                        │            │               │              │
+           RDS PostgreSQL (private,  S3 photos       Secrets Manager CloudWatch logs/alarms
+           encrypted, PITR ≥7 d)     (private, SSE,  (names in §5)   (model_integrity_failure,
+                                      no public URLs)                  v2_unhandled, 5xx, latency)
+           S3 artifacts + demo bundles (private, versioned, write-once prefix; fetched at build/start)
 ```
 
 ### 4.1 Backend compute: decide in H1
-
 | Option | For | Against |
 |---|---|---|
-| **AWS App Runner** | Lowest operations: built-in HTTPS, health checks, deploy from ECR, autoscaling, no VPC/NAT needed for public egress. | Less control. Private RDS needs a VPC connector. Its availability to new accounts and its ephemeral disk limits for a 0.57 GB SQLite file must be **verified** before choosing it. |
-| **ECS Fargate + ALB** | Full control, VPC-native, works with private RDS, ephemeral storage sized as needed. | More resources to manage. The ALB costs money while idle. Avoid NAT by using public-subnet tasks or VPC endpoints. |
+| **ECS Fargate** (API service + scheduled worker tasks) | One image for API and workers. EventBridge Scheduler → `RunTask` is native. Works with private RDS. Ephemeral storage sized as needed. | Needs a load balancer (ALB) or other origin for CloudFront, which costs money while idle. Avoid NAT with public-subnet tasks plus security groups, or VPC endpoints. |
+| **App Runner** (API) + Fargate scheduled tasks (workers) | Simplest API hosting with built-in HTTPS. | Two compute products. Needs a VPC connector for private RDS. **Availability to new accounts must be verified** before choosing it. |
 
-### 4.2 Runtime warehouse (F3)
-The working assumption is that the SQLite file is stored in a private S3 bucket, copied to local storage at
-container start (read-only), and its SHA-256 checked. This keeps it out of image layers. It depends on
-(a) the licence check, (b) Ruhaan confirming which `.db` matches the freeze, and (c) the disk-size limits of the
-chosen compute.
+Initial lean: **ECS Fargate**, because the workers and the API share one image and one network model.
+
+### 4.2 Application database
+RDS PostgreSQL, smallest burstable class, single-AZ for staging, encrypted, automated backups with point-in-time
+recovery for **at least 7 days** (per `HANDOFF_HET.md` §6), not publicly accessible. Migrations run as a **one-off
+ECS task (`alembic upgrade head`) before** a rollout, never at container boot.
 
 ### 4.3 Frontend hosting: decide with Neil
 | Option | Notes |
 |---|---|
-| A. Keep Lovable hosting | Already HTTPS, zero AWS work. But it is a cross-origin API, so it runs into F5 (no `Authorization` header) once auth exists. |
-| B. **Amplify Hosting (SSR)** using Nitro's AWS Amplify preset | Managed SSR, branch-based environments. The build preset must be overridden in the Lovable config, which needs Neil's agreement. |
-| C. SPA/static build → S3 + CloudFront | Simplest and cheapest. Only works if the app doesn't rely on SSR, which needs Neil's confirmation. |
+| A. Keep Lovable hosting | Zero AWS work, but cross-origin: requires `GLUCOTWIN_CORS_ORIGINS` set to the Lovable origin. Works with v2's CORS. |
+| B. Amplify Hosting (SSR) via Nitro's AWS preset | Managed SSR, but the build preset changes in the Lovable config (Neil's agreement needed). |
+| C. Static/SPA build → S3 + CloudFront | Cheapest and gives one origin. Only valid if the app doesn't need SSR (Neil to confirm). |
 
-All three can sit behind one CloudFront distribution to achieve the single origin (F5).
-
-### 4.4 Auth (needs Ruhaan + team decision)
-The master plan leaves the identity provider open. The infra-side candidate is a **Cognito user pool**,
-with tokens validated in Ruhaan's `/api/v2` code (and/or at the edge). Frozen v1 routes stay as they are.
+### 4.4 Environments
+- **demo:** `GLUCOTWIN_DEMO_MODE=1`, a single container, a demo password secret, the bundles mounted. **No real users.**
+- **staging:** demo mode off, used for integration and smoke tests.
+- **prod:** out of scope before the deadline, and needs the compliance review in §7.
 
 ---
 
-## 5. Required resources (staging) and what drives cost
+## 5. Secret inventory (names only; values are entered by their owner)
 
-**No prices are listed here on purpose.** H1 will price these with the AWS Pricing Calculator for the agreed
-region, and attach the export. This table shows what is billed even with **no traffic**:
+| Secret | Used by | Owner who enters it | Notes |
+|---|---|---|---|
+| `GLUCOTWIN_APP_DB_URL` | API, all workers, migrations | Het (generated with RDS) | `postgresql+psycopg://…` |
+| `GLUCOTWIN_TOKEN_ENCRYPTION_KEY` | API, `device_sync` | Het (generated once) | Fernet key. **Losing it makes stored OAuth tokens unreadable; rotating it disconnects every user.** Never auto-rotate. |
+| `OPENAI_API_KEY` | API only | team / Ruhaan | Not needed for the demo. |
+| `DEXCOM_CLIENT_SECRET`, `FITBIT_CLIENT_SECRET`, `WHOOP_CLIENT_SECRET` | API, `device_sync` | whoever registers the developer app | B-002: none exist yet. |
+| `GLUCOTWIN_DEMO_PASSWORD` | demo environment only | Het | Shared with Neil out of band. |
+
+Non-secret configuration (environment variables): `GLUCOTWIN_MODEL_ARTIFACT`, `GLUCOTWIN_METRICS_PATH`,
+`GLUCOTWIN_EXPECTED_MODEL_SHA256` (as the Dockerfile sets them; never overridden), `GLUCOTWIN_CORS_ORIGINS`,
+`GLUCOTWIN_PUBLIC_API_BASE_URL`, `GLUCOTWIN_FRONTEND_RETURN_URL`, `GLUCOTWIN_IMAGE_S3_BUCKET`/`_PREFIX`,
+`GLUCOTWIN_OPENAI_VISION_MODEL`, the provider client IDs, `DEXCOM_ENVIRONMENT`, the demo variables. **Never set
+`GLUCOTWIN_PERSONALIZATION_POLICY`** (D-007). The frontend gets `VITE_API_BASE_URL` only.
+
+---
+
+## 6. Resources and what drives cost
+
+No prices are listed here. H1 will price them with the AWS Pricing Calculator for the agreed region and attach the
+estimate.
 
 | Resource | Phase | Costs while idle? | Main cost driver |
 |---|---|---|---|
 | ECR repository | H3 | yes (small) | stored image GB |
-| App Runner service **or** ECS service + ALB | H3 | **yes** (provisioned instance memory, or ALB hours + task hours) | instance size × hours |
-| S3 buckets (artifacts, warehouse, photos, logs) | H3/H5 | yes (small) | stored GB, requests |
-| CloudFront | H4 | no (pay per use) | data out, requests |
+| ECS Fargate API service (+ ALB) | H3 | **yes** | task vCPU/memory hours; ALB hours + capacity units |
+| Fargate scheduled worker tasks | H6 | no (per run) | runs × duration |
+| RDS PostgreSQL (smallest burstable, single-AZ) | H5 | **yes** | instance hours + storage + backup storage |
+| S3 (artifacts, bundles, photos) | H3/H5 | yes (small) | GB stored, requests |
+| CloudFront + WAF rate rules | H4 | WAF: **yes** (web ACL + rules) | requests; WAF ACL/rule/request charges |
 | Secrets Manager | H5 | **yes** | per secret per month + API calls |
-| RDS PostgreSQL (smallest burstable, single-AZ for staging) | H5 | **yes** | instance hours + storage + backups |
-| Cognito user pool | H5 | depends on tier and number of active users | monthly active users |
-| EventBridge Scheduler / SQS / Lambda | H6 | mostly no | invocations |
 | CloudWatch logs, metrics, alarms | H7 | yes (small) | ingested GB, retention, alarms |
-| AWS Budgets | H3 | small | number of budgets/actions |
-| **Must avoid:** NAT gateway, Multi-AZ RDS, provisioned Aurora, oversized instances | — | **yes, significant** | hourly |
+| AWS Budgets | H3 | small | budgets/actions |
+| **Avoid:** NAT gateway, Multi-AZ RDS, Aurora provisioned, oversized tasks | — | **yes, significant** | hourly |
 
-Tagging for every resource: `project=glucotwin`, `env=staging|prod`, `owner=het`, `managed_by=terraform`.
-Log retention: 14 days in staging. Budgets with email alerts are created **before** anything else in H3.
-
----
-
-## 6. Risks
-
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Building with the current Dockerfile ships a retrained synthetic model | Breaks the freeze; wrong forecasts | H2 replaces the build. CI fails if any `ml.train` appears in the container build path or the SHA differs. |
-| The artifact or warehouse isn't supplied in time | No real-model deployment | Ask Ruhaan now (F2, F3). Fallback: deploy infra with the 503 `model_not_trained` state shown honestly. |
-| Hosting a CGMacros-derived database without licence clearance | Compliance | Check the licence before uploading. Private bucket only, never public. |
-| Changing frozen backend files for infra reasons | Breaks the freeze hashes | Wrap or use the edge only. A CI hash check against `fs13_integrity_manifest.json`. |
-| Cross-origin auth blocked by frozen CORS | Login fails in the browser | One-origin CloudFront (F5). |
-| Idle billing (ALB, RDS, Secrets Manager, NAT) | Spends the budget | Budgets first, no NAT, smallest sizes, a scripted `terraform destroy`. |
-| Time: the deadline is **2026-10-11 12:00 ET** | Can't finish H3–H8 | Prioritize M1: backend + frontend reachable over HTTPS with the frozen model. Everything else is documented as planned. |
-| Lovable sync on the frontend branch | Lost history if rewritten | Never force-push. Frontend build changes only with Neil's agreement. |
-| Health data in logs once v2 exists | Privacy | Redaction rules and log review in H7. No payload logging at the edge. |
+Tags on every resource: `project=glucotwin`, `env=<demo|staging|prod>`, `owner=het`, `managed_by=terraform`.
+Logs are kept 14 days in demo and staging. **Budgets and alerts are created first.** Teardown is `terraform destroy`
+per environment, preceded by an RDS final snapshot (documented in the runbook).
 
 ---
 
-## 7. External approvals needed
+## 7. Risks
+
+| Risk | Mitigation |
+|---|---|
+| The artifact or bundles aren't handed over in time | Ask Ruhaan now. Without them the container correctly refuses to start, so nothing is faked. |
+| The Docker image fails on first build (never built) | H2 builds locally first, including a wrong-artifact negative test. |
+| PostgreSQL behaviour differs from SQLite (B-007) | Scratch RDS plus the v2 suite before any user-facing deploy. |
+| CGMacros-derived bundles hosted without clearing the licence | Check the terms. Private bucket only, no public URL. |
+| Demo mode enabled where real users exist | Separate demo environment. The flag is set only by the Terraform demo workspace. |
+| Duplicate CORS headers from the CDN | The CDN passes the app's CORS through untouched. Tested by browser preflight. |
+| Idle billing (ALB, RDS, WAF, Secrets Manager) | Budgets first, smallest sizes, scripted teardown. |
+| **Deadline 2026-10-11 12:00 ET** | Prioritise: H2 (verified image) → H3/H4 minimal demo environment. Everything else is documented and marked unverified until tested. |
+| A HIPAA/regulated-use assumption | **No HIPAA or BAA claim.** Real-user health data in production requires a compliance review first. |
+
+---
+
+## 8. Approvals and handoffs needed
 
 | From | Item |
 |---|---|
-| **Het / team** | AWS account and owner, **region**, budget/credits, a non-root IAM identity for Het, a domain (optional). |
-| **Ruhaan** | 1) `ml/artifacts_cgmacros_fs13/` files (SHA-verified handoff). 2) Which warehouse `.db` matches the freeze (or a copy). 3) Agreement that the frozen Dockerfile build is replaced by a frozen-artifact build. 4) Identity provider choice. 5) Postgres schema and migrations when v2 starts. |
-| **Neil** | Frontend hosting option (§4.3), whether SSR is needed, and the build-preset change in the Lovable config. |
-| **Organization / legal** | CGMacros licence for cloud hosting. **No HIPAA/BAA claim**: if real user health data is in scope, a compliance review must happen before production. |
+| **Het / team** | AWS account + **region** + budget/credits; a non-root IAM identity for Het (current local credentials are invalid); a domain (optional). |
+| **Ruhaan** | The 5 artifact files + 2 demo bundles (checksums in `HANDOFF_HET.md` §4 and `DEMO_HANDOFF_HET.md` §2); approval to add a pinned `boto3`; review of this audit (O-10). |
+| **Neil** | Frontend hosting option (§4.3); wiring `/auth` to `/api/v2/auth/*` and live mode before the end-to-end browser test. |
+| **Organization / legal** | CGMacros redistribution terms for cloud-hosted bundles; compliance review before any real users. |
+
+Handoffs **from Het** once done: staging/demo API base URL and frontend origin; the artifact location; a scratch
+PostgreSQL for B-007; the bucket name and prefix for B-008; gateway limits (body 16 MB, timeout ≥60 s); the worker
+schedules.
 
 ---
 
-## 8. Milestones
+## 9. Milestones
 
 | Phase | Deliverable | Needs |
 |---|---|---|
-| **H1** | Architecture decision record (compute, frontend, warehouse, auth), Pricing Calculator estimate, Terraform layout | Region and budget decision |
-| **H2** | Frozen-artifact Dockerfile (no training, SHA check at build and start, non-root, read-only), local smoke test of all 7 v1 routes | Docker running, artifact from Ruhaan |
-| **H3** | Terraform: budgets, tags, ECR, artifact/warehouse buckets, backend service, CloudWatch logs | AWS credentials and authorization |
-| **H4** | CloudFront single origin, frontend hosting, HTTPS, browser smoke test | Neil's hosting decision |
-| **H5** | Secrets Manager names, private photo bucket and presigned-URL policy, RDS (after schema), Cognito (if chosen) | Ruhaan's schema and auth decision |
-| **H6** | Scheduler → SQS (+DLQ) → worker skeleton, one real job path | Ruhaan's job semantics |
-| **H7** | GitHub Actions (tests, hash check, image by SHA, staging deploy, rollback), alarms, runbook | Repo secrets via OIDC role |
-| **H8** | Integrated staging smoke, handoff to Ruhaan and Neil | All of the above |
-
-**Realistic before the deadline:** H1–H4 (M1: a real HTTPS app with the frozen model), provided AWS access and the
-artifact arrive tonight. H5–H8 are designed and documented, and only marked done once verified.
+| **H1** | Architecture decision record (Fargate vs App Runner, frontend option, environments), Pricing Calculator estimate | Region and budget |
+| **H2** | Image built locally; wrong-artifact build fails; container passes `/health`, `/api/v2/ready`, `scripts/smoke_v2.py`, `demo_verify` | **Docker running + artifact + bundles** |
+| **H3** | Terraform: budgets, tags, ECR, private artifact bucket, VPC without NAT, RDS, ECS API service, logs | AWS credentials and authorization |
+| **H4** | CloudFront one origin + WAF rate rules + frontend hosting; browser smoke test | Neil's decision |
+| **H5** | Secrets Manager entries, photo bucket + task-role policy, Postgres verification (B-007/B-008) | — |
+| **H6** | EventBridge Scheduler → worker tasks (3 schedules), failure alarms | — |
+| **H7** | GitHub Actions: tests, `research.freeze.verify_artifacts`, `alembic check`, contract check, image by SHA, deploy, rollback; dashboards/runbook | OIDC deploy role |
+| **H8** | Integrated smoke tests in the demo/staging environment; handoff | All of the above |
